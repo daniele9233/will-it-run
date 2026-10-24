@@ -1,0 +1,59 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "willitrun-core",
+      "runtimeExecutable": "backend\\.venv\\Scripts\\willitrun.exe",
+      "runtimeArgs": ["serve", "--port", "8765"],
+      "port": 8765
+    },
+    {
+      "name": "agentfit-ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "desktop", "run", "dev"],
+      "port": 1420
+    },
+    {
+      "name": "willitrun-core-isolated",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$env:AGENTFIT_HOME = Join-Path $env:TEMP 'willitrun-isolated-home'; & backend\\.venv\\Scripts\\willitrun.exe serve --port 8791"
+      ],
+      "port": 8791
+    },
+    {
+      "name": "willitrun-core-isolated-spaces",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$env:AGENTFIT_HOME = Join-Path $env:TEMP 'Will It Run isolated home'; & backend\\.venv\\Scripts\\willitrun.exe serve --port 8791"
+      ],
+      "port": 8791
+    },
+    {
+      "name": "lmstudio-stub",
+      "runtimeExecutable": "backend\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["scripts\\dev\\lmstudio_stub.py", "12399"],
+      "port": 12399
+    },
+    {
+      "name": "willitrun-core-stub",
+      "runtimeExecutable": "backend\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["scripts\\dev\\core_with_stub.py", "8791", "12399"],
+      "port": 8791
+    },
+    {
+      "name": "willitrun-ui-isolated",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$env:VITE_AGENTFIT_API = 'http://127.0.0.1:8791'; npm --prefix desktop run dev"
+      ],
+      "port": 1420
+    }
+  ]
+}

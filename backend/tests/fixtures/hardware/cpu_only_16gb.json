@@ -1,0 +1,79 @@
+{
+  "probe": {
+    "os": {
+      "caption": "Microsoft Windows 11 Pro",
+      "version": "10.0.26100",
+      "build": "26100",
+      "arch": "64 bit",
+      "total_kb": "16659775",
+      "free_kb": "9995865"
+    },
+    "cpu": [
+      {
+        "name": "13th Gen Intel(R) Core(TM) i5-13400",
+        "manufacturer": "GenuineIntel",
+        "cores": 10,
+        "logical": 16,
+        "mhz": 3400,
+        "arch": 9
+      }
+    ],
+    "memory": [
+      {
+        "capacity": "8589934592",
+        "speed": 3200,
+        "configured": 3200,
+        "smbios_type": 26,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 0"
+      },
+      {
+        "capacity": "8589934592",
+        "speed": 3200,
+        "configured": 3200,
+        "smbios_type": 26,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 1"
+      }
+    ],
+    "video": [
+      {
+        "name": "Intel(R) UHD Graphics 770",
+        "adapter_ram": "2147483648",
+        "driver": "31.0.101.5186",
+        "driver_date": "20240901000000.000000-000",
+        "pnp": "PCI\\VEN_8086&DEV_A780&SUBSYS_0000&REV_04\\3&0&0&10",
+        "status": "OK"
+      }
+    ],
+    "registry_vram": [
+      {
+        "name": "Intel(R) UHD Graphics 770",
+        "bytes": "2147483648"
+      }
+    ],
+    "disks": [
+      {
+        "letter": "C:",
+        "label": "",
+        "fs": "NTFS",
+        "size": "999653638144",
+        "free": "442381631488"
+      }
+    ],
+    "partitions": [
+      {
+        "letter": "C",
+        "disk": 0
+      }
+    ],
+    "physical": [
+      {
+        "id": "0",
+        "media": "SSD",
+        "bus": "NVMe"
+      }
+    ]
+  },
+  "nvidia_smi": ""
+}

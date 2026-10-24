@@ -1,0 +1,1569 @@
+(last saved version) ||| (ultima versione salvata)
+(model + vision projector) ||| (modello + proiettore visivo)
++{n} for matching your model preference in Settings. ||| +{n} perché corrisponde alla tua preferenza di modello nelle Impostazioni.
+1 agent has no model yet. ||| 1 agente non ha ancora un modello.
+1 agent ||| 1 agente
+1 download started ||| 1 download avviato
+1 model load this run ||| 1 caricamento di modello in questa esecuzione
+1 model load ||| 1 caricamento di modello
+1 model ||| 1 modello
+1 step so far ||| 1 passo finora
+1 without a model ||| 1 senza modello
+A 0 to 10 summary of how good a choice a model file is for this PC: how well it fits, how capable it is, how fast it runs and how trustworthy its information is. ||| Un voto da 0 a 10 che riassume quanto un file di modello è una buona scelta per questo PC: quanto ci sta bene, quanto è capace, quanto è veloce e quanto sono affidabili le informazioni disponibili.
+A hash is the SHA-256 of a step's output. A step that read another shows the same hash that step wrote: what it used is exactly what was produced. These are hashes, not signatures. ||| Un hash è lo SHA-256 dell'output di un passo. Un passo che ne ha letto un altro mostra lo stesso hash scritto da quello: ha usato esattamente ciò che era stato prodotto. Sono hash, non firme.
+A model at or above this speed counts as fast enough. ||| Un modello a questa velocità o superiore è considerato abbastanza veloce.
+A model edited to refuse less. Will It Run lists and ranks these by the same criteria as any other model. ||| Un modello modificato per rifiutare meno richieste. Will It Run lo elenca e lo classifica con gli stessi criteri di qualunque altro modello.
+A model is published at full precision, then shrunk so it fits on ordinary hardware. Each step down makes the file smaller and the answers a little worse. ||| Un modello viene pubblicato a piena precisione, poi rimpicciolito perché entri in un hardware normale. Ogni gradino in meno rende il file più piccolo e le risposte un po' peggiori.
+A model left idle this long is unloaded by LM Studio itself, so nothing stays in VRAM if a run is abandoned. A run reloads what it needs. 0 turns it off. ||| Un modello rimasto inattivo così a lungo viene rimosso da LM Studio stesso, così niente resta in VRAM se un'esecuzione viene abbandonata. Un'esecuzione ricarica ciò che le serve. 0 lo disattiva.
+A model that does not fit in graphics memory runs many times slower. A smaller model that fits is usually the better tool. ||| Un modello che non entra nella memoria grafica gira molte volte più lento. Un modello più piccolo che ci entra è quasi sempre lo strumento migliore.
+a per-backend constant, because this GPU's bandwidth is not in the table ||| una costante per backend, perché la banda di questa GPU non è in tabella
+A run stops after this many agent steps, so no workflow can loop forever. ||| Un'esecuzione si ferma dopo questo numero di passi, così nessun workflow può girare all'infinito.
+A safety reserve stays free on every drive. ||| Su ogni disco resta libera una riserva di sicurezza.
+A session runs one of your workflows on a task. Build an AI team to create a workflow with models assigned, then start a session here. ||| Una sessione esegue uno dei tuoi workflow su un compito. Crea un team AI per ottenere un workflow con i modelli già assegnati, poi avvia qui una sessione.
+A token is stored. ||| Un token è salvato.
+A way to shrink a model by storing its numbers with fewer bits. Q8 is almost the original, Q4 is about half the size with a small loss, Q2 is tiny but clearly worse. ||| Un modo per rimpicciolire un modello salvando i suoi numeri con meno bit. Q8 è quasi l'originale, Q4 pesa circa la metà con una piccola perdita, Q2 è minuscolo ma chiaramente peggiore.
+A workflow is a graph of agents, approvals and conditions. It is stored as YAML, validated, then compiled to LangGraph when it runs. ||| Un workflow è un grafo di agenti, approvazioni e condizioni. È salvato in YAML, validato e poi compilato in LangGraph quando viene eseguito.
+absent ||| assente
+Accent color ||| Colore d'accento
+Accent {color} ||| Accento {color}
+ACCEPTABLE ||| ACCETTABILE
+Accepted items come from ||| Gli elementi accettati arrivano da
+ACCEPTED ||| ACCETTATO
+Accepts images ||| Accetta immagini
+Accuracy at {quant} ||| Accuratezza a {quant}
+Accuracy is the quality loss the llama.cpp project measured for each quantization on a reference 8B model, not a test of this model. ||| L'accuratezza è la perdita di qualità misurata dal progetto llama.cpp per ogni quantizzazione su un modello di riferimento da 8B: non è un test di questo modello.
+Accuracy kept by {quant} ||| Accuratezza mantenuta da {quant}
+Accuracy ||| Accuratezza
+Action failed ||| Azione non riuscita
+Activity such as hardware scans, model loads, downloads and workflow runs appears here. ||| Qui compaiono attività come scansioni hardware, caricamenti di modelli, download ed esecuzioni di workflow.
+Adjust reserves in Settings ||| Modifica le riserve nelle Impostazioni
+After installation ||| Dopo l'installazione
+After ||| Dopo
+Agent ||| Agente
+Agent, team, workflow ||| Agente, team, workflow
+Agents ||| Agenti
+AI readiness ||| Prontezza AI
+AI Teams ||| Team AI
+All ||| Tutti
+already copied: paste it with Ctrl+V ||| già copiato: incollalo con Ctrl+V
+already installed ||| già installato
+Also shows the workflow definition. ||| Mostra anche la definizione del workflow.
+Also used by {roles}. Choosing another model here changes only this agent. ||| Usato anche da {roles}. Se qui scegli un altro modello cambia solo questo agente.
+always ||| sempre
+An agent failed ||| Un agente ha fallito
+An agent is a model given one job. A team is several agents handing work to each other, and the workflow is the order they do it in. ||| Un agente è un modello con un solo compito. Un team è un gruppo di agenti che si passano il lavoro, e il workflow è l'ordine in cui lo fanno.
+An estimate from model family and size, not a benchmark run. Benchmark the model locally for measured speed. ||| Una stima basata su famiglia e dimensione del modello, non un benchmark. Esegui un benchmark in locale per avere la velocità misurata.
+Another folder... ||| Un'altra cartella...
+Answer comes from ||| La risposta arriva da
+Answer ||| Risposta
+Any model ||| Qualsiasi modello
+Any ||| Qualsiasi
+API token ||| Token API
+Approval ||| Approvazione
+Approve this action? ||| Approvare questa azione?
+Approve ||| Approva
+APPROVED ||| APPROVATO
+approved ||| approvato
+approximate ||| approssimativo
+Architecture ||| Architettura
+Artifacts ||| Artefatti
+Ask a human ||| Chiedi a una persona
+Ask me before a file that is already there is overwritten ||| Chiedimi prima di sovrascrivere un file che c'era già
+Ask the question, then paste the text the answer must come from ||| Scrivi la domanda, poi incolla il testo da cui deve venire la risposta
+Ask this team for the next thing ||| Chiedi a questo team la prossima cosa
+asks first ||| chiede prima
+asks if it changes state ||| chiede se modifica qualcosa
+Audit trail: {n} steps, each with the hash of what it wrote and read ||| Tracciato di verifica: {n} passi, ognuno con l'hash di ciò che ha scritto e letto
+Audited by ||| Controllate da
+Automatic works out the context and what stays in memory from this PC's hardware at the moment of each load, so a model is not given more than it can hold. Manual uses the numbers you set. ||| Automatico ricava il contesto e cosa resta in memoria dall'hardware di questo PC al momento di ogni caricamento, così a un modello non viene dato più di quanto regge. Manuale usa i numeri che imposti tu.
+Automatic ||| Automatico
+automatic ||| automatico
+Automatic: Will It Run decides everything. Guided: Will It Run recommends, you approve. Expert: every file, quantization and memory figure is exposed. ||| Automatico: Will It Run decide tutto. Guidato: Will It Run consiglia, tu approvi. Esperto: vedi ogni file, quantizzazione e dato di memoria.
+Available at scan ||| Disponibile alla scansione
+Available on {drive} ||| Disponibile su {drive}
+Back to workflows ||| Torna ai workflow
+Back ||| Indietro
+Before ||| Prima
+Benchmark failed ||| Benchmark non riuscito
+Benchmark Model ||| Benchmark di un modello
+Benchmark not started ||| Benchmark non avviato
+Benchmark this model ||| Esegui il benchmark di questo modello
+Benchmark ||| Benchmark
+Benchmarks run on models installed in LM Studio. Install one first. ||| I benchmark girano sui modelli installati in LM Studio. Installane prima uno.
+Benchmarks ||| Benchmark
+Best case {quant} at ~{tps} tok/s ||| Caso migliore {quant} a ~{tps} tok/s
+Bits per weight ||| Bit per peso
+branch (optional) ||| ramo (facoltativo)
+Branch ||| Ramo
+Browse ||| Sfoglia
+Build a team first ||| Crea prima un team
+Build AI Team ||| Crea team AI
+Build an AI team to generate one with models assigned, or open a template below and save it as your own copy. ||| Crea un team AI per generarne uno con i modelli assegnati, oppure apri un modello qui sotto e salvalo come tua copia.
+Build another team ||| Crea un altro team
+Build Team ||| Crea team
+Built-in catalog ||| Catalogo integrato
+Built-in catalog, cache and installed models. Type to search Hugging Face live. ||| Catalogo integrato, cache e modelli installati. Scrivi per cercare in diretta su Hugging Face.
+Can I trust the speed figures? ||| Posso fidarmi delle velocità indicate?
+Cancel ||| Annulla
+Cancelled ||| Annullata
+Capabilities ||| Capacità
+Categories ||| Categorie
+Change account ||| Cambia account
+Change folder ||| Cambia cartella
+Change model for {name} ||| Cambia modello per {name}
+Change the team ||| Modifica il team
+Change ||| Cambia
+Changes are saved immediately to your Windows profile. ||| Le modifiche vengono salvate subito nel tuo profilo Windows.
+CHANGES REQUESTED ||| MODIFICHE RICHIESTE
+Changes the model in memory: this step waits for a reload. ||| Cambia il modello in memoria: questo passo aspetta un ricaricamento.
+Check in code ||| Controllo nel codice
+Check in code · no model ||| Controllo nel codice · nessun modello
+check in code, no model ||| controllo nel codice, nessun modello
+Check the SHA-256 hash of direct downloads against the one published by the repository. ||| Confronta l'hash SHA-256 dei file scaricati con quello pubblicato dal repository.
+Checked against ||| Confrontate con
+Checking storage ||| Controllo dei dischi
+Checking the GitHub sign-in... ||| Controllo l'accesso a GitHub...
+Checking this computer... ||| Controllo di questo computer...
+Choose a folder for models ||| Scegli una cartella per i modelli
+choose a folder ||| scegli una cartella
+Choose a model ||| Scegli un modello
+choose a repository ||| scegli un repository
+Choose models ||| Scegli i modelli
+Choose one for each in the Models panel, or one for everyone. ||| Scegline uno per ciascuno nel pannello Modelli, oppure uno per tutti.
+Choose one or several ||| Scegline una o più
+Choose the folder to work in ||| Scegli la cartella in cui lavorare
+Choose the folder, or remove the label above. ||| Scegli la cartella, oppure togli l'etichetta qui sopra.
+Choose the repository, or remove the label above. ||| Scegli il repository, oppure togli l'etichetta qui sopra.
+Choose which of your downloaded models each agent uses. One model for everyone has no waiting between steps; give an agent a different model where it does the job better. There is no limit to how many you use. ||| Scegli quale dei modelli che hai scaricato usa ogni agente. Un solo modello per tutti non ha attese tra un passo e l'altro; dai a un agente un modello diverso dove fa meglio quel lavoro. Non c'è un limite a quanti ne usi.
+Claims come from ||| Le affermazioni arrivano da
+Claims needed to continue ||| Affermazioni necessarie per proseguire
+Clear ||| Cancella
+Close details ||| Chiudi i dettagli
+Close ||| Chiudi
+code ||| codice
+Coding ||| Programmazione
+Command palette ||| Elenco comandi
+Commands ||| Comandi
+Comment ||| Commento
+Commits needed to continue ||| Commit necessari per proseguire
+Commits ||| Commit
+Compare all files ||| Confronta tutti i file
+Compatibility ||| Compatibilità
+Completed ||| Completata
+COMPLETED ||| COMPLETATO
+completed ||| completato
+Compute capability ||| Compute capability
+Computer Use ||| Uso del computer
+Condition ||| Condizione
+Connect a folder or GitHub ||| Collega una cartella o GitHub
+Connected ||| Connesso
+CONNECTED ||| CONNESSO
+Context and memory for {model} ||| Contesto e memoria per {model}
+Context and memory settings ||| Impostazioni di contesto e memoria
+Context chosen automatically for this request. ||| Contesto scelto in automatico per questa richiesta.
+Context length ||| Lunghezza del contesto
+Context lowered from {requested} to {context}: that is what the free VRAM allowed. ||| Contesto ridotto da {requested} a {context}: è quanto permetteva la VRAM libera.
+Context of the variant ||| Contesto della variante
+Context reservation (KV cache) ||| Memoria riservata al contesto (KV cache)
+context {n} ||| contesto {n}
+Context ||| Contesto
+Continue to {id} ||| Prosegui verso {id}
+Continue without it ||| Continua senza
+Continue without runtime ||| Continua senza runtime
+Continue ||| Continua
+Copied ||| Copiato
+Copy the log ||| Copia il registro
+Copy ||| Copia
+Copying the repository... ||| Copio il repository...
+Cores ||| Core
+Could not be determined ||| Non determinabile
+Could not build this team ||| Impossibile creare questo team
+Could not delete ||| Impossibile eliminare
+Could not export ||| Impossibile esportare
+Could not load {model}: {message} ||| Impossibile caricare {model}: {message}
+Could not plan this team ||| Impossibile pianificare questo team
+Could not start the run ||| Impossibile avviare l'esecuzione
+Could not start the server ||| Impossibile avviare il server
+Could not start the session ||| Impossibile avviare la sessione
+CPU only ||| Solo CPU
+Ctrl K ||| Ctrl K
+Custom accent color ||| Colore d'accento personalizzato
+Custom specialization ||| Specializzazione personalizzata
+Dark ||| Scuro
+Decision not recorded ||| Decisione non registrata
+Default context length ||| Lunghezza del contesto predefinita
+Default folder ||| Cartella predefinita
+Default retries per agent ||| Tentativi predefiniti per agente
+Default step limit ||| Limite di passi predefinito
+default ||| predefinita
+Default ||| Predefinito
+Delete agent ||| Elimina agente
+Delete approval ||| Elimina approvazione
+Delete check ||| Elimina controllo
+Delete edge ||| Elimina collegamento
+Delete {name} ||| Elimina {name}
+Deleting files, installing software, privilege escalation, registry changes, destructive PowerShell, changing remote infrastructure, publishing, and mouse or keyboard control always ask first. ||| Eliminare file, installare software, elevare i privilegi, modificare il registro, PowerShell distruttivo, modificare infrastrutture remote, pubblicare e controllare mouse o tastiera chiedono sempre prima.
+DENIED ||| NEGATO
+Deny ||| Nega
+Describe the AI team you want ||| Descrivi il team AI che vuoi
+Describe the AI team you want, e.g. a team specialized in enterprise PostgreSQL Patroni clusters, WAL management, pgBackRest, performance and documentation. ||| Descrivi il team AI che vuoi, ad esempio un team specializzato in cluster PostgreSQL Patroni aziendali, gestione WAL, pgBackRest, prestazioni e documentazione.
+Describe the task in a few sentences. The first agent turns it into a brief with acceptance criteria. ||| Descrivi il compito in poche frasi. Il primo agente lo trasforma in un brief con i criteri di accettazione.
+Detected by ||| Rilevato da
+Detecting CPU ||| Rilevamento CPU
+Detecting CUDA ||| Rilevamento CUDA
+Detecting GPU ||| Rilevamento GPU
+Detecting RAM ||| Rilevamento RAM
+Detecting Windows ||| Rilevamento Windows
+DevOps ||| DevOps
+did not pass ||| non superato
+Disconnect ||| Scollega
+Disk safety reserve ||| Riserva di sicurezza del disco
+Disk ||| Disco
+Dismiss ||| Chiudi
+Do not download. ||| Non scaricare.
+Doctor ||| Diagnostica
+does not fit this PC ||| non entra in questo PC
+Does not fit ||| Non ci sta
+does not run ||| non gira
+Done ||| Fatto
+done ||| fatto
+Download complete, benchmark complete, workflow needs approval, workflow complete. Shown when Will It Run is in the background. ||| Download completato, benchmark completato, workflow in attesa di approvazione, workflow completato. Compaiono quando Will It Run è in secondo piano.
+Download history ||| Cronologia dei download
+Download method ||| Metodo di download
+Download model ||| Scarica il modello
+Download models ||| Scarica i modelli
+Download not started ||| Download non avviato
+Download size ||| Dimensione del download
+Download started ||| Download avviato
+Download {quant} ||| Scarica {quant}
+download {size} ||| da scaricare {size}
+Download ||| Scarica
+Downloaded models ||| Modelli scaricati
+Downloaded ||| Scaricati
+Downloading ||| Download in corso
+DOWNLOADING ||| IN DOWNLOAD
+Downloads ||| Download
+Drag to resize, double-click to reset ||| Trascina per allargare o stringere, doppio clic per ripristinare
+Driver ||| Driver
+e.g. D:\Projects\my-app ||| es. D:\Progetti\mia-app
+e.g. FAIL ||| es. FAIL
+Each file is the same model at a different quantization. The score says how good a choice it is on this PC; accuracy says how much of the original quality it keeps. ||| Ogni file è lo stesso modello a una quantizzazione diversa. Il punteggio dice quanto è una buona scelta su questo PC; l'accuratezza dice quanta qualità originale conserva.
+Each request gets the context it needs, never more than fits, and the model is reloaded with more only if a later request outgrows it. ||| Ogni richiesta riceve il contesto che le serve, mai più di quello che entra, e il modello viene ricaricato con più contesto solo se una richiesta successiva non ci sta più.
+Each role builds on the one before ||| Ogni ruolo costruisce sul lavoro del precedente
+Each time the model is loaded, the free graphics memory is measured and the request gets the context it needs, never more than fits. ||| A ogni caricamento del modello viene misurata la memoria grafica libera e la richiesta riceve il contesto che le serve, mai più di quello che entra.
+Earlier round ||| Giro precedente
+Earlier work it can read ||| Lavoro precedente che può leggere
+Edge ||| Collegamento
+edited {when} ||| modificato {when}
+Embedding ||| Embedding
+Empty: everything so far. Otherwise node ids separated by commas, or one field of a node (researcher.claims). What is not listed never reaches this agent. ||| Vuoto: tutto il lavoro fatto finora. Altrimenti gli id dei nodi separati da virgole, o un solo campo di un nodo (researcher.claims). Ciò che non è elencato non arriva mai a questo agente.
+End the run (retry limit) ||| Termina l'esecuzione (limite di tentativi)
+End the run ||| Termina l'esecuzione
+Enter to start · Shift+Enter for a new line ||| Invio per avviare · Maiusc+Invio per andare a capo
+Enter to queue · the square stops the run ||| Invio per mettere in coda · il quadrato ferma l'esecuzione
+Chat ||| Chat
+Chat with one model ||| Chat con un solo modello
+New chat ||| Nuova chat
+Stopped by you. ||| Fermata da te.
+The model gave no answer. ||| Il modello non ha dato risposta.
+Could not send the message ||| Impossibile inviare il messaggio
+One model answers, with no team around it. Pick the model above and write below. With the + you give it a folder on this PC or one of your GitHub repositories to read and work in. ||| Risponde un solo modello, senza un team intorno. Scegli il modello qui sopra e scrivi qui sotto. Con il + gli dai una cartella di questo PC o un tuo repository GitHub in cui leggere e lavorare.
+No model is installed in LM Studio yet. Download one first. ||| In LM Studio non c'è ancora nessun modello installato. Scaricane uno prima.
+Write to {model} ||| Scrivi a {model}
+Install a model to chat ||| Installa un modello per chattare
+No chats yet. Each conversation with a model appears here. ||| Ancora nessuna chat. Ogni conversazione con un modello compare qui.
+Answering ||| Sta rispondendo
+LM Studio is not reachable ||| LM Studio non è raggiungibile
+Edit ||| Modifica
+Waiting for this run to end: ||| In attesa che finisca questa esecuzione:
+Remove the waiting request ||| Togli la richiesta in attesa
+Write the next request ||| Scrivi la prossima richiesta
+{n} MiB of the model are in system RAM, so it answers slowly: other programs have taken graphics memory. It is reloaded with less context, from {from} to {to}. ||| {n} MiB del modello sono finiti nella RAM di sistema, per questo risponde lentamente: altri programmi hanno preso memoria grafica. Viene ricaricato con meno contesto, da {from} a {to}.
+{n} MiB of the model are in system RAM even with the smallest context, so it answers slowly. With what is open now this model is too large for the graphics card: close programs that use the GPU, or use a smaller quantization of it. ||| {n} MiB del modello sono nella RAM di sistema anche con il contesto minimo, per questo risponde lentamente. Con quello che è aperto ora questo modello è troppo grande per la scheda grafica: chiudi i programmi che usano la GPU, oppure usane una quantizzazione più piccola.
+Reloaded with less context because it had overflowed into system RAM: from {from} to {to}. ||| Ricaricato con meno contesto perché era traboccato nella RAM di sistema: da {from} a {to}.
+Send when this run ends ||| Invia quando finisce questa esecuzione
+Ignore permissions ||| Ignora autorizzazioni
+Ask for approval ||| Chiedi approvazione
+Nothing waits for you: plans are approved as they come, files are overwritten or deleted and commands run without asking. Click, or press Shift+Tab in the field, to be asked again. ||| Niente ti aspetta: i piani vengono approvati appena arrivano, i file vengono sovrascritti o cancellati e i comandi partono senza chiedere. Clicca, o premi Maiusc+Tab nel campo, per tornare a essere interpellato.
+Plans wait for your approval, and so does anything risky: deleting a file, overwriting one of yours, a command that changes the system. Click, or press Shift+Tab in the field, to ignore permissions. ||| I piani aspettano la tua approvazione, e così ogni azione rischiosa: cancellare un file, sovrascriverne uno tuo, un comando che modifica il sistema. Clicca, o premi Maiusc+Tab nel campo, per ignorare le autorizzazioni.
+Approved without asking, permissions are ignored in this run: ||| Approvato senza chiedere, in questa esecuzione le autorizzazioni sono ignorate:
+This run was started with permissions ignored: plans are approved as they come and nothing asks before a risky action. ||| Questa esecuzione è partita ignorando le autorizzazioni: i piani vengono approvati appena arrivano e niente chiede prima di un'azione rischiosa.
+PERMISSIONS IGNORED ||| AUTORIZZAZIONI IGNORATE
+ERROR ||| ERRORE
+Errors ||| Errori
+ERRORS ||| ERRORI
+Esc ||| Esc
+Estimated and measured ||| Stimato e misurato
+estimated from parameters ||| stimato dai parametri
+Estimated generation ||| Generazione stimata
+estimated speed by model size ||| velocità stimata per taglia di modello
+Estimated speed ||| Velocità stimata
+Estimated speeds are calculated from your hardware. Measured speeds come from a benchmark run on this PC and replace the estimate. ||| Le velocità stimate sono calcolate dal tuo hardware. Quelle misurate vengono da un benchmark eseguito su questo PC e sostituiscono la stima.
+estimated ||| stimato
+Estimates are calculated from your hardware and can be off. Run a benchmark once and Will It Run replaces the estimate with the speed it measured on this PC. ||| Le stime sono calcolate dal tuo hardware e possono sbagliare. Esegui un benchmark una volta e Will It Run sostituisce la stima con la velocità misurata su questo PC.
+every command ||| tutti i comandi
+Every model file gets one of eight verdicts for this PC. Green is the comfortable zone, blue works well, yellow and orange come with a cost, red does not run. ||| Ogni file di modello riceve uno di otto giudizi per questo PC. Verde è la zona comoda, blu funziona bene, giallo e arancione hanno un costo, rosso non gira.
+Every model file is checked against that budget: does it fit in graphics memory, how fast will it write, how much quality does its quantization keep. ||| Ogni file di modello viene confrontato con quel budget: entra nella memoria grafica, quanto veloce scriverà, quanta qualità conserva la sua quantizzazione.
+Every role runs on the same model. The checks in code still apply, but two copies of one model tend to make the same mistake: give the roles that check each other different models when you have them. ||| Tutti i ruoli girano sullo stesso modello. I controlli nel codice valgono comunque, ma due copie dello stesso modello tendono a fare lo stesso errore: se li hai, dai modelli diversi ai ruoli che si controllano a vicenda.
+everything so far ||| tutto il lavoro fatto finora
+exact ||| esatto
+Excellent ||| Eccellente
+EXCELLENT ||| ECCELLENTE
+Expected speed ||| Velocità prevista
+Experience mode ||| Modalità d'uso
+Expert ||| Esperto
+Explore Models ||| Esplora modelli
+Explore Uncensored / Abliterated Models ||| Esplora modelli uncensored / abliterated
+Extra margin as a share of each GPU's VRAM. ||| Margine aggiuntivo, in percentuale della VRAM di ogni GPU.
+FAIL ||| FALLITO
+Failed ||| Fallita
+FAILED ||| FALLITO
+failed ||| fallito
+Feedback for the team (optional) ||| Indicazioni per il team (facoltative)
+File location ||| Posizione del file
+File size vs original ||| Dimensione rispetto all'originale
+Files the agents write appear here. ||| Qui compaiono i file scritti dagli agenti.
+Files ||| File
+Filter logs ||| Filtra i log
+Final result ||| Risultato finale
+FINAL RESULT ||| RISULTATO FINALE
+Finding installed models ||| Ricerca dei modelli installati
+Finding LM Studio ||| Ricerca di LM Studio
+Fine-tune lineage ||| Derivazione del fine-tune
+First token ||| Primo token
+first token ||| primo token
+First-start scan ||| Scansione di primo avvio
+Fit on this PC: {category}. ||| Compatibilità con questo PC: {category}.
+Fit to view ||| Adatta
+Fit ||| Compatibilità
+Fits and runs at or above the target speed. ||| Ci sta e gira alla velocità obiettivo o più veloce.
+Fits in graphics memory with room to spare and runs well above the target speed. ||| Entra nella memoria grafica con margine e gira ben oltre la velocità obiettivo.
+Fits with almost nothing left over. Close other apps first. ||| Ci sta quasi senza margine. Chiudi prima le altre app.
+Fix the errors listed above the canvas first. ||| Correggi prima gli errori elencati sopra il canvas.
+Folder on this PC ||| Cartella sul PC
+Folder path ||| Percorso della cartella
+Follow ||| Segue
+Found on attempt {n}, after a load that filled the VRAM. ||| Trovato al tentativo {n}, dopo un caricamento che aveva riempito la VRAM.
+free ||| libero
+free: {n} GB ||| libero: {n} GB
+Fully on GPU ||| Tutto su GPU
+General ||| Generale
+Generating and measuring ||| Generazione e misura
+Generation ||| Generazione
+generation ||| generazione
+GitHub is open in your browser. Sign in there and enter this code: ||| GitHub è aperto nel browser. Accedi lì e inserisci questo codice:
+GitHub repository address ||| Indirizzo del repository GitHub
+Goal ||| Obiettivo
+Good to know ||| Buono a sapersi
+Good ||| Buono
+GOOD ||| BUONO
+GPU + CPU ({n}% on GPU) ||| GPU + CPU ({n}% su GPU)
+GPU memory in use ||| Memoria GPU in uso
+GPU memory ||| Memoria GPU
+GPU utilization ||| Utilizzo GPU
+GPU VRAM ||| VRAM della GPU
+Graphics memory map ||| Mappa della memoria grafica
+Guide ||| Guida
+Guided ||| Guidato
+Had read ||| Aveva letto
+Hardware fit ||| Compatibilità hardware
+Hardware rescanned ||| Hardware riscansionato
+Hardware ||| Hardware
+Has a thinking mode ||| Ha una modalità di ragionamento
+Hide structured output ||| Nascondi l'output strutturato
+Hide the list of sessions ||| Nascondi l'elenco delle sessioni
+Hide the reasoning ||| Nascondi il ragionamento
+Hide this ||| Nascondi
+HIGH RISK ||| RISCHIO ALTO
+HIGH ||| ALTA
+High-risk tool calls will run without asking you. Agents are local models and can make mistakes; turn this back on unless you are working in a disposable environment. ||| Le azioni ad alto rischio verranno eseguite senza chiedertelo. Gli agenti sono modelli locali e possono sbagliare: riattiva questa opzione, a meno che tu non stia lavorando in un ambiente usa e getta.
+History ||| Cronologia
+Home ||| Home
+How it works ||| Come funziona
+How many models ||| Quanti modelli
+How many times an agent may retry an invalid answer before its escalation policy applies. ||| Quante volte un agente può ritentare una risposta non valida prima che scatti la sua regola di escalation.
+How much of the original model's quality a quantization keeps. Will It Run shows the loss measured by the llama.cpp project on a reference model, so treat it as a guide. ||| Quanta qualità del modello originale conserva una quantizzazione. Will It Run mostra la perdita misurata dal progetto llama.cpp su un modello di riferimento: prendila come indicazione.
+How much text the model can keep in mind at once, counted in tokens. A longer context needs more memory. ||| Quanto testo il modello riesce a tenere a mente in una volta, contato in token. Un contesto più lungo richiede più memoria.
+How much Will It Run trusts this figure ||| Quanto Will It Run si fida di questo dato
+How these numbers are calculated ||| Come sono calcolati questi numeri
+Human approval ||| Approvazione umana
+Human approval: ||| Approvazione umana:
+If rejected ||| Se rifiutato
+IMPOSSIBLE ||| IMPOSSIBILE
+IN MEMORY ||| IN MEMORIA
+In progress ||| In corso
+in progress ||| in corso
+In running order ||| In ordine di esecuzione
+In running order. Change any role's model below. ||| In ordine di esecuzione. Qui sotto puoi cambiare il modello di ogni ruolo.
+In use now ||| In uso ora
+Inference engines selected in LM Studio. ||| Motori di inferenza selezionati in LM Studio.
+Influences recommendation ranking only. Models of the other kind stay visible and installable; nothing is hidden or penalized. ||| Influisce solo sull'ordine dei consigli. I modelli dell'altro tipo restano visibili e installabili: niente viene nascosto o penalizzato.
+Input budget (tokens) ||| Limite di input (token)
+Install the team's models ||| Installa i modelli del team
+Install {quant} ||| Installa {quant}
+Installed models ||| Modelli installati
+Installed ||| Installato
+installed ||| installato
+Instruction sets ||| Set di istruzioni
+Integrated · not used for models ||| Integrata · non usata per i modelli
+Interface size ||| Dimensione dell'interfaccia
+Is anything sent to the Internet? ||| Viene inviato qualcosa su Internet?
+It is never shown again or written to logs. ||| Non viene più mostrato né scritto nei log.
+It measures the graphics card, the memory and the disks, then sets aside a margin so Windows keeps working while a model runs. ||| Misura scheda grafica, memoria e dischi, poi mette da parte un margine perché Windows continui a funzionare mentre gira un modello.
+It works out what fits ||| Calcola cosa ci sta
+Its local server is not running yet; Will It Run can start it when needed. ||| Il suo server locale non è ancora attivo: Will It Run può avviarlo quando serve.
+just now ||| adesso
+Keep downloading ||| Continua il download
+keep loaded ||| resta caricato
+Keep the working step in view ||| Tieni in vista il passo al lavoro
+Keep {name} ||| Mantieni {name}
+Label ||| Etichetta
+Labelled uncensored / abliterated: {evidence}. Will It Run ranks it by the same criteria as any other model. ||| Indicato come uncensored / abliterated: {evidence}. Will It Run lo classifica con gli stessi criteri di qualunque altro modello.
+Language ||| Lingua
+Least evidence needed (characters) ||| Minimo di prove necessario (caratteri)
+Leave empty to use LM Studio's folder{dir}. Models are saved here in LM Studio's publisher/repository layout. ||| Lascia vuoto per usare la cartella di LM Studio{dir}. I modelli vengono salvati qui con la struttura autore/repository di LM Studio.
+Legal Analysis ||| Analisi legale
+Let's understand your computer. Will It Run reads your hardware and LM Studio setup locally. Nothing leaves this PC. ||| Conosciamo il tuo computer. Will It Run legge in locale l'hardware e la configurazione di LM Studio. Niente esce da questo PC.
+Level ||| Livello
+License ||| Licenza
+Light ||| Chiaro
+Limited ||| Limitato
+Linux ||| Linux
+Live results from Hugging Face ||| Risultati in diretta da Hugging Face
+LM Studio (local) ||| LM Studio (locale)
+LM Studio API token ||| Token API di LM Studio
+LM Studio folder ||| Cartella di LM Studio
+LM Studio found with ||| LM Studio trovato con
+LM Studio is not installed, so there is no model list to read. ||| LM Studio non è installato, quindi non c'è un elenco di modelli da leggere.
+LM Studio is required for local model execution. ||| Per eseguire i modelli in locale serve LM Studio.
+LM Studio local server is not reachable ||| Il server locale di LM Studio non è raggiungibile
+LM Studio local server is reachable ||| Il server locale di LM Studio è raggiungibile
+LM Studio only looks in its own folder ({folder}). The file stays where you choose and Will It Run adds a link there, so LM Studio still lists the model. ||| LM Studio guarda solo nella sua cartella ({folder}). Il file resta dove scegli tu e Will It Run aggiunge lì un collegamento, così LM Studio elenca comunque il modello.
+LM Studio's downloader ||| Downloader di LM Studio
+LM Studio's estimate; a real measurement replaces it after the first run. ||| Stima di LM Studio; dopo la prima esecuzione la sostituisce una misura reale.
+LM Studio's folder ||| cartella di LM Studio
+LM Studio's local server is not running, so models cannot be loaded. ||| Il server locale di LM Studio non è attivo, quindi i modelli non si possono caricare.
+LM Studio's local server is not running. Models cannot be loaded until it starts. ||| Il server locale di LM Studio non è attivo. I modelli non si possono caricare finché non parte.
+LM Studio's local server port (Developer tab in LM Studio). Default 1234. ||| Porta del server locale di LM Studio (scheda Developer in LM Studio). Predefinita 1234.
+Load in LM Studio ||| Carica in LM Studio
+Load it in LM Studio and chat there, or let Will It Run build a team of agents that work on a task together and show you every step. ||| Caricalo in LM Studio e chatta lì, oppure lascia che Will It Run crei un team di agenti che lavorano insieme a un compito e ti mostrano ogni passo.
+load on demand ||| caricato su richiesta
+Load time ||| Tempo di caricamento
+Load ||| Caricamento
+Loaded ||| Caricato
+loaded ||| caricato
+Loading model ||| Caricamento del modello
+Loading policy ||| Regola di caricamento
+Loading the model ||| Caricamento del modello
+Loading your repositories... ||| Carico i tuoi repository...
+Loading ||| Caricamento
+loads model ||| carica il modello
+Local benchmark ||| Benchmark locale
+Logs ||| Log
+Longest request accepted (tokens) ||| Richiesta più lunga accettata (token)
+Loop limit ||| Limite di cicli
+LOW confidence ||| affidabilità BASSA
+LOW ||| BASSA
+Main ||| Principale
+Makes everything larger or smaller. Also Ctrl + and Ctrl −, or Ctrl with the mouse wheel; Ctrl 0 goes back to normal. ||| Ingrandisce o rimpicciolisce tutto. Anche con Ctrl + e Ctrl −, oppure Ctrl con la rotellina del mouse; Ctrl 0 torna alla dimensione normale.
+Manual ||| Manuale
+Manufacturer ||| Produttore
+Max frequency ||| Frequenza massima
+Max retries ||| Tentativi massimi
+Measure a model on this PC. Measured results replace estimates everywhere in Will It Run. ||| Misura un modello su questo PC. I risultati misurati sostituiscono le stime in tutto Will It Run.
+Measured generation ||| Generazione misurata
+Measured on this PC. ||| Misurato su questo PC.
+Measured speed ||| Velocità misurata
+measured ||| misurato
+Measured · HIGH confidence ||| Misurato · affidabilità ALTA
+Medical / Biomedical Research ||| Ricerca medica / biomedica
+MEDIUM ||| MEDIA
+Memory bandwidth ||| Banda di memoria
+Memory breakdown ||| Dettaglio della memoria
+Memory limit handled automatically ||| Limite di memoria gestito automaticamente
+MEMORY TIGHT ||| MEMORIA AL LIMITE
+Message ||| Messaggio
+Method ||| Metodo
+Minimal ||| Minima
+Minimum free space ||| Spazio libero minimo
+Mode ||| Modalità
+Model alignment ||| Allineamento del modello
+Model Card ||| Scheda del modello
+Model directory ||| Cartella dei modelli
+Model family ||| Famiglia del modello
+Model for each agent ||| Modello di ogni agente
+Model for {role} ||| Modello per {role}
+Model loaded in LM Studio ||| Modello caricato in LM Studio
+Model policy ||| Regola dei modelli
+Model preference ||| Preferenza di modello
+Model switching ||| Cambio di modello
+Model unloaded ||| Modello scaricato dalla memoria
+Model weights ||| Pesi del modello
+Model ||| Modello
+models to download ||| modelli da scaricare
+Models ||| Modelli
+Modules ||| Moduli
+Most evidence read (characters) ||| Massimo di prove lette (caratteri)
+Name ||| Nome
+Named after its specializations ||| Prende il nome dalle sue specializzazioni
+Needs approval ||| Serve approvazione
+Needs Internet. When off, Will It Run works from the built-in catalog, cached metadata and your installed models. ||| Richiede Internet. Se disattivato, Will It Run lavora con il catalogo integrato, i metadati in cache e i modelli installati.
+needs models ||| servono modelli
+NEEDS MODELS ||| SERVONO MODELLI
+Needs more memory than this PC can safely give. ||| Richiede più memoria di quanta questo PC possa dare in sicurezza.
+Never let a download leave less than this, whatever the percentage says. ||| Un download non deve mai lasciare meno di questo spazio, qualunque sia la percentuale.
+New downloads are saved to ||| I nuovi download vengono salvati in
+New session ||| Nuova sessione
+New to local AI? ||| Mai usato l'AI in locale?
+New ||| Nuovo
+Next to this model only about {n} tokens of context fit on this PC. That is little for a team: each agent will be shown a small part of the earlier work, and long answers may be cut. A smaller quantization of the same model, or a smaller model, leaves more room. ||| Accanto a questo modello su questo PC entrano solo circa {n} token di contesto. È poco per un team: a ogni agente verrà mostrata una piccola parte del lavoro precedente e le risposte lunghe possono essere tagliate. Una quantizzazione più piccola dello stesso modello, o un modello più piccolo, lascia più spazio.
+No agent is trusted: code decides what passes ||| Nessun agente è creduto sulla parola: decide il codice cosa passa
+No benchmarks yet. Until a model is measured, Will It Run shows estimated speed with its confidence level. ||| Ancora nessun benchmark. Finché un modello non viene misurato, Will It Run mostra la velocità stimata con il suo livello di affidabilità.
+No command matches "{text}" ||| Nessun comando corrisponde a "{text}"
+No dedicated GPU. Models run on the CPU. ||| Nessuna GPU dedicata. I modelli girano sulla CPU.
+No dedicated GPU: models will run on the CPU ||| Nessuna GPU dedicata: i modelli gireranno sulla CPU
+No GPU detected. Models will run on the CPU. ||| Nessuna GPU rilevata. I modelli gireranno sulla CPU.
+No GPU readings available. ||| Nessuna lettura della GPU disponibile.
+No installed models to benchmark ||| Nessun modello installato da misurare
+no limit ||| nessun limite
+no model chosen ||| nessun modello scelto
+No model is downloaded yet. Download one to give it to an agent. ||| Non hai ancora scaricato nessun modello. Scaricane uno per assegnarlo a un agente.
+No model is on this PC yet. Pick one in Explore Models: it shows the exact file, its size and whether it is safe to install before anything is downloaded. ||| Su questo PC non c'è ancora nessun modello. Scegline uno in Esplora modelli: vedi il file esatto, quanto pesa e se è sicuro installarlo prima che venga scaricato qualcosa.
+No model runs here, so nothing an agent writes can talk its way past it. ||| Qui non gira nessun modello: niente di ciò che scrive un agente può convincerlo a lasciar passare qualcosa.
+no model ||| nessun modello
+No models installed yet. Explore Models shows which ones fit this PC before you download anything. ||| Ancora nessun modello installato. Esplora modelli mostra quali sono adatti a questo PC prima di scaricare qualcosa.
+No models match ||| Nessun modello corrisponde
+No repository matches. ||| Nessun repository corrisponde.
+No runnable model found yet ||| Ancora nessun modello eseguibile trovato
+No safe space for models: below the reserve ||| Nessuno spazio sicuro per i modelli: sotto la riserva
+No sessions yet. Each run of a workflow appears here with its full activity. ||| Ancora nessuna sessione. Ogni esecuzione di un workflow compare qui con tutta la sua attività.
+No token stored. ||| Nessun token salvato.
+no tools ||| nessuno strumento
+No workflows of your own yet ||| Ancora nessun workflow tuo
+No ||| No
+none beyond LM Studio itself ||| nessuna oltre a LM Studio stesso
+None detected ||| Nessuna rilevata
+None ||| Nessuna
+Normal size ||| Dimensione normale
+normal size ||| dimensione normale
+not a loop ||| non è un ciclo
+Not applicable ||| Non applicabile
+Not available ||| Non disponibile
+Not confirmed ||| Non confermato
+Not declared ||| Non dichiarato
+Not found on this computer. ||| Non trovato su questo computer.
+not found ||| non trovato
+Not installed yet: {model} ||| Non ancora installato: {model}
+Not installed ||| Non installato
+NOT INSTALLED ||| NON INSTALLATO
+NOT LOADED ||| NON CARICATO
+Not measured on this PC yet. Speed above is an estimate. ||| Non ancora misurato su questo PC. La velocità indicata sopra è una stima.
+NOT MEASURED ||| NON MISURATA
+Not measured ||| Non misurato
+not measured ||| non misurato
+not published ||| non pubblicato
+NOT RECOMMENDED ||| SCONSIGLIATO
+Not saved ||| Non salvato
+Not set ||| Non impostata
+not set ||| non impostato
+Not usable for inference. ||| Non utilizzabile per l'inferenza.
+Not viable ||| Non praticabile
+Nothing logged yet ||| Ancora niente nei log
+Nothing ||| Niente
+Offline ||| Non attivo
+Offline: cached and built-in models ||| Offline: modelli in cache e integrati
+Offline: showing cached metadata. Exact file sizes and downloads need an Internet connection. ||| Offline: sono mostrati i metadati in cache. Per le dimensioni esatte dei file e i download serve una connessione Internet.
+Older tool results were shortened so the conversation fits the model's context ({n} tokens). ||| I risultati più vecchi degli strumenti sono stati accorciati perché la conversazione stia nel contesto del modello ({n} token).
+On paper the free VRAM allowed {planned} tokens. {context} were loaded and the speed measured: {speed} tok/s, the model's usual speed, so it fits. ||| Sulla carta la VRAM libera permetteva {planned} token. Ne sono stati caricati {context} e la velocità è stata misurata: {speed} tok/s, quella solita del modello, quindi ci sta.
+On this PC it holds up to about {n} tokens of context entirely on the graphics card. ||| Su questo PC regge fino a circa {n} token di contesto tutto sulla scheda grafica.
+On your computer ||| Sul tuo computer
+One for all ||| Uno per tutti
+One model can be split across your {n} GPUs for about {split} GB, less than the raw sum. Runtimes that cannot split a model are limited to the largest single card ({single} GB). ||| Un modello può essere diviso sulle tue {n} GPU per circa {split} GB, meno della somma. I runtime che non sanno dividere un modello sono limitati alla scheda singola più grande ({single} GB).
+One model serves every agent. No waiting between steps. ||| Un solo modello serve tutti gli agenti. Nessuna attesa tra un passo e l'altro.
+One per role ||| Uno per ruolo
+Only needed if you enabled authentication in LM Studio. ||| Serve solo se hai attivato l'autenticazione in LM Studio.
+Only standard models are used. ||| Vengono usati solo modelli standard.
+Only uncensored models are used. ||| Vengono usati solo modelli uncensored.
+Open Downloads ||| Apri Download
+Open Hardware ||| Apri Hardware
+Open in workflow editor ||| Apri nell'editor di workflow
+Open LM Studio Download ||| Apri il download di LM Studio
+Open Logs ||| Apri Log
+Open model card on Hugging Face ||| Apri la scheda del modello su Hugging Face
+Open Sessions ||| Apri Sessioni
+Open the guide ||| Apri la guida
+Open the page again ||| Riapri la pagina
+Open the source table ||| Apri la tabella di origine
+Open workflow ||| Apri il workflow
+Open ||| Apri
+Opens github.com in your browser. Your password stays there: this app never sees it. ||| Apre github.com nel browser. La password resta lì: questa app non la vede mai.
+Optional ||| Facoltativo
+Optional. Serves the requests too large for the model above: usually the same model at a smaller quantization, whose saved memory becomes context. ||| Facoltativa. Serve le richieste troppo grandi per il modello qui sopra: di solito lo stesso modello a una quantizzazione più piccola, la cui memoria risparmiata diventa contesto.
+Other loaded models are unloaded first so the memory reading is clean. ||| Gli altri modelli caricati vengono prima scaricati dalla memoria, così la lettura è pulita.
+Other loaded models: {n} GB ||| Altri modelli caricati: {n} GB
+Output schema ||| Schema di output
+Overall: ||| Esito:
+Overview ||| Panoramica
+Panel on the left ||| Pannello a sinistra
+Panel on the right ||| Pannello a destra
+Panel position ||| Posizione del pannello
+Panel width ||| Larghezza del pannello
+Panel ||| Gruppo di esperti
+parallel ||| in parallelo
+Parameters (4B, 14B, 70B) ||| Parametri (4B, 14B, 70B)
+Parameters ||| Parametri
+PASS ||| OK
+passed ||| superato
+Paste token ||| Incolla il token
+Pause ||| Pausa
+PAUSED ||| IN PAUSA
+Peak VRAM {peak} / {usable} GB ||| Picco di VRAM {peak} / {usable} GB
+Peak VRAM ||| Picco di VRAM
+peak ||| picco
+PENDING ||| IN ATTESA
+PERFECT ||| PERFETTO
+Performance ||| Prestazioni
+Perplexity increase ||| Aumento di perplessità
+Pick a model ||| Scegli un modello
+Placement ||| Collocazione
+Plan Team ||| Pianifica il team
+private ||| privato
+Project ||| Progetto
+Prompt processing ||| Elaborazione del prompt
+Prompt ||| Prompt
+Propositions come from ||| Le proposizioni arrivano da
+public ||| pubblico
+Publisher ||| Autore
+Quality kept ||| Qualità conservata
+Quant ||| Quant.
+Quantization (Q4, Q5, Q8) ||| Quantizzazione (Q4, Q5, Q8)
+Quantization and accuracy ||| Quantizzazione e accuratezza
+Quantization ||| Quantizzazione
+Quantizer ||| Autore della quantizzazione
+Question shown to you ||| Domanda che ti viene mostrata
+QUEUED ||| IN CODA
+RAM (system memory) ||| RAM (memoria di sistema)
+RAM reserve ||| Riserva di RAM
+read: {items} ||| ha letto: {items}
+Reading the verdicts ||| Come leggere i giudizi
+ready in ||| pronto in
+real file size ||| dimensione reale del file
+Real models from Hugging Face, the built-in catalog and LM Studio, ranked by how well they run on this PC. ||| Modelli reali da Hugging Face, dal catalogo integrato e da LM Studio, ordinati per quanto bene girano su questo PC.
+Reason (sent to the agent if you deny) ||| Motivo (inviato all'agente se neghi)
+Reasoning ||| Ragionamento
+Recommended AI VRAM ||| VRAM consigliata per l'AI
+Recommended for models ||| Consigliato per i modelli
+recommended maximum ({n} GB) ||| massimo consigliato ({n} GB)
+recommended model ||| modello consigliato
+Recommended usable RAM ||| RAM utilizzabile consigliata
+Recommended usable VRAM ||| VRAM utilizzabile consigliata
+Recommended usable ||| Utilizzabile consigliato
+Recommended ||| Consigliati
+RECOMMENDED ||| CONSIGLIATO
+Reference: {source}, measured on {model}. ||| Riferimento: {source}, misurato su {model}.
+Refresh ||| Aggiorna
+Reject ||| Rifiuta
+Rejected ||| Rifiutata
+rejected ||| rifiutato
+Rejections allowed before the run ends ||| Rifiuti consentiti prima che l'esecuzione termini
+Reliability ||| Affidabilità
+Remove from list ||| Rimuovi dall'elenco
+Remove ||| Rimuovi
+Repository ||| Repository
+Request for the team ||| Richiesta per il team
+Require approval for high-risk actions ||| Chiedi l'approvazione per le azioni ad alto rischio
+Required for an edge that goes back to an earlier node. Loops are always bounded. ||| Obbligatorio per un collegamento che torna a un nodo precedente. I cicli hanno sempre un limite.
+Reranking ||| Reranking
+Rescan failed ||| Scansione non riuscita
+Rescan Hardware ||| Riscansiona l'hardware
+Rescan ||| Riscansiona
+Resources ||| Risorse
+Resume ||| Riprendi
+Retry limit reached ||| Limite di tentativi raggiunto
+Retry {n}: {reason} ||| Tentativo {n}: {reason}
+Retry ||| Riprova
+Reviewed by ||| Revisionati da
+Revision ||| Revisione
+REWRITE ||| DA RISCRIVERE
+Role prompt ||| Prompt del ruolo
+Role ||| Ruolo
+Role, goal, responsibilities and the output contract are added automatically around this text. ||| Ruolo, obiettivo, responsabilità e formato dell'output vengono aggiunti automaticamente attorno a questo testo.
+Run a benchmark ||| Esegui un benchmark
+Run again ||| Esegui di nuovo
+Run Doctor ||| Esegui la diagnostica
+Run the team ||| Avvia il team
+Run the welcome scan again the next time Will It Run starts. ||| Riesegue la scansione di benvenuto al prossimo avvio di Will It Run.
+Run Workflow ||| Esegui un workflow
+run {n} ||| esecuzione {n}
+Run ||| Esegui
+RUNNING ||| IN CORSO
+Running ||| In esecuzione
+Runs, but you wait for every answer. ||| Gira, ma aspetti ogni risposta.
+Runtime overhead ||| Overhead del runtime
+Runtime ||| Runtime
+Safe to install ||| Sicuro da installare
+Safe to install. ||| Sicuro da installare.
+Safety alignment ||| Allineamento di sicurezza
+safety margin ||| margine di sicurezza
+Same model for every agent ||| Stesso modello per tutti gli agenti
+Save as copy ||| Salva come copia
+Save failed ||| Salvataggio non riuscito
+Save to ||| Salva in
+Save ||| Salva
+Saved as your own copy ||| Salvato come tua copia
+Say what the team should be good at. Will It Run picks the agents, the fewest models that cover them, and a loading plan that fits this PC. ||| Di' in cosa deve essere bravo il team. Will It Run sceglie gli agenti, il minor numero di modelli che li copre e un piano di caricamento adatto a questo PC.
+scanned {when} ||| scansione {when}
+Scientific Research ||| Ricerca scientifica
+score {n} ||| punteggio {n}
+Score ||| Punteggio
+Scoring ||| Punteggio
+Search commands ||| Cerca comandi
+Search commands... ||| Cerca comandi...
+Search Hugging Face ||| Cerca su Hugging Face
+Search models ||| Cerca modelli
+Search models, e.g. "Qwen uncensored 27B" or "best coding model for 16GB VRAM" ||| Cerca modelli, es. "Qwen uncensored 27B" oppure "best coding model for 16GB VRAM"
+Search your repositories, or paste an address ||| Cerca tra i tuoi repository, o incolla un indirizzo
+See all {n} models ||| Vedi tutti i {n} modelli
+See full hardware details ||| Vedi tutti i dettagli hardware
+See the full table ||| Vedi la tabella completa
+See your hardware ||| Vedi il tuo hardware
+Select a step in the graph to see what the model thought and what it answered. ||| Seleziona un passo nel grafico per vedere cosa ha pensato il modello e cosa ha risposto.
+Selected engines ||| Motori selezionati
+Send back to {role} ||| Rimanda a {role}
+sequential ||| in sequenza
+SERVER OFFLINE ||| SERVER NON ATTIVO
+Server port ||| Porta del server
+Session ||| Sessione
+Sessions ||| Sessioni
+Set every model to automatic ||| Metti tutti i modelli in automatico
+Setting not saved ||| Impostazione non salvata
+Settings ||| Impostazioni
+Share of a drive's capacity that downloads must leave free (at most 30 GB). ||| Parte della capacità di un disco che i download devono lasciare libera (al massimo 30 GB).
+Share of peak memory bandwidth inference sustains. Lower it if estimates run high for your setup. Default 0.55. ||| Quota della banda di memoria di picco che l'inferenza riesce a sostenere. Abbassala se le stime risultano troppo alte per il tuo sistema. Predefinito 0.55.
+Share of propositions that must be decided (0 to 1) ||| Quota di proposizioni che devono essere decise (da 0 a 1)
+Share of the panel a side needs (0 to 1) ||| Quota del gruppo necessaria a una parte (da 0 a 1)
+shared instance ||| istanza condivisa
+Shares system memory (up to {size}). Will It Run plans CPU inference instead, which is more predictable. ||| Condivide la memoria di sistema (fino a {size}). Will It Run pianifica invece l'inferenza su CPU, che è più prevedibile.
+Shortest quote that counts (characters) ||| Citazione più corta che vale (caratteri)
+Show Installed Models ||| Mostra i modelli installati
+Show structured output ||| Mostra l'output strutturato
+Show the list of sessions ||| Mostra l'elenco delle sessioni
+Show the output of ||| Mostra l'output di
+Show the reasoning ||| Mostra il ragionamento
+Show welcome scan ||| Mostra la scansione di benvenuto
+Side panel ||| Pannello laterale
+Sign in to GitHub ||| Accedi a GitHub
+Sign in with a different GitHub account ||| Accedi con un altro account GitHub
+Signing in to GitHub and listing your repositories needs the GitHub CLI (gh), which is not installed on this PC. Until then you can paste the address of a public repository. ||| Per accedere a GitHub ed elencare i tuoi repository serve la GitHub CLI (gh), che su questo PC non è installata. Nel frattempo puoi incollare l'indirizzo di un repository pubblico.
+Size ||| Dimensione
+SLOW ||| LENTO
+Sort files by ||| Ordina i file per
+Source ||| Origine
+Space used on {drive} ||| Spazio usato su {drive}
+Specialization ||| Specializzazione
+Speed estimate efficiency ||| Efficienza della stima di velocità
+Speed estimates use {gpu} and {ram} GB/s for system RAM. ||| Le stime di velocità usano {gpu} e {ram} GB/s per la RAM di sistema.
+Speed ||| Velocità
+Split across GPUs ||| Diviso tra le GPU
+Standard and uncensored models compete on equal terms. ||| Modelli standard e uncensored competono alla pari.
+Standard preferred ||| Preferisci standard
+Standard ||| Standard
+Start server ||| Avvia il server
+Start ||| Avvia
+Starting Will It Run ||| Avvio di Will It Run
+Step detail ||| Dettaglio del passo
+Step ||| Passo
+Stop and delete ||| Ferma ed elimina
+Stop the run ||| Ferma l'esecuzione
+Stop this download and delete the {size} already downloaded? Pause keeps them for later. ||| Fermare questo download ed eliminare i {size} già scaricati? Con Pausa restano per dopo.
+Stop ||| Ferma
+Stopped by a check ||| Fermato da un controllo
+Stopped ||| Fermata
+STOPPED ||| FERMATO
+Stopped: no route ||| Fermata: nessun percorso
+Storage ||| Archiviazione
+SUCCESS ||| RIUSCITO
+Supported ||| Supportato
+Switching model ||| Cambio di modello
+System memory in use ||| Memoria di sistema in uso
+System memory left for Windows and your applications. ||| Memoria di sistema lasciata a Windows e alle tue applicazioni.
+System memory map ||| Mappa della memoria di sistema
+System memory ||| Memoria di sistema
+System RAM ||| RAM di sistema
+System ||| Sistema
+system-wide change ||| variazione dell'intero sistema
+Taken only when this is true. Fields come from the output of {source}, e.g. passed == false, approved == true, len(failures) > 0. Leave empty for "always". ||| Seguito solo quando questa condizione è vera. I campi vengono dall'output di {source}, es. passed == false, approved == true, len(failures) > 0. Lascia vuoto per "sempre".
+Target speed ||| Velocità obiettivo
+target {n} tok/s ||| obiettivo {n} tok/s
+Task quality ||| Qualità sul compito
+Task strength ||| Punti di forza
+TEAM CREATED ||| TEAM CREATO
+Team name ||| Nome del team
+Team templates ||| Modelli di team
+Technically runs, too slowly to be useful. ||| Tecnicamente gira, ma troppo lento per essere utile.
+Tell the team what to do ||| Scrivi cosa deve fare il team
+TEMPLATE ||| MODELLO
+Temporary storage recommended ||| Spazio temporaneo consigliato
+Text files in this folder are added to the evidence. They are only read, never changed. PDF and Word files are not read. ||| I file di testo di questa cartella vengono aggiunti alle prove. Sono solo letti, mai modificati. I file PDF e Word non vengono letti.
+The agents read and write in this folder. Deleting a file always asks you first; code they run (Python, tests) runs without asking, as in every run. ||| Gli agenti leggono e scrivono in questa cartella. Per cancellare un file chiedono sempre prima; il codice che eseguono (Python, test) gira senza chiedere, come in ogni esecuzione.
+The AI itself: one large file of numbers that turns text into text. Different models are good at different things. ||| L'AI vera e propria: un grande file di numeri che trasforma testo in testo. Modelli diversi sono bravi in cose diverse.
+The best model for each kind of role. Only one is in memory at a time, so a step that changes model waits for a reload. You can change each one in the plan. ||| Il modello migliore per ogni tipo di ruolo. In memoria ce n'è uno alla volta, quindi un passo che cambia modello aspetta il ricaricamento. Puoi cambiarli uno per uno nel piano.
+The computer's normal memory. Models can run from it, but several times slower than from graphics memory. ||| La memoria normale del computer. I modelli possono girarci, ma diverse volte più lenti che dalla memoria grafica.
+The exact file list is not available for this repository. ||| L'elenco esatto dei file non è disponibile per questo repository.
+The exact file list is not available while offline. ||| L'elenco esatto dei file non è disponibile offline.
+The file format local models come in. One .gguf file is one model at one quantization. ||| Il formato dei file dei modelli locali. Un file .gguf è un modello a una quantizzazione.
+The free program that actually runs the models. Will It Run tells it what to load and unload. ||| Il programma gratuito che esegue davvero i modelli. Will It Run gli dice cosa caricare e cosa togliere dalla memoria.
+the GPU's {n} GB/s memory bandwidth ||| la banda di memoria della GPU, {n} GB/s
+The model itself supports up to {n}. ||| Il modello in sé supporta fino a {n}.
+The models on this PC and the downloads in progress. Every download is checked against the disk safety reserve before it starts; you can pause, resume or stop it here. ||| I modelli presenti su questo PC e i download in corso. Ogni download viene confrontato con la riserva di sicurezza del disco prima di partire; da qui puoi metterlo in pausa, riprenderlo o fermarlo.
+The most earlier work it is handed, whatever the model could hold. Empty: no fixed limit. ||| Il massimo di lavoro precedente che riceve, qualunque sia la capienza del modello. Vuoto: nessun limite fisso.
+The most it asks for. Less is loaded when VRAM is short. ||| Il massimo che richiede. Se la VRAM scarseggia ne viene caricato meno.
+The one Will It Run marks as recommended: the highest quality that still fits your graphics memory comfortably. The Files tab of every model shows the score and the accuracy of each alternative. ||| Quella che Will It Run indica come consigliata: la qualità più alta che entra comodamente nella tua memoria grafica. La scheda File di ogni modello mostra punteggio e accuratezza di ogni alternativa.
+The previous step ||| Il passo precedente
+The repository does not declare a license. Check the model card and its base model before relying on it. ||| Il repository non dichiara una licenza. Controlla la scheda del modello e il suo modello di base prima di farci affidamento.
+The repository is copied to a folder of Will It Run and its text files are added to the evidence. ||| Il repository viene copiato in una cartella di Will It Run e i suoi file di testo vengono aggiunti alle prove.
+The repository is copied to a folder of Will It Run and the team works on the copy. Nothing is sent to GitHub unless you approve it. ||| Il repository viene copiato in una cartella di Will It Run e il team lavora sulla copia. Niente viene inviato a GitHub senza la tua approvazione.
+The request counts as evidence ||| La richiesta vale come prova
+The rest is left for Windows, your desktop and a safety margin. ||| Il resto è lasciato a Windows, al desktop e a un margine di sicurezza.
+The same checks are available from a terminal: willitrun doctor ||| Gli stessi controlli sono disponibili da terminale: willitrun doctor
+The scan failed: {error} ||| La scansione non è riuscita: {error}
+The score says how well a model does that kind of work on this PC, speed and fit included. Roles with the same model share it in memory; each different model you add is one more reload per run. ||| Il punteggio dice quanto bene un modello fa quel tipo di lavoro su questo PC, velocità e compatibilità comprese. I ruoli con lo stesso modello lo condividono in memoria; ogni modello diverso che aggiungi è un ricaricamento in più a ogni esecuzione.
+The sign-in did not complete: {reason} ||| L'accesso non è andato a buon fine: {reason}
+The size of a model, in billions of numbers. Bigger usually means more capable and slower, and it needs more memory. ||| La dimensione di un modello, in miliardi di numeri. Più grande di solito significa più capace e più lento, e richiede più memoria.
+The table shows what each step costs. Perplexity is how surprised the model is by real text, so lower is better: an increase of +0.02 cannot be noticed in use, +0.2 is a small loss, above +1 the model is visibly worse. ||| La tabella mostra quanto costa ogni gradino. La perplessità indica quanto il modello è sorpreso da un testo reale, quindi più bassa è meglio: un aumento di +0.02 non si nota nell'uso, +0.2 è una piccola perdita, sopra +1 il modello è visibilmente peggiore.
+The team can run as soon as LM Studio lists the models. Benchmark them afterwards to replace speed estimates with measurements. ||| Il team può partire appena LM Studio elenca i modelli. Dopo esegui un benchmark per sostituire le stime di velocità con le misure.
+The Will It Run score is a weighted sum of these factors. Weights are normalized, so only their proportions matter. Alignment (standard or uncensored) is not a factor. ||| Il punteggio Will It Run è una somma pesata di questi fattori. I pesi vengono normalizzati, quindi contano solo le proporzioni. L'allineamento (standard o uncensored) non è un fattore.
+The window reloads to apply it. Text written by the models themselves stays in the language they answer in. ||| La finestra si ricarica per applicarla. Il testo scritto dai modelli resta nella lingua in cui rispondono.
+The workflow is saved and can be edited visually. ||| Il workflow è salvato e si può modificare graficamente.
+Theme ||| Tema
+This account has no repositories yet. ||| Questo account non ha ancora repository.
+This download was handed to LM Studio, which offers no way to pause or stop it from outside. Stop it in LM Studio itself. ||| Questo download è stato affidato a LM Studio, che non permette di metterlo in pausa o fermarlo dall'esterno. Fermalo direttamente in LM Studio.
+This is the license declared on the model's repository. Read the full terms on the model card before using the model commercially. ||| Questa è la licenza dichiarata nel repository del modello. Leggi i termini completi nella scheda del modello prima di usarlo a scopo commerciale.
+This is the list LM Studio keeps: models downloaded here, in LM Studio or copied by hand all appear. Select one to see its files and scores. ||| È l'elenco tenuto da LM Studio: compaiono i modelli scaricati da qui, da LM Studio o copiati a mano. Selezionane uno per vedere i suoi file e i punteggi.
+This model did not report any reasoning for this step. ||| Per questo passo il modello non ha riportato alcun ragionamento.
+This model is larger than the graphics memory: part of it runs from system RAM, as planned. ||| Questo modello è più grande della memoria grafica: una parte gira dalla RAM di sistema, come previsto.
+This model is larger than the usable graphics memory ({gb} GB): part of it runs from system RAM and it answers slowly whatever the context. A smaller model or a smaller quantization avoids that. ||| Questo modello è più grande della memoria grafica utilizzabile ({gb} GB): una parte gira dalla RAM di sistema e risponde lentamente qualunque sia il contesto. Un modello più piccolo o una quantizzazione più piccola lo evitano.
+This page shows what your PC can run. Next, pick a model in Explore Models: Will It Run chooses the file that fits and checks the disk before downloading. ||| Questa pagina mostra cosa può eseguire il tuo PC. Poi scegli un modello in Esplora modelli: Will It Run sceglie il file adatto e controlla il disco prima di scaricare.
+This step has not run yet. ||| Questo passo non è ancora stato eseguito.
+This team cannot be built yet. ||| Questo team non può ancora essere creato.
+This workflow answers only from evidence: what you paste here and the text files of the folder below. A statement it cannot quote from there is discarded. ||| Questo workflow risponde solo dalle prove: ciò che incolli qui e i file di testo della cartella qui sotto. Un'affermazione che non può citare da lì viene scartata.
+This workflow uses {n} models. Will It Run keeps one in memory at a time unless two measurably fit, and sets each context from the VRAM that is free at that moment. Every change of model is a reload. ||| Questo workflow usa {n} modelli. Will It Run ne tiene in memoria uno alla volta, a meno che due ci stiano davvero secondo la misura, e imposta ogni contesto in base alla VRAM libera in quel momento. Ogni cambio di modello è un ricaricamento.
+Time to first token ||| Tempo al primo token
+Times a model was loaded with less context than asked, or a conversation was shortened to fit. A smaller model or quantization leaves more room. ||| Volte in cui un modello è stato caricato con meno contesto del richiesto, o una conversazione è stata accorciata per starci. Un modello o una quantizzazione più piccoli lasciano più spazio.
+to download ||| da scaricare
+To download ||| Da scaricare
+to download: {model} ||| da scaricare: {model}
+Tokens per second: how fast the model writes. A token is about three quarters of a word. Around 20 tok/s reads comfortably. ||| Token al secondo: quanto veloce scrive il modello. Un token è circa tre quarti di parola. Intorno a 20 tok/s si legge comodamente.
+Tool Use ||| Uso di strumenti
+Tool use ||| Uso di strumenti
+Tools ||| Strumenti
+Total ||| Totale
+Translation ||| Traduzione
+Try again ||| Riprova
+Type a folder path, for example D:\AI\Models. ||| Scrivi il percorso di una cartella, ad esempio D:\AI\Models.
+Type ||| Tipo
+Uncensored / abliterated build ||| Versione uncensored / abliterated
+Uncensored / abliterated preferred ||| Preferisci uncensored / abliterated
+Uncensored / abliterated ||| Uncensored / abliterated
+Uncensored / Abliterated ||| Uncensored / Abliterated
+Uncensored ||| Uncensored
+UNKNOWN ||| SCONOSCIUTA
+Unknown ||| Sconosciuto
+Unknown: the parameter count is not available, so no estimate is made. ||| Sconosciuto: il numero di parametri non è disponibile, quindi non viene fatta alcuna stima.
+Unknown: {fields} ||| Sconosciuto: {fields}
+unload after use ||| rimosso dopo l'uso
+Unload idle models after ||| Rimuovi i modelli inattivi dopo
+Unload ||| Togli dalla memoria
+unloaded ||| rimosso
+Unloading other models ||| Rimozione degli altri modelli dalla memoria
+Unsaved changes ||| Modifiche non salvate
+Usable ||| Utilizzabile
+Usable, but noticeably slow. ||| Utilizzabile, ma sensibilmente lento.
+Use a different model: ||| Usa un altro modello:
+Use it ||| Usa questa
+Use LM Studio's folder ||| Usa la cartella di LM Studio
+Use this folder for future downloads too ||| Usa questa cartella anche per i prossimi download
+Used for fit calculations unless a job needs more. ||| Usata nei calcoli di compatibilità, a meno che un compito ne richieda di più.
+Used for primary actions, selection and active state. ||| Usato per le azioni principali, la selezione e lo stato attivo.
+USER REQUEST ||| RICHIESTA DELL'UTENTE
+Uses LM Studio's own downloader: it cannot be paused or stopped from Will It Run. ||| Usa il downloader di LM Studio: non si può mettere in pausa né fermare da Will It Run.
+VALID ||| VALIDO
+Verdict ||| Verdetto
+Verification workflows ||| Workflow di verifica
+Verify downloads ||| Verifica i download
+VERIFYING ||| VERIFICA
+View downloads ||| Vedi i download
+Visible to Windows ||| Visibile a Windows
+Vision projector ||| Proiettore visivo
+Vision ||| Visione
+VRAM (graphics memory) ||| VRAM (memoria grafica)
+VRAM is full even at the smallest context. Windows moves the overflow to system RAM, so this model will answer slowly. Close other apps that use the GPU. ||| La VRAM è piena anche con il contesto minimo. Windows sposta l'eccedenza nella RAM di sistema, quindi questo modello risponderà lentamente. Chiudi le altre app che usano la GPU.
+VRAM left free when loading ||| VRAM lasciata libera al caricamento
+VRAM required ||| VRAM richiesta
+VRAM safety reserve ||| Riserva di sicurezza della VRAM
+VRAM that Windows, the compositor and open apps keep on the GPU that drives your display. ||| VRAM che Windows, il compositore e le app aperte tengono sulla GPU collegata al monitor.
+Waiting for you to finish on github.com... ||| Aspetto che tu finisca su github.com...
+Warming up ||| Riscaldamento
+Warnings ||| Avvisi
+Welcome to Will It Run ||| Benvenuto in Will It Run
+What is this? {term} ||| Cos'è? {term}
+What runs on this PC ||| Cosa gira su questo PC
+What should the team do? ||| Cosa deve fare il team?
+What the check found ||| Cosa ha trovato il controllo
+What this agent is shown ||| Cosa viene mostrato a questo agente
+What this PC can run well, based on its real hardware and what is safe to use. ||| Cosa può eseguire bene questo PC, in base all'hardware reale e a ciò che è sicuro usare.
+What Will It Run did, newest first. Passwords, tokens, API keys, cookies and private keys are redacted before anything is written. ||| Cosa ha fatto Will It Run, dal più recente. Password, token, chiavi API, cookie e chiavi private vengono oscurati prima di scrivere qualsiasi cosa.
+What Will It Run does and how to read it, in plain words. ||| Cosa fa Will It Run e come leggerlo, in parole semplici.
+What would you like your AI team to specialize in? ||| In cosa vuoi che sia specializzato il tuo team AI?
+When a workflow loads a model, Will It Run measures the free VRAM and picks the largest context that still leaves this much. If almost nothing is left after the load, it reloads with less context instead of letting Windows spill into system RAM. ||| Quando un workflow carica un modello, Will It Run misura la VRAM libera e sceglie il contesto più grande che ne lascia ancora questa quantità. Se dopo il caricamento non resta quasi nulla, ricarica con meno contesto invece di lasciare che Windows sconfini nella RAM di sistema.
+When it fails ||| Quando fallisce
+When the limit is reached ||| Quando si raggiunge il limite
+When ||| Quando
+Where the team works ||| Dove lavora il team
+Which model does which job ||| Quale modello fa quale lavoro
+Which quantization should I take? ||| Quale quantizzazione devo prendere?
+Why not simply the biggest model? ||| Perché non semplicemente il modello più grande?
+Why this model? ||| Perché questo modello?
+Why this plan? ||| Perché questo piano?
+Why Will It Run does not recommend this model ||| Perché Will It Run non consiglia questo modello
+Why Will It Run recommends this model ||| Perché Will It Run consiglia questo modello
+Why {quant}? ||| Perché {quant}?
+Wide-context variant ||| Variante a contesto largo
+Wide-context variant: the request did not fit the slot's usual model. ||| Variante a contesto largo: la richiesta non entrava nel modello abituale dello slot.
+Will It Run decides everything. ||| Will It Run decide tutto.
+Will It Run did not measure these on your models. ||| Will It Run non li ha misurati sui tuoi modelli.
+Will It Run does not install it for you. You can still explore hardware and models without it. ||| Will It Run non lo installa al posto tuo. Puoi comunque esplorare hardware e modelli senza.
+Will It Run never plans with all of your VRAM or RAM. These reserves decide how much is left out. ||| Will It Run non pianifica mai usando tutta la VRAM o la RAM. Queste riserve stabiliscono quanta ne resta fuori.
+Will It Run never starts a download that would leave a drive without its reserve of free space. ||| Will It Run non avvia mai un download che lascerebbe un disco senza la sua riserva di spazio libero.
+Will It Run picks the highest quality that still fits your graphics memory comfortably, and tells you when it had to go lower. ||| Will It Run sceglie la qualità più alta che entra comodamente nella tua memoria grafica, e ti dice quando è dovuto scendere.
+Will It Run reads your computer ||| Will It Run legge il tuo computer
+Will It Run recommendation ||| Consiglio di Will It Run
+Will It Run recommends, you can swap models. ||| Will It Run consiglia, tu puoi cambiare i modelli.
+Will It Run safety reserve ||| Riserva di sicurezza Will It Run
+Will It Run score for this file on this PC ||| Punteggio Will It Run di questo file su questo PC
+Will It Run score ||| Punteggio Will It Run
+Will It Run suggests the best file for this PC, and you can take a different one. You can pause or stop a download and choose where it is saved. Nothing starts if the disk would end up too full. ||| Will It Run propone il file migliore per questo PC, ma puoi prenderne un altro. Puoi mettere in pausa o fermare un download e scegliere dove salvarlo. Niente parte se il disco finirebbe troppo pieno.
+Will It Run uses more than one model only when it clearly beats a shared one. ||| Will It Run usa più di un modello solo quando è chiaramente meglio di uno condiviso.
+Will It Run's downloader ||| Downloader di Will It Run
+Will It Run's own downloader can be paused, resumed and stopped, verifies the file and lets you choose the folder. LM Studio's downloader cannot be stopped from here and always saves to LM Studio's folder. ||| Il downloader di Will It Run si può mettere in pausa, riprendere e fermare, verifica il file e ti lascia scegliere la cartella. Quello di LM Studio non si può fermare da qui e salva sempre nella cartella di LM Studio.
+Will It Run's verdict on how well one model file runs on this PC, from PERFECT down to IMPOSSIBLE. ||| Il giudizio di Will It Run su quanto bene un file di modello gira su questo PC, da PERFETTO fino a IMPOSSIBILE.
+Windows / desktop reserve ||| Riserva per Windows / desktop
+Windows / desktop VRAM reserve ||| Riserva di VRAM per Windows / desktop
+Windows and apps ||| Windows e app
+Windows language ||| Lingua di Windows
+Windows notifications ||| Notifiche di Windows
+Words you will see ||| Parole che incontrerai
+Workflow definition (YAML) ||| Definizione del workflow (YAML)
+Workflow memory plan ||| Piano di memoria del workflow
+Workflow name ||| Nome del workflow
+Workflow saved ||| Workflow salvato
+Workflow YAML ||| YAML del workflow
+Workflow ||| Workflow
+Workflows ||| Workflow
+Working out what fits this PC... ||| Calcolo cosa regge questo PC...
+working ||| al lavoro
+Working ||| Al lavoro
+Works well. A little slower, or part of it runs from normal memory. ||| Funziona bene. Un po' più lento, oppure una parte gira dalla memoria normale.
+Workspace ||| Area di lavoro
+Write the request below. To work on a project of yours, add a folder on this PC or one of your GitHub repositories. The first agent turns the request into a brief; plans wait for your approval. ||| Scrivi la richiesta qui sotto. Per lavorare su un tuo progetto aggiungi una cartella sul PC o uno dei tuoi repository GitHub. Il primo agente trasforma la richiesta in un brief; i piani aspettano la tua approvazione.
+Writing the answer ||| Sta scrivendo la risposta
+Writing ||| Scrittura
+YAML ||| YAML
+You can explore hardware and models without it. ||| Puoi esplorare hardware e modelli anche senza.
+You can pause or stop it at any time from Downloads. ||| Puoi metterlo in pausa o fermarlo in qualsiasi momento da Download.
+You choose, it downloads safely ||| Tu scegli, lui scarica in sicurezza
+You use the model ||| Usi il modello
+Your approval is needed ||| Serve la tua approvazione
+YOUR CHOICE ||| SCELTO DA TE
+Your graphics card's own memory. A model that fits entirely in it runs fast; one that spills into normal memory runs much slower. ||| La memoria propria della scheda grafica. Un modello che ci entra tutto gira veloce; uno che sconfina nella memoria normale gira molto più lento.
+Your Local AI Computer ||| Il tuo computer AI locale
+Your local AI computer ||| Il tuo computer AI locale
+Your repositories ||| I tuoi repository
+Your teams ||| I tuoi team
+Your workflows ||| I tuoi workflow
+zoom in and out ||| ingrandisci e rimpicciolisci
+Zoom in ||| Ingrandisci
+Zoom out ||| Rimpicciolisci
+{agents} agents on 1 model instance. ||| {agents} agenti su 1 istanza di modello.
+{agents} agents on {models} model instances. ||| {agents} agenti su {models} istanze di modello.
+{agents} agents share 1 model instance ||| {agents} agenti condividono 1 istanza di modello
+{agents} agents share {models} model instances ||| {agents} agenti condividono {models} istanze di modello
+{field} can only be: ||| {field} può essere solo:
+{free} GB free of {total} GB ||| {free} GB liberi su {total} GB
+{free} GB free · below the reserve ||| {free} GB liberi · sotto la riserva
+{free} GB free · {safe} safe for models ||| {free} GB liberi · {safe} sicuri per i modelli
+{label}: {value} of 5 ||| {label}: {value} su 5
+{level} confidence ||| affidabilità {level}
+{model} (no longer installed) ||| {model} (non più installato)
+{model} on your PC ||| {model} sul tuo PC
+{n} active per token ||| {n} attivi per token
+{n} agents have no model yet. ||| {n} agenti non hanno ancora un modello.
+{n} agents ||| {n} agenti
+{n} checks in code ||| {n} controlli nel codice
+{n} context ||| contesto {n}
+{n} different models in use ||| {n} modelli diversi in uso
+{n} downloads started ||| {n} download avviati
+{n} GB free ||| {n} GB liberi
+{n} GB safely usable for models ||| {n} GB utilizzabili in sicurezza per i modelli
+{n} GB safely usable ||| {n} GB utilizzabili in sicurezza
+{n} GPUs ||| {n} GPU
+{n} h ago ||| {n} h fa
+{n} h left ||| {n} h rimanenti
+{n} installed models ||| {n} modelli installati
+{n} loaded ||| {n} caricati
+{n} MiB of VRAM left free ||| {n} MiB di VRAM rimasti liberi
+{n} min ago ||| {n} min fa
+{n} min left ||| {n} min rimanenti
+{n} model loads this run ||| {n} caricamenti di modello in questa esecuzione
+{n} model loads ||| {n} caricamenti di modello
+{n} models loaded together, {gb} GB peak ||| {n} modelli caricati insieme, picco {gb} GB
+{n} models ||| {n} modelli
+{n} s left ||| {n} s rimanenti
+{n} SHORT ON CONTEXT ||| {n} A CORTO DI CONTESTO
+{n} steps so far ||| {n} passi finora
+{n} steps ||| {n} passi
+{n} tokens ||| {n} token
+{n} tools ||| {n} strumenti
+{n} without a model ||| {n} senza modello
+{n}% of the score ||| {n}% del punteggio
+{n}% utilization ||| utilizzo {n}%
+{persistent} persistent model, {on_demand} loaded on demand, {gb} GB peak ||| {persistent} modello persistente, {on_demand} caricati su richiesta, picco {gb} GB
+{physical} physical / {logical} logical ||| {physical} fisici / {logical} logici
+{score}/10 for this kind of work ||| {score}/10 per questo tipo di lavoro
+{shown} shown of {total} matching ||| {shown} mostrati su {total} corrispondenti
+{size} needs {gb} GB: more than this PC can safely give ||| {size} richiede {gb} GB: più di quanto questo PC possa dare in sicurezza
+{task} strength ||| capacità: {task}
+{time} spent switching ||| {time} spesi nei cambi
+{usable} GB usable of {total} ||| {usable} GB utilizzabili su {total}
+{used} / {usable} GB recommended ||| {used} / {usable} GB consigliati
+
+# Project Brain: the permanent memory of each project
+error fixed by solution ||| errore risolto da una soluzione
+change to a file ||| modifica a un file
+memory about a file or topic ||| ricordo su un file o un argomento
+file imports file ||| un file ne importa un altro
+recorded in a session ||| registrato in una sessione
+Showing the {shown} most connected of {total} nodes. Select a node to see what it is linked to. ||| Sono mostrati i {shown} nodi più collegati su {total}. Seleziona un nodo per vedere a cosa è collegato.
+{nodes} nodes and {edges} links. Select a node to see what it is linked to. ||| {nodes} nodi e {edges} collegamenti. Seleziona un nodo per vedere a cosa è collegato.
+File ||| File
+Topic ||| Argomento
+Open the memory ||| Apri il ricordo
+Nothing to draw yet ||| Ancora niente da disegnare
+The graph links memories to the files and topics they are about. It fills in as the project is worked on. ||| Il grafo collega i ricordi ai file e agli argomenti di cui parlano. Si riempie man mano che si lavora al progetto.
+This project has a permanent memory. Each agent is given the entries its task needs, and what this run finds out is added. Click to open it. ||| Questo progetto ha una memoria permanente. Ogni agente riceve i ricordi che servono al suo compito, e ciò che questa esecuzione scopre viene aggiunto. Clicca per aprirla.
+1 memory ||| 1 ricordo
+{n} memories ||| {n} ricordi
+This project has no memory yet. This run starts it: what it changes and finds out is written down for the next sessions. ||| Questo progetto non ha ancora una memoria. Nasce con questa esecuzione: ciò che cambia e ciò che scopre viene annotato per le prossime sessioni.
+Memory starts here ||| La memoria nasce qui
+Memory ||| Memoria
+Open the project memory ||| Apri la memoria del progetto
+Decision ||| Decisione
+Decisions ||| Decisioni
+File change ||| Modifica ai file
+File changes ||| Modifiche ai file
+Error ||| Errore
+Solution ||| Soluzione
+Solutions ||| Soluzioni
+Note ||| Nota
+Notes ||| Note
+file {name} ||| file {name}
+topic {name} ||| argomento {name}
+fixes #{n} ||| risolve #{n}
+fixed by #{n} ||| risolto da #{n}
+No embedding model is installed in LM Studio, so the memory is searched by words and through the graph only. Download one in LM Studio (for example nomic-embed-text) to search by meaning too. ||| In LM Studio non è installato nessun modello di embedding, quindi la memoria viene cercata solo per parole e attraverso il grafo. Scaricane uno in LM Studio (per esempio nomic-embed-text) per cercare anche per significato.
+LM Studio is not reachable, so the memory is searched by words and through the graph only. ||| LM Studio non è raggiungibile, quindi la memoria viene cercata solo per parole e attraverso il grafo.
+The embedding model did not answer, so the memory is searched by words and through the graph only for now. ||| Il modello di embedding non ha risposto, quindi per ora la memoria viene cercata solo per parole e attraverso il grafo.
+Search by meaning is not available here: the memory is searched by words and through the graph only. ||| Qui la ricerca per significato non è disponibile: la memoria viene cercata solo per parole e attraverso il grafo.
+Fixed by ||| Risolto da
+Fixes ||| Risolve
+From the session ||| Dalla sessione
+Recorded in this session ||| Registrato in questa sessione
+Replaces ||| Sostituisce
+Replaced by ||| Sostituito da
+Kind ||| Tipo
+In one line ||| In una riga
+Sessions are stored in SQLite ||| Le sessioni sono salvate in SQLite
+In full, with the reason ||| Per esteso, con il motivo
+Files it is about ||| File di cui parla
+Paths inside the project, separated by commas. Optional. ||| Percorsi dentro il progetto, separati da virgole. Facoltativo.
+meaning {n} ||| significato {n}
+words ||| parole
+written by you ||| scritto da te
+written by {agent} ||| scritto da {agent}
+an agent ||| un agente
+recorded by the engine ||| registrato dal motore
+Could not save the memory ||| Impossibile salvare il ricordo
+still open ||| ancora aperto
+replaced by #{n} ||| sostituito da #{n}
+{n} files ||| {n} file
+given to an agent once ||| dato a un agente una volta
+given to agents {n} times ||| dato agli agenti {n} volte
+not indexed by meaning yet ||| non ancora indicizzato per significato
+Open the session it comes from ||| Apri la sessione da cui proviene
+Open the chat it comes from ||| Apri la chat da cui proviene
+Rewritten from the project's files whenever they change. ||| Riscritto a partire dai file del progetto ogni volta che cambiano.
+Delete this memory? ||| Eliminare questo ricordo?
+Delete ||| Elimina
+Already in the memory ||| Già nella memoria
+Could not index the memory ||| Impossibile indicizzare la memoria
+FOLDER ||| CARTELLA
+Delete everything this project remembers? ||| Eliminare tutto ciò che questo progetto ricorda?
+Delete it all ||| Elimina tutto
+Add a memory ||| Aggiungi un ricordo
+Forget this project ||| Dimentica questo progetto
+Project map: {files} files, {imports} imports between them, read {when} ||| Mappa del progetto: {files} file, {imports} import tra di loro, letta {when}
+Search by meaning: {model} ||| Ricerca per significato: {model}
+{n} not indexed yet ||| {n} non ancora indicizzati
+Index now ||| Indicizza ora
+Memories ||| Ricordi
+Knowledge graph ||| Grafo delle conoscenze
+Ask the memory: why is the session stored in SQLite? ||| Chiedi alla memoria: perché la sessione è salvata in SQLite?
+Search the memory ||| Cerca nella memoria
+Show replaced ones ||| Mostra quelli sostituiti
+Nothing in this memory answers that. ||| Niente in questa memoria risponde a questa domanda.
+{n} of {total} memories, best first. ||| {n} ricordi su {total}, i più pertinenti per primi.
+Searched by meaning, by words and through the graph. ||| Ricerca per significato, per parole e attraverso il grafo.
+Searched by words and through the graph. ||| Ricerca per parole e attraverso il grafo.
+No memory of this kind yet. ||| Ancora nessun ricordo di questo tipo.
+Nothing is remembered yet. The next session in this project writes down what it does. ||| Ancora niente in memoria. La prossima sessione in questo progetto annota ciò che fa.
+Project Brain ||| Project Brain
+No project has a memory yet. ||| Nessun progetto ha ancora una memoria.
+Every project gets a permanent memory ||| Ogni progetto ha una memoria permanente
+Start a session ||| Avvia una sessione
+Open a chat ||| Apri una chat
+When a team or a chat works in a folder of yours or in a GitHub repository, Will It Run writes down what it learns about that project: how it is built, what was decided, which files were changed and why, what went wrong and what fixed it. The next session is handed only the memories its task needs. Connect a folder or a repository with the + next to the prompt to start one. ||| Quando un team o una chat lavora in una tua cartella o in un repository GitHub, Will It Run annota ciò che impara su quel progetto: com'è costruito, cosa è stato deciso, quali file sono stati modificati e perché, cosa è andato storto e cosa l'ha risolto. La sessione successiva riceve solo i ricordi che servono al suo compito. Per iniziare, collega una cartella o un repository con il + accanto al prompt.
+The project memory is turned off in Settings: runs neither read nor write it. ||| La memoria dei progetti è disattivata nelle Impostazioni: le esecuzioni non la leggono e non la scrivono.
+project memory ||| memoria del progetto
+The project memory could not be read, so this step works without it: {error} ||| Non è stato possibile leggere la memoria del progetto, quindi questo passo lavora senza: {error}
+1 memory of the project was given to this step ||| A questo passo è stato dato 1 ricordo del progetto
+{n} memories of the project were given to this step ||| A questo passo sono stati dati {n} ricordi del progetto
+1 memory written to the memory of {name}. ||| 1 ricordo scritto nella memoria di {name}.
+{n} memories written to the memory of {name}. ||| {n} ricordi scritti nella memoria di {name}.
+Project memory ||| Memoria del progetto
+{name} had no memory before this run: it starts here. ||| {name} non aveva una memoria prima di questa esecuzione: nasce qui.
+{name} had 1 memory when this run started. ||| {name} aveva 1 ricordo quando questa esecuzione è partita.
+{name} had {n} memories when this run started. ||| {name} aveva {n} ricordi quando questa esecuzione è partita.
+Each step is given the few that match its task. What this run changes and finds out is written down when it ends. ||| Ogni passo riceve i pochi che riguardano il suo compito. Ciò che questa esecuzione cambia e scopre viene annotato quando finisce.
+A verification workflow answers from its evidence only: it reads no memory and leaves none. ||| Un workflow di verifica risponde solo a partire dalle sue prove: non legge nessuna memoria e non ne lascia.
+This run has no project: it works in a workspace of its own, so nothing is remembered. Connect a folder or a GitHub repository to give the team a permanent memory. ||| Questa esecuzione non ha un progetto: lavora in uno spazio tutto suo, quindi non viene ricordato niente. Collega una cartella o un repository GitHub per dare al team una memoria permanente.
+Embedding model ||| Modello di embedding
+Automatic ({model}) ||| Automatico ({model})
+No embedding model in LM Studio: search by words only. ||| Nessun modello di embedding in LM Studio: ricerca solo per parole.
+Not reachable right now: search by words only. ||| Non raggiungibile in questo momento: ricerca solo per parole.
+Every folder or GitHub repository a team or a chat works in keeps a permanent memory: its architecture, the decisions taken, the files changed, the errors met and what fixed them. Each agent is given the few entries its task needs. Turned off, runs neither read nor write it; what is already remembered stays. ||| Ogni cartella o repository GitHub in cui lavora un team o una chat conserva una memoria permanente: la sua architettura, le decisioni prese, i file modificati, gli errori incontrati e ciò che li ha risolti. Ogni agente riceve i pochi ricordi che servono al suo compito. Se la disattivi, le esecuzioni non la leggono e non la scrivono; ciò che è già in memoria resta.
+The small model that lets the memory be searched by meaning, not only by words. It is loaded on the CPU, so the graphics card stays whole for the model that is working. LM Studio ships with one. ||| Il piccolo modello che permette di cercare nella memoria per significato, non solo per parole. Viene caricato sulla CPU, così la scheda grafica resta tutta per il modello che sta lavorando. LM Studio ne include già uno.
+# Questions about a session's work
+One model answers, in the folder the team worked in and knowing what it delivered. The team does not run again. Click to give this to the whole team instead. ||| Risponde un solo modello, nella cartella in cui ha lavorato il team e sapendo cosa ha consegnato. Il team non riparte. Clicca per affidarlo invece a tutto il team.
+The whole team works on this, step by step, as for the first request. Click to have one model answer instead. ||| Ci lavora tutto il team, passo per passo, come per la prima richiesta. Clicca per far rispondere invece un solo modello.
+One model answers ||| Risponde un modello
+The whole team works ||| Lavora tutto il team
+chosen from your words ||| scelto da ciò che hai scritto
+Enter to ask · Shift+Enter for a new line ||| Invio per chiedere · Maiusc+Invio per andare a capo
+Questions about this work ||| Domande su questo lavoro
+answered by {model}, without running the team again ||| risponde {model}, senza far ripartire il team
+Could not ask ||| Impossibile fare la domanda
+Ask about this work, or tell the team what to do next ||| Chiedi qualcosa su questo lavoro, o di' al team cosa fare dopo
+Attempt {n}: LM Studio could not read what the model wrote as a tool call or an answer, so the model was told what went wrong. ||| Tentativo {n}: LM Studio non è riuscito a leggere ciò che il modello ha scritto come chiamata a uno strumento o come risposta, quindi al modello è stato spiegato cosa non andava.
+Claude Opus, Sonnet and Haiku. Strong at long tool work and careful reading. ||| Claude Opus, Sonnet e Haiku. Forti nel lavoro lungo con gli strumenti e nella lettura attenta.
+GPT models from OpenAI, the ones behind ChatGPT. ||| I modelli GPT di OpenAI, quelli dietro ChatGPT.
+DeepSeek V4: very low prices, thinks before it answers. ||| DeepSeek V4: prezzi molto bassi, ragiona prima di rispondere.
+Google's Gemini models, through their OpenAI-compatible API. ||| I modelli Gemini di Google, tramite la loro API compatibile con OpenAI.
+The key did not work. ||| La chiave non ha funzionato.
+{name} is ready ||| {name} è pronto
+{n} models available. ||| {n} modelli disponibili.
+saved in Will It Run, encrypted for your Windows account ||| salvata in Will It Run, cifrata per il tuo account Windows
+from the environment variable {name} ||| dalla variabile d'ambiente {name}
+KEY SET ||| CHIAVE PRESENTE
+NO KEY ||| NESSUNA CHIAVE
+Key {hint} ||| Chiave {hint}
+Get a key ||| Ottieni una chiave
+Check the key and refresh the models ||| Verifica la chiave e aggiorna i modelli
+Remove the saved key ||| Rimuovi la chiave salvata
+Paste a new key to replace it ||| Incolla una nuova chiave per sostituirla
+Paste the API key ||| Incolla la chiave API
+{name} API key ||| Chiave API di {name}
+Save and test ||| Salva e prova
+Cloud models ||| Modelli cloud
+Most context for a cloud model ||| Contesto massimo per un modello cloud
+Every token a cloud model reads is paid for. Conversations longer than this are shortened, oldest tool results first. ||| Ogni token letto da un modello cloud si paga. Le conversazioni più lunghe di così vengono accorciate, a partire dai risultati degli strumenti più vecchi.
+tokens ||| token
+Local models run entirely on this PC. Will It Run goes online to search Hugging Face, to download the files you ask for and, only if you add an API key, to call that cloud provider with what you send its model. ||| I modelli locali girano interamente su questo PC. Will It Run va online per cercare su Hugging Face, per scaricare i file che chiedi e, solo se aggiungi una chiave API, per chiamare quel fornitore cloud con ciò che mandi al suo modello.
+Can I use Claude, ChatGPT, DeepSeek or Gemini? ||| Posso usare Claude, ChatGPT, DeepSeek o Gemini?
+The folder could not be opened ||| Non è stato possibile aprire la cartella
+its own folder ||| la sua cartella
+Back to its own folder ||| Torna alla sua cartella
+On this PC ||| Su questo PC
+Cloud ||| Cloud
+{name}: add an API key in Settings › Cloud models ||| {name}: aggiungi una chiave API in Impostazioni › Modelli cloud
+{name}: press ↻ in Settings › Cloud models to load its models ||| {name}: premi ↻ in Impostazioni › Modelli cloud per caricare i suoi modelli
+Claude, ChatGPT, DeepSeek and Gemini appear here once their API key is saved in Settings › Cloud models. ||| Claude, ChatGPT, DeepSeek e Gemini compaiono qui quando la loro chiave API è salvata in Impostazioni › Modelli cloud.
+Add cloud models ||| Aggiungi modelli cloud
+Any model you have downloaded, or a cloud model with a key. Agents with the same model share it in memory. ||| Qualsiasi modello scaricato, oppure un modello cloud con la chiave. Gli agenti con lo stesso modello lo condividono in memoria.
+The address of the website ||| L'indirizzo del sito
+That is not the address of a website. ||| Questo non è l'indirizzo di un sito.
+No model yet ||| Ancora nessun modello
+Result ||| Risultato
+Screenshots ||| Schermate
+Live graph ||| Grafo live
+Folder ||| Cartella
+No result yet. ||| Ancora nessun risultato.
+{n} rounds in a row without changing a file: the tools were taken away and the agent concludes. ||| {n} turni di fila senza cambiare un file: gli strumenti sono stati tolti e l'agente conclude.
+{n} rounds in a row without changing a file: the agent was told to write now. ||| {n} turni di fila senza cambiare un file: all'agente è stato detto di scrivere adesso.
+stopped ||| fermato
+Cloud models run on the provider's servers: nothing is loaded on this PC and every request is paid on your account. What you send them (questions, the files and web pages the agents read) leaves this PC. Keys are encrypted with Windows (DPAPI) for your account and never shown again, nor written to settings or logs. ||| I modelli cloud girano sui server del fornitore: sul PC non si carica nulla e ogni richiesta è pagata dal tuo account. Ciò che gli invii (domande, i file e le pagine web che gli agenti leggono) esce da questo PC. Le chiavi sono cifrate con Windows (DPAPI) per il tuo account e non vengono mostrate di nuovo, né scritte nelle impostazioni o nei log.
+Clone a site ||| Clona sito
+Preparation ||| Preparazione
+Final check ||| Controllo finale
+Cloner ||| Clonatore
+Node.js, npm, browser engine and Chrome or Edge ||| Node.js, npm, motore del browser e Chrome o Edge
+Cloning kit fetched at its pinned version ||| Kit di clonazione scaricato alla versione fissata
+Project ready ||| Progetto pronto
+Packages installed (npm install) ||| Pacchetti installati (npm install)
+Installing the browser engine ||| Installazione del motore del browser
+The browser engine could not be installed ||| Il motore del browser non è stato installato
+Something is missing on this PC ||| Manca qualcosa su questo PC
+One step before the first clone ||| Un passo prima del primo clone
+Prepare ||| Prepara
+The clone could not start ||| Il clone non è partito
+MIT licence ||| licenza MIT
+no licence stated ||| nessuna licenza dichiarata
+already on this PC (version {v}) ||| già su questo PC (versione {v})
+fetched from GitHub the first time (version {v}) ||| scaricato da GitHub la prima volta (versione {v})
+sees ||| vede
+Model that sees (optional) ||| Modello che vede (facoltativo)
+None: measure with scripts only ||| Nessuno: misura solo con gli script
+None (no model with vision available) ||| Nessuno (nessun modello con vista disponibile)
+Where the project is written ||| Dove viene scritto il progetto
+The project is written in ||| Il progetto viene scritto in
+Extra instructions (optional) ||| Istruzioni aggiuntive (facoltative)
+Clone the site ||| Clona il sito
+Finish the preparation above first. ||| Prima completa la preparazione qui sopra.
+Meant for sites you own (a migration, lost source code) and for learning how a site is built. Check the site's terms first; its text, logos and brand belong to its owner. Not legal advice. ||| Pensato per siti tuoi (una migrazione, un codice sorgente perso) e per imparare come è fatto un sito. Controlla prima le condizioni del sito: testi, loghi e marchio appartengono al proprietario. Non è un parere legale.
+failed check → back to the writer ||| controllo fallito → torna a chi ha scritto
+Build log ||| Log della build
+The clone could not be opened ||| Non è stato possibile aprire il clone
+All clones ||| Tutti i cloni
+The files already written stay in the project. ||| I file già scritti restano nel progetto.
+Open the clone ||| Apri il clone
+Improve it ||| Migliora
+What should change? ||| Cosa va cambiato?
+Leave it empty to just continue where it stopped: the agent resumes from the kit's manifest and builds what is missing. ||| Lascialo vuoto per riprendere da dove si è fermato: l'agente riparte dal manifest del kit e costruisce quello che manca.
+For example: the hero is too tall on a phone, the footer links are missing ||| Per esempio: la parte in alto è troppo alta su telefono, mancano i link del piè di pagina
+Preparation · what it did ||| Preparazione · cosa ha fatto
+The preparation starts in a moment. ||| La preparazione parte tra un attimo.
+Activity ||| Attività
+browser ||| browser
+files read ||| file letti
+files written ||| file scritti
+The project builds: lint, typecheck and production build passed. ||| Il progetto si costruisce: lint, typecheck e build di produzione sono passati.
+No build yet. ||| Nessuna build ancora.
+Sites cloned ||| Siti clonati
+blocked ||| bloccato
+What does Clone a site do? ||| A cosa serve Clona sito?
+Yes, with your own API key, in Settings > Cloud models. The key is encrypted for your Windows account. Those models run on the provider's servers and are paid on your account; they can be chosen in Clone a site, in Chat and in any workflow. ||| Sì, con la tua chiave API, in Impostazioni > Modelli cloud. La chiave è cifrata per il tuo account Windows. Quei modelli girano sui server del fornitore e sono pagati dal tuo account; si possono scegliere in Clona sito, in Chat e in qualsiasi workflow.
+fetches the kit, puts its project in the folder, installs the packages and the browser ||| scarica il kit, mette il suo progetto nella cartella, installa i pacchetti e il browser
+follows the kit's /clone-website skill: asks which pages, studies the site, writes the components ||| segue la skill /clone-website del kit: chiede quali pagine, studia il sito, scrive i componenti
+runs the project's check: lint, typecheck, production build ||| esegue il controllo del progetto: lint, typecheck, build di produzione
+Chromium for the kit's scripts (npm run setup) ||| Chromium per gli script del kit (npm run setup)
+Will It Run drives the Chrome or Edge you already have with Playwright's library (a few MB, kept in its own folder). The cloning kit is fetched from GitHub the first time you use it, at one exact version; its own scripts also download a copy of Chromium (about 170 MB, once). ||| Will It Run pilota il Chrome o l'Edge che hai già con la libreria di Playwright (pochi MB, in una cartella tutta sua). Il kit di clonazione viene scaricato da GitHub la prima volta che lo usi, a una versione precisa; i suoi script scaricano anche una copia di Chromium (circa 170 MB, una volta sola).
+A Next.js project, cloned the way the kit does it ||| Un progetto Next.js, clonato come fa il kit
+The kit's project is put in the folder, its packages are installed, and the model runs its /clone-website skill, exactly as in a coding agent in the terminal: it opens the site, finds the pages and asks you which ones to clone (only the home page, two pages, three…), then studies and rebuilds them as Next.js components. ||| Il progetto del kit viene messo nella cartella, i suoi pacchetti vengono installati e il modello esegue la sua skill /clone-website, esattamente come un agente di programmazione nel terminale: apre il sito, trova le pagine e ti chiede quali clonare (solo la home page, due pagine, tre…), poi le studia e le ricostruisce come componenti Next.js.
+The model can see: it looks at the screenshots itself. ||| Il modello vede: guarda gli screenshot da sé.
+An empty folder gets the project; a folder that already is a project of the kit is built into; any other folder gets a subfolder for the clone. ||| Una cartella vuota riceve il progetto; in una cartella che è già un progetto del kit si costruisce dentro; ogni altra cartella riceve una sottocartella per il clone.
+The repository is copied to a folder of Will It Run and the agent writes in the copy. Nothing is sent to GitHub unless you approve it. ||| Il repository viene copiato in una cartella di Will It Run e l'agente scrive nella copia. Nulla viene inviato a GitHub se non lo approvi.
+For example: keep the dark theme, skip the blog ||| Per esempio: mantieni il tema scuro, salta il blog
+A failed build goes back to the agent that wrote the code, once, with the log. ||| Una build fallita torna all'agente che ha scritto il codice, una volta, con il log.
+The answer was not delivered ||| La risposta non è stata consegnata
+The agent asks ||| L'agente chiede
+The agent is waiting for your answer ||| L'agente aspetta la tua risposta
+Or write your own answer ||| Oppure scrivi la tua risposta
+Write your answer ||| Scrivi la tua risposta
+Your answer ||| La tua risposta
+Send ||| Invia
+Run it again ||| Esegui di nuovo
+Your choices ||| Le tue scelte
+waiting for you ||| aspetta te
+commands ||| comandi
+The result appears here when the agent has finished. ||| Il risultato compare qui quando l'agente ha finito.
+The screenshots appear here as the agent takes them. ||| Gli screenshot compaiono qui man mano che l'agente li scatta.
+Give an address: the ai-site-cloner kit and the model you choose (on this PC or in the cloud) rebuild the site as a Next.js project in a folder or a GitHub repository. It asks you which pages to clone. ||| Dai un indirizzo: il kit ai-site-cloner e il modello che scegli (su questo PC o nel cloud) ricostruiscono il sito come progetto Next.js in una cartella o in un repository GitHub. Ti chiede quali pagine clonare.
+You give the address of a website and choose a model, on this PC or in the cloud. It runs the ai-site-cloner kit the way it runs in a coding agent: the agent opens the site in your Chrome or Edge, asks you which pages to clone (only the home page, two pages, three…), measures them, downloads what it needs and rebuilds them as a Next.js project in a folder or a GitHub repository you choose. It is meant for sites you own, for migrations and for learning. ||| Dai l'indirizzo di un sito e scegli un modello, su questo PC o nel cloud. Esegue il kit ai-site-cloner come si esegue in un agente di programmazione: l'agente apre il sito nel tuo Chrome o Edge, ti chiede quali pagine clonare (solo la home page, due pagine, tre…), le misura, scarica ciò che serve e le ricostruisce come progetto Next.js in una cartella o in un repository GitHub che scegli. È pensato per siti tuoi, per migrazioni e per imparare.
+Faster generation (MTP) ||| Generazione più veloce (MTP)
+Some models carry a small extra head that guesses the next words (the "-mtp" files of Qwen3.8, for example). LM Studio checks the guesses and keeps the right ones, so the answers keep their quality and come 1.4 to 1.6 times faster. Will It Run turns it on for those models, loads them with one slot and sends no repeat penalty, which would lower the number of right guesses. Turn it off if a model misbehaves. ||| Alcuni modelli hanno una piccola testa in più che indovina le parole successive (per esempio i file "-mtp" di Qwen3.8). LM Studio controlla le ipotesi e tiene quelle giuste: le risposte restano di pari qualità e arrivano 1,4–1,6 volte più veloci. Will It Run lo attiva per questi modelli, li carica con un solo slot e non invia penalità di ripetizione, che ridurrebbe le ipotesi giuste. Disattivalo se un modello si comporta male.
+Score {value} out of 100 ||| Punteggio {value} su 100
+out of 100 ||| su 100
+{value} out of 100, between {low} and {high} ||| {value} su 100, tra {low} e {high}
+Radar of the areas: {names} ||| Radar delle aree: {names}
+no score ||| nessun punteggio
+Score of each model in each area ||| Punteggio di ogni modello in ogni area
+Area by area: {a} against {b} ||| Area per area: {a} contro {b}
+No speed was measured yet. ||| Nessuna velocità misurata finora.
+Speed against reliability ||| Velocità contro affidabilità
+Not asked ||| Non posta
+Arena ||| Arena
+Open the Arena ||| Apri l'Arena
+Start an Arena challenge ||| Avvia una sfida dell'Arena
+Right ||| Giusta
+Partly right ||| In parte giusta
+Wrong ||| Sbagliata
+Not evaluated ||| Non valutata
+Skipped ||| Saltata
+Run error ||| Errore di esecuzione
+Wrong answer ||| Risposta sbagliata
+Format not followed ||| Formato non rispettato
+Made it up ||| Se l'è inventata
+Refused to answer ||| Ha rifiutato di rispondere
+Cut off ||| Interrotta
+Needs a person ||| Serve una persona
+Tool missing ||| Strumento mancante
+Cannot do it ||| Non può farlo
+General knowledge ||| Cultura generale
+Reading comprehension ||| Comprensione del testo
+Math ||| Matematica
+Logic ||| Logica
+Business documents ||| Documenti aziendali
+PDF analysis ||| Analisi di PDF
+Structured JSON ||| JSON strutturato
+Image analysis ||| Analisi di immagini
+Tool calling ||| Chiamata di strumenti
+Impossible questions ||| Domande impossibili
+Following instructions ||| Seguire le istruzioni
+Resisting injection ||| Resistere alle iniezioni
+Long context ||| Contesto lungo
+Knowledge ||| Conoscenza
+Infrastructure ||| Infrastruttura
+Documents ||| Documenti
+Honesty ||| Onestà
+Quick ||| Rapida
+Complete ||| Completa
+Starting ||| In partenza
+Stopping ||| Si ferma
+Finished ||| Finita
+{n} s ||| {n} s
+{n} min ||| {n} min
+cloud ||| cloud
+vision ||| visione
+{model}: its turn ||| {model}: tocca a lui
+{model} could not be loaded: {message} ||| {model} non si è caricato: {message}
+Loading {model}, context {context} ||| Carico {model}, contesto {context}
+{model} loaded in {seconds} s, context {context} ||| {model} caricato in {seconds} s, contesto {context}
+{model} unloaded from memory ||| {model} scaricato dalla memoria
+{model} does not fit in graphics memory: part of it is in system RAM ||| {model} non entra nella memoria grafica: una parte è nella RAM di sistema
+A page that opens anywhere, with the charts ||| Una pagina che si apre ovunque, con i grafici
+A text report for notes and repositories ||| Un rapporto di testo per appunti e repository
+One row per answer, for a spreadsheet ||| Una riga per risposta, per un foglio di calcolo
+Everything, for another program ||| Tutto, per un altro programma
+The report could not be made. ||| Non è stato possibile creare il rapporto.
+Save the report ||| Salva il rapporto
+areas won ||| aree vinte
+± confidence ||| ± confidenza
+A duel needs two models with a score. Run the challenge with at least two models. ||| Un confronto richiede due modelli con un punteggio. Avvia la sfida con almeno due modelli.
+Challengers ||| Sfidanti
+tap to change A or B ||| tocca per cambiare A o B
+tied ||| pari
+{n} points ||| {n} punti
+{n} areas each out of {total} ||| {n} aree a testa su {total}
+{model} wins {n} areas out of {total} ||| {model} vince {n} aree su {total}
+Area by area ||| Area per area
+who wins where ||| chi vince dove
+Profile ||| Profilo
+overlaid ||| sovrapposto
+Where they part ||| Dove si separano
+{n} questions with a different outcome ||| {n} domande con esito diverso
+They did the same on every question both were scored on. ||| Hanno fatto lo stesso su ogni domanda valutata a entrambi.
+{model} did better ||| {model} ha fatto meglio
+Show fewer ||| Mostra meno
+Show all {n} ||| Mostra tutte e {n}
+up and to the right is better ||| più in alto e più a destra è meglio
+Not asked yet ||| Non ancora posta
+Could not stop the challenge ||| Non è stato possibile fermare la sfida
+{done} of {total} models ||| {done} modelli su {total}
+{done} of {total} questions of the model at work ||| {done} domande su {total} del modello in corso
+about {time} left ||| restano circa {time}
+waiting: it is loaded when its turn comes ||| in attesa: si carica quando tocca a lui
+loading or thinking ||| carica o sta pensando
+done · {n} answers ||| finito · {n} risposte
+it could not run ||| non è riuscito a girare
+{done} of {total} questions answered ||| {done} domande su {total} con risposta
+{done} of {total} questions ||| {done} domande su {total}
+Question ||| Domanda
+The answer of {model}, as it writes ||| La risposta di {model}, mentre la scrive
+(thinking…) ||| (sta ragionando…)
+The same questions in the same words, the same seed and the same context for every model. A server error is not held against a model. ||| Le stesse domande con le stesse parole, lo stesso seed e lo stesso contesto per ogni modello. Un errore del server non si addebita al modello.
+Stopping: the model finishes the word it is writing, then it is unloaded. ||| Mi sto fermando: il modello finisce la parola che scrive, poi viene scaricato.
+Only mistakes ||| Solo errori
+Where they differ ||| Dove si dividono
+Which questions ||| Quali domande
+Category ||| Categoria
+All the categories ||| Tutte le categorie
+Close the groups ||| Chiudi i gruppi
+Open the groups ||| Apri i gruppi
+{n} questions ||| {n} domande
+No question matches. ||| Nessuna domanda corrisponde.
+The challenge did not start ||| La sfida non è partita
+Something went wrong ||| Qualcosa è andato storto
+without it the configurations are checked on their structure ||| senza, le configurazioni si controllano sulla struttura
+without it the playbooks are checked on their YAML and their rules ||| senza, i playbook si controllano sul YAML e sulle regole
+without it JavaScript code is not run ||| senza, il codice JavaScript non viene eseguito
+without it Python code is not run ||| senza, il codice Python non viene eseguito
+without it SQL is run on SQLite after a translation ||| senza, l'SQL gira su SQLite dopo una traduzione
+Who takes part ||| Chi partecipa
+one at a time in memory ||| uno alla volta in memoria
+No model is installed in LM Studio yet. ||| Non c'è ancora nessun modello installato in LM Studio.
+LM Studio holds it in memory right now ||| LM Studio lo tiene in memoria adesso
+It thinks before it answers: give it more tokens ||| Ragiona prima di rispondere: dagli più token
+thinks ||| ragiona
+tools ||| strumenti
+Cloud · paid with your key ||| Cloud · a pagamento con la tua chiave
+Claude, ChatGPT, DeepSeek and Gemini turn on in ||| Claude, ChatGPT, DeepSeek e Gemini si attivano in
+Settings › Cloud models ||| Impostazioni › Modelli cloud
+costs money ||| costa
+LM Studio already holds {names}. It may be in use by another program: to measure one model at a time the Arena unloads what is loaded. ||| LM Studio ha già caricato {names}. Potrebbe essere in uso da un altro programma: per misurare un modello alla volta l'Arena scarica ciò che è caricato.
+Unload the models that are loaded ||| Scarica i modelli caricati
+The questions are sent to the provider of each cloud model and every answer is paid for with your key. ||| Le domande vengono inviate al fornitore di ogni modello cloud e ogni risposta si paga con la tua chiave.
+I agree to use cloud models ||| Accetto di usare i modelli cloud
+{names} cannot see pictures: the image questions are skipped for it, and a skipped question is not a wrong answer. ||| {names} non vede le immagini: le domande sulle immagini vengono saltate, e una domanda saltata non è una risposta sbagliata.
+How long ||| Quanto a lungo
+the same questions for everyone ||| le stesse domande per tutti
+questions for each model ||| domande per ogni modello
+{n} of {total} ||| {n} su {total}
+The quick pack does not ask this category. ||| Il set rapido non pone questa categoria.
+Never scored: the answers are kept to be read side by side. ||| Mai valutata: le risposte si conservano per leggerle affiancate.
+all of it is kept in the report ||| tutto resta nel rapporto
+42 is the reference challenge ||| 42 è la sfida di riferimento
+Temperature ||| Temperatura
+0 gives the same answer every time ||| 0 dà ogni volta la stessa risposta
+Repeats ||| Ripetizioni
+each repeat adds to the seed ||| ogni ripetizione si somma al seed
+Max tokens per answer ||| Token massimi per risposta
+empty: chosen by the pack ||| vuoto: lo sceglie il set
+Repeat penalty ||| Penalità di ripetizione
+Use {n} ||| Usa {n}
+A model that thinks before it answers can run out of tokens before it writes the answer, and then the answer counts as cut off. ||| Un modello che ragiona prima di rispondere può finire i token prima di scrivere la risposta, e allora la risposta risulta interrotta.
+More settings ||| Altre impostazioni
+Time per answer (s) ||| Tempo per risposta (s)
+Name of the challenge ||| Nome della sfida
+empty: the names of the models ||| vuoto: i nomi dei modelli
+What checks the answers ||| Cosa controlla le risposte
+found on this PC ||| trovati su questo PC
+Start the challenge ||| Avvia la sfida
+Choose at least one model. ||| Scegli almeno un modello.
+Another challenge is working: stop it or wait for it. ||| Un'altra sfida è in corso: fermala o aspetta.
+Agree to unload the models that are loaded. ||| Accetta di scaricare i modelli caricati.
+Agree to use the cloud models. ||| Accetta di usare i modelli cloud.
+{models} models · {questions} questions each · {answers} answers ||| {models} modelli · {questions} domande ciascuno · {answers} risposte
+strong in {area} ({score}) ||| forte in {area} ({score})
+No model has a score yet: none of the questions asked so far could be scored. ||| Nessun modello ha ancora un punteggio: nessuna delle domande poste finora si è potuta valutare.
+Profile by area ||| Profilo per area
+tap a model to add or remove it ||| tocca un modello per aggiungerlo o toglierlo
+Ranking ||| Classifica
+score ± the 95% confidence interval ||| punteggio ± intervallo di confidenza al 95%
+Scored ||| Valutate
+Where it goes wrong ||| Dove sbaglia
+{score} on everything it did ||| {score} su tutto ciò che ha fatto
+The score is the mean of the categories every model could be scored on: {names}. ||| Il punteggio è la media delle categorie su cui ogni modello poteva essere valutato: {names}.
+{n} answers could not be judged by code: they are not evaluated, and they are not counted as wrong. ||| {n} risposte non si potevano giudicare col codice: sono non valutate e non contano come sbagliate.
+By area ||| Per area
+By category ||| Per categoria
+share of right answers · scored / asked ||| quota di risposte giuste · valutate / poste
+{scored} scored of {total} asked ||| {scored} valutate su {total} poste
+Show less ||| Mostra meno
+Show all ||| Mostra tutto
+The mark was not saved ||| Il giudizio non è stato salvato
+repeat {n} ||| ripetizione {n}
+The reply was empty. ||| La risposta era vuota.
+Its reasoning ||| Il suo ragionamento
+Your own reading, kept apart from the score: ||| La tua lettura, tenuta a parte dal punteggio:
+Poor ||| Scarsa
+Detail of the question ||| Dettaglio della domanda
+difficulty {n} ||| difficoltà {n}
+The question ||| La domanda
+System prompt ||| Istruzione di sistema
+{n} pages ||| {n} pagine
+Tools offered ||| Strumenti offerti
+Expected ||| Atteso
+checked by {method} ||| controllata con {method}
+An answer that passes ||| Una risposta che passa
+What each model answered ||| Cosa ha risposto ogni modello
+not asked yet ||| non ancora posta
+temperature {n} ||| temperatura {n}
+1 repeat ||| 1 ripetizione
+{n} repeats ||| {n} ripetizioni
+reproducible ||| riproducibile
+{n} not evaluated ||| {n} non valutate
+{n} skipped ||| {n} saltate
+{n} run errors ||| {n} errori di esecuzione
+cloud models: sampling decided by the provider ||| modelli cloud: il campionamento lo decide il fornitore
+Hide ||| Nascondi
+Questions ||| Domande
+Duel ||| Confronto
+Report saved ||| Rapporto salvato
+The report was not saved ||| Il rapporto non è stato salvato
+Export ||| Esporta
+The challenge was not deleted ||| La sfida non è stata eliminata
+The challenge did not resume ||| La sfida non è ripartita
+Choose the models and how long: the same questions, the same seed, one model at a time in memory. ||| Scegli i modelli e quanto a lungo: le stesse domande, lo stesso seed, un modello alla volta in memoria.
+{models} models put to the test with {questions} questions that code can check. {when} ||| {models} modelli messi alla prova con {questions} domande che si verificano col codice. {when}
+Models put to the test on questions with a verifiable answer: nothing is judged by another model. ||| Modelli messi alla prova su domande con risposta verificabile: niente è giudicato da un altro modello.
+Challenge ||| Sfida
+Delete this challenge ||| Elimina questa sfida
+New challenge ||| Nuova sfida
+Back to the results ||| Torna ai risultati
+No challenge yet ||| Nessuna sfida ancora
+The Arena puts models through the same questions, each with an answer that code can check, and shows who is reliable and where. ||| L'Arena sottopone i modelli alle stesse domande, ognuna con una risposta che il codice sa controllare, e mostra chi è affidabile e dove.
+Delete this challenge? ||| Eliminare questa sfida?
+Its answers and its report go with it. The exported files stay where you saved them. ||| Le sue risposte e il suo rapporto spariscono con lei. I file esportati restano dove li hai salvati.
+Unload the models in memory? ||| Scaricare i modelli in memoria?
+LM Studio already holds models, maybe for another program. To measure one model at a time the Arena unloads them. ||| LM Studio ha già dei modelli in memoria, forse per un altro programma. Per misurarne uno alla volta l'Arena li scarica.
+Unload and resume ||| Scarica e riprendi
+A benchmark measures how fast a model runs on this PC. The Arena measures how far its answers can be trusted. ||| Un benchmark misura quanto veloce gira un modello su questo PC. L'Arena misura fino a che punto ci si può fidare delle sue risposte.
+A model that sees describes the screenshots to the agent: where things are, how big, which colours. Without one the agent measures the page with scripts only. Each look swaps models: about 40 seconds on a card that holds one at a time. ||| Un modello che vede descrive gli screenshot all'agente: dove sono le cose, quanto sono grandi, di che colore. Senza, l'agente misura la pagina solo con gli script. Ogni sguardo scambia i modelli: circa 40 secondi su una scheda che ne tiene uno solo alla volta.
+real loss ||| perdita reale
+real gain ||| guadagno reale
+noise ||| rumore
+This was not measured for enough of the quantizations to draw it. ||| Non è stato misurato per abbastanza quantizzazioni da disegnarlo.
+Accuracy against {axis} ||| Accuratezza contro {axis}
+File size ||| Dimensione del file
+Graphics memory ||| Memoria grafica
+reference ||| riferimento
+identical answers ||| risposte identiche
+{better} better · {worse} worse than the reference ||| {better} meglio · {worse} peggio del riferimento
+under {n} points it cannot be seen ||| sotto i {n} punti non si vede
+Graphics memory the model took when it was loaded, with the same context for all ||| Memoria grafica che il modello ha occupato al caricamento, con lo stesso contesto per tutti
+Median time before the first word ||| Tempo mediano prima della prima parola
+Difference ||| Differenza
+Part of this model did not fit in graphics memory and was in system RAM: its speed is not a fair measure. ||| Una parte di questo modello non stava nella memoria grafica ed era nella RAM di sistema: la sua velocità non è una misura onesta.
+Part of it was in system RAM ||| Una parte era nella RAM di sistema
+The Arena groups models by name, size and architecture. If yours are not grouped, or you want to compare other models of this challenge, choose them here. ||| L'Arena raggruppa i modelli per nome, dimensione e architettura. Se i tuoi non sono raggruppati, o vuoi confrontare altri modelli di questa sfida, sceglili qui.
+Compare these ||| Confronta questi
+Every other quantization loses accuracy against {reference}, and the loss is real: {losses}. ||| Ogni altra quantizzazione perde accuratezza rispetto a {reference}, e la perdita è reale: {losses}.
+{quant} weighs {saved} less than {reference} and answered every question the same way. ||| {quant} pesa {saved} in meno di {reference} e ha risposto allo stesso modo a ogni domanda.
+{quant} weighs {saved} less than {reference}, and its difference from it is not a real loss. This run could not have seen a loss smaller than {points} points. ||| {quant} pesa {saved} in meno di {reference}, e la sua differenza non è una perdita reale. Questa prova non avrebbe potuto vedere una perdita sotto i {points} punti.
+Real loss: {losses}. ||| Perdita reale: {losses}.
+None of the other quantizations is lighter than {reference} without a real loss. ||| Nessuna delle altre quantizzazioni è più leggera di {reference} senza una perdita reale.
+The temperature is 0, so a repeat gives the same answer: the extra repeats cost time and add nothing. To average out chance, raise the temperature. ||| La temperatura è 0, quindi una ripetizione dà la stessa risposta: le ripetizioni in più costano tempo e non aggiungono nulla. Per mediare il caso, alza la temperatura.
+Sampling at temperature {temperature} with only {n} repeat(s): the result depends on luck. Use 3 or more repeats to compare quantizations. ||| Campionamento a temperatura {temperature} con solo {n} ripetizione/i: il risultato dipende dalla fortuna. Usa 3 ripetizioni o più per confrontare le quantizzazioni.
+Compare with ||| Confronta con
+Choose the models by hand ||| Scegli i modelli a mano
+Back to the grouping ||| Torna al raggruppamento
+This tab compares quantizations of one model. Start a challenge with two or more of them (for example the IQ3, Q3_K and Q4 files of the same model) and they appear here, grouped. ||| Questa scheda confronta le quantizzazioni di uno stesso modello. Avvia una sfida con due o più di esse (per esempio i file IQ3, Q3_K e Q4 dello stesso modello) e compaiono qui, raggruppate.
+Choose at least two models to compare. ||| Scegli almeno due modelli da confrontare.
+These models were not scored on any question in common, so there is nothing to compare yet. ||| Questi modelli non hanno un punteggio su nessuna domanda in comune, quindi per ora non c'è nulla da confrontare.
+One by one against {reference} ||| Una per una contro {reference}
+{n} questions in common{dropped} ||| {n} domande in comune{dropped}
+, {n} left out because one of them was not scored ||| , {n} escluse perché una delle quantizzazioni non ha un punteggio
+At least one of these models did not fit in graphics memory: the speeds are not a fair comparison between quantizations. ||| Almeno uno di questi modelli non stava nella memoria grafica: le velocità non sono un confronto onesto fra le quantizzazioni.
+Accuracy against weight ||| Accuratezza contro peso
+What the horizontal axis shows ||| Cosa mostra l'asse orizzontale
+Each point is the score with its 95% interval. The dashed line joins the quantizations from the lightest to the heaviest. ||| Ogni punto è il punteggio con il suo intervallo al 95%. La linea tratteggiata unisce le quantizzazioni dalla più leggera alla più pesante.
+Category by category ||| Categoria per categoria
+difference from the reference in points ||| differenza dal riferimento in punti
+A category holds few questions: read these figures as a hint about where a quantization loses, not as a verdict. ||| Una categoria ha poche domande: leggi questi numeri come un indizio su dove una quantizzazione perde, non come un verdetto.
+How to read this: real or noise ||| Come leggerlo: reale o rumore
+Every quantization answered the same questions with the same seed and the same sampling, so they are compared question by question: how many each one got right that the other missed. ||| Ogni quantizzazione ha risposto alle stesse domande con lo stesso seed e lo stesso campionamento, quindi si confrontano domanda per domanda: quante ne ha azzeccate ognuna che l'altra ha sbagliato.
+The difference is the change in score against the reference, each category weighing the same. Its interval comes from {draws} resamplings of the questions, with a fixed seed: the same results always give the same interval. ||| La differenza è la variazione del punteggio rispetto al riferimento, con ogni categoria dello stesso peso. Il suo intervallo viene da {draws} ricampionamenti delle domande, con un seed fisso: gli stessi risultati danno sempre lo stesso intervallo.
+A difference is called real only if its interval leaves out zero and the sign test, corrected for the number of comparisons, gives less than {alpha}. Everything else is noise: not a proof that the two are equal, only that this run cannot tell them apart. ||| Una differenza è detta reale solo se il suo intervallo esclude lo zero e il test dei segni, corretto per il numero di confronti, dà meno di {alpha}. Tutto il resto è rumore: non è una prova che i due siano uguali, solo che questa prova non sa distinguerli.
+«Under N points it cannot be seen» is the smallest gap this run could reliably detect. To see smaller ones, ask more questions (the Complete pack) or average more repeats at a temperature above 0. ||| «Sotto N punti non si vede» è il divario più piccolo che questa prova potrebbe rilevare con sicurezza. Per vederne di più piccoli, fai più domande (il set Completo) o media più ripetizioni a una temperatura sopra 0.
+Quantizations ||| Quantizzazioni
+Use 3 repeats, temperature 0.5 ||| Usa 3 ripetizioni, temperatura 0,5
+{n} of the chosen models are quantizations of {model}. To tell a real difference from noise, each is asked the same questions several times: 3 repeats at a temperature above 0 give the Quantizations tab something to measure. ||| {n} dei modelli scelti sono quantizzazioni di {model}. Per distinguere una differenza reale dal rumore, a ognuno si fanno più volte le stesse domande: 3 ripetizioni a una temperatura sopra 0 danno alla scheda Quantizzazioni qualcosa da misurare.

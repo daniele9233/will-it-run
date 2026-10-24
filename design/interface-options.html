@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentFit · 5 direzioni grafiche</title>
+<style>
+/* Page chrome: deliberately neutral so it does not favour any option. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: oklch(0.21 0 0); color: oklch(0.93 0 0);
+  font: 14px/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+ul { list-style: none; }
+svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.tab { font-variant-numeric: tabular-nums; }
+
+.chooser { display: flex; align-items: center; gap: 18px; padding: 10px 18px; border-bottom: 1px solid oklch(0.3 0 0); }
+.chooser h1 { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.chooser .opts { display: flex; gap: 6px; flex: 1; }
+.chooser .opt { height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid oklch(0.34 0 0); color: oklch(0.8 0 0); white-space: nowrap; }
+.chooser .opt:hover { border-color: oklch(0.5 0 0); color: oklch(0.96 0 0); }
+.chooser .opt[aria-pressed="true"] { background: oklch(0.93 0 0); border-color: oklch(0.93 0 0); color: oklch(0.18 0 0); font-weight: 600; }
+.chooser .opt b { font-weight: 600; margin-right: 6px; }
+.chooser .hint { color: oklch(0.68 0 0); font-size: 12px; white-space: nowrap; }
+.chooser kbd { font: 11px "Cascadia Code", Consolas, monospace; border: 1px solid oklch(0.38 0 0); border-radius: 4px; padding: 1px 5px; }
+
+.stage { position: relative; overflow: hidden; }
+.frame { position: absolute; left: 50%; top: 50%; width: 1360px; height: 820px; transform-origin: center; border-radius: 10px; overflow: hidden; box-shadow: 0 18px 60px oklch(0 0 0 / .5), 0 0 0 1px oklch(0.34 0 0); }
+.mock { position: absolute; inset: 0; display: none; }
+.mock.on { display: grid; }
+
+.caption { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; align-items: start; padding: 12px 18px 14px; border-top: 1px solid oklch(0.3 0 0); min-height: 92px; }
+.caption h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.caption p { color: oklch(0.8 0 0); margin-top: 3px; max-width: 62ch; }
+.caption dl { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 3px 14px; font-size: 13px; }
+.caption dt { color: oklch(0.66 0 0); }
+.caption dd { color: oklch(0.9 0 0); }
+
+/* ============ 1 · GRAFITE ============ */
+.m1 {
+  --bg: oklch(0.145 0 0); --panel: oklch(0.172 0.004 240); --surface: oklch(0.198 0.005 240); --raised: oklch(0.238 0.006 240);
+  --line: oklch(0.272 0.006 240); --line2: oklch(0.35 0.008 240); --ink: oklch(0.95 0 0); --ink2: oklch(0.78 0.008 240); --ink3: oklch(0.64 0.01 240);
+  --accent: oklch(0.72 0.12 222); --ok: oklch(0.77 0.16 152); --warn: oklch(0.85 0.14 92); --lim: oklch(0.76 0.15 58); --bad: oklch(0.69 0.19 25);
+  grid-template-columns: 204px minmax(0, 1fr); background: var(--bg); color: var(--ink); font-size: 13px;
+
+  .side { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; font-weight: 600; font-size: 14px; }
+  .cmd { margin: 0 12px 10px; height: 30px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); display: flex; align-items: center; gap: 8px; padding: 0 9px; color: var(--ink3); font-size: 12px; }
+  .cmd span { flex: 1; } .cmd kbd { font: 10.5px "Cascadia Code", Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; background: var(--raised); color: var(--ink2); }
+  .nav { padding: 0 8px; flex: 1; }
+  .nav li { display: flex; align-items: center; gap: 10px; height: 31px; padding: 0 10px; border-radius: 6px; color: var(--ink2); }
+  .nav li svg { color: var(--ink3); }
+  .nav li.on { background: var(--raised); color: var(--ink); font-weight: 500; } .nav li.on svg { color: var(--accent); }
+  .nav li.gap { margin-top: 12px; position: relative; } .nav li.gap::before { content: ""; position: absolute; left: 0; right: 0; top: -7px; border-top: 1px solid var(--line); }
+  .stat { border-top: 1px solid var(--line); padding: 12px 16px; display: grid; gap: 9px; font-size: 12px; color: var(--ink3); }
+  .stat .r { display: flex; justify-content: space-between; } .stat .v { color: var(--ink2); }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); margin-right: 7px; }
+  .mini { height: 4px; border-radius: 4px; background: var(--raised); overflow: hidden; } .mini i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+
+  main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding: 20px 28px 14px; border-bottom: 1px solid var(--line); }
+  h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; } header p { color: var(--ink2); margin-top: 3px; }
+  .btn { height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); font-size: 13px; }
+  .btn.pri { background: var(--accent); border-color: transparent; color: oklch(0.17 0.03 222); font-weight: 600; }
+  .body { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); grid-template-rows: auto minmax(0, 1fr); gap: 22px 40px; padding: 20px 28px 22px; }
+  h4 { font-size: 13px; font-weight: 600; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; } h4 span { font-weight: 400; color: var(--ink3); font-size: 12px; }
+  .gpu { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; } .gpu + p { color: var(--ink2); margin: 1px 0 14px; }
+  .lbl { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--ink2); } .lbl b { color: var(--ink); font-weight: 500; }
+  .map { display: flex; height: 34px; border-radius: 6px; overflow: hidden; background: var(--raised); font-size: 11.5px; }
+  .map > div { display: flex; align-items: center; padding: 0 9px; white-space: nowrap; overflow: hidden; }
+  .map .use { background: var(--accent); color: oklch(0.17 0.03 222); font-weight: 600; }
+  .map .free { box-shadow: inset 0 0 0 1.5px var(--ok); color: var(--ok); justify-content: center; padding: 0; }
+  .map .safe { background: repeating-linear-gradient(135deg, var(--line2) 0 4px, var(--raised) 4px 8px); }
+  .map .os { background: var(--line2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 7px; font-size: 11.5px; color: var(--ink3); }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .bar { height: 8px; border-radius: 8px; background: var(--raised); overflow: hidden; } .bar i { display: block; height: 100%; border-radius: 8px; background: var(--ok); }
+  .disk { display: grid; grid-template-columns: 26px 1fr 190px; gap: 12px; align-items: center; margin-top: 9px; } .disk b { font: 600 13px "Cascadia Code", Consolas, monospace; } .disk span { color: var(--ink3); font-size: 12px; text-align: right; }
+  .ready-word { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; color: var(--ok); margin: 1px 0 12px; }
+  .rows li { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .rows li:first-child { border-top: 1px solid var(--line); } .rows small { display: block; color: var(--ink3); font-size: 11.5px; }
+  .v-ok { color: var(--ok); font-weight: 500; } .v-good { color: var(--accent); font-weight: 500; } .v-lim { color: var(--lim); font-weight: 500; } .v-bad { color: var(--bad); font-weight: 500; }
+  .chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; align-items: end; height: 176px; position: relative; padding-top: 6px; border-bottom: 1px solid var(--line2); }
+  .chart .target { position: absolute; left: 0; right: 0; bottom: 18.7%; border-top: 1px dashed var(--ink3); } .chart .target span { position: absolute; right: 0; top: -17px; font-size: 11px; color: var(--ink3); }
+  .chart .col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 5px; }
+  .chart .col b { font-size: 11.5px; font-weight: 500; color: var(--ink2); } .chart .col i { display: block; width: 100%; max-width: 62px; border-radius: 4px 4px 0 0; min-height: 3px; }
+  .axis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; margin-top: 7px; text-align: center; font-size: 12px; } .axis small { display: block; font-size: 11px; }
+  .badge { display: inline-flex; height: 20px; align-items: center; padding: 0 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; }
+  .b-ok { color: var(--ok); background: color-mix(in oklch, var(--ok) 15%, transparent); } .b-good { color: var(--accent); background: color-mix(in oklch, var(--accent) 15%, transparent); }
+  .inst li { display: grid; grid-template-columns: minmax(0, 1fr) 96px 78px; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .inst li:first-child { border-top: 1px solid var(--line); } .inst small { display: block; color: var(--ink3); font-size: 11.5px; } .inst .sp { text-align: right; color: var(--ink2); } .inst .fit { text-align: right; }
+}
+
+/* ============ 2 · TELEMETRIA ============ */
+.m2 {
+  --bg: oklch(0.185 0.006 70); --panel: oklch(0.225 0.007 70); --line: oklch(0.31 0.008 70); --ink: oklch(0.94 0.01 80); --ink2: oklch(0.77 0.012 80); --ink3: oklch(0.62 0.012 80);
+  --amber: oklch(0.82 0.15 78); --ok: oklch(0.8 0.16 150); --lim: oklch(0.76 0.16 50); --bad: oklch(0.68 0.2 25); --track: oklch(0.28 0.008 70);
+  grid-template-columns: 58px minmax(0, 1fr); grid-template-rows: 44px minmax(0, 1fr); background: var(--bg); color: var(--ink);
+  font-family: Bahnschrift, "Segoe UI Variable Text", "Segoe UI", sans-serif; font-size: 13.5px;
+
+  .strip { grid-column: 1 / -1; display: flex; align-items: center; gap: 22px; padding: 0 18px 0 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .strip .name { font-size: 15px; font-weight: 600; letter-spacing: .06em; display: flex; align-items: center; gap: 9px; }
+  .strip .crumb { color: var(--ink2); flex: 1; }
+  .chip { display: flex; align-items: baseline; gap: 7px; color: var(--ink3); font-size: 12.5px; } .chip b { color: var(--ink); font-weight: 500; font-size: 14px; font-stretch: 90%; }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; box-shadow: 0 0 8px var(--ok); align-self: center; }
+  .rail { border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; padding: 10px 0; gap: 4px; }
+  .rail a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 8px; color: var(--ink3); } .rail a svg { width: 19px; height: 19px; }
+  .rail a.on { background: var(--track); color: var(--amber); } .rail .sp { flex: 1; }
+  .main { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 16px; padding: 18px 22px 18px; min-height: 0; }
+  .gauges { display: grid; grid-template-columns: repeat(3, 1fr) 1.15fr; gap: 16px; }
+  .cell { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-width: 0; }
+  .cell h5 { font-size: 13px; font-weight: 500; color: var(--ink2); display: flex; justify-content: space-between; gap: 10px; white-space: nowrap; } .cell h5 span { color: var(--ink3); overflow: hidden; text-overflow: ellipsis; }
+  .g { display: grid; place-items: center; position: relative; height: 178px; margin-top: 2px; }
+  .g svg { width: 178px; height: 178px; transform: rotate(135deg); } .g circle { fill: none; stroke-width: 11; stroke-linecap: round; }
+  .g .t { stroke: var(--track); stroke-dasharray: 329.9 439.9; } .g .v { stroke: var(--amber); }
+  .g .num { position: absolute; text-align: center; top: 54px; left: 0; right: 0; } .g .num b { display: block; font-size: 42px; font-weight: 600; line-height: 1; font-stretch: 85%; letter-spacing: -0.01em; } .g .num span { color: var(--ink2); font-size: 13px; }
+  .g .foot { position: absolute; bottom: 4px; left: 0; right: 0; text-align: center; color: var(--ink3); font-size: 12px; }
+  .verdict b { display: block; font-size: 34px; font-weight: 600; color: var(--ok); line-height: 1.1; margin: 10px 0 6px; font-stretch: 90%; } .verdict p { color: var(--ink2); max-width: 30ch; }
+  .verdict .acts { display: flex; gap: 8px; margin-top: 16px; }
+  .btn { height: 34px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--line); color: var(--ink); font-family: inherit; font-size: 13.5px; } .btn.pri { background: var(--amber); color: oklch(0.2 0.04 78); border-color: transparent; font-weight: 600; }
+  .mid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 16px; min-height: 0; } .mid .cell { display: flex; flex-direction: column; } .mid .tasks { flex: 1; display: flex; flex-direction: column; justify-content: space-around; margin-top: 6px; }
+  .task { display: grid; grid-template-columns: 96px 1fr 92px 92px; gap: 14px; align-items: center; height: 36px; }
+  .task .nm { color: var(--ink); } .task .tps { text-align: right; font-size: 15px; font-stretch: 90%; } .task .tps small { color: var(--ink3); font-size: 12px; } .task .vd { text-align: right; font-weight: 500; }
+  .scale { position: relative; height: 14px; background: var(--track); border-radius: 2px; } .scale i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
+  .scale::after { content: ""; position: absolute; left: 33.33%; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+  .ticks { display: grid; grid-template-columns: 96px 1fr 92px 92px; gap: 14px; margin-top: 4px; color: var(--ink3); font-size: 11.5px; } .ticks div { display: flex; justify-content: space-between; }
+  .spark { width: 100%; flex: 1; min-height: 60px; display: block; margin-top: 8px; } .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; } .kv b { display: block; font-size: 20px; font-weight: 600; font-stretch: 88%; } .kv span { color: var(--ink3); font-size: 12px; }
+  .sizes { display: grid; grid-template-columns: 150px repeat(7, 1fr) 250px; gap: 8px; align-items: stretch; }
+  .sizes .hd { display: flex; flex-direction: column; justify-content: center; color: var(--ink2); } .sizes .hd small { color: var(--ink3); font-size: 12px; }
+  .sz { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; background: var(--panel); position: relative; } .sz::before { content: ""; position: absolute; left: 10px; right: 10px; top: 0; height: 3px; border-radius: 0 0 3px 3px; background: var(--c); }
+  .sz b { display: block; font-size: 17px; font-weight: 600; margin-top: 3px; font-stretch: 88%; } .sz span { font-size: 12px; color: var(--c); font-weight: 500; } .sz small { display: block; color: var(--ink3); font-size: 11.5px; }
+  .disks { border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: var(--panel); display: grid; gap: 6px; align-content: center; font-size: 12.5px; }
+  .disks .d { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; } .disks .scale { height: 8px; } .disks .scale::after { display: none; }
+}
+
+/* ============ 3 · CARTA ============ */
+.m3 {
+  --bg: oklch(1 0 0); --ink: oklch(0.19 0 0); --ink2: oklch(0.38 0 0); --ink3: oklch(0.52 0 0); --line: oklch(0.89 0 0); --line2: oklch(0.2 0 0); --soft: oklch(0.965 0 0);
+  --accent: oklch(0.47 0.19 262); --ok: oklch(0.5 0.15 152); --good: oklch(0.47 0.19 262); --lim: oklch(0.56 0.16 50); --bad: oklch(0.52 0.2 25);
+  grid-template-rows: 56px minmax(0, 1fr); background: var(--bg); color: var(--ink); font-size: 13.5px; color-scheme: light;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+
+  .top { display: flex; align-items: center; gap: 34px; padding: 0 40px; border-bottom: 1px solid var(--line2); }
+  .top .name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; }
+  .top nav { display: flex; gap: 24px; flex: 1; } .top nav a { color: var(--ink2); padding: 18px 0 16px; border-bottom: 2px solid transparent; } .top nav a.on { color: var(--ink); font-weight: 600; border-color: var(--ink); }
+  .top .st { display: flex; align-items: center; gap: 8px; color: var(--ink2); } .top .st i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .page { padding: 30px 40px 26px; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 26px; min-height: 0; }
+  .lead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end; }
+  .lead h3 { font: 600 42px/1.08 "Segoe UI Variable Display", "Segoe UI", sans-serif; letter-spacing: -0.03em; max-width: 21ch; text-wrap: balance; } .lead h3 em { font-style: normal; color: var(--accent); }
+  .lead p { color: var(--ink2); margin-top: 10px; font-size: 14.5px; }
+  .acts { display: flex; gap: 10px; } .btn { height: 38px; padding: 0 18px; border: 1px solid var(--ink); color: var(--ink); font-size: 14px; font-weight: 500; } .btn.pri { background: var(--ink); color: var(--bg); }
+  .cols { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 48px; min-height: 0; }
+  h4 { font-size: 12.5px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--line2); display: flex; justify-content: space-between; } h4 span { font-weight: 400; color: var(--ink3); }
+  .spec { display: grid; grid-template-columns: 124px 1fr; } .spec dt, .spec dd { padding: 11.5px 0; border-bottom: 1px solid var(--line); } .spec dt { color: var(--ink3); } .spec dd b { font-weight: 600; } .spec dd small { display: block; color: var(--ink3); font-size: 12px; }
+  .warn { color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; } th { text-align: left; font-weight: 500; color: var(--ink3); font-size: 12px; padding: 8px 12px 7px 0; border-bottom: 1px solid var(--line); }
+  td { padding: 12.5px 12px 12.5px 0; border-bottom: 1px solid var(--line); vertical-align: middle; } td.sz { font: 600 19px/1 "Segoe UI Variable Display", "Segoe UI", sans-serif; letter-spacing: -0.02em; width: 72px; } td.q { font: 12.5px "Cascadia Code", Consolas, monospace; color: var(--ink2); }
+  td .mem { display: grid; grid-template-columns: 62px 1fr; gap: 10px; align-items: center; } td .mem i { display: block; height: 6px; background: var(--soft); position: relative; } td .mem i b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); } td .mem i u { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--accent); left: 88.75%; }
+  td.v { font-weight: 600; white-space: nowrap; } td.v::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor; margin-right: 8px; }
+  .c-ok { color: var(--ok); } .c-good { color: var(--good); } .c-lim { color: var(--lim); } .c-bad { color: var(--bad); }
+  .note { color: var(--ink3); font-size: 12px; margin-top: 9px; }
+  .rec { margin-top: 24px; } .rec ul { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); } .rec li { padding: 13px 14px 14px 0; } .rec li + li { padding-left: 14px; border-left: 1px solid var(--line); }
+  .rec li span { color: var(--ink3); font-size: 12px; } .rec li b { display: block; font-weight: 600; margin: 1px 0; } .rec li small { color: var(--ink2); font-size: 12px; }
+}
+
+/* ============ 4 · MORBIDO ============ */
+.m4 {
+  --bg: oklch(0.21 0.055 285); --tile: oklch(0.275 0.065 285); --tile2: oklch(0.34 0.1 285); --line: oklch(0.37 0.07 285); --ink: oklch(0.97 0.008 285); --ink2: oklch(0.84 0.03 285); --ink3: oklch(0.72 0.045 285);
+  --coral: oklch(0.82 0.13 45); --mint: oklch(0.85 0.13 165); --sun: oklch(0.87 0.13 92); --peach: oklch(0.8 0.14 60); --track: oklch(0.4 0.07 285);
+  grid-template-rows: 68px minmax(0, 1fr); background: var(--bg); color: var(--ink); font-size: 14px;
+
+  .top { display: flex; align-items: center; gap: 20px; padding: 0 24px; }
+  .top .name { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; width: 190px; }
+  .pills { display: flex; gap: 2px; background: var(--tile); border-radius: 999px; padding: 4px; margin: 0 auto; }
+  .pills a { display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 999px; color: var(--ink2); font-size: 13.5px; } .pills a.on { background: var(--ink); color: oklch(0.22 0.06 285); font-weight: 600; }
+  .top .st { display: flex; align-items: center; gap: 8px; background: var(--tile); border-radius: 999px; height: 38px; padding: 0 15px; color: var(--ink2); font-size: 13px; width: 190px; justify-content: center; } .top .st i { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+  .bento { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: minmax(0, .88fr) minmax(0, .88fr) minmax(0, 1.24fr); gap: 14px; padding: 4px 24px 22px; min-height: 0; }
+  .t { background: var(--tile); border-radius: 22px; padding: 20px 22px; min-width: 0; min-height: 0; }
+  h5 { font-size: 14px; font-weight: 600; color: var(--ink2); margin-bottom: 10px; }
+  .hero { grid-column: 1 / 8; grid-row: 1 / 3; background: var(--tile2); padding: 30px 32px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .hero h3 { font: 600 34px/1.12 "Segoe UI Variable Display", "Segoe UI", sans-serif; letter-spacing: -0.025em; max-width: 15ch; text-wrap: balance; }
+  .hero p { color: var(--ink2); font-size: 16px; line-height: 1.5; max-width: 34ch; margin-top: 14px; } .hero p b { color: var(--ink); font-weight: 600; }
+  .hero .acts { display: flex; gap: 10px; margin-top: auto; }
+  .btn { height: 46px; padding: 0 22px; border-radius: 999px; font-size: 15px; font-weight: 600; background: oklch(0.42 0.1 285); color: var(--ink); } .btn.pri { background: var(--coral); color: oklch(0.25 0.06 45); }
+  .hero .pc { position: absolute; right: 26px; top: 34px; width: 270px; height: 270px; }
+  .mem { grid-column: 8 / 13; grid-row: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: center; }
+  .donut { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; } .donut svg { width: 96px; height: 96px; transform: rotate(-90deg); } .donut circle { fill: none; stroke-width: 12; stroke-linecap: round; }
+  .donut b { display: block; font-size: 25px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; } .donut span { color: var(--ink2); font-size: 13px; } .donut small { display: block; color: var(--ink3); font-size: 12.5px; margin-top: 2px; }
+  .disk { grid-column: 8 / 13; grid-row: 2; } .disk .d { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: center; margin-top: 12px; font-size: 13.5px; } .disk .d b { font-weight: 600; }
+  .pbar { height: 12px; border-radius: 12px; background: var(--track); overflow: hidden; } .pbar i { display: block; height: 100%; border-radius: 12px; }
+  .disk p { color: var(--ink3); font-size: 12.5px; margin-top: 12px; }
+  .how { grid-column: 1 / 6; grid-row: 3; } .how ol { display: grid; gap: 10px; counter-reset: s; } .how li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; }
+  .how li::before { counter-increment: s; content: counter(s); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--track); font-weight: 600; } .how li.done::before { content: "✓"; background: var(--mint); color: oklch(0.25 0.06 165); }
+  .how li b { display: block; font-weight: 600; } .how li span { color: var(--ink3); font-size: 13px; }
+  .can { grid-column: 6 / 13; grid-row: 3; } .can ul { display: grid; gap: 0; } .can li { display: grid; grid-template-columns: 138px 1fr auto; gap: 14px; align-items: center; padding: 5px 0; } .can li + li { border-top: 1px solid var(--line); }
+  .can li b { font-weight: 600; } .can li span { color: var(--ink3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tag { height: 26px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12.5px; font-weight: 600; } .tag.ok { background: var(--mint); color: oklch(0.25 0.06 165); } .tag.lim { background: var(--peach); color: oklch(0.26 0.06 60); }
+}
+
+/* ============ 5 · TERMINALE ============ */
+.m5 {
+  --bg: oklch(0.1 0.004 148); --g: oklch(0.87 0.19 148); --g2: oklch(0.68 0.12 148); --g3: oklch(0.42 0.07 148); --ink: oklch(0.94 0.02 148); --amber: oklch(0.84 0.16 80); --red: oklch(0.71 0.2 27); --cy: oklch(0.82 0.11 215);
+  grid-template-rows: 30px minmax(0, 1fr) 28px; background: var(--bg); color: var(--g2);
+  font: 13.5px/1.5 "Cascadia Mono", "Cascadia Code", Consolas, monospace; white-space: pre;
+
+  .hd, .ft { display: flex; align-items: center; gap: 0; padding: 0 14px; background: var(--g); color: oklch(0.14 0.03 148); font-weight: 600; } .hd span, .ft span { margin-right: 26px; } .hd .right { margin-left: auto; margin-right: 0; }
+  .ft { background: none; color: var(--g2); border-top: 1px solid var(--g3); font-weight: 400; } .ft b { color: oklch(0.14 0.03 148); background: var(--g2); padding: 0 6px; margin-right: 7px; font-weight: 600; }
+  .scr { display: grid; grid-template-columns: 184px minmax(0, 1fr) 432px; grid-template-rows: auto auto minmax(0, 1fr); gap: 10px 12px; padding: 12px 14px 10px; min-height: 0; }
+  fieldset { border: 1px solid var(--g3); padding: 6px 14px 10px; min-width: 0; margin: 0; } legend { padding: 0 8px; color: var(--g); font-weight: 600; }
+  .menu { grid-row: 1 / 4; } .menu div { padding: 1px 0; } .menu .on { color: oklch(0.14 0.03 148); background: var(--g); margin: 0 -6px; padding: 1px 6px; font-weight: 600; } .menu .k { color: var(--g3); } .menu .on .k { color: inherit; } .menu hr { border: 0; border-top: 1px dashed var(--g3); margin: 7px 0; }
+  .w { color: var(--ink); } .g { color: var(--g); } .d { color: var(--g3); } .a { color: var(--amber); } .r { color: var(--red); } .c { color: var(--cy); }
+  .big { color: var(--g); font-weight: 600; font-size: 21px; line-height: 1.2; }
+  .sizes, .inst { grid-column: 2 / 4; } .inst { overflow: hidden; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="m4 7 8 4 8-4M12 11v10"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.3 5 2.7 5 5.8"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="5" rx="1"/><rect x="15" y="4" width="6" height="5" rx="1"/><rect x="9" y="15" width="6" height="5" rx="1"/><path d="M6 9v3h12V9M12 12v3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"/><path d="m12 17 4-6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h6"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+  <symbol id="i-mark" viewBox="0 0 18 18"><rect x="1" y="1" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-opacity=".45"/><circle cx="9" cy="11.5" r="2.4" fill="var(--mk, currentColor)" stroke="none"/><circle cx="4.6" cy="5" r="1.4" fill="currentColor" stroke="none" fill-opacity=".8"/><circle cx="9" cy="4.2" r="1.4" fill="currentColor" stroke="none" fill-opacity=".8"/><circle cx="13.4" cy="5" r="1.4" fill="currentColor" stroke="none" fill-opacity=".8"/></symbol>
+</svg>
+
+<div class="chooser">
+  <h1>AgentFit · 5 direzioni grafiche</h1>
+  <div class="opts" role="group" aria-label="Scegli una direzione">
+    <button class="opt" data-i="0"><b>1</b>Grafite</button>
+    <button class="opt" data-i="1"><b>2</b>Telemetria</button>
+    <button class="opt" data-i="2"><b>3</b>Carta</button>
+    <button class="opt" data-i="3"><b>4</b>Morbido</button>
+    <button class="opt" data-i="4"><b>5</b>Terminale</button>
+  </div>
+  <span class="hint">Tasti <kbd>1</kbd>–<kbd>5</kbd> o <kbd>←</kbd> <kbd>→</kbd> · bozze con i dati reali del tuo PC, non ancora nell'app</span>
+</div>
+
+<div class="stage"><div class="frame" id="frame">
+
+<!-- ================= 1 · GRAFITE ================= -->
+<section class="mock m1">
+  <nav class="side">
+    <div class="brand"><svg class="i" style="width:18px;height:18px;--mk:var(--accent)"><use href="#i-mark"/></svg>AgentFit</div>
+    <div class="cmd"><span>Comandi</span><kbd>Ctrl K</kbd></div>
+    <ul class="nav">
+      <li class="on"><svg class="i"><use href="#i-home"/></svg>Home</li>
+      <li class="gap"><svg class="i"><use href="#i-cpu"/></svg>Hardware</li>
+      <li><svg class="i"><use href="#i-box"/></svg>Modelli</li>
+      <li><svg class="i"><use href="#i-users"/></svg>Team AI</li>
+      <li><svg class="i"><use href="#i-flow"/></svg>Workflow</li>
+      <li><svg class="i"><use href="#i-gauge"/></svg>Benchmark</li>
+      <li><svg class="i"><use href="#i-down"/></svg>Download</li>
+      <li class="gap"><svg class="i"><use href="#i-pulse"/></svg>Sessioni</li>
+      <li><svg class="i"><use href="#i-log"/></svg>Log</li>
+      <li class="gap"><svg class="i"><use href="#i-gear"/></svg>Impostazioni</li>
+    </ul>
+    <div class="stat">
+      <div class="r"><span><i class="dot"></i>LM Studio</span><span style="color:var(--ok)">Connesso</span></div>
+      <div><div class="r"><span>GPU</span><span class="v tab">0.9 / 16 GB</span></div><div class="mini" style="margin-top:4px"><i style="width:6%"></i></div></div>
+      <div><div class="r"><span>RAM</span><span class="v tab">13 / 32 GB</span></div><div class="mini" style="margin-top:4px"><i style="width:41%;background:var(--ink3)"></i></div></div>
+    </div>
+  </nav>
+  <main>
+    <header>
+      <div><h3>Il tuo computer AI locale</h3><p>Cosa può eseguire bene questo PC, in base all'hardware reale e a ciò che è sicuro usare.</p></div>
+      <div style="display:flex;gap:8px"><button class="btn">Esplora modelli</button><button class="btn pri">Crea team AI</button></div>
+    </header>
+    <div class="body">
+      <section>
+        <div class="gpu">RTX 4080 SUPER</div><p>16 GB VRAM · Core i7-14700K · 32 GB DDR5</p>
+        <div class="lbl"><span>Mappa della memoria grafica</span><b class="tab">14.2 GB utilizzabili di 16</b></div>
+        <div class="map tab">
+          <div class="use" style="width:78.75%">Qwen3-14B Q5_K_S · 12.6 GB</div>
+          <div class="free" style="width:10%">1.6</div>
+          <div class="safe" style="width:5%"></div>
+          <div class="os" style="width:6.25%"></div>
+        </div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>modello consigliato</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--ok)"></i>libero</span><span><i style="background:repeating-linear-gradient(135deg,var(--line2) 0 3px,var(--raised) 3px 6px)"></i>margine di sicurezza 0.8 GB</span><span><i style="background:var(--line2)"></i>Windows 1.0 GB</span></div>
+        <div class="lbl" style="margin-top:16px"><span>Memoria di sistema</span><b class="tab">27 GB utilizzabili di 32</b></div>
+        <div class="bar"><i style="width:85%"></i></div>
+        <div class="disk"><b>D:</b><div class="bar"><i style="width:82%;background:var(--ink3)"></i></div><span class="tab">116 GB liberi · 86 sicuri</span></div>
+        <div class="disk"><b>C:</b><div class="bar"><i style="width:96%;background:var(--bad)"></i></div><span class="tab" style="color:var(--bad)">11 GB liberi · sotto la riserva</span></div>
+      </section>
+      <section>
+        <div style="color:var(--ink2)">Prontezza AI</div><div class="ready-word">Eccellente</div>
+        <ul class="rows">
+          <li><div>Coding<small>Qwen3-14B Q5_K_S · ~44 tok/s</small></div><span class="v-ok">Eccellente</span></li>
+          <li><div>Ragionamento<small>Qwen3-14B Q5_K_S · ~44 tok/s</small></div><span class="v-ok">Eccellente</span></li>
+          <li><div>Visione<small>gemma-4-12B-it Q5_K_M · ~54 tok/s</small></div><span class="v-ok">Eccellente</span></li>
+          <li><div>Scrittura<small>Qwen3-14B Q5_K_S · ~44 tok/s</small></div><span class="v-ok">Eccellente</span></li>
+          <li><div>Modelli grandi 70B<small>caso migliore Q3_K_M · ~2.3 tok/s</small></div><span class="v-lim">Limitato</span></li>
+        </ul>
+      </section>
+      <section>
+        <h4>Cosa gira su questo PC <span>velocità stimata per taglia di modello</span></h4>
+        <div class="chart">
+          <div class="target"><span>obiettivo 20 tok/s</span></div>
+          <div class="col"><b class="tab">107</b><i style="height:100%;background:var(--ok)"></i></div>
+          <div class="col"><b class="tab">49</b><i style="height:46%;background:var(--ok)"></i></div>
+          <div class="col"><b class="tab">44</b><i style="height:41%;background:var(--ok)"></i></div>
+          <div class="col"><b class="tab">25</b><i style="height:23%;background:var(--accent)"></i></div>
+          <div class="col"><b class="tab">63</b><i style="height:59%;background:var(--accent)"></i></div>
+          <div class="col"><b class="tab">2.3</b><i style="height:2%;background:var(--lim)"></i></div>
+          <div class="col"><b style="color:var(--bad)">×</b><i style="height:0;min-height:0"></i></div>
+        </div>
+        <div class="axis tab">
+          <div>4B<small class="v-ok">Perfetto</small></div><div>8B<small class="v-ok">Perfetto</small></div><div>14B<small class="v-ok">Perfetto</small></div><div>27B<small class="v-good">Buono</small></div><div>35B MoE<small class="v-good">Buono</small></div><div>70B<small class="v-lim">Lento</small></div><div>200B<small class="v-bad">Impossibile</small></div>
+        </div>
+      </section>
+      <section>
+        <h4>Modelli installati <span>11 · 135 GB</span></h4>
+        <ul class="inst">
+          <li><div>Spark X2.5 4B<small>Q8_0 · 4.1 GB</small></div><span class="sp tab">108.7 tok/s<small>misurato</small></span><span class="fit"><span class="badge b-ok">PERFETTO</span></span></li>
+          <li><div>Gemma 4 12B QAT<small>Q4_0 · 6.7 GB</small></div><span class="sp tab">~68 tok/s<small>stimato</small></span><span class="fit"><span class="badge b-ok">PERFETTO</span></span></li>
+          <li><div>Qwen3.6 35B A3B<small>Q4_K_S · 21.1 GB</small></div><span class="sp tab">~63 tok/s<small>stimato</small></span><span class="fit"><span class="badge b-good">BUONO</span></span></li>
+          <li><div>Qwen3.8 27B<small>Q3_K_XL · 13.1 GB</small></div><span class="sp tab">~16 tok/s<small>stimato</small></span><span class="fit"><span class="badge b-good">BUONO</span></span></li>
+        </ul>
+        <div style="color:var(--accent);margin-top:9px">Vedi tutti gli 11 modelli</div>
+      </section>
+    </div>
+  </main>
+</section>
+
+<!-- ================= 2 · TELEMETRIA ================= -->
+<section class="mock m2">
+  <div class="strip">
+    <div class="name"><svg class="i" style="width:18px;height:18px;--mk:var(--amber)"><use href="#i-mark"/></svg>AGENTFIT</div>
+    <div class="crumb">Home · il tuo computer AI locale</div>
+    <div class="chip"><i class="led"></i>LM Studio <b>online</b></div>
+    <div class="chip">GPU <b class="tab">0.9 / 16 GB</b></div>
+    <div class="chip">RAM <b class="tab">13 / 32 GB</b></div>
+    <div class="chip">Temp <b class="tab">41 °C</b></div>
+  </div>
+  <div class="rail">
+    <a class="on"><svg class="i"><use href="#i-home"/></svg></a><a><svg class="i"><use href="#i-cpu"/></svg></a><a><svg class="i"><use href="#i-box"/></svg></a><a><svg class="i"><use href="#i-users"/></svg></a><a><svg class="i"><use href="#i-flow"/></svg></a><a><svg class="i"><use href="#i-gauge"/></svg></a><a><svg class="i"><use href="#i-down"/></svg></a><a><svg class="i"><use href="#i-pulse"/></svg></a>
+    <span class="sp"></span><a><svg class="i"><use href="#i-gear"/></svg></a>
+  </div>
+  <div class="main">
+    <div class="gauges">
+      <div class="cell"><h5>VRAM utilizzabile <span>RTX 4080 SUPER</span></h5>
+        <div class="g"><svg viewBox="0 0 160 160"><circle class="t" cx="80" cy="80" r="70"/><circle class="v" cx="80" cy="80" r="70" stroke-dasharray="292.8 439.9"/></svg><div class="num"><b class="tab">14.2</b><span>GB di 16</span></div><div class="foot">riserva Windows 1.0 · sicurezza 0.8</div></div></div>
+      <div class="cell"><h5>RAM utilizzabile <span>DDR5-4800</span></h5>
+        <div class="g"><svg viewBox="0 0 160 160"><circle class="t" cx="80" cy="80" r="70"/><circle class="v" cx="80" cy="80" r="70" stroke-dasharray="280.1 439.9"/></svg><div class="num"><b class="tab">27</b><span>GB di 32</span></div><div class="foot">riserva per Windows e app 4.8</div></div></div>
+      <div class="cell"><h5>Velocità tipica <span>Qwen3-14B Q5_K_S</span></h5>
+        <div class="g"><svg viewBox="0 0 160 160"><circle class="t" cx="80" cy="80" r="70"/><circle class="v" cx="80" cy="80" r="70" stroke-dasharray="241.9 439.9" style="stroke:var(--ok)"/></svg><div class="num"><b class="tab">44</b><span>tok/s stimati</span></div><div class="foot">obiettivo 20 · confidenza media</div></div></div>
+      <div class="cell verdict"><h5>Prontezza AI</h5><b>Eccellente</b><p>Esegue al massimo modelli fino a 14B. I 27B girano con parte del carico sulla CPU.</p>
+        <div class="acts"><button class="btn pri">Crea team AI</button><button class="btn">Esplora modelli</button></div></div>
+    </div>
+    <div class="mid">
+      <div class="cell"><h5>Prestazioni stimate per compito <span>la tacca indica l'obiettivo di 20 tok/s</span></h5>
+        <div class="tasks">
+          <div class="task"><span class="nm">Coding</span><div class="scale"><i style="width:73.3%;background:var(--ok)"></i></div><span class="tps tab">44 <small>tok/s</small></span><span class="vd" style="color:var(--ok)">Eccellente</span></div>
+          <div class="task"><span class="nm">Ragionamento</span><div class="scale"><i style="width:73.3%;background:var(--ok)"></i></div><span class="tps tab">44 <small>tok/s</small></span><span class="vd" style="color:var(--ok)">Eccellente</span></div>
+          <div class="task"><span class="nm">Visione</span><div class="scale"><i style="width:90%;background:var(--ok)"></i></div><span class="tps tab">54 <small>tok/s</small></span><span class="vd" style="color:var(--ok)">Eccellente</span></div>
+          <div class="task"><span class="nm">Scrittura</span><div class="scale"><i style="width:73.3%;background:var(--ok)"></i></div><span class="tps tab">44 <small>tok/s</small></span><span class="vd" style="color:var(--ok)">Eccellente</span></div>
+          <div class="task"><span class="nm">Grandi 70B</span><div class="scale"><i style="width:3.8%;background:var(--lim)"></i></div><span class="tps tab">2.3 <small>tok/s</small></span><span class="vd" style="color:var(--lim)">Limitato</span></div>
+          <div class="ticks tab"><span></span><div><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span></div><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="cell"><h5>Tempo reale <span>ultimi 60 secondi</span></h5>
+        <svg class="spark" viewBox="0 0 400 96" preserveAspectRatio="none"><path d="M0 80h400M0 48h400M0 16h400" stroke="var(--line)" stroke-width="1"/><path d="M0 84 30 83 60 85 90 82 120 60 150 30 180 22 210 26 240 24 270 58 300 80 330 83 360 82 400 84V96H0Z" fill="color-mix(in oklch, var(--amber) 16%, transparent)"/><path d="M0 84 30 83 60 85 90 82 120 60 150 30 180 22 210 26 240 24 270 58 300 80 330 83 360 82 400 84" fill="none" stroke="var(--amber)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+        <div class="kv"><div><b class="tab">8%</b><span>uso GPU</span></div><div><b class="tab">0.9 GB</b><span>VRAM in uso</span></div><div><b>Nessuno</b><span>modello caricato</span></div></div>
+      </div>
+    </div>
+    <div class="sizes">
+      <div class="hd">Taglie di modello<small>miglior caso su questo PC</small></div>
+      <div class="sz" style="--c:var(--ok)"><small>4B · Q8</small><b class="tab">107</b><span>Perfetto</span></div>
+      <div class="sz" style="--c:var(--ok)"><small>8B · Q8</small><b class="tab">49</b><span>Perfetto</span></div>
+      <div class="sz" style="--c:var(--ok)"><small>14B · Q5</small><b class="tab">44</b><span>Perfetto</span></div>
+      <div class="sz" style="--c:var(--amber)"><small>27B · Q3</small><b class="tab">25</b><span>Buono</span></div>
+      <div class="sz" style="--c:var(--amber)"><small>35B MoE · Q4</small><b class="tab">63</b><span>Buono</span></div>
+      <div class="sz" style="--c:var(--lim)"><small>70B · Q3</small><b class="tab">2.3</b><span>Lento</span></div>
+      <div class="sz" style="--c:var(--bad)"><small>200B</small><b>—</b><span>Impossibile</span></div>
+      <div class="disks tab">
+        <div class="d"><b>D:</b><div class="scale"><i style="width:82%;background:var(--ink3)"></i></div><span>116 GB liberi</span></div>
+        <div class="d"><b>C:</b><div class="scale"><i style="width:96%;background:var(--bad)"></i></div><span style="color:var(--bad)">11 GB liberi</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 · CARTA ================= -->
+<section class="mock m3">
+  <div class="top">
+    <div class="name"><svg class="i" style="width:18px;height:18px;--mk:var(--accent)"><use href="#i-mark"/></svg>AgentFit</div>
+    <nav><a class="on">Home</a><a>Hardware</a><a>Modelli</a><a>Team AI</a><a>Workflow</a><a>Benchmark</a><a>Download</a><a>Sessioni</a></nav>
+    <div class="st"><i></i>LM Studio connesso · 11 modelli</div>
+  </div>
+  <div class="page">
+    <div class="lead">
+      <div><h3>Questo PC esegue al meglio modelli <em>fino a 14B</em>.</h3><p>RTX 4080 SUPER con 16 GB di VRAM, di cui 14.2 utilizzabili in sicurezza. Quattro compiti su cinque: eccellente.</p></div>
+      <div class="acts"><button class="btn">Esplora modelli</button><button class="btn pri">Crea team AI</button></div>
+    </div>
+    <div class="cols">
+      <section>
+        <h4>Scheda tecnica <span>scansione di 16 minuti fa</span></h4>
+        <dl class="spec tab">
+          <dt>GPU</dt><dd><b>RTX 4080 SUPER</b><small>16 GB · driver 610.62 · CUDA 13.3</small></dd>
+          <dt>VRAM utilizzabile</dt><dd><b>14.2 GB</b><small>16 − 1.0 Windows − 0.8 sicurezza</small></dd>
+          <dt>CPU</dt><dd><b>Core i7-14700K</b><small>20 core · 28 thread · AVX2</small></dd>
+          <dt>RAM utilizzabile</dt><dd><b>27 GB</b><small>di 32 GB DDR5-4800</small></dd>
+          <dt>Disco D:</dt><dd><b>116 GB liberi</b><small>86 GB utilizzabili per i modelli</small></dd>
+          <dt>Disco C:</dt><dd><b class="warn">11 GB liberi</b><small class="warn">sotto la riserva: nessun download qui</small></dd>
+          <dt>Runtime</dt><dd><b>LM Studio</b><small>llama.cpp CUDA 2.53.0 · porta 1234</small></dd>
+        </dl>
+      </section>
+      <section>
+        <h4>Compatibilità per taglia di modello <span>contesto 8K · il segno blu è il limite di 14.2 GB</span></h4>
+        <table class="tab">
+          <tr><th>Taglia</th><th>Quantizzazione</th><th style="width:34%">Memoria richiesta</th><th>Dove gira</th><th>Velocità</th><th>Esito</th></tr>
+          <tr><td class="sz">4B</td><td class="q">Q8_0</td><td><div class="mem"><span>4.7 GB</span><i><b style="width:29%"></b><u></u></i></div></td><td>GPU</td><td>~107 tok/s</td><td class="v c-ok">Perfetto</td></tr>
+          <tr><td class="sz">8B</td><td class="q">Q8_0</td><td><div class="mem"><span>9.1 GB</span><i><b style="width:57%"></b><u></u></i></div></td><td>GPU</td><td>~49 tok/s</td><td class="v c-ok">Perfetto</td></tr>
+          <tr><td class="sz">14B</td><td class="q">Q5_K_S</td><td><div class="mem"><span>12.6 GB</span><i><b style="width:79%"></b><u></u></i></div></td><td>GPU</td><td>~44 tok/s</td><td class="v c-ok">Perfetto</td></tr>
+          <tr><td class="sz">27B</td><td class="q">Q3_K_M</td><td><div class="mem"><span>15.2 GB</span><i><b style="width:95%"></b><u></u></i></div></td><td>GPU + CPU</td><td>~25 tok/s</td><td class="v c-good">Buono</td></tr>
+          <tr><td class="sz">35B</td><td class="q">Q4_K_S · MoE</td><td><div class="mem"><span>22.9 GB</span><i><b style="width:100%"></b><u></u></i></div></td><td>GPU + CPU</td><td>~63 tok/s</td><td class="v c-good">Buono</td></tr>
+          <tr><td class="sz">70B</td><td class="q">Q3_K_M</td><td><div class="mem"><span>38.7 GB</span><i><b style="width:100%"></b><u></u></i></div></td><td>GPU + CPU</td><td>~2.3 tok/s</td><td class="v c-lim">Lento</td></tr>
+          <tr><td class="sz">200B</td><td class="q">—</td><td><div class="mem"><span>77.8 GB</span><i><b style="width:100%"></b><u></u></i></div></td><td>—</td><td>—</td><td class="v c-bad">Impossibile</td></tr>
+        </table>
+        <div class="rec">
+          <h4>Consigliati per questo computer</h4>
+          <ul>
+            <li><span>Coding</span><b>Qwen3-14B</b><small>Q5_K_S · ~44 tok/s</small></li>
+            <li><span>Ragionamento</span><b>Qwen3-14B</b><small>Q5_K_S · ~44 tok/s</small></li>
+            <li><span>Visione</span><b>gemma-4-12B-it</b><small>Q5_K_M · ~54 tok/s</small></li>
+            <li><span>Scrittura</span><b>Qwen3-14B</b><small>Q5_K_S · ~44 tok/s</small></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4 · MORBIDO ================= -->
+<section class="mock m4">
+  <div class="top">
+    <div class="name"><svg class="i" style="width:22px;height:22px;--mk:var(--coral)"><use href="#i-mark"/></svg>AgentFit</div>
+    <div class="pills"><a class="on"><svg class="i"><use href="#i-home"/></svg>Home</a><a><svg class="i"><use href="#i-cpu"/></svg>Hardware</a><a><svg class="i"><use href="#i-box"/></svg>Modelli</a><a><svg class="i"><use href="#i-users"/></svg>Team AI</a><a><svg class="i"><use href="#i-flow"/></svg>Workflow</a><a><svg class="i"><use href="#i-pulse"/></svg>Sessioni</a><a><svg class="i"><use href="#i-gear"/></svg></a></div>
+    <div class="st"><i></i>LM Studio connesso</div>
+  </div>
+  <div class="bento">
+    <div class="t hero">
+      <svg class="pc" viewBox="0 0 270 270" aria-hidden="true">
+        <rect x="46" y="46" width="178" height="178" rx="38" fill="oklch(0.4 0.11 285)"/>
+        <rect x="84" y="84" width="102" height="102" rx="22" fill="oklch(0.27 0.07 285)"/>
+        <circle cx="135" cy="150" r="22" fill="var(--coral)"/>
+        <circle cx="107" cy="112" r="10" fill="var(--ink)"/><circle cx="135" cy="106" r="10" fill="var(--ink)"/><circle cx="163" cy="112" r="10" fill="var(--ink)"/>
+        <g fill="oklch(0.5 0.12 285)"><rect x="92" y="18" width="14" height="24" rx="7"/><rect x="128" y="18" width="14" height="24" rx="7"/><rect x="164" y="18" width="14" height="24" rx="7"/><rect x="92" y="228" width="14" height="24" rx="7"/><rect x="128" y="228" width="14" height="24" rx="7"/><rect x="164" y="228" width="14" height="24" rx="7"/><rect x="18" y="92" width="24" height="14" rx="7"/><rect x="18" y="128" width="24" height="14" rx="7"/><rect x="18" y="164" width="24" height="14" rx="7"/><rect x="228" y="92" width="24" height="14" rx="7"/><rect x="228" y="128" width="24" height="14" rx="7"/><rect x="228" y="164" width="24" height="14" rx="7"/></g>
+      </svg>
+      <h3>Il tuo PC è pronto per l'AI locale.</h3>
+      <p>Può far girare <b>molto bene</b> assistenti per programmare, ragionare, leggere immagini e scrivere. Tutto resta sul tuo computer.</p>
+      <div class="acts"><button class="btn pri">Crea il tuo team AI</button><button class="btn">Esplora i modelli</button></div>
+    </div>
+    <div class="t mem">
+      <div class="donut"><svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" stroke="var(--track)"/><circle cx="48" cy="48" r="40" stroke="var(--mint)" stroke-dasharray="223 251.3"/></svg><div><span>Memoria grafica</span><b class="tab">14.2 GB</b><small>utilizzabili di 16</small></div></div>
+      <div class="donut"><svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" stroke="var(--track)"/><circle cx="48" cy="48" r="40" stroke="var(--mint)" stroke-dasharray="213.6 251.3"/></svg><div><span>Memoria di sistema</span><b class="tab">27 GB</b><small>utilizzabili di 32</small></div></div>
+    </div>
+    <div class="t disk">
+      <h5>Spazio per i modelli</h5>
+      <div class="d tab"><b>D:</b><div class="pbar"><i style="width:82%;background:var(--ink3)"></i></div><span>116 GB liberi</span></div>
+      <div class="d tab"><b>C:</b><div class="pbar"><i style="width:96%;background:var(--coral)"></i></div><span style="color:var(--coral)">11 GB liberi</span></div>
+      <p>I modelli vanno su D:. C: è quasi pieno, quindi AgentFit non ci scarica nulla.</p>
+    </div>
+    <div class="t how">
+      <h5>Come funziona</h5>
+      <ol>
+        <li class="done"><div><b>AgentFit ha analizzato il tuo PC</b><span>scheda video, memoria, disco, LM Studio</span></div></li>
+        <li><div><b>Dici cosa vuoi fare</b><span>per esempio «un team per programmare»</span></div></li>
+        <li><div><b>AgentFit sceglie, installa e avvia</b><span>i modelli giusti, senza riempire il disco</span></div></li>
+      </ol>
+    </div>
+    <div class="t can">
+      <h5>Cosa puoi fare con questo PC</h5>
+      <ul>
+        <li><b>Programmare</b><span>Qwen3-14B · circa 44 parole al secondo</span><span class="tag ok">Eccellente</span></li>
+        <li><b>Ragionare</b><span>Qwen3-14B · circa 44 parole al secondo</span><span class="tag ok">Eccellente</span></li>
+        <li><b>Leggere immagini</b><span>gemma-4-12B · circa 54 parole al secondo</span><span class="tag ok">Eccellente</span></li>
+        <li><b>Scrivere</b><span>Qwen3-14B · circa 44 parole al secondo</span><span class="tag ok">Eccellente</span></li>
+        <li><b>Modelli enormi</b><span>i 70B girano, ma molto lentamente</span><span class="tag lim">Limitato</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5 · TERMINALE ================= -->
+<section class="mock m5">
+<div class="hd"><span>AGENTFIT 0.1.0</span><span>RTX 4080 SUPER 16GB</span><span>i7-14700K</span><span>32GB DDR5</span><span class="right">LM STUDIO ● CONNESSO   11 MODELLI   GPU 0.9/16   RAM 13/32</span></div>
+<div class="scr">
+<fieldset class="menu"><legend>MENU</legend><div class="on"><span class="k">1</span> Home</div><hr><div><span class="k">2</span> Hardware</div><div><span class="k">3</span> Modelli</div><div><span class="k">4</span> Team AI</div><div><span class="k">5</span> Workflow</div><div><span class="k">6</span> Benchmark</div><div><span class="k">7</span> Download</div><hr><div><span class="k">8</span> Sessioni</div><div><span class="k">9</span> Log</div><hr><div><span class="k">0</span> Impostazioni</div>
+
+<span class="d">modello caricato</span>
+<span class="w">nessuno</span>
+
+<span class="d">ultima scansione</span>
+<span class="w">16 minuti fa</span></fieldset>
+<fieldset><legend>IL TUO COMPUTER AI LOCALE</legend><span class="d">GPU   </span><span class="w">NVIDIA GeForce RTX 4080 SUPER</span>   <span class="d">driver 610.62  CUDA 13.3</span>
+      <span class="g">███████████████████████████████████</span><span class="d">▒▒░░░</span>  <span class="w">14.2</span> / 16 GB utilizzabili
+      <span class="d">▒ sicurezza 0.8 GB   ░ Windows 1.0 GB</span>
+
+<span class="d">RAM   </span><span class="w">32 GB DDR5-4800</span>
+      <span class="g">██████████████████████████████████</span><span class="d">░░░░░░</span>  <span class="w">27</span> / 32 GB utilizzabili
+
+<span class="d">DISCO </span><span class="w">D:</span>  <span class="g">█████████████████████████████</span><span class="d">░░░░░░░</span>  <span class="w">116</span> GB liberi  <span class="d">86 sicuri</span>
+      <span class="w">C:</span>  <span class="r">██████████████████████████████████</span><span class="d">░░</span>  <span class="r">11 GB liberi  ! sotto riserva</span></fieldset>
+<fieldset><legend>PRONTEZZA AI</legend><span class="big">ECCELLENTE</span>
+
+<span class="w">Coding     </span><span class="g">ECCELLENTE </span>Qwen3-14B Q5    <span class="w">~44</span> tok/s
+<span class="w">Ragionam.  </span><span class="g">ECCELLENTE </span>Qwen3-14B Q5    <span class="w">~44</span> tok/s
+<span class="w">Visione    </span><span class="g">ECCELLENTE </span>gemma-4-12B Q5  <span class="w">~54</span> tok/s
+<span class="w">Scrittura  </span><span class="g">ECCELLENTE </span>Qwen3-14B Q5    <span class="w">~44</span> tok/s
+<span class="w">Grandi 70B </span><span class="a">LIMITATO   </span>caso migl. Q3   <span class="a">~2.3</span> tok/s
+
+<span class="c">[E]</span> Esplora modelli   <span class="c">[T]</span> Crea team AI</fieldset>
+<fieldset class="sizes"><legend>COSA GIRA SU QUESTO PC   velocità stimata per taglia, obiettivo 20 tok/s</legend><span class="w">4B    Q8_0    </span><span class="g">████████████████████████████████████████████████████████████</span>  <span class="w">107</span> tok/s  <span class="g">PERFETTO</span>     <span class="d">GPU        4.7 GB</span>
+<span class="w">8B    Q8_0    </span><span class="g">███████████████████████████</span>                                   <span class="w"> 49</span> tok/s  <span class="g">PERFETTO</span>     <span class="d">GPU        9.1 GB</span>
+<span class="w">14B   Q5_K_S  </span><span class="g">█████████████████████████</span>                                     <span class="w"> 44</span> tok/s  <span class="g">PERFETTO</span>     <span class="d">GPU       12.6 GB</span>
+<span class="w">27B   Q3_K_M  </span><span class="c">██████████████</span>                                                <span class="w"> 25</span> tok/s  <span class="c">BUONO</span>        <span class="d">GPU+CPU   15.2 GB</span>
+<span class="w">35B   Q4 MoE  </span><span class="c">███████████████████████████████████</span>                           <span class="w"> 63</span> tok/s  <span class="c">BUONO</span>        <span class="d">GPU+CPU   22.9 GB</span>
+<span class="w">70B   Q3_K_M  </span><span class="a">█</span>                                                             <span class="w">2.3</span> tok/s  <span class="a">LENTO</span>        <span class="d">GPU+CPU   38.7 GB</span>
+<span class="w">200B  —       </span><span class="r">×</span>                                                               <span class="d">—</span>        <span class="r">IMPOSSIBILE</span>  <span class="d">richiede  77.8 GB</span></fieldset>
+<fieldset class="inst"><legend>MODELLI INSTALLATI   11 modelli, 135 GB su D:\Models</legend><span class="d">NOME                                    QUANT      DIMENSIONE   VELOCITÀ               ESITO       TIPO</span>
+<span class="w">Spark X2.5 4B                           </span>Q8_0         4.1 GB     <span class="w">108.7</span> tok/s misurato   <span class="g">PERFETTO</span>    standard
+<span class="w">Gemma 4 12B QAT                         </span>Q4_0         6.7 GB     <span class="w"> ~68</span> tok/s stimato     <span class="g">PERFETTO</span>    standard
+<span class="w">MedGemma 1.5 4B                         </span>BF16         8.8 GB     <span class="w"> ~47</span> tok/s stimato     <span class="g">PERFETTO</span>    standard
+<span class="w">Qwen3.6 35B A3B                         </span>Q4_K_S      21.1 GB     <span class="w"> ~63</span> tok/s stimato     <span class="c">BUONO</span>       standard
+<span class="w">NVIDIA Nemotron 3.5 Lightning 30B A3B   </span>Q4_K_S      22.8 GB     <span class="w"> ~56</span> tok/s stimato     <span class="c">BUONO</span>       standard
+<span class="w">Qwen3.8 27B GSQ RCO                     </span>IQ3_S       11.8 GB     <span class="w"> ~26</span> tok/s stimato     <span class="c">BUONO</span>       standard
+<span class="w">Huihui Qwen3.8 27B Abliterated          </span>Q3_K_XL     13.3 GB     <span class="w"> ~17</span> tok/s stimato     <span class="c">BUONO</span>       <span class="a">uncensored</span>
+<span class="w">Qwen3.8 27B                             </span>Q3_K_XL     13.1 GB     <span class="w"> ~16</span> tok/s stimato     <span class="c">BUONO</span>       standard
+<span class="d">... altri 3   </span><span class="c">[3]</span> apri Modelli   <span class="c">[B]</span> misura la velocità reale</fieldset>
+</div>
+<div class="ft"><span><b>F1</b>Aiuto</span><span><b>Ctrl+K</b>Comandi</span><span><b>E</b>Esplora modelli</span><span><b>T</b>Crea team</span><span><b>B</b>Benchmark</span><span><b>R</b>Riscansiona</span></div>
+</section>
+
+</div></div>
+
+<div class="caption">
+  <div><h2 id="cap-name"></h2><p id="cap-text"></p></div>
+  <dl id="cap-facts"></dl>
+</div>
+
+<script>
+const OPTIONS = [
+  { name: "1 · Grafite", text: "L'evoluzione dell'interfaccia attuale: scura, neutra, un solo colore d'accento. La Home si riempie con la mappa della memoria (vedi quanto occupa il modello consigliato) e con il grafico «cosa gira su questo PC».",
+    facts: [["Tema", "scuro neutro"], ["Navigazione", "barra laterale"], ["Carattere", "sobrio, come ora"], ["Per chi", "uso quotidiano accanto a LM Studio"]] },
+  { name: "2 · Telemetria", text: "Un cruscotto da strumentazione: indicatori circolari, scale graduate con la tacca dell'obiettivo, numeri grandi in stile DIN, stato del sistema sempre in alto. Tutto leggibile a colpo d'occhio.",
+    facts: [["Tema", "grafite caldo + ambra"], ["Navigazione", "rail di icone + barra di stato"], ["Carattere", "tecnico, da sala controllo"], ["Per chi", "chi vuole monitorare a vista"]] },
+  { name: "3 · Carta", text: "Chiara e tipografica, come una scheda tecnica stampata. Una frase dice subito cosa può fare il PC; sotto, tabelle con filetti sottili. Nessun riquadro, nessuna decorazione.",
+    facts: [["Tema", "chiaro, bianco e nero + blu"], ["Navigazione", "menu in alto"], ["Carattere", "editoriale, preciso"], ["Per chi", "chi legge e confronta numeri"]] },
+  { name: "4 · Morbido", text: "Colorata e accogliente: riquadri arrotondati di misure diverse, parole semplici («circa 44 parole al secondo»), «Come funziona» sempre in vista. È la più adatta a chi è alle prime armi.",
+    facts: [["Tema", "indaco con accenti corallo e menta"], ["Navigazione", "pillole in alto"], ["Carattere", "amichevole, guidato"], ["Per chi", "utenti non esperti"]] },
+  { name: "5 · Terminale", text: "Monospazio, bordi sottili, barre disegnate a caratteri: lo stesso linguaggio dei bozzetti del tuo documento originale. Densissima e pensata per la tastiera.",
+    facts: [["Tema", "nero + verde fosforo"], ["Navigazione", "menu numerato, scorciatoie"], ["Carattere", "da riga di comando"], ["Per chi", "utenti esperti, amanti del terminale"]] },
+];
+const mocks = [...document.querySelectorAll(".mock")];
+const buttons = [...document.querySelectorAll(".opt")];
+const frame = document.getElementById("frame");
+let current = 0;
+
+function show(index) {
+  current = (index + OPTIONS.length) % OPTIONS.length;
+  mocks.forEach((m, i) => m.classList.toggle("on", i === current));
+  buttons.forEach((b, i) => b.setAttribute("aria-pressed", String(i === current)));
+  const option = OPTIONS[current];
+  document.getElementById("cap-name").textContent = option.name;
+  document.getElementById("cap-text").textContent = option.text;
+  document.getElementById("cap-facts").innerHTML = option.facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  history.replaceState(null, "", `#${current + 1}`);
+}
+function fit() {
+  const stage = frame.parentElement.getBoundingClientRect();
+  const scale = Math.min((stage.width - 36) / 1360, (stage.height - 28) / 820);
+  frame.style.transform = `translate(-50%, -50%) scale(${Math.max(0.2, scale)})`;
+}
+buttons.forEach((b) => b.addEventListener("click", () => show(Number(b.dataset.i))));
+window.addEventListener("keydown", (e) => {
+  if (e.key >= "1" && e.key <= "5") show(Number(e.key) - 1);
+  else if (e.key === "ArrowRight") show(current + 1);
+  else if (e.key === "ArrowLeft") show(current - 1);
+});
+window.addEventListener("resize", fit);
+const start = Number(location.hash.slice(1));
+show(start >= 1 && start <= 5 ? start - 1 : 0);
+fit();
+</script>
+</body>
+</html>

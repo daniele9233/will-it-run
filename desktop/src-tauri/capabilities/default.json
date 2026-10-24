@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the Will It Run window may ask the shell to do.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:webview:allow-set-webview-zoom",
+    "notification:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "http://127.0.0.1:*/*" }, { "url": "https://lmstudio.ai/*" }, { "url": "https://huggingface.co/*" }, { "url": "https://github.com/*" }, { "url": "https://cli.github.com/*" }, { "url": "https://nodejs.org/*" }, { "url": "https://platform.claude.com/*" }, { "url": "https://platform.openai.com/*" }, { "url": "https://platform.deepseek.com/*" }, { "url": "https://aistudio.google.com/*" }]
+    }
+  ]
+}

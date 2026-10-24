@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Will It Run · prompt</title>
+<style>
+  :root {
+    --bg: oklch(0.145 0 0); --panel: oklch(0.172 0.004 240); --surface: oklch(0.198 0.005 240); --raised: oklch(0.238 0.006 240);
+    --line: oklch(0.272 0.006 240); --line-strong: oklch(0.35 0.008 240);
+    --ink: oklch(0.95 0 0); --ink-2: oklch(0.78 0.008 240); --ink-3: oklch(0.64 0.01 240);
+    --accent: oklch(0.72 0.12 222); --accent-ink: oklch(0.17 0.03 222); --ok: oklch(0.77 0.16 152);
+    --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --mono: "Cascadia Code", "Cascadia Mono", Consolas, ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); padding: 32px 36px 72px; }
+  svg { display: block; flex: none; }
+  .page { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; letter-spacing: -0.012em; }
+  .lede { color: var(--ink-2); margin-top: 6px; max-width: 72ch; text-wrap: pretty; }
+  .lede b { color: var(--ink); font-weight: 600; }
+  .variant { margin-top: 46px; }
+  .variant h2 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: 10px; }
+  .variant h2 .n { font: 600 13px var(--mono); color: var(--accent); }
+  .variant > p { color: var(--ink-2); margin-top: 3px; max-width: 74ch; text-wrap: pretty; }
+  .state { margin-top: 16px; }
+  .state > span { display: block; font-size: 12px; color: var(--ink-3); margin-bottom: 6px; }
+  /* The bottom of the editor, where the prompt is docked. */
+  .dock { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); }
+  .canvas { height: 54px; background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 22px 22px; background-position: 11px 11px; }
+  .canvas.tall { height: 22px; }
+  .well { background: var(--panel); border-top: 1px solid var(--line); padding: 14px 18px 12px; position: relative; }
+  .ph { color: var(--ink-3); }
+  .mono { font-family: var(--mono); }
+  .muted { color: var(--ink-3); }
+  .kbd { font: 11px var(--mono); color: var(--ink-3); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; line-height: 17px; display: inline-block; }
+  .i { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .tag { font-size: 11px; color: var(--ink-3); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; line-height: 18px; white-space: nowrap; }
+
+  /* shared repository list */
+  .repos { display: grid; }
+  .repo { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 7px 10px; border-radius: 6px; font-size: 13px; }
+  .repo .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .repo .name b { font-weight: 600; }
+  .repo .when { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .repo.on { background: var(--raised); }
+  .search { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink-3); font-size: 13px; }
+  .who { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-2); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+  /* 1 · Terminale */
+  .v1 .well { padding: 12px 18px 10px; }
+  .v1 .line { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: baseline; font: 14px/1.6 var(--mono); }
+  .v1 .caret { color: var(--accent); font-weight: 600; }
+  .v1 .cursor { display: inline-block; width: 8px; height: 17px; background: var(--ink); vertical-align: -3px; margin-left: 1px; }
+  .v1 .status { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--line); font: 12px var(--mono); color: var(--ink-3); }
+  .v1 .status b { color: var(--ink-2); font-weight: 400; }
+  .v1 .status .act { color: var(--accent); }
+  .v1 .list { font: 13px/1.5 var(--mono); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--line); }
+  .v1 .row { display: grid; grid-template-columns: 16px minmax(0, 1fr) 84px 110px; gap: 8px; padding: 2px 0; color: var(--ink-2); }
+  .v1 .row.on { color: var(--ink); }
+  .v1 .row.on .mark { color: var(--accent); }
+  .v1 .row span:last-child { text-align: right; }
+  .v1 .head { color: var(--ink-3); margin-bottom: 5px; }
+
+  /* 2 · Pillola */
+  .v2 .well { padding: 18px 18px 14px; display: grid; justify-items: center; }
+  .v2 .wrap { width: min(760px, 100%); position: relative; }
+  .v2 .chips { display: flex; gap: 6px; margin: 0 0 8px 18px; }
+  .v2 .chip { display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 10px 0 9px; border-radius: 13px; background: var(--raised); font-size: 12px; color: var(--ink-2); }
+  .v2 .chip .x { color: var(--ink-3); margin-left: 2px; }
+  .v2 .pill { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; min-height: 50px; padding: 7px 8px 7px 8px; border-radius: 25px; background: var(--surface); border: 1px solid var(--line-strong); box-shadow: 0 6px 22px oklch(0 0 0 / 0.35); }
+  .v2 .round { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--ink-2); border: 1px solid var(--line); }
+  .v2 .round.on { background: var(--raised); color: var(--ink); border-color: var(--line-strong); }
+  .v2 .send { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); }
+  .v2 .send .i { stroke-width: 2.2; }
+  .v2 .hint { margin-top: 8px; font-size: 12px; color: var(--ink-3); text-align: center; }
+  .v2 .pop { position: absolute; left: 0; bottom: 60px; width: 420px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 10px 32px oklch(0 0 0 / 0.5); padding: 10px; display: grid; gap: 8px; }
+  .v2 .pop .top { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 0; }
+  .v2 .room { height: 232px; }
+
+  /* 3 · Scheda con barra */
+  .v3 .card { border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); }
+  .v3 .text { padding: 12px 14px 22px; min-height: 66px; }
+  .v3 .bar { display: flex; align-items: center; gap: 8px; padding: 8px; border-top: 1px solid var(--line); }
+  .v3 .lbl { font-size: 12px; color: var(--ink-3); padding-left: 6px; }
+  .v3 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; padding: 2px; background: var(--bg); }
+  .v3 .seg span { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 4px; font-size: 12px; color: var(--ink-3); }
+  .v3 .seg span.on { background: var(--raised); color: var(--ink); }
+  .v3 .path { flex: 1; min-width: 0; height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); font: 12px var(--mono); color: var(--ink-2); white-space: nowrap; overflow: hidden; }
+  .v3 .btn { height: 30px; padding: 0 14px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
+  .v3 .ghost { height: 30px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--line); font-size: 12px; color: var(--ink-2); display: inline-flex; align-items: center; }
+  .v3 .drop { border-top: 1px solid var(--line); padding: 10px; display: grid; gap: 8px; }
+  .v3 .drop .top { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .v3 .foot { margin-top: 7px; font-size: 12px; color: var(--ink-3); padding-left: 2px; }
+
+  /* 4 · Intestazione di progetto */
+  .v4 .card { border: 1px solid var(--line-strong); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .v4 .where { display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 8px 0 12px; background: var(--raised); font-size: 12.5px; color: var(--ink-2); }
+  .v4 .crumb { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .v4 .crumb b { color: var(--ink); font-weight: 600; }
+  .v4 .crumb .sep { color: var(--ink-3); }
+  .v4 .where .change { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 5px; color: var(--ink-2); border: 1px solid var(--line-strong); font-size: 12px; }
+  .v4 .body { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; padding: 12px 10px 10px 14px; min-height: 70px; }
+  .v4 .send { width: 32px; height: 32px; border-radius: 7px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); }
+  .v4 .send .i { stroke-width: 2.2; }
+  .v4 .tabs { display: flex; gap: 2px; padding: 8px 8px 0; background: var(--raised); }
+  .v4 .tabs > span { height: 30px; padding: 0 12px; display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-3); border-radius: 6px 6px 0 0; }
+  .v4 .tabs > span.on { background: var(--surface); color: var(--ink); }
+  .v4 .tabs > .who { margin-left: auto; padding-right: 6px; color: var(--ink-2); font-size: 12px; }
+  .v4 .sheet { padding: 10px; display: grid; gap: 8px; border-bottom: 1px solid var(--line); }
+  .v4 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+
+  /* 5 · Due colonne */
+  .v5 .well { padding: 0; }
+  .v5 .split { display: grid; grid-template-columns: 286px 1fr; min-height: 176px; }
+  .v5 .side { border-right: 1px solid var(--line); padding: 12px 10px 10px; display: grid; gap: 6px; align-content: start; }
+  .v5 .side h3 { font-size: 12px; font-weight: 600; color: var(--ink-2); padding: 0 6px 2px; display: flex; justify-content: space-between; align-items: center; }
+  .v5 .place { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 9px; align-items: center; padding: 6px 8px; border-radius: 6px; font-size: 12.5px; color: var(--ink-2); }
+  .v5 .place.on { background: var(--raised); color: var(--ink); }
+  .v5 .place small { display: block; font: 11px var(--mono); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .v5 .place div { min-width: 0; }
+  .v5 .add { display: flex; gap: 6px; padding: 4px 2px 0; }
+  .v5 .add span { flex: 1; height: 28px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px dashed var(--line-strong); border-radius: 6px; font-size: 12px; color: var(--ink-2); }
+  .v5 .main { display: grid; grid-template-rows: 1fr auto; padding: 14px 14px 12px 18px; }
+  .v5 .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .v5 .btn { height: 32px; padding: 0 16px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
+  .v5 .side .search { height: 28px; font-size: 12px; margin: 0 2px 2px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="folder" viewBox="0 0 16 16"><path d="M1.75 4.25c0-.83.67-1.5 1.5-1.5h2.6l1.5 1.6h5.4c.83 0 1.5.67 1.5 1.5v5.9c0 .83-.67 1.5-1.5 1.5H3.25c-.83 0-1.5-.67-1.5-1.5v-7.5Z"/></symbol>
+    <symbol id="git" viewBox="0 0 16 16"><circle cx="4.5" cy="3.5" r="1.75"/><circle cx="4.5" cy="12.5" r="1.75"/><circle cx="11.5" cy="5.5" r="1.75"/><path d="M4.5 5.25v5.5M11.5 7.25c0 2.3-2.2 2.9-4.6 3.4"/></symbol>
+    <symbol id="up" viewBox="0 0 16 16"><path d="M8 13V3M3.75 7.25 8 3l4.25 4.25"/></symbol>
+    <symbol id="plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
+    <symbol id="find" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.25"/><path d="m10.2 10.2 3.3 3.3"/></symbol>
+    <symbol id="lock" viewBox="0 0 16 16"><rect x="3.25" y="7" width="9.5" height="6.5" rx="1.5"/><path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7"/></symbol>
+    <symbol id="x" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+    <symbol id="down" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></symbol>
+    <symbol id="right" viewBox="0 0 16 16"><path d="m6 4 4 4-4 4"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <h1>Will It Run · cinque versioni del prompt</h1>
+  <p class="lede">Ogni versione è mostrata due volte: <b>a riposo</b>, con una cartella già scelta, e <b>mentre scegli un repository</b> dopo l'accesso a GitHub. In tutte sparisce "Cartella nuova vuota": se non scegli niente il team lavora in uno spazio suo, senza che tu debba dirlo. Dimmi il numero di quella che preferisci, anche mescolando ("la 2 ma con l'elenco della 5").</p>
+
+  <!-- 1 -->
+  <section class="variant v1">
+    <h2><span class="n">1</span> Terminale</h2>
+    <p>Una riga sola con il segno di invito, carattere a spaziatura fissa, niente riquadro. Sotto, una riga di stato dice dove lavora il team. È la più vicina a Claude Code: occupa pochissimo e si usa tutta da tastiera.</p>
+    <div class="state"><span>A riposo</span>
+      <div class="dock"><div class="canvas"></div>
+        <div class="well">
+          <div class="line"><span class="caret">›</span><span>Aggiungi i test per il modulo di login<span class="cursor"></span></span><span class="kbd">Invio</span></div>
+          <div class="status"><span><b>cartella</b> D:\Progetti\mia-app</span><span><b>team</b> Three.js Team</span><span class="act">cambia cartella</span><span class="act">github</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="state"><span>Scelta del repository GitHub</span>
+      <div class="dock"><div class="canvas tall"></div>
+        <div class="well">
+          <div class="list">
+            <div class="head">github · collegato come daniele9233 · 14 repository · ↑ ↓ per scegliere</div>
+            <div class="row on"><span class="mark">›</span><span>daniele9233/mia-app</span><span>privato</span><span>2 giorni fa</span></div>
+            <div class="row"><span></span><span>daniele9233/will-it-run</span><span>privato</span><span>oggi</span></div>
+            <div class="row"><span></span><span>daniele9233/orchestra</span><span>privato</span><span>7 giorni fa</span></div>
+            <div class="row"><span></span><span>daniele9233/appunti-threejs</span><span>pubblico</span><span>3 mesi fa</span></div>
+          </div>
+          <div class="line"><span class="caret">›</span><span>mia<span class="cursor"></span> <span class="ph">scrivi per filtrare</span></span><span class="kbd">Invio</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="variant v2">
+    <h2><span class="n">2</span> Pillola</h2>
+    <p>Un campo arrotondato al centro, staccato dal bordo, con un tasto "+" a sinistra per collegare una cartella o GitHub e il tasto di invio a destra. Ciò che hai collegato compare come etichetta sopra il campo. È la forma delle chat: la più familiare, e la più leggera alla vista.</p>
+    <div class="state"><span>A riposo</span>
+      <div class="dock"><div class="canvas"></div>
+        <div class="well">
+          <div class="wrap">
+            <div class="chips"><span class="chip"><svg class="i"><use href="#folder"/></svg><span class="mono">D:\Progetti\mia-app</span><svg class="i x"><use href="#x"/></svg></span></div>
+            <div class="pill"><span class="round"><svg class="i"><use href="#plus"/></svg></span><span class="ph">Scrivi cosa deve fare il team</span><span class="send"><svg class="i"><use href="#up"/></svg></span></div>
+            <div class="hint">Invio per avviare · Maiusc+Invio per andare a capo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="state"><span>Scelta del repository GitHub</span>
+      <div class="dock"><div class="canvas tall"></div>
+        <div class="well">
+          <div class="wrap">
+            <div class="room"></div>
+            <div class="pop">
+              <div class="top"><span class="who"><span class="dot"></span>GitHub · daniele9233</span><span class="tag">14 repository</span></div>
+              <div class="search"><svg class="i"><use href="#find"/></svg>Cerca un repository</div>
+              <div class="repos">
+                <div class="repo on"><span class="name">daniele9233/<b>mia-app</b></span><span class="tag">privato</span><span class="when">2 giorni fa</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>will-it-run</b></span><span class="tag">privato</span><span class="when">oggi</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>orchestra</b></span><span class="tag">privato</span><span class="when">7 giorni fa</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>appunti-threejs</b></span><span class="tag">pubblico</span><span class="when">3 mesi fa</span></div>
+              </div>
+            </div>
+            <div class="pill"><span class="round on"><svg class="i"><use href="#plus"/></svg></span><span class="ph">Scrivi cosa deve fare il team</span><span class="send"><svg class="i"><use href="#up"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="variant v3">
+    <h2><span class="n">3</span> Scheda con barra</h2>
+    <p>Un riquadro squadrato: sopra scrivi, sotto c'è una barra con "Lavora in", il percorso sempre visibile e modificabile, e il pulsante Avvia con la scritta. È la più esplicita: ogni cosa ha la sua etichetta, niente è nascosto dietro un'icona.</p>
+    <div class="state"><span>A riposo</span>
+      <div class="dock"><div class="canvas"></div>
+        <div class="well">
+          <div class="card">
+            <div class="text ph">Scrivi cosa deve fare il team</div>
+            <div class="bar">
+              <span class="lbl">Lavora in</span>
+              <span class="seg"><span class="on"><svg class="i"><use href="#folder"/></svg>Cartella</span><span><svg class="i"><use href="#git"/></svg>GitHub</span></span>
+              <span class="path">D:\Progetti\mia-app</span>
+              <span class="ghost">Sfoglia</span>
+              <span class="btn">Avvia <svg class="i"><use href="#up"/></svg></span>
+            </div>
+          </div>
+          <div class="foot">Invio per avviare · Maiusc+Invio per andare a capo · prima di sovrascrivere un file che c'era già chiede</div>
+        </div>
+      </div>
+    </div>
+    <div class="state"><span>Scelta del repository GitHub</span>
+      <div class="dock"><div class="canvas tall"></div>
+        <div class="well">
+          <div class="card">
+            <div class="text ph">Scrivi cosa deve fare il team</div>
+            <div class="drop">
+              <div class="top"><div class="search"><svg class="i"><use href="#find"/></svg>Cerca tra 14 repository</div><span class="who"><span class="dot"></span>daniele9233</span></div>
+              <div class="repos">
+                <div class="repo on"><span class="name">daniele9233/<b>mia-app</b></span><span class="tag">privato</span><span class="when">2 giorni fa</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>will-it-run</b></span><span class="tag">privato</span><span class="when">oggi</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>orchestra</b></span><span class="tag">privato</span><span class="when">7 giorni fa</span></div>
+              </div>
+            </div>
+            <div class="bar">
+              <span class="lbl">Lavora in</span>
+              <span class="seg"><span><svg class="i"><use href="#folder"/></svg>Cartella</span><span class="on"><svg class="i"><use href="#git"/></svg>GitHub</span></span>
+              <span class="path">daniele9233/mia-app <span class="muted">· main</span></span>
+              <span class="btn">Avvia <svg class="i"><use href="#up"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="variant v4">
+    <h2><span class="n">4</span> Intestazione di progetto</h2>
+    <p>Sopra il campo c'è una fascia che dice per prima cosa dove lavora il team, come il percorso in cima a una finestra, con "Cambia" a destra. Sotto scrivi. Mette il progetto davanti alla richiesta: non puoi avviare senza aver visto su cosa.</p>
+    <div class="state"><span>A riposo</span>
+      <div class="dock"><div class="canvas"></div>
+        <div class="well">
+          <div class="card">
+            <div class="where"><svg class="i"><use href="#folder"/></svg><span class="crumb"><span>D:</span><span class="sep">›</span><span>Progetti</span><span class="sep">›</span><b>mia-app</b></span><span class="change">Cambia <svg class="i"><use href="#down"/></svg></span></div>
+            <div class="body"><span class="ph">Scrivi cosa deve fare il team</span><span class="send"><svg class="i"><use href="#up"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="state"><span>Scelta del repository GitHub</span>
+      <div class="dock"><div class="canvas tall"></div>
+        <div class="well">
+          <div class="card">
+            <div class="tabs"><span><svg class="i"><use href="#folder"/></svg>Cartella sul PC</span><span class="on"><svg class="i"><use href="#git"/></svg>GitHub</span><span class="who"><span class="dot"></span>daniele9233</span></div>
+            <div class="sheet">
+              <div class="search"><svg class="i"><use href="#find"/></svg>Cerca tra 14 repository</div>
+              <div class="repos grid">
+                <div class="repo on"><span class="name">daniele9233/<b>mia-app</b></span><span class="tag">privato</span><span class="when">2 g</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>will-it-run</b></span><span class="tag">privato</span><span class="when">oggi</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>orchestra</b></span><span class="tag">privato</span><span class="when">7 g</span></div>
+                <div class="repo"><span class="name">daniele9233/<b>appunti-threejs</b></span><span class="tag">pubblico</span><span class="when">3 mesi</span></div>
+              </div>
+            </div>
+            <div class="where"><svg class="i"><use href="#git"/></svg><span class="crumb"><span>GitHub</span><span class="sep">›</span><span>daniele9233</span><span class="sep">›</span><b>mia-app</b><span class="sep">›</span><span>main</span></span></div>
+            <div class="body"><span class="ph">Scrivi cosa deve fare il team</span><span class="send"><svg class="i"><use href="#up"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="variant v5">
+    <h2><span class="n">5</span> Due colonne</h2>
+    <p>A sinistra l'elenco dei posti, sempre aperto: le cartelle usate di recente e i repository di GitHub; a destra un campo grande per scrivere. Cambiare progetto è un clic solo, senza menu. È la più alta e la più comoda se passi spesso da un progetto all'altro.</p>
+    <div class="state"><span>A riposo</span>
+      <div class="dock"><div class="canvas"></div>
+        <div class="well">
+          <div class="split">
+            <div class="side">
+              <h3>Dove lavora</h3>
+              <div class="place on"><svg class="i"><use href="#folder"/></svg><div>mia-app<small>D:\Progetti\mia-app</small></div></div>
+              <div class="place"><svg class="i"><use href="#folder"/></svg><div>sito-studio<small>D:\Lavoro\sito-studio</small></div></div>
+              <div class="place"><svg class="i"><use href="#git"/></svg><div>daniele9233/orchestra<small>github · main</small></div></div>
+              <div class="add"><span><svg class="i"><use href="#plus"/></svg>Cartella</span><span><svg class="i"><use href="#git"/></svg>GitHub</span></div>
+            </div>
+            <div class="main">
+              <span class="ph">Scrivi cosa deve fare il team</span>
+              <div class="foot"><span class="muted" style="font-size:12px">Invio per avviare · Maiusc+Invio per andare a capo</span><span class="btn">Avvia <svg class="i"><use href="#up"/></svg></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="state"><span>Scelta del repository GitHub</span>
+      <div class="dock"><div class="canvas tall"></div>
+        <div class="well">
+          <div class="split">
+            <div class="side">
+              <h3>GitHub <span class="who"><span class="dot"></span>daniele9233</span></h3>
+              <div class="search"><svg class="i"><use href="#find"/></svg>Cerca tra 14 repository</div>
+              <div class="place on"><svg class="i"><use href="#lock"/></svg><div>mia-app<small>privato · 2 giorni fa</small></div></div>
+              <div class="place"><svg class="i"><use href="#lock"/></svg><div>will-it-run<small>privato · oggi</small></div></div>
+              <div class="place"><svg class="i"><use href="#lock"/></svg><div>orchestra<small>privato · 7 giorni fa</small></div></div>
+              <div class="place"><svg class="i"><use href="#git"/></svg><div>appunti-threejs<small>pubblico · 3 mesi fa</small></div></div>
+            </div>
+            <div class="main">
+              <span class="ph">Scrivi cosa deve fare il team</span>
+              <div class="foot"><span class="muted mono" style="font-size:12px">daniele9233/mia-app · main</span><span class="btn">Avvia <svg class="i"><use href="#up"/></svg></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

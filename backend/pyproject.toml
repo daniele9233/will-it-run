@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentfit"
+version = "0.1.0"
+description = "Windows local AI model manager, hardware analyzer and LangGraph AI-team builder"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "httpx>=0.27",
+    "pydantic>=2.9",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+    "rich>=13.7",
+    "psutil>=6.0",
+    "langgraph>=0.2.60",
+    "langgraph-checkpoint-sqlite>=2.0",
+    # Claude through the official SDK (cloud models, see agentfit/cloud).
+    "anthropic>=1.13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "respx>=0.21",
+    "ruff>=0.7",
+    "pyinstaller>=6.11",
+]
+
+[project.scripts]
+willitrun = "agentfit.cli:app"
+# The command under the project's first name keeps working.
+agentfit = "agentfit.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentfit"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "B008", "RUF012", "SIM108", "UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+# The question bank is written for readers of Italian: × and − are what a prompt must say, not typos of x and -.
+"src/agentfit/arena/bank/*.py" = ["RUF001"]
+# The report writes dashes and check marks as a reader sees them.
+"src/agentfit/arena/export.py" = ["RUF001"]

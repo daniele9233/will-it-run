@@ -1,0 +1,79 @@
+{
+  "probe": {
+    "os": {
+      "caption": "Microsoft Windows 11 Pro",
+      "version": "10.0.26100",
+      "build": "26100",
+      "arch": "64 bit",
+      "total_kb": "66639101",
+      "free_kb": "39983460"
+    },
+    "cpu": [
+      {
+        "name": "AMD Ryzen 7 7800X3D 8-Core Processor",
+        "manufacturer": "AuthenticAMD",
+        "cores": 8,
+        "logical": 16,
+        "mhz": 3400,
+        "arch": 9
+      }
+    ],
+    "memory": [
+      {
+        "capacity": "34359738368",
+        "speed": 6000,
+        "configured": 6000,
+        "smbios_type": 34,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 0"
+      },
+      {
+        "capacity": "34359738368",
+        "speed": 6000,
+        "configured": 6000,
+        "smbios_type": 34,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 1"
+      }
+    ],
+    "video": [
+      {
+        "name": "NVIDIA GeForce RTX 4090",
+        "adapter_ram": "4293918720",
+        "driver": "32.0.15.6094",
+        "driver_date": "20250114000000.000000-000",
+        "pnp": "PCI\\VEN_10DE&DEV_2684&SUBSYS_0000&REV_A1\\4&0&0&000",
+        "status": "OK"
+      }
+    ],
+    "registry_vram": [
+      {
+        "name": "NVIDIA GeForce RTX 4090",
+        "bytes": "25757220864"
+      }
+    ],
+    "disks": [
+      {
+        "letter": "C:",
+        "label": "",
+        "fs": "NTFS",
+        "size": "999653638144",
+        "free": "442381631488"
+      }
+    ],
+    "partitions": [
+      {
+        "letter": "C",
+        "disk": 0
+      }
+    ],
+    "physical": [
+      {
+        "id": "0",
+        "media": "SSD",
+        "bus": "NVMe"
+      }
+    ]
+  },
+  "nvidia_smi": "0, NVIDIA GeForce RTX 4090, 24564, 900, 23664, 560.94, 3, 41, GPU-00000000, 00000000:01:00.0"
+}

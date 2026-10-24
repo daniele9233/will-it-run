@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Will It Run mark: a chip with a play button on it. Original artwork. -->
+  <rect x="64" y="64" width="896" height="896" rx="208" fill="#101214"/>
+  <rect x="64" y="64" width="896" height="896" rx="208" fill="none" stroke="#2c3238" stroke-width="16"/>
+  <g stroke="#5d6770" stroke-width="46" stroke-linecap="round">
+    <path d="M424 196v66M600 196v66M424 762v66M600 762v66"/>
+    <path d="M196 424h66M196 600h66M762 424h66M762 600h66"/>
+  </g>
+  <rect x="290" y="290" width="444" height="444" rx="104" fill="#15181b" stroke="#c3cad1" stroke-width="46"/>
+  <path d="M456 404v216l184-108z" fill="#4aa8e0" stroke="#4aa8e0" stroke-width="40" stroke-linejoin="round"/>
+</svg>

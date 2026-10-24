@@ -1,0 +1,107 @@
+{
+  "probe": {
+    "os": {
+      "caption": "Microsoft Windows 11 Pro",
+      "version": "10.0.26100",
+      "build": "26100",
+      "arch": "64 bit",
+      "total_kb": "33319550",
+      "free_kb": "19991730"
+    },
+    "cpu": [
+      {
+        "name": "Intel(R) Core(TM) i7-14700K",
+        "manufacturer": "GenuineIntel",
+        "cores": 20,
+        "logical": 28,
+        "mhz": 3400,
+        "arch": 9
+      }
+    ],
+    "memory": [
+      {
+        "capacity": "17179869184",
+        "speed": 4800,
+        "configured": 4800,
+        "smbios_type": 34,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 0"
+      },
+      {
+        "capacity": "17179869184",
+        "speed": 4800,
+        "configured": 4800,
+        "smbios_type": 34,
+        "manufacturer": "Kingston",
+        "slot": "DIMM 1"
+      }
+    ],
+    "video": [
+      {
+        "name": "NVIDIA GeForce RTX 4080 SUPER",
+        "adapter_ram": "4293918720",
+        "driver": "32.0.15.6094",
+        "driver_date": "20250114000000.000000-000",
+        "pnp": "PCI\\VEN_10DE&DEV_2702&SUBSYS_0000&REV_A1\\4&0&0&000",
+        "status": "OK"
+      },
+      {
+        "name": "Intel(R) UHD Graphics 770",
+        "adapter_ram": "2147483648",
+        "driver": "31.0.101.5186",
+        "driver_date": "20240901000000.000000-000",
+        "pnp": "PCI\\VEN_8086&DEV_A780&SUBSYS_0000&REV_04\\3&0&0&10",
+        "status": "OK"
+      }
+    ],
+    "registry_vram": [
+      {
+        "name": "NVIDIA GeForce RTX 4080 SUPER",
+        "bytes": "17171480576"
+      },
+      {
+        "name": "Intel(R) UHD Graphics 770",
+        "bytes": "2147483648"
+      }
+    ],
+    "disks": [
+      {
+        "letter": "C:",
+        "label": "",
+        "fs": "NTFS",
+        "size": "313532612608",
+        "free": "11811160064"
+      },
+      {
+        "letter": "D:",
+        "label": "",
+        "fs": "NTFS",
+        "size": "686121025536",
+        "free": "124554051584"
+      }
+    ],
+    "partitions": [
+      {
+        "letter": "C",
+        "disk": 0
+      },
+      {
+        "letter": "D",
+        "disk": 1
+      }
+    ],
+    "physical": [
+      {
+        "id": "0",
+        "media": "SSD",
+        "bus": "NVMe"
+      },
+      {
+        "id": "1",
+        "media": "SSD",
+        "bus": "NVMe"
+      }
+    ]
+  },
+  "nvidia_smi": "0, NVIDIA GeForce RTX 4080 SUPER, 16376, 900, 15476, 560.94, 3, 41, GPU-00000000, 00000000:01:00.0"
+}

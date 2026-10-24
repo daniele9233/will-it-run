@@ -1,0 +1,337 @@
+@import "tailwindcss";
+
+/*
+  Will It Run design tokens.
+  Strategy: restrained. Chroma-0 near-black surface, a cool second neutral for panels,
+  one steel-blue accent (hue ~222) used for actions, selection and "active" state only.
+  Status colors are semantic and never decorative:
+    ok = perfect / healthy   accent = active / selected   warn = warning
+    limited = limited        bad = incompatible / error   off = unavailable
+*/
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: oklch(0.145 0 0);
+  --panel: oklch(0.172 0.004 240);
+  --surface: oklch(0.198 0.005 240);
+  --raised: oklch(0.238 0.006 240);
+  --line: oklch(0.272 0.006 240);
+  --line-strong: oklch(0.35 0.008 240);
+  --ink: oklch(0.95 0 0);
+  --ink-2: oklch(0.78 0.008 240);
+  --ink-3: oklch(0.64 0.01 240);
+  --accent: oklch(0.72 0.12 222);
+  --accent-ink: oklch(0.17 0.03 222);
+  --ok: oklch(0.77 0.16 152);
+  --warn: oklch(0.85 0.14 92);
+  --limited: oklch(0.76 0.15 58);
+  --bad: oklch(0.69 0.19 25);
+  --off: oklch(0.6 0 0);
+  --shadow: 0 8px 28px oklch(0 0 0 / 0.45);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: oklch(1 0 0);
+  --panel: oklch(0.968 0.003 240);
+  --surface: oklch(0.985 0.002 240);
+  --raised: oklch(0.945 0.004 240);
+  --line: oklch(0.9 0.004 240);
+  --line-strong: oklch(0.8 0.006 240);
+  --ink: oklch(0.2 0 0);
+  --ink-2: oklch(0.38 0.01 240);
+  --ink-3: oklch(0.5 0.012 240);
+  --accent: oklch(0.52 0.13 232);
+  --accent-ink: oklch(0.99 0 0);
+  --ok: oklch(0.52 0.15 152);
+  --warn: oklch(0.56 0.13 80);
+  --limited: oklch(0.57 0.16 50);
+  --bad: oklch(0.54 0.2 25);
+  --off: oklch(0.55 0 0);
+  --shadow: 0 8px 28px oklch(0 0 0 / 0.12);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-limited: var(--limited);
+  --color-bad: var(--bad);
+  --color-off: var(--off);
+
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, ui-monospace, monospace;
+
+  /* Fixed product scale, ratio ~1.15. */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.1875rem;
+  --text-2xl: 1.5rem;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Semantic z-index scale. */
+  --z-index-sticky: 10;
+  --z-index-dropdown: 20;
+  --z-index-backdrop: 40;
+  --z-index-modal: 50;
+  --z-index-toast: 60;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Text the user will want to copy stays selectable. */
+.selectable,
+pre,
+code,
+input,
+textarea {
+  user-select: text;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.soft-accent {
+  background: color-mix(in oklch, var(--accent) 14%, transparent);
+}
+
+/* State-conveying motion only; 150-220ms, exponential ease-out. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.rise-in {
+  animation: rise-in 200ms var(--ease-out) both;
+}
+.fade-in {
+  animation: fade-in 160ms var(--ease-out) both;
+}
+.pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+/* The arrow into the agent that is working: its dashes travel towards it, one cycle every
+   --wir-flow seconds, which the session sets from the model's tokens per second. */
+@keyframes wir-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+.wir-flowing .react-flow__edge-path {
+  animation: wir-flow var(--wir-flow, 1.2s) linear infinite;
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--raised) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s linear infinite;
+  border-radius: var(--radius-sm);
+}
+.indeterminate {
+  animation: indeterminate 1.2s var(--ease-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .fade-in {
+    animation: fade-in 1ms both;
+  }
+  .pulse-dot,
+  .skeleton,
+  .indeterminate,
+  .wir-flowing .react-flow__edge-path {
+    animation: none;
+  }
+  * {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* React Flow, restyled to the tokens above. */
+.react-flow {
+  --xy-background-color: var(--bg);
+  --xy-edge-stroke: var(--line-strong);
+  --xy-edge-stroke-selected: var(--accent);
+  --xy-connectionline-stroke: var(--accent);
+  --xy-handle-background-color: var(--ink-3);
+  --xy-handle-border-color: var(--bg);
+  --xy-controls-button-background-color: var(--surface);
+  --xy-controls-button-background-color-hover: var(--raised);
+  --xy-controls-button-color: var(--ink-2);
+  --xy-controls-button-color-hover: var(--ink);
+  --xy-controls-button-border-color: var(--line);
+  --xy-minimap-background-color: var(--panel);
+  --xy-minimap-mask-background-color: oklch(0 0 0 / 0.5);
+  --xy-edge-label-background-color: var(--bg);
+  --xy-edge-label-color: var(--ink-2);
+  --xy-attribution-background-color: transparent;
+}
+.react-flow__controls {
+  box-shadow: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.react-flow__edge-text {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.react-flow__attribution a {
+  color: var(--ink-3);
+}
+
+/*
+  The Clone a site page (pages/CloneSite.tsx): a little more atmosphere than the working pages, on the app's tokens:
+  the near-black surface with the steel-blue accent as a glow, semantic colors for state.
+*/
+:root,
+:root[data-theme="dark"] {
+  --clone-glow: oklch(0.72 0.12 222 / 0.22);
+}
+:root[data-theme="light"] {
+  --clone-glow: oklch(0.6 0.12 232 / 0.14);
+}
+
+.clone-console {
+  background:
+    radial-gradient(ellipse 55% 45% at 92% 0%, var(--clone-glow), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 0% 100%, oklch(0.72 0.12 222 / 0.06), transparent 70%),
+    var(--bg);
+}
+.clone-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.clone-card {
+  border: 1px solid var(--line);
+  background: color-mix(in oklch, var(--panel) 82%, transparent);
+  border-radius: 10px;
+}
+.clone-chip {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 2px 8px;
+  color: var(--ink-2);
+}
+
+/*
+  The Arena (pages/Arena.tsx): one colour per model of a run, in a fixed order, so that a model keeps its colour in every chart
+  and every tab. The eight steps of the reference palette, validated on this app's own surfaces: all the gates in dark;
+  in light three of them sit below 3:1 on the surface, so every chart also names what it draws (legend, labels, table).
+*/
+:root,
+:root[data-theme="dark"] {
+  --s1: #3987e5;
+  --s2: #d95926;
+  --s3: #199e70;
+  --s4: #c98500;
+  --s5: #d55181;
+  --s6: #008300;
+  --s7: #9085e9;
+  --s8: #e66767;
+}
+:root[data-theme="light"] {
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --s5: #e87ba4;
+  --s6: #008300;
+  --s7: #6250d6;
+  --s8: #e34948;
+}

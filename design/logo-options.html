@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Will It Run · logo</title>
+<style>
+  :root { --bg: oklch(0.145 0 0); --panel: oklch(0.172 0.004 240); --line: oklch(0.272 0.006 240); --ink: oklch(0.95 0 0); --ink2: oklch(0.78 0.008 240); --ink3: oklch(0.64 0.01 240); --accent: #4aa8e0; --plate: #101214; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; padding: 28px 32px 40px; }
+  h1 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  header p { color: var(--ink2); margin-top: 4px; max-width: 70ch; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 0 36px; margin-top: 26px; max-width: 1360px; }
+  article { border-top: 1px solid var(--line); padding: 20px 0 26px; }
+  h2 { font-size: 15px; font-weight: 600; display: flex; align-items: baseline; gap: 10px; }
+  h2 small { font-size: 11px; font-weight: 600; letter-spacing: .02em; color: var(--accent); }
+  article > p { color: var(--ink2); margin-top: 4px; min-height: 3em; }
+  .sizes { display: flex; align-items: flex-end; gap: 22px; margin-top: 16px; }
+  .plate { background: var(--plate); box-shadow: inset 0 0 0 1.5px #2c3238; display: grid; place-items: center; flex: none; }
+  .plate.big { width: 132px; height: 132px; border-radius: 30px; }
+  .plate.mid { width: 48px; height: 48px; border-radius: 11px; }
+  .plate.small { width: 32px; height: 32px; border-radius: 7px; }
+  .lock { margin-top: 16px; display: flex; gap: 12px; }
+  .lock div { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 6px; font-weight: 600; font-size: 14px; letter-spacing: -0.01em; }
+  .lock .dark { background: var(--panel); border: 1px solid var(--line); }
+  .lock .light { background: #f4f5f7; color: #1c1d20; --ink-2: #4d5560; --ink-3: #7d8792; --accent: #2379b8; }
+  .dark { --ink-2: var(--ink2); --ink-3: var(--ink3); }
+  .plate { --ink-2: #c3cad1; --ink-3: #5d6770; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Will It Run · quattro idee per il logo</h1>
+  <p>La numero 1 è già applicata nell'app, nell'icona di Windows e nell'installer. Se ne preferisci un'altra dimmi il numero e la sostituisco. Ogni logo è mostrato come icona grande, come icona da barra delle applicazioni e accanto al nome, su fondo scuro e chiaro.</p>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="m1" viewBox="0 0 18 18" fill="none">
+      <path d="M6.75 1v1.6M11.25 1v1.6M6.75 15.4V17M11.25 15.4V17M1 6.75h1.6M1 11.25h1.6M15.4 6.75H17M15.4 11.25H17" stroke="var(--ink-3)" stroke-width="1.4" stroke-linecap="round"/>
+      <rect x="3.25" y="3.25" width="11.5" height="11.5" rx="2.75" stroke="var(--ink-2)" stroke-width="1.5"/>
+      <path d="M7.7 6.4v5.2L12 9 7.7 6.4Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="m2" viewBox="0 0 18 18" fill="none">
+      <path d="M5.6 6.2a3.4 3.4 0 1 1 5.5 2.7c-1.1.8-2.1 1.3-2.1 2.9" stroke="var(--ink-2)" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M7.6 14v3l2.8-1.5L7.6 14Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="m3" viewBox="0 0 18 18" fill="none">
+      <path d="M4 13.6a7 7 0 1 1 10 0" stroke="var(--ink-3)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M4 13.6A7 7 0 0 1 9 2" stroke="var(--ink-2)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M7.4 6.7v5l4.2-2.5-4.2-2.5Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="m4" viewBox="0 0 18 18" fill="none">
+      <path d="M2 5.2 5.2 12.8 8.6 6.4 12 12.8" stroke="var(--ink-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 12.8 15.2 5.2" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M12.9 4.4l3.2-.6-.5 3.3" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main>
+  <article>
+    <h2>1 · Chip e play <small>APPLICATO</small></h2>
+    <p>Un processore con il tasto play sopra: "questo hardware lo fa girare?". Leggibile anche a 16 pixel.</p>
+    <div class="sizes"><div class="plate big"><svg width="96" height="96"><use href="#m1"/></svg></div><div class="plate mid"><svg width="34" height="34"><use href="#m1"/></svg></div><div class="plate small"><svg width="22" height="22"><use href="#m1"/></svg></div></div>
+    <div class="lock"><div class="dark"><svg width="18" height="18"><use href="#m1"/></svg>Will It Run</div><div class="light"><svg width="18" height="18"><use href="#m1"/></svg>Will It Run</div></div>
+  </article>
+  <article>
+    <h2>2 · Domanda e play</h2>
+    <p>Il punto interrogativo del nome, con il punto sostituito da un play. Il più legato al nome, il meno "tecnico".</p>
+    <div class="sizes"><div class="plate big"><svg width="96" height="96"><use href="#m2"/></svg></div><div class="plate mid"><svg width="34" height="34"><use href="#m2"/></svg></div><div class="plate small"><svg width="22" height="22"><use href="#m2"/></svg></div></div>
+    <div class="lock"><div class="dark"><svg width="18" height="18"><use href="#m2"/></svg>Will It Run</div><div class="light"><svg width="18" height="18"><use href="#m2"/></svg>Will It Run</div></div>
+  </article>
+  <article>
+    <h2>3 · Indicatore e play</h2>
+    <p>Un quadrante che si riempie attorno al play: quanto bene gira, non solo se gira.</p>
+    <div class="sizes"><div class="plate big"><svg width="96" height="96"><use href="#m3"/></svg></div><div class="plate mid"><svg width="34" height="34"><use href="#m3"/></svg></div><div class="plate small"><svg width="22" height="22"><use href="#m3"/></svg></div></div>
+    <div class="lock"><div class="dark"><svg width="18" height="18"><use href="#m3"/></svg>Will It Run</div><div class="light"><svg width="18" height="18"><use href="#m3"/></svg>Will It Run</div></div>
+  </article>
+  <article>
+    <h2>4 · W che parte</h2>
+    <p>La W di Will, con l'ultimo tratto che diventa una freccia. Un monogramma, più da marchio che da icona.</p>
+    <div class="sizes"><div class="plate big"><svg width="96" height="96"><use href="#m4"/></svg></div><div class="plate mid"><svg width="34" height="34"><use href="#m4"/></svg></div><div class="plate small"><svg width="22" height="22"><use href="#m4"/></svg></div></div>
+    <div class="lock"><div class="dark"><svg width="18" height="18"><use href="#m4"/></svg>Will It Run</div><div class="light"><svg width="18" height="18"><use href="#m4"/></svg>Will It Run</div></div>
+  </article>
+</main>
+</body>
+</html>

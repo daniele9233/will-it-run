@@ -53,9 +53,11 @@ loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
 ## Install
 
-Run `WillItRun-Setup-x64.exe`. It installs for the current user and adds a Start Menu
-entry. Nothing else is installed: the Python runtime Will It Run needs is bundled inside
-the app.
+Download the latest `WillItRun-<version>-Setup-x64.exe` from the
+[Releases](https://github.com/daniele9233/will-it-run/releases/latest) page and run it. It installs for the current
+user and adds a Start Menu entry. Nothing else is installed: the Python runtime Will It Run needs is bundled inside
+the app. The installer is not code-signed, so Windows SmartScreen warns on first run; each release carries a
+`.sha256` file to check the download. How a version is published: [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Command line
 

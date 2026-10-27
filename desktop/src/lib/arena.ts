@@ -74,10 +74,13 @@ export interface RunRow {
   started_at: string | null;
   finished_at: string | null;
   suite_version: string;
+  suite_hash: string;
   seed: number;
   preset: Preset | null;
   total: number;
   done: number;
+  /** A comparison made from other challenges: it has its own copies of the answers and nothing left to ask. */
+  merged: boolean;
   models: { key: string; label: string; status: string; cloud: boolean }[];
   note: string;
 }
@@ -93,6 +96,14 @@ export interface Settings {
   context: number;
   timeout_s: number;
   cloud_sampling: string | null;
+  /** Present when the challenge was made by putting other challenges side by side. */
+  merged?: Merged;
+}
+
+export interface Merged {
+  from: string[];
+  differences: string[];
+  replaced: { model: string; kept: string; dropped: string }[];
 }
 
 export interface RunMeta {

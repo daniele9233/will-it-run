@@ -1778,3 +1778,21 @@ Video (Wan) — has no effect on an image ||| Video (Wan) — su un'immagine non
 Write it like the caption of a photo that already exists: who, what they do, where, the light. English works better. ||| Scrivila come la didascalia di una foto già scattata: chi, che cosa fa, dove, la luce. In inglese funziona meglio.
 Needs your Civitai token ||| Serve il tuo token Civitai
 Civitai gives its files only to a signed-in account: create a token on civitai.com and paste it here to download the Civitai models. Hugging Face models need none. ||| Civitai dà i suoi file solo a un account con accesso: crea un token su civitai.com e incollalo qui per scaricare i modelli Civitai. I modelli di Hugging Face non ne hanno bisogno.
+Compare challenges ||| Confronta sfide
+Compare models from separate challenges ||| Confronta modelli di sfide diverse
+Models tested in separate challenges can be put side by side when the challenges asked the same questions (same pack and seed). The answers are copied: the originals stay as they are. ||| I modelli provati in sfide diverse si possono mettere a confronto quando le sfide hanno posto le stesse domande (stesso pacchetto e stesso seed). Le risposte vengono copiate: gli originali restano come sono.
+No two challenges can be compared yet: you need two finished ones that asked the same questions. ||| Non ci sono ancora due sfide da confrontare: ne servono due concluse che abbiano posto le stesse domande.
+Other questions: not comparable with the ones chosen ||| Altre domande: non confrontabile con quelle scelte
+Name of the comparison (optional) ||| Nome del confronto (facoltativo)
+Choose two or more challenges. ||| Scegli due o più sfide.
+{n} challenges chosen ||| {n} sfide scelte
+Compare ||| Confronta
+Comparison ready ||| Confronto pronto
+The challenges were not compared ||| Le sfide non sono state confrontate
+A comparison of {n} separate challenges that asked the same questions. The answers are copies: it has nothing left to ask. ||| Un confronto di {n} sfide separate che hanno posto le stesse domande. Le risposte sono copie: non c'è più nulla da chiedere.
+{model} was in more than one challenge: the newest answers are the ones shown. ||| {model} era in più di una sfida: si vedono le risposte più recenti.
+Questions and answers (HTML) ||| Domande e risposte (HTML)
+Questions and answers (Markdown) ||| Domande e risposte (Markdown)
+Every question and what each model answered, side by side ||| Ogni domanda e cosa ha risposto ogni modello, affiancati
+The same, as text for notes and repositories ||| Lo stesso, come testo per appunti e repository
+custom ||| personalizzato

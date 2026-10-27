@@ -1,4 +1,4 @@
-import { ChevronDown, Play, Trash2, Trophy } from "lucide-react";
+import { ChevronDown, GitCompareArrows, Play, Trash2, Trophy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button, EmptyState, IconButton, Note, PageHeader, Select, SkeletonRows, cx } from "../components/ui";
@@ -9,6 +9,7 @@ import { timeAgo } from "../lib/format";
 import { errorMessage, useBus, useInterval, useLoad } from "../lib/hooks";
 import { t } from "../lib/i18n";
 import { useApp } from "../lib/store";
+import { CompareForm, comparable } from "./arena/Compare";
 import { LiveRun } from "./arena/LiveRun";
 import { NewRun } from "./arena/NewRun";
 import { Results, type Tab } from "./arena/Results";
@@ -16,7 +17,7 @@ import { Results, type Tab } from "./arena/Results";
 function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
   return (
     <div className="fade-in fixed inset-0 z-[40] flex items-start justify-center bg-black/55 pt-[18vh]" onMouseDown={onClose}>
-      <div role="dialog" aria-modal="true" aria-label={title} onMouseDown={(e) => e.stopPropagation()} className="rise-in z-[50] w-[460px] rounded-lg border border-line-strong bg-panel p-5" style={{ boxShadow: "var(--shadow)" }}>
+      <div role="dialog" aria-modal="true" aria-label={title} onMouseDown={(e) => e.stopPropagation()} className="rise-in z-[50] w-[560px] max-w-[92vw] rounded-lg border border-line-strong bg-panel p-5" style={{ boxShadow: "var(--shadow)" }}>
         <h2 className="text-base font-semibold">{title}</h2>
         <div className="mt-2 text-sm text-ink-2">{children}</div>
       </div>
@@ -127,7 +128,7 @@ export function ArenaPage() {
   const [mode, setMode] = useState<"run" | "new">(params.new ? "new" : "run");
   const [tab, setTab] = useState<Tab>("board");
   const [report, setReport] = useState<Report | null>(null);
-  const [asking, setAsking] = useState<"delete" | "resume" | null>(null);
+  const [asking, setAsking] = useState<"delete" | "resume" | "compare" | null>(null);
   const [working, setWorking] = useState(false);
 
   const list = runs.data?.runs ?? [];
@@ -190,8 +191,22 @@ export function ArenaPage() {
     }
   };
 
+  const compare = async (ids: string[], title: string) => {
+    setWorking(true);
+    try {
+      const made = await api.post<{ id: string; differences: string[] }>("/api/arena/compare", { run_ids: ids, title });
+      setAsking(null);
+      toast({ tone: "ok", title: t("Comparison ready"), body: made.differences.length ? made.differences.join(" ") : undefined });
+      started(made.id);
+    } catch (err) {
+      toast({ tone: "bad", title: t("The challenges were not compared"), body: errorMessage(err) });
+    } finally {
+      setWorking(false);
+    }
+  };
+
   const run = report?.run;
-  const resumable = Boolean(run && !isLive(run.status) && (run.done < run.total || report?.matrix.some((r) => Object.values(r.cells).some((c) => c.status === "error"))));
+  const resumable = Boolean(run && !run.settings.merged && !isLive(run.status) && (run.done < run.total || report?.matrix.some((r) => Object.values(r.cells).some((c) => c.status === "error"))));
   const when = run ? timeAgo(run.finished_at ?? run.started_at ?? run.created_at) : "";
   const subtitle =
     mode === "new"
@@ -208,6 +223,11 @@ export function ArenaPage() {
         actions={
           <>
             {mode === "run" && report && !isLive(report.run.status) && <ExportMenu report={report} />}
+            {mode === "run" && list.filter(comparable).length >= 2 && (
+              <Button icon={<GitCompareArrows size={13} />} onClick={() => setAsking("compare")}>
+                {t("Compare challenges")}
+              </Button>
+            )}
             {mode === "run" && resumable && (
               <Button icon={<Play size={12} />} loading={working} onClick={() => void resume(false)}>
                 {t("Resume")}
@@ -270,6 +290,11 @@ export function ArenaPage() {
               {t("Delete")}
             </Button>
           </div>
+        </Modal>
+      )}
+      {asking === "compare" && (
+        <Modal title={t("Compare models from separate challenges")} onClose={() => setAsking(null)}>
+          <CompareForm runs={list} working={working} onCancel={() => setAsking(null)} onCompare={(ids, title) => void compare(ids, title)} />
         </Modal>
       )}
       {asking === "resume" && (

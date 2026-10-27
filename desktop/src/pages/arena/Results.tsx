@@ -58,6 +58,25 @@ export function Results({ report, tab, onTab, selected, onSelect, onChanged }: {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <Facts report={report} />
+      {report.run.settings.merged && (
+        <div className="px-7 pt-3">
+          <Note>
+            <div className="grid gap-1">
+              <span>{t("A comparison of {n} separate challenges that asked the same questions. The answers are copies: it has nothing left to ask.", { n: report.run.settings.merged.from.length })}</span>
+              {report.run.settings.merged.differences.map((line) => (
+                <span key={line} className="text-xs text-ink-3">
+                  · {line}
+                </span>
+              ))}
+              {report.run.settings.merged.replaced.map((item) => (
+                <span key={`${item.model}-${item.kept}`} className="text-xs text-ink-3">
+                  · {t("{model} was in more than one challenge: the newest answers are the ones shown.", { model: item.model })}
+                </span>
+              ))}
+            </div>
+          </Note>
+        </div>
+      )}
       {failed.length > 0 && !shown && (
         <div className="px-7 pt-3">
           <Note tone="warn" action={<button type="button" className="text-xs text-ink-2 hover:text-ink" onClick={() => setShown(true)}>{t("Hide")}</button>}>

@@ -24,7 +24,12 @@ from agentfit.arena.report import build_report, render_verdict
 from agentfit.arena.store import ArenaStore
 from agentfit.i18n import current_language, tr
 
-FORMATS = {"json": "application/json", "csv": "text/csv", "md": "text/markdown", "html": "text/html"}
+FORMATS = {
+    "json": "application/json", "csv": "text/csv", "md": "text/markdown", "html": "text/html",
+    # The run as it was asked: every question, then the answer of every model (see ``answers``).
+    "answers": "text/html", "answers-md": "text/markdown",
+}
+EXTENSIONS = {"answers": "html", "answers-md": "md"}
 FORMAT_VERSION = 1
 # The reasoning and the reply are cut here in the JSON file: a thinking model can write a whole book.
 TEXT_LIMIT = 8000
@@ -511,9 +516,12 @@ def export_run(store: ArenaStore, run_id: str, fmt: str) -> tuple[bytes, str, st
     report = build_report(store, run_id)
     if report is None:
         return None
-    builders = {"json": to_json, "csv": to_csv, "md": to_markdown, "html": to_html}
+    from agentfit.arena import answers
+
+    builders = {"json": to_json, "csv": to_csv, "md": to_markdown, "html": to_html, "answers": answers.to_html, "answers-md": answers.to_markdown}
     text = builders[fmt](store, run_id, report)
     run = report["run"]
-    name = f"arena-{(run['started_at'] or run['created_at'])[:10]}-{_slug(run['title'])}.{fmt}"
+    suffix = "-answers" if fmt in EXTENSIONS else ""
+    name = f"arena-{(run['started_at'] or run['created_at'])[:10]}-{_slug(run['title'])}{suffix}.{EXTENSIONS.get(fmt, fmt)}"
     data = text.encode("utf-8-sig") if fmt == "csv" else text.encode("utf-8")
     return data, FORMATS[fmt], name

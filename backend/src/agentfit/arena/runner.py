@@ -355,6 +355,8 @@ class ArenaService:
             run = self.store.get_run(run_id)
             if run is None:
                 raise ArenaError(tr("This run does not exist."), code="missing", status=404)
+            if (run["settings"] or {}).get("merged"):
+                raise ArenaError(tr("This challenge is a comparison of other challenges: there is nothing left to ask."), code="merged", status=409)
             if self.busy():
                 raise ArenaError(tr("Another Arena run is working: stop it, or wait for it to finish."), code="busy", status=409, run=self.busy())
             if run["status"] in ("queued", "running"):

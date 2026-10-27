@@ -4,6 +4,7 @@ the person has to answer before a run may begin."""
 from __future__ import annotations
 
 import csv
+import html
 import io
 import json
 import time
@@ -274,3 +275,110 @@ def test_the_report_can_be_saved_where_the_person_chose(arena, tmp_path):
     assert arena.post(f"/api/arena/runs/{run_id}/export", json={"format": "html", "path": "relativo.html"}).status_code == 400
     assert arena.post(f"/api/arena/runs/{run_id}/export", json={"format": "pdf", "path": str(target)}).status_code == 400
     assert arena.post("/api/arena/runs/nope/export", json={"format": "html", "path": str(target)}).status_code == 404
+
+
+# -- a report to read, and models tested in separate challenges --------------------------------------------------
+
+
+def test_the_answers_report_shows_every_question_and_what_every_model_said(arena):
+    run_id = start(arena, title="Domande e risposte", categories=["general", "math"], preset="quick")
+    finish(arena, run_id)
+    asked = arena.get(f"/api/arena/runs/{run_id}/questions/general.001").json()["question"]
+    page = arena.get(f"/api/arena/runs/{run_id}/export", params={"format": "answers"})
+    markdown = arena.get(f"/api/arena/runs/{run_id}/export", params={"format": "answers-md"})
+    assert page.status_code == 200 and markdown.status_code == 200
+    assert "domande-e-risposte-answers.html" in page.headers["content-disposition"]
+    assert "domande-e-risposte-answers.md" in markdown.headers["content-disposition"]
+
+    html_page = page.text
+    assert html_page.startswith("<!doctype html>") and "<script" not in html_page
+    assert html.escape(asked["prompt"].split("\n")[0]) in html_page and html.escape(asked["expected"]) in html_page
+    # Both models are there, and the right answers as well as the wrong ones: this is not the list of failures.
+    assert html_page.count("Good model") >= 2 and html_page.count("Bad model") >= 2
+    assert 'class="ans passed"' in html_page and 'class="ans failed"' in html_page
+    assert "Only where the models differ" in html_page and 'class="q differs' in html_page
+
+    text = markdown.text
+    assert "### `general.001`" in text and "#### Good model" in text and "#### Bad model" in text and "```text" in text
+    assert asked["prompt"].split("\n")[0] in text and f"**Expected**: {asked['expected']}" in text
+
+
+def test_the_answers_report_is_in_the_language_of_the_reader(arena):
+    run_id = start(arena, categories=["general"], preset="quick")
+    finish(arena, run_id)
+    italian = arena.get(f"/api/arena/runs/{run_id}/export", params={"format": "answers-md"}, headers={"x-willitrun-lang": "it"}).text
+    assert "Domande e risposte" in italian and "**Atteso**" in italian and "Classifica" in italian
+
+
+def test_an_answer_with_markup_cannot_break_the_answers_report(arena):
+    arena.runtime.behaviour["good"] = lambda q, n: {"choices": [{"message": {"content": "<script>alert(1)</script> Risposta: x"}, "finish_reason": "stop"}], "usage": {}}
+    run_id = start(arena, categories=["general"], preset="quick")
+    finish(arena, run_id)
+    page = arena.get(f"/api/arena/runs/{run_id}/export", params={"format": "answers"}).text
+    assert "<script>alert(1)" not in page and "&lt;script&gt;alert(1)" in page
+
+
+def test_models_tested_in_separate_challenges_can_be_put_side_by_side(arena):
+    first = start(arena, models=["good"], title="Il buono", categories=["general", "math"], preset="quick")
+    finish(arena, first)
+    second = start(arena, models=["bad"], title="Il cattivo", categories=["general", "math"], preset="quick")
+    finish(arena, second)
+
+    made = arena.post("/api/arena/compare", json={"run_ids": [first, second], "title": "Buono contro cattivo"})
+    assert made.status_code == 200, made.text
+    body = made.json()
+    assert set(body["models"]) == {"Good model", "Bad model"} and body["replaced"] == []
+
+    report = arena.get(f"/api/arena/runs/{body['id']}").json()
+    assert report["run"]["status"] == "done" and report["run"]["title"] == "Buono contro cattivo"
+    assert report["run"]["settings"]["merged"]["from"] == [first, second]
+    assert {m["key"] for m in report["models"]} == {"good", "bad"}
+    # The same questions, so the same ranking the two models would have had in one challenge.
+    assert report["models"][0]["key"] == "good" and report["models"][0]["score"] > report["models"][1]["score"]
+    together = start(arena, models=["good", "bad"], categories=["general", "math"], preset="quick")
+    reference = finish(arena, together)
+    assert {m["key"]: m["score"] for m in report["models"]} == {m["key"]: m["score"] for m in reference["models"]}
+
+    # Every report works on it, the one with the answers included.
+    page = arena.get(f"/api/arena/runs/{body['id']}/export", params={"format": "answers"}).text
+    assert "Good model" in page and "Bad model" in page and "separate challenges" in page
+    listed = {r["id"]: r for r in arena.get("/api/arena/runs").json()["runs"]}
+    assert listed[body["id"]]["merged"] is True and listed[first]["merged"] is False
+    # It holds copies: deleting an original leaves the comparison readable.
+    assert arena.delete(f"/api/arena/runs/{first}").status_code == 200
+    assert {m["key"] for m in arena.get(f"/api/arena/runs/{body['id']}").json()["models"]} == {"good", "bad"}
+
+
+def test_a_comparison_has_nothing_to_resume_and_cannot_be_compared_again(arena):
+    first = start(arena, models=["good"], categories=["general"], preset="quick")
+    finish(arena, first)
+    second = start(arena, models=["bad"], categories=["general"], preset="quick")
+    finish(arena, second)
+    merged = arena.post("/api/arena/compare", json={"run_ids": [first, second]}).json()["id"]
+    resumed = arena.post(f"/api/arena/runs/{merged}/resume", json={})
+    assert resumed.status_code == 409 and resumed.json()["code"] == "merged"
+    again = arena.post("/api/arena/compare", json={"run_ids": [merged, first]})
+    assert again.status_code == 409 and "already a comparison" in again.json()["detail"]
+
+
+def test_challenges_that_asked_other_questions_cannot_be_compared(arena):
+    first = start(arena, models=["good"], categories=["general"], preset="quick")
+    finish(arena, first)
+    other_seed = start(arena, models=["bad"], categories=["general"], preset="quick", seed=7)
+    finish(arena, other_seed)
+    refused = arena.post("/api/arena/compare", json={"run_ids": [first, other_seed]})
+    assert refused.status_code == 409 and "did not ask the same questions" in refused.json()["detail"]
+    assert arena.post("/api/arena/compare", json={"run_ids": [first]}).status_code == 400
+    assert arena.post("/api/arena/compare", json={"run_ids": [first, "nope"]}).status_code == 404
+
+
+def test_a_model_tested_twice_keeps_its_newest_answers_and_says_so(arena):
+    first = start(arena, models=["good", "bad"], categories=["general"], preset="quick")
+    finish(arena, first)
+    second = start(arena, models=["good"], categories=["general"], preset="quick", temperature=0.4, title="Più tardi")
+    finish(arena, second)
+    body = arena.post("/api/arena/compare", json={"run_ids": [first, second]}).json()
+    assert [(r["model"], r["kept"], r["dropped"]) for r in body["replaced"]] == [("Good model", second, first)]
+    assert any("temperature" in line for line in body["differences"])
+    report = arena.get(f"/api/arena/runs/{body['id']}").json()
+    assert {m["key"] for m in report["models"]} == {"good", "bad"}

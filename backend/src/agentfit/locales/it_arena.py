@@ -329,4 +329,27 @@ MESSAGES: dict[str, str] = {
     "{path}.{key} is missing: expected {expected}.": "{path}.{key} manca: atteso {expected}.",
     "{path}: unexpected items {found}.": "{path}: elementi inattesi {found}.",
     "{path}: {expected} is missing from the list.": "{path}: {expected} manca dalla lista.",
+    # -- questions and answers, and comparing challenges ---------------------------------------
+    "Questions and answers": "Domande e risposte",
+    "the models differ here": "qui i modelli differiscono",
+    "Only where the models differ": "Solo dove i modelli differiscono",
+    "Only the mistakes": "Solo gli errori",
+    "No answer was kept.": "Nessuna risposta conservata.",
+    "your mark: {mark}": "il tuo giudizio: {mark}",
+    "right": "giusta",
+    "wrong": "sbagliata",
+    "pages": "pagine",
+    "Picture": "Immagine",
+    "This comparison was made from {n} separate challenges with the same questions.":
+        "Questo confronto è fatto con {n} sfide separate che hanno posto le stesse domande.",
+    "Choose at least two challenges to compare.": "Scegli almeno due sfide da confrontare.",
+    "{run} is still working: wait for it to finish.": "{run} è ancora in corso: aspetta che finisca.",
+    "{run} is already a comparison: choose the challenges it was made from.":
+        "{run} è già un confronto: scegli le sfide da cui è nato.",
+    "{a} and {b} did not ask the same questions ({what}): their scores cannot be compared.":
+        "{a} e {b} non hanno posto le stesse domande ({what}): i loro punteggi non si possono confrontare.",
+    "These challenges hold fewer than two models with answers.": "Queste sfide hanno meno di due modelli con risposte.",
+    "{name} differs between the challenges: {values}.": "{name} cambia tra le sfide: {values}.",
+    "This challenge is a comparison of other challenges: there is nothing left to ask.":
+        "Questa sfida è un confronto di altre sfide: non c'è più nulla da chiedere.",
 }

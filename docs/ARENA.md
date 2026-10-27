@@ -29,7 +29,11 @@ how far its answers can be *trusted*, where it fails and how it fails.
    - **Quantizations**: when the challenge holds the same model in several quantizations (IQ3, Q3_K, Q4...), each one
      against the most precise, with the file, the graphics memory, the speed and *whether the difference is real or
      noise* (see [Quantizations of one model](#quantizations-of-one-model)).
-4. **Export** the report as an HTML page (with the charts), Markdown, CSV (one row per answer) or JSON (everything).
+4. **Export** the report. *Questions and answers* (an HTML page or Markdown) is the one to read: every question as the
+   models were given it, what was expected, and the answer of each model with how it was judged, side by side; the page
+   has two filters (*only where the models differ*, *only the mistakes*) that work without a script. The others are the
+   summary as an HTML page (with the charts), Markdown, CSV (one row per answer) or JSON (everything).
+5. **Compare models tested separately** with *Compare challenges* (see [below](#comparing-models-tested-in-separate-challenges)).
 
 ## What it asks
 
@@ -91,6 +95,26 @@ A person can mark a not-evaluated answer good or poor. The mark is kept beside t
 - Speed is the mean of tokens per second over the answers of at least 20 tokens, counted from the first token. Time to
   first token is the median.
 - With more than one repeat, *consistency* is the share of questions that came out the same every time.
+
+## Comparing models tested in separate challenges
+
+A challenge ranks the models it was started with. When one model is tested today and another next week, *Compare
+challenges* (next to *Export*) puts them side by side: it asks for two or more finished challenges and **copies the
+answers of their models into a new challenge**. The ranking, the matrix of questions, the duel and every report then work on
+it as on any other, the *Questions and answers* report included. The originals are not touched, and the copy stays
+readable if one of them is deleted.
+
+What it requires, and what it only reports:
+
+- **The same questions.** Suite, version, hash and seed must be identical (`arena/compare.py`): a score on other questions
+  says nothing about this one, so challenges that differ are refused and the answer names what differs. The model
+  picker is limited to the group of challenges that match the first one chosen.
+- **The sampling may differ** (temperature, context, maximum tokens, repeats…). That does not stop the comparison, but the
+  differences are written in the new challenge, shown on top of its results and in its reports, so the figures are not read
+  as if everything had been equal. For a strict comparison, run the models with the same sampling.
+- **A model tested twice** keeps its newest answers; the comparison says which model it was.
+- **A comparison has nothing to ask**: it cannot be resumed and cannot be compared again (choose the challenges it was
+  made from).
 
 ## Quantizations of one model
 
@@ -219,7 +243,8 @@ HTML, Markdown and JSON files carry the comparison too (a `quantizations` list i
 | `GET /api/arena/runs/{id}/quants` | The quantization families of the run and one compared against its reference (`family`, or `models` comma-separated and `reference`, to choose by hand) |
 | `GET /api/arena/runs/{id}/questions/{qid}` | A question with its pictures and what every model answered |
 | `POST /api/arena/runs/{id}/manual` | A person's own mark on an answer no code could judge |
-| `GET /api/arena/runs/{id}/export?format=` | The file; `POST` with `{format, path}` writes it where the Save dialog said |
+| `POST /api/arena/compare` | `{run_ids, title}`: the models of challenges that asked the same questions, copied into a new challenge (409 with the reason when they did not, 400 for fewer than two, 404 for one that does not exist) |
+| `GET /api/arena/runs/{id}/export?format=` | The file (`html`, `md`, `csv`, `json`, `answers`, `answers-md`); `POST` with `{format, path}` writes it where the Save dialog said |
 
 Events on the stream: `arena.run` (state), `arena.progress` (an answer), `arena.delta` (the text a model is writing, not
 kept in the backlog), `arena.model` (a model loaded or unloaded).
@@ -237,6 +262,8 @@ Tables (migration `0004_arena.sql`): `arena_run`, `arena_question`, `arena_model
 | `arena/quants.py`, `arena/paired.py` | The quantizations of one model: grouping, order, the comparison; the paired difference, its interval, the sign test and Holm's correction |
 | `arena/runner.py` | `ArenaService`, `RunRequest`, the thread |
 | `arena/store.py`, `report.py`, `export.py` | The database, the report, the files |
+| `arena/answers.py` | The *Questions and answers* report (HTML and Markdown): the conversation of each question and every model's answer |
+| `arena/compare.py` | Putting models from separate challenges side by side: what must be equal, the copy, what is reported |
 | `arena/sandbox.py`, `hcl.py`, `sqlcheck.py`, `pngart.py`, `pdfgen.py` | What the verifiers and the bank need: a process to run code in, a reader of HCL, of SQL, a drawing of pictures and a PDF writer, all without dependencies |
 
 To add a question: write it in its category's module with a reference and wrong answers, run

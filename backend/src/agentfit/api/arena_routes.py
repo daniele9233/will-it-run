@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 from agentfit.app import AppServices
-from agentfit.arena import SUITE_ID, SUITE_VERSION, quants
+from agentfit.arena import SUITE_ID, SUITE_VERSION, compare, quants
 from agentfit.arena.categories import AREAS, CATEGORIES, GROUPS, PRESETS
 from agentfit.arena.export import FORMATS, export_run
 from agentfit.arena.report import build_report, render_verdict
@@ -37,6 +37,11 @@ class SaveBody(BaseModel):
     format: str
     # Where the person chose to save it, in the window's Save dialog.
     path: str
+
+
+class CompareBody(BaseModel):
+    run_ids: list[str]
+    title: str = ""
 
 
 class ManualBody(BaseModel):
@@ -109,11 +114,20 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             models = svc.arena.store.models(run["id"])
             rows.append({
                 "id": run["id"], "title": run["title"], "status": run["status"], "created_at": run["created_at"], "started_at": run["started_at"],
-                "finished_at": run["finished_at"], "suite_version": run["suite_version"], "seed": run["seed"], "preset": run["preset"], "total": run["total"],
+                "finished_at": run["finished_at"], "suite_version": run["suite_version"], "suite_hash": run["suite_hash"], "seed": run["seed"],
+                "preset": run["preset"], "total": run["total"], "merged": bool((run["settings"] or {}).get("merged")),
                 "done": run["done"], "models": [{"key": m["model_key"], "label": m["label"], "status": m["status"], "cloud": m["cloud"]} for m in models],
                 "note": run["note"],
             })
         return {"runs": rows, "busy": svc.arena.busy()}
+
+    @app.post("/api/arena/compare", dependencies=guard)
+    def arena_compare(body: CompareBody) -> dict[str, Any]:
+        """Models tested in separate challenges, put side by side in a new one (same questions required)."""
+        try:
+            return compare.merge(svc.arena.store, body.run_ids, body.title)
+        except compare.CompareError as exc:
+            raise HTTPException(status_code=exc.status, detail=str(exc)) from exc
 
     @app.post("/api/arena/runs", dependencies=guard)
     def arena_start(body: RunRequest) -> dict[str, Any]:

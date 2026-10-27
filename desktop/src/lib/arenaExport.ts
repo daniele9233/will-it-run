@@ -4,9 +4,11 @@ import { getBackend, inTauri, api } from "./api";
 import { pickSavePath } from "./dialog";
 import { t } from "./i18n";
 
-export type ExportFormat = "html" | "md" | "csv" | "json";
+export type ExportFormat = "html" | "md" | "csv" | "json" | "answers" | "answers-md";
 
 export const EXPORT_FORMATS: { id: ExportFormat; label: string; hint: string }[] = [
+  { id: "answers", label: t("Questions and answers (HTML)"), hint: t("Every question and what each model answered, side by side") },
+  { id: "answers-md", label: t("Questions and answers (Markdown)"), hint: t("The same, as text for notes and repositories") },
   { id: "html", label: "HTML", hint: t("A page that opens anywhere, with the charts") },
   { id: "md", label: "Markdown", hint: t("A text report for notes and repositories") },
   { id: "csv", label: "CSV", hint: t("One row per answer, for a spreadsheet") },
@@ -25,8 +27,14 @@ export function slug(text: string): string {
   );
 }
 
+/** The extension a format is saved with: the two reports with the answers are a page and a text file. */
+export function extensionOf(format: ExportFormat): string {
+  return format === "answers" ? "html" : format === "answers-md" ? "md" : format;
+}
+
 export function fileName(run: { title: string; started_at: string | null; created_at: string }, format: ExportFormat): string {
-  return `arena-${(run.started_at ?? run.created_at).slice(0, 10)}-${slug(run.title)}.${format}`;
+  const suffix = format === "answers" || format === "answers-md" ? "-answers" : "";
+  return `arena-${(run.started_at ?? run.created_at).slice(0, 10)}-${slug(run.title)}${suffix}.${extensionOf(format)}`;
 }
 
 async function download(runId: string, format: ExportFormat, name: string): Promise<void> {
@@ -47,7 +55,7 @@ export async function saveReport(run: { id: string; title: string; started_at: s
   const name = fileName(run, format);
   if (inTauri) {
     try {
-      const path = await pickSavePath(name, format, t("Save the report"));
+      const path = await pickSavePath(name, extensionOf(format), t("Save the report"));
       if (path === null) return null;
       const saved = await api.post<{ path: string }>(`/api/arena/runs/${run.id}/export`, { format, path });
       return saved.path;

@@ -229,3 +229,16 @@ export function retryText(payload: Record<string, unknown>): string {
   }
   return t("Retry {n}: {reason}", { n, reason: String(payload.reason ?? "") });
 }
+
+/** The weight of a file on disk, the way a file manager says it. Empty when it is not known. */
+export function bytesLabel(bytes: number | null | undefined): string {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** How long something took. Empty when it is not known. */
+export function secondsLabel(seconds: number | null | undefined): string {
+  if (!seconds) return "";
+  return seconds < 60 ? t("{n} s", { n: Math.round(seconds) }) : t("{n} min", { n: (seconds / 60).toFixed(1) });
+}

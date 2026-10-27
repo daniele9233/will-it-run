@@ -35,7 +35,7 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_github.py` | 8 | The GitHub account, through a GitHub CLI that is scripted here. | api, core, workflows |
 | `test_hardware.py` | 29 |  | core, hardware |
 | `test_i18n.py` | 11 | Localization of text the core produces, and the accuracy reference table. | arena, core, fit, locales, teams, workflows |
-| `test_imagegen.py` | 48 | The image studio: templates, components, downloads, plans and a full generation. | api, core, imagegen |
+| `test_imagegen.py` | 51 | The image studio: templates, components, downloads, plans and a full generation. | api, core, imagegen |
 | `test_importer.py` | 14 | Importing the files people already have: recognition, placement, idempotency, LoRA conversion. | core, imagegen |
 | `test_lmstudio.py` | 37 | LM Studio integration against a mocked HTTP server and a fake CLI. | core, lmstudio |
 | `test_model_quirks.py` | 6 | What local models do that the engine has to survive: turns the runtime cannot read, tests in other languages. | core, workflows |
@@ -46,4 +46,4 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
 | `test_workflows.py` | 76 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
-Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/liveRun.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`
+Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`

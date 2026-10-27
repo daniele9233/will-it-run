@@ -9,6 +9,7 @@ from __future__ import annotations
 import base64
 import binascii
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any, Literal
@@ -18,6 +19,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from agentfit.app import AppServices
+from agentfit.i18n import tr
 from agentfit.imagegen import GenerationRequest, StudioError, importer
 from agentfit.imagegen import templates as template_mod
 from agentfit.imagegen.comfy import ComfyError, ComfyUnavailable
@@ -41,6 +43,10 @@ class CheckBody(BaseModel):
     width: int = 1024
     height: int = 1024
     image: str = ""
+
+
+class SaveBody(BaseModel):
+    path: str
 
 
 class GenerateBody(BaseModel):
@@ -305,6 +311,21 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
     def images_file(image_id: str) -> FileResponse:
         path = studio.image_path(image_id)
         return FileResponse(path, media_type="image/png", filename=path.name)
+
+    @app.post("/api/images/gallery/{image_id}/save", dependencies=guard)
+    def images_save(image_id: str, body: SaveBody) -> dict[str, Any]:
+        """The picture, copied where the person chose to put it in the window's Save dialog."""
+        target = Path(body.path)
+        if not target.is_absolute() or not target.parent.is_dir():
+            raise HTTPException(status_code=400, detail=tr("That place does not exist: {path}", path=body.path))
+        if not target.suffix:
+            target = target.with_suffix(".png")
+        source = studio.image_path(image_id)
+        try:
+            shutil.copyfile(source, target)
+        except OSError as exc:
+            raise HTTPException(status_code=400, detail=tr("The file could not be saved: {error}", error=str(exc))) from exc
+        return {"path": str(target), "bytes": target.stat().st_size}
 
     @app.delete("/api/images/gallery/{image_id}", dependencies=guard)
     def images_forget(image_id: str) -> dict[str, Any]:

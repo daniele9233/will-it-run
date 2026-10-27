@@ -4,13 +4,13 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-169 Python files (39,367 lines) · 815 public symbols · 133 HTTP routes · 23 tables · 39 test files (935 tests) · 62 UI files (19,564 lines).
+169 Python files (39,388 lines) · 816 public symbols · 134 HTTP routes · 23 tables · 39 test files (938 tests) · 66 UI files (19,860 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
 | Package | What it is | Files | Lines | Depends on | Card |
 |---|---|---:|---:|---|---|
-| `api` | Local HTTP API consumed by the desktop UI. | 5 | 2,041 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
+| `api` | Local HTTP API consumed by the desktop UI. | 5 | 2,062 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
 | `arena` | The Arena: reliability tests for models, checked by code and never by another model. | 51 | 9,587 | cloud, core, fit, workflows | `arena.md` |
 | `benchmark` | Local measurement | 1 | 237 | core, hardware, lmstudio | `benchmark.md` |
 | `brain` | The Project Brain: the permanent memory of each project. | 13 | 3,050 | core | `brain.md` |

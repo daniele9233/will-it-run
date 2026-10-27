@@ -1,12 +1,13 @@
-import { Download, FolderOpen, Image as ImageIcon, RefreshCw, Snowflake, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Download, FolderOpen, Image as ImageIcon, RefreshCw, Snowflake, Sparkles, Trash2, Upload, X, ZoomIn } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { EngineCard } from "../components/images/EngineCard";
 import { ImportPanel } from "../components/images/ImportPanel";
+import { Lightbox } from "../components/images/Lightbox";
 import { ModelManager, sizeLabel } from "../components/images/ModelManager";
+import { PictureInfo } from "../components/images/PictureInfo";
 import { hintText, suggestionText } from "../components/images/planText";
 import {
-  Badge,
   Button,
   Collapsible,
   Field,
@@ -25,8 +26,10 @@ import {
   cx,
 } from "../components/ui";
 import { api, getBackend } from "../lib/api";
+import { secondsLabel } from "../lib/format";
 import { errorMessage, useBus, useInterval, useLoad } from "../lib/hooks";
 import { t } from "../lib/i18n";
+import { savePicture } from "../lib/imageSave";
 import { useApp } from "../lib/store";
 import type {
   GalleryImage,
@@ -70,21 +73,10 @@ function sizeFor(aspect: string, megapixels: number, step = 8): { width: number;
   return { width: round(height * (ratio[0] / ratio[1])), height: round(height) };
 }
 
-function bytesLabel(bytes: number): string {
-  if (!bytes) return "";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 /** Wan and its accelerators are video LoRAs: they belong to the other studio, not here. */
 function isVideoLora(name: string): boolean {
   const low = name.toLowerCase();
   return /wan|lightx2v|i2v|t2v|\d+steps/.test(low);
-}
-
-function secondsLabel(seconds: number | null | undefined): string {
-  if (!seconds) return "";
-  return seconds < 60 ? t("{n} s", { n: Math.round(seconds) }) : t("{n} min", { n: (seconds / 60).toFixed(1) });
 }
 
 /** A picture on disk is served by the core, which wants the token whenever one is set. */
@@ -142,6 +134,7 @@ export function ImagesPage() {
   const [upload, setUpload] = useState<{ name: string; preview: string } | null>(null);
   const [job, setJob] = useState<ImageJob | null>(null);
   const [current, setCurrent] = useState<GalleryImage | null>(null);
+  const [zoomed, setZoomed] = useState(false);
   const [check, setCheck] = useState<ImageCheck | null>(null);
   const [plan, setPlan] = useState<ImagePlan | null>(null);
   const [busy, setBusy] = useState(false);
@@ -462,6 +455,19 @@ export function ImagesPage() {
     if (current?.id === image.id) setCurrent(null);
     gallery.reload();
     status.reload();
+  }
+
+  /** The name of the model that drew a picture, as the catalog calls it; the key when the model is no longer there. */
+  const modelNames = useMemo(() => new Map((models.data?.models ?? []).map((row) => [row.key, row.name])), [models.data]);
+  const modelName = (image: GalleryImage) => modelNames.get(image.model_key) ?? image.model_key;
+
+  async function saveCurrent(image: GalleryImage) {
+    try {
+      const where = await savePicture(image);
+      if (where) toast({ tone: "ok", title: t("Picture saved"), body: where });
+    } catch (err) {
+      toast({ tone: "bad", title: t("The picture could not be saved"), body: errorMessage(err) });
+    }
   }
 
   const installed = (models.data?.models ?? []).filter((row) => row.installed);
@@ -1058,13 +1064,12 @@ export function ImagesPage() {
                   <Button size="sm" icon={<Upload size={12} />} onClick={() => void attachFromGallery(current)}>
                     {t("Edit this one")}
                   </Button>
-                  <a
-                    className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-xs text-ink-2 hover:border-line-strong hover:text-ink"
-                    href={fileUrl(base, current.id)}
-                    download={`${current.id}.png`}
-                  >
-                    <Download size={12} /> {t("Download")}
-                  </a>
+                  <Button size="sm" icon={<ZoomIn size={12} />} onClick={() => setZoomed(true)}>
+                    {t("Zoom")}
+                  </Button>
+                  <Button size="sm" icon={<Download size={12} />} onClick={() => void saveCurrent(current)}>
+                    {t("Download")}
+                  </Button>
                   <IconButton label={t("Delete")} onClick={() => void forget(current)}>
                     <Trash2 size={14} />
                   </IconButton>
@@ -1074,7 +1079,9 @@ export function ImagesPage() {
 
             <div className="grid min-h-[320px] place-items-center rounded-md border border-line bg-bg p-2">
               {current ? (
-                <img src={fileUrl(base, current.id)} alt={current.prompt} className="max-h-[62vh] rounded-sm object-contain" />
+                <button type="button" aria-label={t("Zoom")} onClick={() => setZoomed(true)} className="cursor-zoom-in">
+                  <img src={fileUrl(base, current.id)} alt={current.prompt} className="max-h-[62vh] rounded-sm object-contain" />
+                </button>
               ) : (
                 <div className="grid justify-items-center gap-2 py-16 text-center text-ink-3">
                   <ImageIcon size={28} />
@@ -1085,30 +1092,14 @@ export function ImagesPage() {
               )}
             </div>
 
-            {current && (
-              <div className="grid gap-1 text-xs text-ink-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone="accent">
-                    {current.width} × {current.height}
-                  </Badge>
-                  <span className="font-mono">{t("seed {n}", { n: current.seed })}</span>
-                  {current.sampler && (
-                    <span className="font-mono text-ink-3">
-                      {current.sampler} · {t("{n} steps", { n: current.steps ?? 0 })} · CFG {current.cfg}
-                    </span>
-                  )}
-                  {current.elapsed_seconds ? <span className="text-ink-3">{secondsLabel(current.elapsed_seconds)}</span> : null}
-                  <span className="text-ink-3">{bytesLabel(current.bytes)}</span>
-                </div>
-                <p className="selectable line-clamp-2">{current.prompt}</p>
-                {current.loras.length > 0 && (
-                  <p className="font-mono text-2xs text-ink-3">
-                    {current.loras.map((lora) => `${lora.name}:${lora.weight}`).join("  ")}
-                  </p>
-                )}
-              </div>
-            )}
+            {current && <PictureInfo image={current} modelName={modelName(current)} />}
           </Panel>
+
+          {zoomed && current && (
+            <Lightbox src={fileUrl(base, current.id)} alt={current.prompt} onClose={() => setZoomed(false)} onSave={() => void saveCurrent(current)}>
+              <PictureInfo image={current} modelName={modelName(current)} lines={4} />
+            </Lightbox>
+          )}
 
           {activeDownloads.length > 0 && (
             <Section title={t("Downloading")} aside={t("{n} files", { n: activeDownloads.length })}>

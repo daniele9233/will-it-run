@@ -44,6 +44,22 @@ unless the file is on disk where ComfyUI looks for it**, and **nothing is queued
 node class the graph uses exists** — the page shows what is missing by name before you press
 Generate.
 
+### The picture, and what you can do with it
+
+Under the picture the page says what made it: the model (by its catalog name; the key if the
+model is no longer in the catalog), the size in pixels, the seed, the sampler and scheduler with
+the steps and CFG, how long it took, what the file weighs, and the prompt. The same line is
+shown in the zoom.
+
+- **Zoom** (or a click on the picture) opens it over the whole window: the wheel or the
+  buttons zoom up to 12×, dragging moves it, a double click or `1` shows actual size (one
+  picture pixel per screen pixel), `0` fits it to the window, `Esc` closes. The arithmetic is in
+  `desktop/src/lib/imageView.ts`, with tests.
+- **Download** opens the window's Save dialog and copies the picture where you choose
+  (`POST /api/images/gallery/{id}/save`, written like the Arena's reports); in a plain browser
+  it uses the browser's own download. The link with a `download` attribute that used to be here
+  did nothing inside the desktop window.
+
 ## Starting the engine
 
 The Images page has one button, and it does the honest thing in each of the three cases:
@@ -200,7 +216,8 @@ sampling were checked, with sizes and download sources read from the publishers'
 
 | Model | Family | Source | On 16 GB | Licence |
 |---|---|---|---|---|
-| **Qwen-Image 2.1 UC (Q6_K, GGUF)** | `qwen_image` | Hugging Face `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | 5.9 GB diffusion model; the 9.4 GB encoder leaves the card first | Qwen Research: **non-commercial** |
+| **Qwen-Image 2.1 UC (BF16, GGUF, lossless)** | `qwen_image` | Hugging Face `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` (`qwen-image-2.1-UC-BF16.gguf`, 14.23 GB) | The same uncensored weights with no quantization. Checked on this PC (RTX 4080 SUPER, 16 GB): 1024×1024, 25 steps, 64 s including the 14 GB load, 12.8 GB of VRAM at the peak (ComfyUI moves to RAM what does not fit). The recommended one on a 16 GB card | Qwen Research: **non-commercial** |
+| **Qwen-Image 2.1 UC (Q6_K, GGUF)** | `qwen_image` | Hugging Face `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | 5.9 GB diffusion model; the 9.4 GB encoder leaves the card first. For smaller cards | Qwen Research: **non-commercial** |
 | **KreaNoct V4 INT8** | `krea2` | Hugging Face `Noctaluna/Krea2-Noct-Uncensored` | 13.5 GB, tight; 14 s for 1024×1536 | Krea 2 Community |
 | **Noct Q V4 (Qwen 2.1 UC, INT8)** | `qwen_image` | Hugging Face `Noctaluna/Noct-Q-Uncensored-Qwen-Image-2.1` | 7.3 GB | Qwen Research: non-commercial |
 | Qwen-Image 2.1 UC (INT8, no GGUF) | `qwen_image` | same repository as the Q6_K | 7.3 GB | Qwen Research: non-commercial |

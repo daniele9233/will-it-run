@@ -1796,3 +1796,13 @@ Questions and answers (Markdown) ||| Domande e risposte (Markdown)
 Every question and what each model answered, side by side ||| Ogni domanda e cosa ha risposto ogni modello, affiancati
 The same, as text for notes and repositories ||| Lo stesso, come testo per appunti e repository
 custom ||| personalizzato
+Picture ||| Immagine
+Fit to window ||| Adatta alla finestra
+Actual size ||| Dimensione reale
+Scroll to zoom, drag to move, double-click for actual size, Esc to close. ||| Rotellina per ingrandire, trascina per spostare, doppio clic per la dimensione reale, Esc per chiudere.
+Model: {name} ||| Modello: {name}
+took {time} ||| ha impiegato {time}
+Save the picture ||| Salva l'immagine
+Picture saved ||| Immagine salvata
+The picture could not be saved ||| Non è stato possibile salvare l'immagine
+Zoom ||| Ingrandisci

@@ -22,6 +22,12 @@ A Python script that prints a character outside that code page (a star, an arrow
 ## The code graph does not see calls made through an attribute
 `codegraph callers BrainService.add` lists one caller; a text search finds ten, most of them written `memory.service.add(...)` or `self.service.add(...)`. Use the graph to find where to look, then confirm "these are all the callers" with `grep -rn "\.add(" backend/src` before changing a signature. Found by a fresh agent in the 2026-10-27 test (AGENT_CONTEXT.md, "Measured").
 
+## A link with a `download` attribute does nothing inside the desktop window
+The Images page saved pictures with `<a href="..." download>`. In the Tauri window (WebView2) the picture lives on another origin (the core on 127.0.0.1) and the attribute is ignored, so the button looked dead. Save through the window's Save dialog and a route that writes the file (`lib/imageSave.ts`, `POST /api/images/gallery/{id}/save`), the way the Arena saves its reports, and fall back to a fetched blob only in a plain browser.
+
+## A text file that does not end with a newline glues the next appended line to it
+`desktop/src/locales/it.txt` has Windows line endings and no newline after its last line; `cat >> it.txt` joined the first new pair to the last old one and the catalog check reported one string missing. Look at the end of a file (`tail -c 100 file | od -c`) before appending, and keep one kind of line ending in it.
+
 ## Some source files begin with a byte order mark
 `backend/src/agentfit/api/server.py` is one. Text read as plain UTF-8 starts with U+FEFF and `ast.parse` fails with "invalid non-printable character U+FEFF". Read source with `encoding="utf-8-sig"` (the map generator and the hooks do).
 

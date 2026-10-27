@@ -33,7 +33,7 @@
       "licence": "Qwen Research Licence: solo uso non commerciale",
       "source": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "nsfw": "native",
-      "recommended": true,
+      "recommended": false,
       "notes": "È il flusso ComfyUI che funziona: Unet Loader (GGUF), CLIP qwen3vl 8B int8, VAE 2.1 bf16, TextEncodeQwenImage21, KSampler 25 passi, CFG 1, euler/simple. A CFG 1 il prompt negativo è ignorato: alza il CFG a 3-4 solo se vuoi usarlo. 40-50 passi per la qualità massima; fino a 2048×2048 in multipli di 32.",
       "aspect": "1:1",
       "megapixels": 1.0,
@@ -49,6 +49,64 @@
         },
         {
           "key": "uc-fast",
+          "name": "Veloce (25 passi)",
+          "loras": [],
+          "sampling": {
+            "steps": 25,
+            "cfg": 1.0
+          }
+        }
+      ],
+      "template": "qwen_image_txt2img"
+    },
+    {
+      "key": "qwen-image-2.1-uc-bf16",
+      "name": "Qwen-Image 2.1 UC (BF16, senza perdita)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21uc-unet-bf16",
+        "text_encoder": "qwen21-te-int8",
+        "vae": "qwen21-vae"
+      },
+      "requires": [
+        "node-gguf"
+      ],
+      "loader": {
+        "unet_loader": "UnetLoaderGGUF",
+        "weight_dtype": null,
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 25,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "vram_gb": 24.3,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "nsfw": "native",
+      "recommended": true,
+      "notes": "Gli stessi pesi non censurati del Q6_K, a precisione piena: nessuna quantizzazione del modello che disegna. Stesso flusso, stessi encoder e stesso VAE. L'encoder di testo resta INT8 ConvRot (9,4 GB): la versione BF16 pesa 17,5 GB e non sta nella scheda. Provato su una RTX 4080 SUPER da 16 GB: 1024×1024, 25 passi, 64 secondi compreso il caricamento di 14 GB, picco di 12,8 GB di VRAM (ComfyUI sposta in RAM ciò che non sta). Per schede più piccole usa il Q6_K.",
+      "aspect": "1:1",
+      "megapixels": 1.0,
+      "presets": [
+        {
+          "key": "ucbf-max",
+          "name": "Qualità massima (45 passi)",
+          "loras": [],
+          "sampling": {
+            "steps": 45,
+            "cfg": 1.0
+          }
+        },
+        {
+          "key": "ucbf-fast",
           "name": "Veloce (25 passi)",
           "loras": [],
           "sampling": {

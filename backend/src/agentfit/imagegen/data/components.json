@@ -150,6 +150,27 @@
       "notes": "Build non censurata, quantizzata Q6_K: 5,9 GB. Serve ComfyUI-GGUF nel ramo leejet (con il ramo di city96 dà 'Unknown model architecture')."
     },
     {
+      "id": "qwen21uc-unet-bf16",
+      "name": "Qwen-Image 2.1 UC (BF16, GGUF, senza perdita)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "qwen-image-2.1-UC-BF16.gguf",
+      "size_bytes": 14230272800,
+      "source": {
+        "kind": "huggingface",
+        "repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+        "revision": "main",
+        "filename": "qwen-image-2.1-UC-BF16.gguf"
+      },
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 14.2,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "La stessa build non censurata a precisione piena (BF16): nessuna quantizzazione, quindi nessuna perdita. 14,2 GB: su una scheda da 16 GB sta solo se l'encoder di testo esce dalla scheda mentre disegna. Serve ComfyUI-GGUF nel ramo leejet."
+    },
+    {
       "id": "node-gguf",
       "name": "ComfyUI-GGUF (ramo leejet)",
       "role": "custom_node",

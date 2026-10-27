@@ -26,7 +26,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Guide.tsx` | 207 | GuidePage | `/api/quantization` |  |
 | `pages/Hardware.tsx` | 207 | HardwarePage | `/api/storage` |  |
 | `pages/Home.tsx` | 443 | HomePage | `/api/lmstudio/server/start`, `/api/models/installed`, `/api/readiness`, `/api/storage` | download.update |
-| `pages/Images.tsx` | 1219 | ImagesPage | `/api/images/check`, `/api/images/components/download`, `/api/images/components/{}`, `/api/images/downloads`, `/api/images/engine`, `/api/images/engine/start` +16 | image. |
+| `pages/Images.tsx` | 1210 | ImagesPage | `/api/images/check`, `/api/images/components/download`, `/api/images/components/{}`, `/api/images/downloads`, `/api/images/engine`, `/api/images/engine/start` +16 | image. |
 | `pages/Logs.tsx` | 79 | LogsPage | `/api/logs` |  |
 | `pages/Models.tsx` | 1048 | ModelsPage | `/api/downloads`, `/api/downloads/plan`, `/api/models/details`, `/api/models/load`, `/api/models/search`, `/api/models/unload` +1 | download.update |
 | `pages/Sessions.tsx` | 1422 | ToolCard, LiveText, LiveBlock, RecalledLine, SavedLine, SwitchLine, ApprovalCard +1 | `/api/models/installed`, `/api/runs`, `/api/runs/{}`, `/api/runs/{}/approvals/{}`, `/api/runs/{}/ask`, `/api/runs/{}/cancel` +4 |  |
@@ -46,7 +46,9 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `components/Guide.tsx` | 184 | TermId, Term, GLOSSARY, HelpTip, accuracyTone, AccuracyMeter, pplLabel |  |  |
 | `components/images/EngineCard.tsx` | 126 | EngineCard |  |  |
 | `components/images/ImportPanel.tsx` | 262 | ImportPanel | `/api/images/import/apply`, `/api/images/import/scan` |  |
+| `components/images/Lightbox.tsx` | 151 | Lightbox |  |  |
 | `components/images/ModelManager.tsx` | 291 | sizeLabel, ModelManager | `/api/images/models/{}/plan` |  |
+| `components/images/PictureInfo.tsx` | 33 | PictureInfo |  |  |
 | `components/images/planText.ts` | 68 | warningText, suggestionText, hintText |  |  |
 | `components/LiveGraph.tsx` | 257 | LiveGraph |  |  |
 | `components/Markdown.tsx` | 70 | Markdown |  |  |
@@ -66,9 +68,11 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/brainGraph.ts` | 157 | Point, KINDS, KIND, isMemoryKind, nodeTone, viaLabel, LABEL_WIDTH +3 |  |  |
 | `lib/cloneSite.ts` | 254 | KitInfo, CloneSetup, InstallJob, CloneInfo, CloneRun, CloneAsk, CloneDetail +19 |  |  |
 | `lib/dialog.ts` | 32 | canBrowseFolders, pickFolder, pickAnyFolder, pickSavePath |  |  |
-| `lib/format.ts` | 232 | UNKNOWN, gbFromBytes, gbFromMb, gb, sizeLabel, compactNumber, params +18 |  |  |
+| `lib/format.ts` | 245 | UNKNOWN, gbFromBytes, gbFromMb, gb, sizeLabel, compactNumber, params +20 |  |  |
 | `lib/hooks.ts` | 86 | Loadable, useLoad, useBus, useInterval, useDebounced, errorMessage |  |  |
 | `lib/i18n.ts` | 75 | Lang, LangSetting, LANGUAGES, systemLang, resolveLang, getLang, storeLang +3 |  |  |
+| `lib/imageSave.ts` | 46 | pictureFileName, savePicture | `/api/images/gallery/{}/file`, `/api/images/gallery/{}/save` |  |
+| `lib/imageView.ts` | 62 | View, Size, MIN_ZOOM, MAX_ZOOM, STEP, FIT, clampZoom +5 |  |  |
 | `lib/liveRun.ts` | 152 | START, END, NodeState, NodeLive, GraphLive, edgeKey, sourcesOf +2 |  |  |
 | `lib/modelFilters.ts` | 129 | ModelSort, ParamBand, ModelFilters, DEFAULT_MODEL_FILTERS, nominalParamsB, quantizationOptions, parameterSizes +3 |  |  |
 | `lib/models.ts` | 36 | isCloudKey, cloudAsInstalled, providerGap, useModelChoices | `/api/cloud`, `/api/models/installed` |  |

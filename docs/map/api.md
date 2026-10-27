@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-133 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+134 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -49,7 +49,7 @@
 | PUT | `/api/cloud/{provider_id}/key` | `cloud_key_set` |  |
 | POST | `/api/cloud/{provider_id}/test` | `cloud_test` |  |
 
-## `api/image_routes.py` (29)
+## `api/image_routes.py` (30)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
@@ -66,6 +66,7 @@
 | GET | `/api/images/gallery` | `images_gallery` |  |
 | DELETE | `/api/images/gallery/{image_id}` | `images_forget` |  |
 | GET | `/api/images/gallery/{image_id}/file` | `images_file` |  |
+| POST | `/api/images/gallery/{image_id}/save` | `images_save` | The picture, copied where the person chose to put it in the window's Save dialog. |
 | POST | `/api/images/generate` | `images_generate` |  |
 | POST | `/api/images/import/apply` | `images_import_apply` |  |
 | POST | `/api/images/import/convert-lora` | `images_import_convert_lora` | Rewrite a LoRA's tensor names so ComfyUI's loader can read them, then prove the pairing. |

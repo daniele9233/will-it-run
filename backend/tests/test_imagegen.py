@@ -451,6 +451,26 @@ def test_the_uncensored_qwen_build_has_a_verified_source() -> None:
     assert node is not None and "leejet" in node.source["repo"]
 
 
+def test_the_lossless_qwen_build_is_the_same_flow_with_the_unquantized_weights() -> None:
+    from agentfit.imagegen.components import definition
+
+    unet = definition("qwen21uc-unet-bf16")
+    assert unet is not None and unet.downloadable
+    assert unet.source["repo"] == "abenzerps/Qwen-Image-2.1-Uncensored-Quantized"
+    assert unet.file == "qwen-image-2.1-UC-BF16.gguf" and unet.size_bytes == 14_230_272_800
+
+    lossless, small = catalog.by_key("qwen-image-2.1-uc-bf16"), catalog.by_key("qwen-image-2.1-uc")
+    assert lossless is not None and small is not None
+    # Only the file that draws differs: the encoder, the VAE, the node, the loader and the sampling are the ones that were checked.
+    assert {role: cid for role, cid in lossless.components.items() if role != "diffusion_model"} == {
+        role: cid for role, cid in small.components.items() if role != "diffusion_model"
+    }
+    assert lossless.requires == small.requires and lossless.loader == small.loader and lossless.sampling == small.sampling
+    assert lossless.nsfw == "native" and lossless.template == small.template
+    # One star per family: the lossless build is the one offered first, the Q6_K is for smaller cards.
+    assert lossless.recommended and not small.recommended
+
+
 def test_the_qwen_uc_flow_is_the_one_that_works_in_comfyui(studio: ImageStudio) -> None:
     """Unet Loader (GGUF) + CLIP qwen_image + VAE 2.1, KSampler 25 steps, CFG 1, euler / simple."""
     profile = catalog.by_key("qwen-image-2.1-uc")
@@ -679,6 +699,38 @@ def test_the_api_generates_and_serves_the_file(api) -> None:
     assert gallery[0]["seed"] == 5
     file = api.get(f"/api/images/gallery/{job['image_id']}/file")
     assert file.status_code == 200 and file.content == STORED_PNG
+
+
+def _generated_image_id(api) -> str:
+    created = api.post("/api/images/generate", json={"model_key": "kreanoct-v4", "prompt": "a portrait", "seed": 7})
+    job_id = created.json()["job"]["id"]
+    for _ in range(200):
+        job = api.get(f"/api/images/jobs/{job_id}").json()["job"]
+        if job["status"] in ("done", "failed"):
+            break
+        time.sleep(0.02)
+    assert job["status"] == "done", job
+    return job["image_id"]
+
+
+def test_a_picture_is_saved_where_the_person_chose(api, tmp_path) -> None:
+    image_id = _generated_image_id(api)
+
+    saved = api.post(f"/api/images/gallery/{image_id}/save", json={"path": str(tmp_path / "mine.png")})
+    assert saved.status_code == 200, saved.text
+    assert (tmp_path / "mine.png").read_bytes() == STORED_PNG and saved.json()["bytes"] == len(STORED_PNG)
+
+    no_extension = api.post(f"/api/images/gallery/{image_id}/save", json={"path": str(tmp_path / "plain")})
+    assert no_extension.json()["path"].endswith("plain.png") and (tmp_path / "plain.png").exists()
+
+
+def test_a_picture_is_not_saved_to_a_place_that_does_not_exist(api, tmp_path) -> None:
+    image_id = _generated_image_id(api)
+
+    assert api.post(f"/api/images/gallery/{image_id}/save", json={"path": "relative.png"}).status_code == 400
+    assert api.post(f"/api/images/gallery/{image_id}/save", json={"path": str(tmp_path / "nowhere" / "a.png")}).status_code == 400
+    assert api.post("/api/images/gallery/not-a-picture/save", json={"path": str(tmp_path / "a.png")}).status_code == 400
+    assert not (tmp_path / "a.png").exists()
 
 
 def test_the_api_refuses_an_impossible_request(api) -> None:

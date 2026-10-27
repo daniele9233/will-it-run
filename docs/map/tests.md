@@ -27,7 +27,7 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_clone_picture.py` | 31 | A site from a picture: what a model's answer is made into, how the steps keep or undo what it wrote, and the run's start. | clone, core, workflows |
 | `test_clone_replica.py` | 38 | The exact copy of a site: HTML to JSX, the project written from a capture, and the three steps of its pipeline. | clone, core, workflows |
 | `test_clone_skills.py` | 10 | The skill store: packs of SKILL.md folders, fetched at a pinned commit and copied into a project for a model to read. | clone, core |
-| `test_cloud.py` | 14 | Cloud models: naming, keys, the two wire formats, the gateway, and the API. Nothing leaves this machine. | cloud, core, workflows |
+| `test_cloud.py` | 17 | Cloud models: naming, keys, the two wire formats, the gateway, and the API. Nothing leaves this machine. | cloud, core, workflows |
 | `test_context_map.py` | 5 | The generated map (docs/map/) and the code it describes: it lists the routes the app really serves, it is the same every time, and it is small enough… | api, core |
 | `test_core.py` | 22 | Database, settings, logging redaction, paths, events and benchmark storage. | benchmark, core, lmstudio |
 | `test_downloads.py` | 31 | Disk safety and the download manager (direct and LM Studio backends). | catalog, core, hardware, lmstudio |

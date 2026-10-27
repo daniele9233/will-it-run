@@ -37,7 +37,7 @@ export function ModelOptions({ models, providers, label }: { models: InstalledMo
             <option key={p.id} value={`missing:${p.id}`} disabled>
               {providerGap(p) === "key"
                 ? t("{name}: add an API key in Settings › Cloud models", { name: p.label })
-                : t("{name}: press ↻ in Settings › Cloud models to load its models", { name: p.label })}
+                : (p.error ?? t("{name}: press ↻ in Settings › Cloud models to load its models", { name: p.label }))}
             </option>
           ))}
         </optgroup>

@@ -80,7 +80,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/models.ts` | 36 | isCloudKey, cloudAsInstalled, providerGap, useModelChoices | `/api/cloud`, `/api/models/installed` |  |
 | `lib/runSource.ts` | 174 | RunSource, isGithubUrl, repoName, sourceProblem, sourcePayload, sourceFromEvent, loadSource +18 |  |  |
 | `lib/store.ts` | 158 | PageId, Toast, useApp, applyAppearance, relativeLuminance | `/api/hardware`, `/api/live`, `/api/lmstudio`, `/api/settings` |  |
-| `lib/types.ts` | 1211 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +88 |  |  |
+| `lib/types.ts` | 1212 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +88 |  |  |
 | `lib/workflow.ts` | 86 | emptySlot, modelLabel, agentModelKey, distinctModels, agentsWithoutModel, assignModel |  |  |
 | `lib/zoom.ts` | 28 | ZOOM_MIN, ZOOM_MAX, ZOOM_STEP, clampZoom, applyZoom |  |  |
 

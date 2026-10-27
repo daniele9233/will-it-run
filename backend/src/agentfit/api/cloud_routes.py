@@ -24,6 +24,8 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
     # -- cloud models -------------------------------------------------------
     @app.get("/api/cloud", dependencies=guard)
     def cloud_status() -> dict[str, Any]:
+        # A key with no model list yet is asked for it now, so its models reach every picker.
+        svc.cloud.load_missing()
         return {"providers": svc.cloud.providers(), "models": svc.cloud.available(),
                 "max_context": svc.settings.cloud.max_context}
 

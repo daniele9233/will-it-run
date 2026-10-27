@@ -132,10 +132,16 @@ class OpenAICompatClient:
             raise CloudError(explain(self.provider, None, f"not reachable ({exc})")) from exc
         if response.status_code >= 400:
             raise CloudError(explain(self.provider, response.status_code, _error_text(response)), response.status_code)
-        data = response.json()
+        try:
+            data = response.json()
+        except ValueError as exc:
+            # A proxy or a captive portal answers 200 with a page, not a list.
+            raise CloudError(explain(self.provider, response.status_code, "the answer is not a model list")) from exc
         rows = data.get("data") if isinstance(data, dict) else data
         models = []
         for row in rows or []:
+            if not isinstance(row, dict):
+                continue
             model_id = str(row.get("id") or "").removeprefix("models/")
             if model_id:
                 models.append({"id": model_id, "label": row.get("display_name") or model_id, "context": None})

@@ -12,7 +12,7 @@ Cloud models (Claude, ChatGPT, DeepSeek, Gemini) next to the local ones.
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
 | `cloud/anthropic_wire.py` | 339 | Claude through Anthropic's SDK, spoken to the engine in the chat-completions dialect. | **BlockMemory**, **AnthropicClient**, adaptive(), echo_blocks(), to_anthropic(), to_tools() | test_clone.py, test_cloud.py |
-| `cloud/openai_wire.py` | 265 | Chat completions against OpenAI, DeepSeek and Gemini (its OpenAI-compatible endpoint). | **CloudError**, **TurnMemory**, **OpenAICompatClient**, explain() | test_cloud.py |
+| `cloud/openai_wire.py` | 271 | Chat completions against OpenAI, DeepSeek and Gemini (its OpenAI-compatible endpoint). | **CloudError**, **TurnMemory**, **OpenAICompatClient**, explain() | test_cloud.py |
 | `cloud/providers.py` | 122 | The cloud model providers Will It Run can call, and how a cloud model is named. | **Provider**, is_cloud(), make_key(), parse_key(), chat_model(), context_of(), label_of() | test_cloud.py |
 | `cloud/secrets.py` | 108 | API keys of the cloud providers, encrypted for the Windows user who saved them. | **SecretError**, save(), load(), delete(), exists() | test_cloud.py |
-| `cloud/service.py` | 229 | Cloud models: which providers have a key, which models they offer, and the calls themselves. | **CloudService**, **HybridRuntime** | test_cloud.py |
+| `cloud/service.py` | 275 | Cloud models: which providers have a key, which models they offer, and the calls themselves. | **CloudService**, **HybridRuntime** | test_cloud.py |

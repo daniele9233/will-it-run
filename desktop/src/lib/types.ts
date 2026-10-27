@@ -917,7 +917,8 @@ export interface CloudProvider {
   env_keys: string[];
   models: CloudModel[];
   ok?: boolean;
-  error?: string;
+  /** Why the models could not be loaded, when the last attempt failed. */
+  error?: string | null;
   count?: number;
 }
 

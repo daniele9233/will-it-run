@@ -315,6 +315,59 @@ def test_models_are_listed_recommended_first_and_cached(monkeypatch):
     assert cloud.available() == []  # no key, no models offered
 
 
+class FlakyLister:
+    """Lists no models until ``works`` is set, as a provider that refused the first call."""
+
+    def __init__(self) -> None:
+        self.works = False
+        self.asked = 0
+
+    def list_models(self) -> list[dict[str, Any]]:
+        self.asked += 1
+        if not self.works:
+            raise CloudError("DeepSeek is not reachable (timed out)")
+        return [{"id": "deepseek-v4-pro", "label": "DeepSeek V4 Pro", "context": None}]
+
+
+def test_a_key_with_no_model_list_is_asked_for_it_and_says_why_when_that_fails(monkeypatch):
+    from agentfit.cloud import service as service_module
+
+    lister = FlakyLister()
+    cloud = CloudService(client_factory=lambda provider, key: lister)
+    secrets.save("cloud_deepseek", "sk-x-1234567890")
+    try:
+        cloud.load_missing()
+        status = cloud.status("deepseek")
+        assert lister.asked == 1 and cloud.available() == []
+        assert status["configured"] and status["models"] == [] and "not reachable" in status["error"]
+
+        cloud.load_missing()
+        assert lister.asked == 1  # asked a moment ago: not again, a page that asks often must not hammer it
+
+        monkeypatch.setattr(service_module, "RETRY_AFTER_SECONDS", 0.0)
+        lister.works = True
+        cloud.load_missing()
+        assert [m["key"] for m in cloud.available()] == ["cloud:deepseek/deepseek-v4-pro"]
+        assert cloud.status("deepseek")["error"] is None
+
+        cloud.load_missing()
+        assert lister.asked == 2  # a provider that has its list is left alone
+    finally:
+        secrets.delete("cloud_deepseek")
+
+
+def test_a_provider_without_a_key_is_never_asked_for_models():
+    lister = FlakyLister()
+    CloudService(client_factory=lambda provider, key: lister).load_missing()
+    assert lister.asked == 0
+
+
+def test_a_model_list_that_is_not_json_is_an_error_a_person_can_read():
+    recorder = Recorder(httpx.Response(200, content=b"<html>Sign in to the network</html>"))
+    with pytest.raises(CloudError, match="DeepSeek answered HTTP 200: the answer is not a model list"):
+        openai_client("deepseek", recorder).list_models()
+
+
 def test_without_a_key_the_call_says_where_to_add_one():
     with pytest.raises(CloudError, match="No API key for ChatGPT"):
         CloudService().complete(make_key("openai", "gpt-5.5"), [{"role": "user", "content": "x"}])

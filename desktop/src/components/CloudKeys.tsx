@@ -100,7 +100,7 @@ function ProviderRow({ provider, onChanged }: { provider: CloudProvider; onChang
           {t("Save and test")}
         </Button>
       </div>
-      {error && <p className="text-xs text-bad">{error}</p>}
+      {(error ?? provider.error) && <p className="text-xs text-bad">{error ?? provider.error}</p>}
     </li>
   );
 }

@@ -10,5 +10,5 @@ Translation catalogs, keyed by the English text.
 
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
-| `locales/it.py` | 359 | Italian catalog for text the core produces. |  | test_i18n.py |
+| `locales/it.py` | 385 | Italian catalog for text the core produces. |  | test_i18n.py |
 | `locales/it_arena.py` | 356 | Italian for what the Arena's core says: why an answer was judged as it was, the messages of its API, and its exported reports. |  |  |

@@ -46,6 +46,16 @@
       "port": 8791
     },
     {
+      "name": "willitrun-ui-token",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$env:VITE_AGENTFIT_API = 'http://127.0.0.1:8766'; $env:VITE_AGENTFIT_TOKEN = 'live'; npm --prefix desktop run dev"
+      ],
+      "port": 1420
+    },
+    {
       "name": "willitrun-ui-isolated",
       "runtimeExecutable": "powershell",
       "runtimeArgs": [

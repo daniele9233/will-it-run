@@ -21,7 +21,9 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Benchmarks.tsx` | 191 | BenchmarksPage | `/api/benchmarks`, `/api/models/installed` | benchmark.progress |
 | `pages/Brain.tsx` | 529 | BrainPage | `/api/brain`, `/api/brain/memories/{}`, `/api/brain/projects/{}`, `/api/brain/projects/{}/memories`, `/api/brain/projects/{}/reindex` |  |
 | `pages/Chat.tsx` | 454 | Turn, useAnswerStream, SessionQuestions, ChatPage | `/api/chats`, `/api/chats/{}`, `/api/chats/{}/messages`, `/api/runs/{}/approvals/{}`, `/api/runs/{}/cancel`, `/api/runs/{}/questions` +1 |  |
-| `pages/CloneSite.tsx` | 783 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/{}`, `/api/clone/{}/answer`, `/api/clone/{}/file` +5 | clone.install |
+| `pages/clone/PictureStart.tsx` | 200 | PictureStart | `/api/clone/picture`, `/api/clone/skills`, `/api/clone/skills/install` |  |
+| `pages/clone/ReplicaResult.tsx` | 131 | ReplicaResult |  |  |
+| `pages/CloneSite.tsx` | 907 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/{}`, `/api/clone/{}/answer`, `/api/clone/{}/file` +5 | clone.install |
 | `pages/Downloads.tsx` | 285 | DownloadsPage | `/api/downloads`, `/api/downloads/{}`, `/api/downloads/{}/{}`, `/api/models/installed` | download. |
 | `pages/Guide.tsx` | 207 | GuidePage | `/api/quantization` |  |
 | `pages/Hardware.tsx` | 207 | HardwarePage | `/api/storage` |  |
@@ -66,7 +68,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/arena.ts` | 840 | Status, Preset, RunStatus, CategoryInfo, ToolInfo, Overview, LocalChoice +76 |  |  |
 | `lib/arenaExport.ts` | 70 | ExportFormat, EXPORT_FORMATS, slug, extensionOf, fileName, saveReport | `/api/arena/runs/{}/export` |  |
 | `lib/brainGraph.ts` | 157 | Point, KINDS, KIND, isMemoryKind, nodeTone, viaLabel, LABEL_WIDTH +3 |  |  |
-| `lib/cloneSite.ts` | 254 | KitInfo, CloneSetup, InstallJob, CloneInfo, CloneRun, CloneAsk, CloneDetail +19 |  |  |
+| `lib/cloneSite.ts` | 418 | KitInfo, CloneSetup, CloneMode, SkillPackInfo, SkillsStatus, InstallJob, CloneInfo +34 |  |  |
 | `lib/dialog.ts` | 32 | canBrowseFolders, pickFolder, pickAnyFolder, pickSavePath |  |  |
 | `lib/format.ts` | 245 | UNKNOWN, gbFromBytes, gbFromMb, gb, sizeLabel, compactNumber, params +20 |  |  |
 | `lib/hooks.ts` | 86 | Loadable, useLoad, useBus, useInterval, useDebounced, errorMessage |  |  |

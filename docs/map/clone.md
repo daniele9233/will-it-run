@@ -6,18 +6,23 @@ Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by
 
 - Depends on: `core`, `workflows`
 - Used by: `api`, `core`
-- Tests that import it: `test_clone.py`
+- Tests that import it: `test_clone.py`, `test_clone_picture.py`, `test_clone_replica.py`, `test_clone_skills.py`
 - HTTP routes: see `api.md` (`api/clone_routes.py`)
 
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
 | `clone/asking.py` | 74 | A question from the agent to the person, answered in the interface. | **Stopped**, ask(), pending(), answer() | test_clone.py |
-| `clone/browser.py` | 177 | The browser a site is cloned from: ``browser.mjs`` under Node, driven over stdin/stdout. | **BrowserError**, **BrowserCancelled**, **BrowserHost**, find_browser() |  |
-| `clone/devserver.py` | 148 | A dev server for the project a clone is built in, started and stopped by the app. | **DevServerError**, **DevServer**, stop_all() | test_clone.py |
-| `clone/install.py` | 209 | The browser engine the cloner drives: Playwright's core library, kept in a folder of the app's own. | **CloneSetupError**, **BrowserInstall** | test_clone.py |
+| `clone/browser.py` | 177 | The browser a site is cloned from: ``browser.mjs`` under Node, driven over stdin/stdout. | **BrowserError**, **BrowserCancelled**, **BrowserHost**, find_browser() | test_clone_replica.py |
+| `clone/devserver.py` | 155 | A dev server for the project a clone is built in, started and stopped by the app. | **DevServerError**, **DevServer**, stop_all() | test_clone.py |
+| `clone/install.py` | 209 | The browser engine the cloner drives: Playwright's core library, kept in a folder of the app's own. | **CloneSetupError**, **BrowserInstall** | test_clone.py, test_clone_picture.py, test_clone_replica.py |
+| `clone/jsx.py` | 225 | HTML as ``capture.mjs`` writes it, to JSX. | **Element**, parse(), style_object(), attributes(), render() | test_clone_replica.py |
 | `clone/kits.py` | 228 | The cloning kit: Mahanaicoach/ai-site-cloner, fetched from GitHub at a pinned commit. | **KitError**, **Kit**, **KitStore**, strip_frontmatter(), is_cloner_project(), has_package(), is_empty(), host_of(), host_slug() +1 more | test_clone.py |
+| `clone/picture.py` | 994 | Building a site from a picture, with the models of this PC: a frame of code around small model calls that code checks. | research(), region_file(), image_type(), png_size(), data_url(), image_message(), answer_of(), ask(), clamp() +24 more | test_clone_picture.py |
+| `clone/pipeline.py` | 476 | Cloning a site as a pipeline: capture, project, measure, and a model only where a number says it is needed. | research(), capture_dir(), report_dir(), ask_model(), definition(), register(), has_fixes(), tidy() | test_clone_picture.py, test_clone_replica.py |
 | `clone/proc.py` | 177 | Starting programs the way Windows needs them, for everything the site cloner runs. | **Cancelled**, **Job**, parse_version(), at_least(), resolve_true_case(), command(), clean_env(), run_command(), spawn_command() +4 more | test_clone.py |
 | `clone/prompts.py` | 38 | What the cloning agent is told. | skill_prompt() | test_clone.py |
+| `clone/replica.py` | 375 | A capture folder (``capture.mjs``) turned into a Next.js project: the page, one component for each of its sections. | **ReplicaError**, pascal(), valid_name(), default_name(), component_names(), name_components(), write_project() | test_clone_replica.py |
 | `clone/session.py` | 120 | What one cloning run keeps open: its browser, its dev server and the question it may be asking. | **CloneSession**, **SessionRegistry** | test_clone.py |
-| `clone/studio.py` | 589 | Cloning a site: an address in, a project on this PC out. | **CloneError**, **CloneStudio**, normalize_url(), site_title(), definition(), register() | test_clone.py |
+| `clone/skills.py` | 277 | Agent skills: folders with a ``SKILL.md`` that tell a model how to do one kind of work, fetched from GitHub. | **SkillsError**, **SkillPack**, **Skill**, **SkillStore**, describe(), prompt_catalog() | test_clone_picture.py, test_clone_skills.py |
+| `clone/studio.py` | 673 | Cloning a site: an address in, a project on this PC out. | **CloneError**, **CloneStudio**, normalize_url(), site_title(), definition(), register() | test_clone.py, test_clone_picture.py, test_clone_replica.py |
 | `clone/tools.py` | 719 | The tools the agent that clones a website is given, in place of the ones opencode has. | register() | test_clone.py |

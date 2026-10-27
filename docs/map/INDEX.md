@@ -4,25 +4,25 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-169 Python files (39,388 lines) · 816 public symbols · 134 HTTP routes · 23 tables · 39 test files (938 tests) · 66 UI files (19,860 lines).
+174 Python files (41,932 lines) · 878 public symbols · 137 HTTP routes · 23 tables · 42 test files (1017 tests) · 68 UI files (20,479 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
 | Package | What it is | Files | Lines | Depends on | Card |
 |---|---|---:|---:|---|---|
-| `api` | Local HTTP API consumed by the desktop UI. | 5 | 2,062 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
+| `api` | Local HTTP API consumed by the desktop UI. | 5 | 2,128 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
 | `arena` | The Arena: reliability tests for models, checked by code and never by another model. | 51 | 9,587 | cloud, core, fit, workflows | `arena.md` |
 | `benchmark` | Local measurement | 1 | 237 | core, hardware, lmstudio | `benchmark.md` |
 | `brain` | The Project Brain: the permanent memory of each project. | 13 | 3,050 | core | `brain.md` |
 | `catalog` | Discovery, search, classification, scoring | 8 | 1,655 | core, fit, hardware, lmstudio | `catalog.md` |
-| `clone` | Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by the model the person chooses). | 10 | 2,479 | core, workflows | `clone.md` |
+| `clone` | Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by the model the person chooses). | 15 | 4,917 | core, workflows | `clone.md` |
 | `cloud` | Cloud models (Claude, ChatGPT, DeepSeek, Gemini) next to the local ones. | 5 | 1,063 | core | `cloud.md` |
-| `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 32 | 3,748 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
+| `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 32 | 3,762 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
 | `fit` | Quantization tables, memory, speed, fit categories | 6 | 1,005 | core, hardware | `fit.md` |
 | `hardware` | Detection and the usable-memory budget | 6 | 1,029 | core | `hardware.md` |
 | `imagegen` | Image generation and editing through ComfyUI. | 8 | 3,264 | core, hardware | `imagegen.md` |
 | `lmstudio` | CLI wrapper, REST client, runtime | 6 | 1,364 | core, fit, hardware | `lmstudio.md` |
-| `locales` | Translation catalogs, keyed by the English text. | 2 | 715 |  | `locales.md` |
+| `locales` | Translation catalogs, keyed by the English text. | 2 | 741 |  | `locales.md` |
 | `teams` | AI team builder: specializations, roles, model assignment and resource planning. | 5 | 2,538 | catalog, cloud, core, fit, hardware, lmstudio, workflows | `teams.md` |
 | `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,592 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
 

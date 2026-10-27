@@ -17,10 +17,13 @@ from agentfit.benchmark import BenchmarkEngine
 from agentfit.brain import BrainService, RuntimeEmbedder
 from agentfit.catalog import CatalogService
 from agentfit.chat import ChatService
+from agentfit.clone import picture as clone_picture
+from agentfit.clone import pipeline as clone_pipeline
 from agentfit.clone import studio as clone_studio
 from agentfit.clone.install import BrowserInstall
 from agentfit.clone.kits import KitStore
 from agentfit.clone.session import SessionRegistry
+from agentfit.clone.skills import SkillStore
 from agentfit.cloud import CloudService, HybridRuntime
 from agentfit.config import Settings, load_settings, update_settings
 from agentfit.db import Database, get_db, utcnow
@@ -66,6 +69,7 @@ class AppServices:
         self._brain: BrainService | None = None
         self._browser_install: BrowserInstall | None = None
         self._kits: KitStore | None = None
+        self._skills: SkillStore | None = None
         self._clone_sessions: SessionRegistry | None = None
         self._clone: clone_studio.CloneStudio | None = None
         self._images: ImageStudio | None = None
@@ -184,7 +188,17 @@ class AppServices:
             if self._browser_install is None:
                 self._browser_install = BrowserInstall(bus=self.bus)
                 clone_studio.install_source = lambda: self.browser_install
+                clone_pipeline.install_source = lambda: self.browser_install
             return self._browser_install
+
+    @property
+    def skills(self) -> SkillStore:
+        """The agent skills (GSAP, frontend design, Vercel, Three.js, Playwright), fetched at their pinned commits."""
+        with self._lock:
+            if self._skills is None:
+                self._skills = SkillStore()
+                clone_picture.skill_store = self._skills
+            return self._skills
 
     @property
     def kits(self) -> KitStore:

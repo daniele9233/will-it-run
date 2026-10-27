@@ -81,3 +81,15 @@ The git hooks (`.githooks/`, turned on by `core.hooksPath`) and the Claude Code 
 ## Commit and push only when asked, and "main" means master
 *2026-10-27. Standing instruction from the owner.*
 Nothing is committed or pushed unless the person asks. The repository's default branch is `master`; "push to main" means push `master`. `.shots/` (development screenshots, which can show generated pictures) is never committed: the GitHub repository is public.
+
+## A clone is the page as the browser rendered it, not a model's description of it
+*2026-10-27. Detail: CLONE.md.*
+The first version had a model follow the skill of ai-site-cloner. On a local 27B model (about 27K tokens of context, 12K of them the skill) a run of 2 h 39 min on brioni.com made 776 tool calls and built no component; guards around the loop did not change that, because the skill assumes a model that keeps a whole site in its head. The default is now an exact copy: Chrome renders the page, `capture.mjs` freezes what it rendered (markup, style rules, pictures, fonts, shadow DOM flattened, a phone variant of each section), `replica.py` writes a Next.js project and `measure.mjs` compares it with the original's screenshots. Accuracy on brioni.com, measured on the built project: 99.9%, in 65 seconds, with no model for the copy. The agent mode stays for the models it works with. Code: `backend/src/agentfit/clone/pipeline.py`.
+
+## A local model does small jobs that a number can check
+*2026-10-27. Detail: CLONE.md, "From a picture".*
+A model of 27B on a 16 GB card has about 27K tokens, and a long tool loop spends them on re-reading. So a model is used as a function: one bounded question (name these sections, write this region from its crop, rewrite it from its score), an answer that code validates, and a measure that decides whether the answer stays. Places and sizes come from data, not from the model; a rewrite that does not raise the score is undone; motion that moves the page at rest is removed, and the motion is a fixed GSAP component that only takes numbers (the model chose the GSAP code once and the measure threw it out). The photographs of a picture are its own crops, and the report says which share of the page that is, so the accuracy cannot be raised by copying. A step that is code (capture, build, measure) never asks a model. Code: `clone/picture.py`.
+
+## Skills are fetched at a pinned commit and read on demand
+*2026-10-27. Detail: CLONE.md, "Skills".*
+GSAP's, Anthropic's frontend-design, Vercel's, Three.js and Playwright's skills are installed the way the clone kit is: `git fetch` of one commit, checked against its hash, never bundled, kept with their licences in `tools/skills/<owner>__<repo>@<commit>`. A run copies the ones it wants into its project (`.skills/`) and the model reads them with `read_file`; only a line of each goes in its prompt. The Playwright CLI is not installed as a global npm package. Code: `clone/skills.py`.

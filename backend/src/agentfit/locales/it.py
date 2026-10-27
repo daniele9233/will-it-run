@@ -261,6 +261,32 @@ MESSAGES: dict[str, str] = {
     "Build check": "Controllo della build",
     "Runs the project's check script (lint, typecheck, production build). A failure is sent back, with the log, to the agent that wrote the code.":
         "Esegue lo script di controllo del progetto (lint, typecheck, build di produzione). Un errore torna, con il log, all'agente che ha scritto il codice.",
+    "Capture": "Cattura",
+    "Opens the page in Chrome, lets it settle, removes banners and pop-ups, takes the reference screenshots and freezes the rendered page with its styles, pictures and fonts.":
+        "Apre la pagina in Chrome, la lascia assestare, toglie banner e popup, fa gli screenshot di riferimento e congela la pagina disegnata con i suoi stili, le immagini e i font.",
+    "Project": "Progetto",
+    "Turns the capture into a Next.js project, one component for each section (a model may name them), installs and builds it.":
+        "Trasforma la cattura in un progetto Next.js, un componente per ogni sezione (un modello può dar loro i nomi), lo installa e lo compila.",
+    "Measure": "Misura",
+    "Serves the built clone and compares its screenshots with the original's, over the page and over each section.":
+        "Serve il clone compilato e ne confronta gli screenshot con quelli dell'originale, su tutta la pagina e su ogni sezione.",
+    "Prepare": "Prepara",
+    "Copies the picture into the project, measures its colours and bands, writes the Next.js and GSAP project, copies the skills and installs the packages.":
+        "Copia l'immagine nel progetto, ne misura i colori e le fasce, scrive il progetto Next.js e GSAP, copia le skill e installa i pacchetti.",
+    "Analyze": "Analizza",
+    "A model that sees writes the picture's composition as regions; the picture is cut into them.":
+        "Un modello che vede scrive la composizione dell'immagine come regioni; l'immagine viene ritagliata in esse.",
+    "Compose": "Componi",
+    "A model writes one component for each region from its crop; the places come from the composition.":
+        "Un modello scrive un componente per ogni regione dal suo ritaglio; le posizioni vengono dalla composizione.",
+    "Builds and shows the page at the picture's size and compares it with the picture, region by region.":
+        "Compila e mostra la pagina alla dimensione dell'immagine e la confronta con l'immagine, regione per regione.",
+    "Refine": "Rifinisci",
+    "The weakest regions are written again from the crop and the score; the old code comes back if it is not better.":
+        "Le regioni più deboli vengono riscritte dal ritaglio e dal punteggio; il vecchio codice torna se non è migliore.",
+    "Motion": "Movimento",
+    "A model chooses the numbers of a GSAP animation (the intro, the parallax, the hover); it stays only if the page at rest still matches.":
+        "Un modello sceglie i numeri di un'animazione GSAP (intro, parallax, hover); resta solo se la pagina ferma coincide ancora.",
     "Refusal": "Rifiuto",
     "Ends the run without an answer, with a named verdict. A workflow routes here when no trusted path produced something that could be verified: refusing is the outcome, not a failure to be worked around.":
         "Chiude l'esecuzione senza risposta, con un verdetto esplicito. Un workflow arriva qui quando nessun percorso affidabile ha prodotto qualcosa di verificabile: rifiutare è l'esito, non un errore da aggirare.",

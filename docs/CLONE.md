@@ -1,158 +1,211 @@
 # Clone a site
 
-An address in, a Next.js project on this PC out. It is the workflow of
-[Mahanaicoach/ai-site-cloner](https://github.com/Mahanaicoach/ai-site-cloner) run the way it runs in a
-coding agent in the terminal, with the model you choose (a model in LM Studio, or Claude, ChatGPT,
-DeepSeek or Gemini with your own API key): the kit's project goes in a folder of yours or in a copy of a
-GitHub repository, its packages are installed, and the model follows the kit's `/clone-website` skill.
-It opens the site, finds the pages and **asks you which ones to clone**: only the home page, the home page
-and two more, three more, all of them.
+An address in, a Next.js project on this PC out. There are three ways to get one, and the first is the one to use:
 
-It is meant for sites you own (a migration, lost source code) and for learning how a site is built. Check a
-site's terms first: its text, logos and brand belong to its owner. This is not legal advice.
+| Way | What makes the page | Needs a model | Use it for |
+|---|---|---|---|
+| **Exact copy** (default) | Chrome's own rendering of the page, frozen; code builds and measures the project | No for the copy; yes for the names and the fixes | A site you own (a migration, lost source code), or to learn how a site is built |
+| **From a picture** | A model that sees writes the page region by region from a reference picture; code places, builds and measures it | A model that sees | A design that exists only as an image, with motion added by GSAP |
+| **Agent rebuilds it (kit)** | A model follows the skill of [ai-site-cloner](https://github.com/Mahanaicoach/ai-site-cloner) | A strong one: a cloud model, or a local one with a large context | The first version of this page, kept for the models it works with |
 
-## The same as in a terminal
+Check a site's terms first: its text, logos and brand belong to its owner. This is not legal advice.
 
-What you would type in a coding agent, and what Will It Run does for you:
+## Why the exact copy exists
 
-| In the terminal | Here |
-|---|---|
-| `git clone https://github.com/Mahanaicoach/ai-site-cloner.git .` | The kit is fetched at one pinned commit and its project files are put in the folder (never over a file that is already there) |
-| `npm install` | The same, in the folder, and `npm run setup` for the Chromium the kit's own scripts use |
-| `/clone-website https://nome-sito` | The model gets the text of the kit's `clone-website` skill as its instructions, with the address in it |
-| The agent asks "the home page, or 2 pages, 3 pages…?" | The question appears on the page, with buttons; you click or write your own answer and the agent goes on |
+The first version only had the agent. On 2026-10-25 a 27B model on a 16 GB card ran for 2 h 39 min on brioni.com: 776 tool calls (261
+commands, 133 folder listings, 118 file reads, 114 outlines of JSON), 39 files written, the context trimmed 310 times, the model swapped
+194 times for the vision model, and **no component built**. Its context was about 27K tokens, 12K of them the kit's skill, and the
+room left for one answer shrank to about 1,000 tokens, thinking included, so its tool calls were cut off in the middle. The skill is
+written for a model that keeps a whole site in its head; a local model cannot, and no amount of guards around the loop changed that.
 
-The skill is given exactly as its author wrote it. Will It Run adds a short note after it
-(`backend/src/agentfit/clone/prompts.py`) on how its tools map to the app's: where the skill says Bash,
-`run_command`; where it says `npm start`, `preview_start`; where it would spawn sub-agents, the agent does the
-work itself, one section after another.
+The fidelity of a clone is decided by what is copied, not by how well a model describes a layout. So the page is copied as the browser
+rendered it, by code, and a model is asked only for what is small and what a number can check.
 
-### Licence, and why nothing of it is bundled
-
-The kit is MIT. Even so, its files are not shipped with this program: the app fetches them from GitHub on your
-PC (`git fetch` of the pinned commit, which Git checks against the commit's hash; a different commit is
-refused). See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
-
-## What runs
+## Exact copy
 
 ```
-Preparation  ->  Cloner  ->  Final check
+capture  ->  project  ->  measure  ->  (polisher  ->  measure)
 ```
 
-- **Preparation** (code, no model): checks Node.js (22 or newer, as the kit asks), npm and Git; fetches the
-  kit; puts its project in the folder unless the folder already is one; runs `npm install`; runs `npm run
-  setup` (downloads Playwright's Chromium, about 170 MB, the first time only).
-- **Cloner** (the model): one agent that follows the skill. Phase 0 is the question to you. Then it records the
-  site with the kit's scripts (`scripts/extract/page.mjs`, `scripts/manifest.mjs`, ...), takes screenshots at
-  desktop and mobile width, writes `docs/research/<site>/` and builds the components in
-  `src/components/sites/<site>/`, page by page, checking each against the original. The work is **passes of
-  up to 150 tool calls, each a fresh conversation** that resumes from the kit's manifest: a local model's
-  context (about 30K tokens for a 27B on a 16 GB card, 12K of it the skill) fills with its own history and
-  trims what it read, so in one long conversation it reads the same files again and again (brioni.com: 117
-  reads against 14 edits). A round in which anything in the project folder changed, even through a script, is
-  progress. After 20 rounds in a row in which nothing changed (counted from the pass's first round) the agent
-  keeps only the tools that write, and the question to you, until it changes a file; 4 more rounds without one
-  and the pass ends. (Seen on brioni.com with a 27B: 110 rounds of reading, the same 9 KB file over twenty
-  times, not one file written, and a closing report that showed it knew what to write. A reminder in the
-  conversation did not move it; no reading tool to call did. The first version counted only the agent's own
-  file edits and ended a run that was doing real work with the kit's scripts.) Its temperature is 0.6, not
-  near zero: greedy decoding is what makes a local model repeat itself endlessly.
-- **Final check** (code): `npm run check` (lint, typecheck, production build), and a gate: the kit's own blank
-  page builds fine, so a build proves nothing alone. A source file of the site in `src/components/sites/`, a
-  page of another route or a changed `src/app/page.tsx` must be there. A check that fails goes back to the
-  Cloner, with the end of the log, **while the work moved** since the last check (sections by stage in the
-  manifest, specs written, size of the project's source): up to 8 more passes, and a pass that changed
-  nothing ends the run. A second gate is the kit's own definition of done: its manifest
-  (`docs/research/manifest.json`) moves every section through `discovered`, `extracted`, `specd`, `built`,
-  `merged` and `qa_passed`, and a build with sections that are not `qa_passed` goes back to the Cloner with the
-  list (the skill is resumable: `node scripts/manifest.mjs status`). If a check still fails the run ends as
-  *blocked*, with the reason, instead of "completed": the files written stay in the project and *Improve it*
-  resumes from the manifest.
+It is a workflow like any other (its live graph is in *Sessions*, models go through the gateway, Stop works). The steps are in
+`backend/src/agentfit/clone/pipeline.py`; the work is in `capture.mjs`, `replica.py` and `measure.mjs`.
 
-It is a workflow like any other: its live graph is in *Sessions*, models go through the gateway (one at a time
-in VRAM; a cloud model costs no VRAM), Stop works, risky actions ask first or are ignored if you chose so.
+### Capture (code)
 
-### The question
+Chrome (or Edge) opens the address like a visitor: the same Chrome, introducing itself as "Chrome" (a headless one says
+"HeadlessChrome" and bot protection answers 403 to it). Then, at desktop width (1440) and phone width (390):
 
-While the agent waits for you, the run shows a card on the clone's page ("The agent is waiting for your
-answer") and the app notifies you. The agent asks once, in Phase 0, with the pages it found in the site's
-menu and 3 to 6 options. Your answer goes to the agent as the tool's result (`POST /api/clone/{id}/answer`).
-Stopping the run ends the wait. Your choices stay on the page.
+- the page settles, and is scrolled once from top to bottom so lazy pictures and reveal animations happen;
+- **cookie banners and pop-ups are hidden**: the known consent managers, open dialogs, fixed layers over the page that are not its header.
+  They are hidden with an attribute, never removed: a page built with React that finds a node of its own gone throws, and its error
+  page replaces the site (seen on brioni.com, whose newsletter dialog appears four seconds after the first scroll). They are looked
+  for three times, because they come on timers;
+- the reference screenshots are taken (full page, animations off);
+- the page is **frozen**: the rendered markup, with each element's state (the picture the browser chose, a canvas as a picture, the
+  value of a form field), every style rule as the browser holds it (also those a script inserted), and every picture, font and file
+  the page used. A web component's shadow DOM is flattened into the page (`:host` becomes a class, `<slot>` is filled with what the
+  page put in the host), because `outerHTML` does not contain it and a Swiper carousel is nothing without its shadow styles. An
+  `<iframe>` becomes a box of the same size holding a picture of what it showed (a map). Scripts are dropped.
+- a font file the page never fetched is not copied (a map's style sheet lists a hundred scripts' worth of subsets: 186 files on
+  brioni.com);
+- the page is cut into **sections** (the header, each block of `main`, the footer), and each gets a component;
+- the document's **compatibility mode** is noted: a page with no doctype is drawn by the browser in quirks mode (an old table-based site
+  such as news.ycombinator.com), where a line of small inline text has another height, and Next.js always writes a doctype. Such a
+  page is served from `public/clone/page.html`, a document without one, with the same sections (`next.config.mjs` rewrites `/` to it);
+  first copied as a normal Next.js page, Hacker News measured 78.7%, with rows 4 px taller from the third on, and 100.0% after;
+- the sections are frozen again at phone width. A site often sends a phone other markup and other pictures (brioni.com: a different
+  header and a different hero picture), so a section whose phone markup differs has both, and a media query shows one of them (at the
+  width the page's own styles use most: 640, 768 or 1024).
 
-## The agent's tools
+### Project (code, and a model for the names)
 
-Names follow the Playwright MCP server the kit was written for.
+`replica.py` writes a Next.js project:
 
-| Tool | What it does |
+```
+src/app/layout.tsx          the document: title, description, icon, the classes of <html> and <body>, the two style sheets
+src/app/page.tsx            the page: the shell of the document, and each section as a component
+src/components/sites/<site>/<Name>.tsx    one file for each section
+public/clone/site.css       the page's own style rules, with their addresses made local
+public/clone/fixes.css      empty: where fixes go (loaded after site.css)
+public/clone/<files>        pictures, fonts, the pictures of frames
+docs/research/<site>/capture, report      the screenshots and what the measure found
+```
+
+The style rules are one file linked by the layout, not run through the framework's CSS pipeline, which rewrites what it does not know:
+a copy is a copy only if the rules reach the browser unchanged. The markup is real JSX (`jsx.py`): `class` is `className`, a style
+is an object, SVG attributes are camelCase, a form control's `value` is a `defaultValue`, text with a brace is a string. The generated
+files start with `// @ts-nocheck`, because a copy keeps every attribute of the original, whatever React's types say of it; remove the
+line when you tidy a file.
+
+The model, when it is there, only **names** the components (`Header`, `HeroTravelJacket`, `ProductCarousel`): it is asked once, its
+answer is validated (a name must be PascalCase, 3 to 40 letters, unique), and what is not usable falls back to a name made from the
+section's tag, class and heading. A model that fails changes nothing but the names. Then `npm install` and `npm run build`.
+
+### Measure (code)
+
+The built project is served in production mode on 127.0.0.1 and opened by the same Chrome at the same widths. Both pictures are full-page
+screenshots. No model judges; the numbers come from the two pictures:
+
+| Number | What it is |
 |---|---|
-| `browser_navigate`, `browser_resize`, `browser_scroll`, `browser_click`, `browser_hover`, `browser_press_key`, `browser_wait_for` | Drive the page like a visitor (the scroll is the mouse wheel, so smooth-scroll libraries and scroll-linked animations react) |
-| `browser_take_screenshot` | A PNG in the project (`docs/design-references/` unless the agent names a place under `docs/` or `.tasks/`) |
-| `browser_snapshot`, `browser_evaluate` | The page's structure; any JavaScript in the page, for computed styles, sizes and sources |
-| `browser_network_requests`, `browser_console_messages` | What the page loaded and what it logged |
-| `download_asset` | A file the page uses, with the page's cookies; it warns when the server's type and the file's name disagree (a `.png` that is AVIF) |
-| `look` | A picture described by a model that can see (see below) |
-| `run_command` | The skill's Bash, with a fixed list of commands (below) |
-| `json_outline` | The shape of a big JSON file (tokens.json, css.json, the manifest) in a few lines, with a `pointer` to zoom in; a part under 3000 characters is shown whole, with every value: the agent's memory is too small to page through such files |
-| `preview_start`, `preview_stop` | Serve the project on 127.0.0.1: `production=true` builds first and serves the build, as `npm start` does |
-| `ask_user` | The question to you |
-| `read_file`, `write_file`, `edit_file`, `list_dir`, `delete_file` | The workspace, as for every team |
+| **pixels** | the share of pixels whose colour is within 16/255 of the original's (the part missing from a shorter page counts as wrong) |
+| **ssim** | structural similarity of 8×8 blocks of the grey picture: is the same thing drawn in the same place |
+| **visual** | `(pixels + ssim) / 2` |
+| **layout** | how close the height of the page, and of each section, is to the original's |
+| **text** | F1 over the multiset of the words the original shows and the clone shows (desktop only) |
+| **accuracy** | the mean of *visual* over the widths: the headline |
 
-Everything the tools write stays inside the run's folder. Only `http` and `https` addresses open.
+Each section is also scored on its own, aligned by the section's own top, so a section that moved the others down is not blamed for
+them. The report is `docs/research/<site>/report/report.json`, with the original and the clone at half size and a picture of where
+they differ (`diff-*.png`, red).
 
-### `run_command`
+The target is **80%**: below it the run ends *blocked* with the reasons instead of *completed*. Below **97%**, if a section scores under
+90%, the polisher is called.
 
-It is not a shell. The line is split on `&&`, `;` and new lines, each command is checked, and they run in
-order, stopping at the first failure. Allowed:
+### Polisher (a model, only when needed)
 
-- `node scripts/<file>.mjs ...`: the project's own scripts, inside the workspace (no `node -e`, no file outside);
-- `npm run <script>` for a script of `package.json` that ends (not `dev` or `start`: use `preview_start`),
-  `npm install` and `npm ci` (a few options; adding a package asks first), `npm ls`;
-- `npx tsc`, `npx eslint`, `npx next build|lint|info`, `npx playwright install ...`: programs the project already
-  has, never downloaded;
-- `git status|log|diff|show|rev-parse|ls-files|describe|blame` and `git branch` to list: read-only.
+An agent with a short prompt and the file tools (and `look`, if a model that sees is available). It reads the weak sections from the
+measure and writes **style rules only** to `public/clone/fixes.css`, selecting a section by `[data-clone-section="N"]`. The measure
+runs again; at most two rounds.
 
-Pipes, redirects, `&`, `$VARIABLES` and quotes left open are refused with a message that says what to do
-instead. A long output keeps its beginning and its end.
+### What it gave (2026-10-27, no model for the copy)
 
-### Models that cannot see
+| Site | Time | Sections | Accuracy (desktop, phone) |
+|---|---|---|---|
+| brioni.com/it/it | 65 s | 12 | **99.9%** (99.9%, 99.8%), text 98.9%, layout 100% |
+| python.org | 51 s | 4 | **99.9%** (100.0%, 99.9%) |
+| news.ycombinator.com | 46 s | 2 | **100.0%** |
 
-`look` calls a second model: the agent's own, when it can see (the picker says *sees*), else the *model that
-sees* you choose, else none. Without one the agent is not offered `look` and measures instead
-(`browser_evaluate`, `browser_snapshot`, the kit's `diff.mjs`). Cloud models: Claude, ChatGPT and Gemini see;
-DeepSeek's chat models do not.
+The time is the capture (23 to 33 s), `npm install` and `npm run build` (about 20 s), and the measure (about 11 s). No console error and
+no failed request on brioni.com. The Next.js project built and served by `next start` was the one measured, not an intermediate page.
+
+### Known limits
+
+- **What the page does is not copied**, only what it shows: a menu does not open, a carousel does not move, a form does not send.
+  Its scripts are dropped on purpose (they are the framework of the original, not code of yours).
+- A video is a still of its first frame if the file is too big to copy (20 MB); WebGL and canvas art is a picture of the moment of the capture.
+- Scroll-linked motion (pinned sections, parallax) is frozen at the top of the page.
+- A page that sends different markup for a tablet gets the desktop one between the phone breakpoint and 1440.
+- A site behind a login or a captcha cannot be captured: the run ends and says what the site answered. Stronger protection than a
+  user agent can still refuse the capture.
+- The accuracy compares the page with its own screenshot at two widths, not with every width.
+
+## From a picture
+
+```
+prepare -> analyze -> compose -> measure -> (refine -> measure)* -> motion -> reviewer
+```
+
+A frontier model can be given a whole brief (a hero that looks like this picture, with parallax, hover and scroll) and write it in one
+long conversation. A 27B model has about 27K tokens, so the brief is cut into the phases it describes, each small enough, and code
+keeps the numbers (`picture.py`, `picture.mjs`):
+
+1. **prepare** (code): the project (Next.js and GSAP), the reference picture in `docs/reference/`, the picture's colours and bands
+   (`picture.mjs`), the **skills** copied into `.skills/`, `npm install`.
+2. **analyze** (the model that sees): writes the composition as data: regions with a kind (photo, text, ui, shape), a place and a size
+   in percent, a depth, a rotation and the text in them. It is clamped and checked; if it is unusable the bands of the picture stand in.
+3. **compose** (the model): one component for each region, looking at that region's **crop**. The place of a region comes from the data,
+   not from the model, so a wrong size cannot move the layout. A component with an import, a script, `fetch`, `window` or `document` is
+   refused; one that does not compile is asked for again with the compiler's words, then replaced. A photograph is the crop itself, and
+   so is a region the model could not write: the report says how many.
+4. **measure** (code): the page is built, shown at the picture's size and compared with it, region by region. The report separates the
+   accuracy of the whole picture from the accuracy over **the regions the model wrote**, and says which share of the picture is its own
+   crops, so that a page made of photographs cannot pass for a built one.
+5. **refine** (the model): the weakest regions (under 85%, three at most, two rounds) are written again from the crop, the clone's own
+   crop and the score. The new code stays only if the next measure is better; if not, the old code comes back.
+6. **motion** (the model chooses numbers; a fixed component animates): the model reads the brief and answers with a few numbers (the style
+   and length of the intro, how far the mouse parallax goes, the depth of the hover shadow), clamped to what the component allows. The
+   component is a GSAP one written from the GSAP skills (`gsap-react`: one `gsap.context`, reverted when the component goes;
+   `gsap-performance`: transforms and opacity only), animates the *content* of each region so that its box keeps its place and
+   rotation, clears everything it set when it ends, waits for the intro before answering the pointer, and does nothing for a visitor who
+   asks for reduced motion. The page is measured when the intro is over and it stays only if it still matches the picture, within 3
+   points. A first version let the model write the GSAP code itself: it moved the page at rest (87.8% fell to 64.9%) and was
+   removed by the measure, which is the rule working and a useless result; numbers in a fixed component cannot leave the page moved.
+7. **reviewer** (an agent): the report for the person, from the numbers.
+
+## Agent rebuilds it (the kit)
+
+It is the workflow of [Mahanaicoach/ai-site-cloner](https://github.com/Mahanaicoach/ai-site-cloner) (MIT) run the way it runs in a
+coding agent in the terminal, with the model you choose: the kit's project goes in a folder of yours or in a copy of a GitHub
+repository, its packages are installed, and the model follows the kit's `/clone-website` skill. It opens the site, finds the pages and
+**asks you which ones to clone**, records the site with the kit's scripts, writes a spec for each section and builds it, checking each
+against the original. The kit is fetched from GitHub on your PC (`git fetch` of the pinned commit, which Git checks against the hash).
+Its tools (`browser_*`, `download_asset`, `look`, `run_command` with a fixed list of commands, `json_outline`, `preview_start`,
+`ask_user`, and the file tools) and its guards (passes of 150 rounds, the reading tools taken away after 20 rounds without a change
+in the project) are in `studio.py`, `tools.py` and `prompts.py`. Use a model with at least 32k tokens of context, or a cloud model.
+
+## Skills
+
+The skills of a coding agent, fetched from GitHub on this PC at an exact commit and kept, with their authors' licences, in
+`%LOCALAPPDATA%\Will It Run\Data\tools\skills\<owner>__<repo>@<commit>` (`clone/skills.py`; none is bundled with the program):
+
+| Pack | Repository, commit | Licence | Skills |
+|---|---|---|---|
+| gsap | greensock/gsap-skills `aed9cfd32777` | MIT | gsap-core, gsap-timeline, gsap-scrolltrigger, gsap-plugins, gsap-utils, gsap-react, gsap-performance, gsap-frameworks |
+| frontend-design | anthropics/skills `dbd4588f9e10` | Apache-2.0 | frontend-design |
+| vercel | vercel-labs/agent-skills `6ec269328bc4` | MIT | react-best-practices, web-design-guidelines |
+| threejs | cesartevisual/threejs-skills `84f9bcb4bea1` | MIT | threejs-web, -scene, -materials, -lighting, -assets, -animation, -interaction, -r3f, -html, -performance, -testing |
+| playwright | microsoft/playwright-cli `b1a5903c5b63` | Apache-2.0 | playwright-cli |
+
+`GET /api/clone/skills` lists them and `POST /api/clone/skills/install` fetches them in the background. A run copies the skills it
+wants into its project (`.skills/<name>/`), where the model reads them with `read_file`; only a one-line description of each goes in
+its prompt, because a small model's context is the scarcest thing it has. The Playwright CLI itself is not installed (no global npm
+package): the app drives the browser with its own scripts, and the skill is there to be read. (`npm install -g cli@latest`, in the
+script these skills came from, installs an unrelated package named `cli`; the Playwright one is `@playwright/cli`.)
 
 ## Where the project goes
 
 | You choose | The project is built in |
 |---|---|
 | nothing | a folder of its own in Will It Run's data (`workspaces\clone-<id>`), removed with the clone |
-| an empty folder, or a project of the kit | that folder |
+| an empty folder | that folder (the agent: also a project of the kit) |
 | any other folder | a subfolder named after the site |
 | a GitHub repository | a copy of it in Will It Run's data (`workspaces\repos`); nothing is pushed unless you approve it |
 
-In a folder of yours, a file that was there before is not overwritten without asking (*ask before
-overwriting*); files the preparation copied from the kit are not "yours" and are rewritten freely. A folder or
-repository of yours is never deleted with the clone.
+A folder or repository of yours is never deleted with the clone.
 
 ## Getting ready
 
 The browser engine is installed up front: Playwright's core library (`playwright-core`, pinned), in
-`%LOCALAPPDATA%\Will It Run\Data\tools\clone-browser`, by `npm install --prefix`. It drives the Chrome or Edge
-you already have for the agent's browser tools. The kit is fetched at the first clone (a few seconds), and its
-`npm run setup` downloads a Chromium of Playwright's own for the kit's scripts. Needs Node.js 22 or newer, npm
-and Git on the PC. Windows 11 always has Edge.
-
-## Known limits
-
-- Scroll-linked motion, WebGL, Lottie and canvas art are what the kit can do by observing; a small local model
-  will often get the layout right and the motion approximately. Frontier models do better; try the same site
-  with both.
-- A site behind a login or a CAPTCHA is not cloned: the agent stops and says so. The agent's browser tools use
-  your Chrome or Edge, headless, introducing itself as a normal one (a headless Chrome says "HeadlessChrome",
-  and Akamai-type protection answered 403 to it on brioni.com). The kit's own scripts use Playwright's Chromium
-  with the user agent the kit chose; a site with stronger checks can still refuse them.
-- The skill describes sub-agents building sections in parallel in separate worktrees. Here one agent does all of
-  it, in order: a run takes from minutes (a frontier model) to over an hour (a 27B on a busy GPU), and a small
-  model may get lost on a page with many sections. Choosing fewer pages when it asks helps.
-- A model with a short context fills it on a long page. Use a model with at least 32k tokens of context, or a
-  cloud model.
+`%LOCALAPPDATA%\Will It Run\Data\tools\clone-browser`, by `npm install --prefix`. It drives the Chrome or Edge you already have, so
+nothing big is downloaded. It needs Node.js 22 or newer and npm; the agent also needs Git, to fetch the kit.

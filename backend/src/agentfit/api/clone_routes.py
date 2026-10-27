@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict
 from agentfit.app import AppServices
 from agentfit.clone.browser import find_browser
 from agentfit.clone.install import CloneSetupError
+from agentfit.clone.skills import PACK_BY_ID
 from agentfit.clone.studio import CloneError
 from agentfit.cloud import is_cloud, parse_key
 from agentfit.workflows import sources
@@ -35,10 +36,38 @@ class CloneBody(BaseModel):
     approval: Literal["ask", "bypass"] = "ask"
     # Extra instructions from the person ("keep the dark theme", "only the home page").
     extra: str = ""
+    # "replica": an exact copy of the page as a browser rendered it, measured against the original. "agent": a model rebuilds it
+    # following the cloning kit's skill. A new run of a clone keeps the mode it was made in.
+    mode: Literal["replica", "agent"] = "replica"
 
 
 class AnswerBody(BaseModel):
     answer: str
+
+
+class SkillsBody(BaseModel):
+    # The packs to fetch; none given: all of them.
+    packs: list[str] | None = None
+
+
+class PictureFile(BaseModel):
+    name: str = "reference.png"
+    # The picture as base64: what the browser's file chooser gives, so no multipart upload is needed.
+    data: str
+
+
+class PictureBody(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    reference: PictureFile
+    # What the person wants, in their words: the site, its content, its motion.
+    brief: str = ""
+    model_key: str
+    # A model that sees, when the one above cannot: the whole job is done by it.
+    vision_key: str = ""
+    language: str = "en"
+    # The skills copied into the project for the model to read; none given: every skill that is installed.
+    skills: list[str] | None = None
+    approval: Literal["ask", "bypass"] = "ask"
 
 
 def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
@@ -50,12 +79,13 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             problems.append(status["node"]["detail"] or "Node.js is needed.")
         if not status["npm"]:
             problems.append("npm is not on this PC. It comes with Node.js.")
-        if not status["git"]:
-            problems.append("Git is not installed: the cloning kit is fetched with it.")
         if browser is None:
             problems.append("Neither Chrome nor Edge was found on this PC.")
-        return {**status, "browser": browser, "kit": svc.kits.describe(), "problems": problems,
-                "ready": status["installed"] and not problems}
+        # Only the agent that follows the kit's skill fetches the kit, and needs Git for it.
+        kit_problems = [] if status["git"] else ["Git is not installed: the cloning kit is fetched with it."]
+        ready = status["installed"] and not problems
+        return {**status, "browser": browser, "kit": svc.kits.describe(), "problems": problems, "kit_problems": kit_problems,
+                "ready": ready, "agent_ready": ready and not kit_problems}
 
     def model_sees(model_key: str) -> bool:
         if is_cloud(model_key):
@@ -95,6 +125,19 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
     def clone_install_cancel() -> dict[str, Any]:
         return {"cancelled": svc.browser_install.cancel()}
 
+    @app.get("/api/clone/skills", dependencies=guard)
+    def skills_status() -> dict[str, Any]:
+        """The agent skills: which packs are on this PC (GSAP, frontend design, Vercel, Three.js, Playwright), at which commit and licence."""
+        return svc.skills.status()
+
+    @app.post("/api/clone/skills/install", dependencies=guard)
+    def skills_install(body: SkillsBody) -> dict[str, Any]:
+        """Fetch the skill packs at their pinned commits, in the background; ``GET /api/clone/skills`` follows the job."""
+        unknown = [i for i in body.packs or [] if i not in PACK_BY_ID]
+        if unknown:
+            raise HTTPException(status_code=400, detail=f"Unknown skill pack: {', '.join(unknown)}.")
+        return {"job": svc.skills.install_in_background(body.packs or None)}
+
     def clone_start(study_id: str | None, body: CloneBody) -> dict[str, Any]:
         check_model(body.model_key)
         if svc.browser_install.installed_version() is None:
@@ -120,8 +163,31 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             entry, record = svc.clone.start(
                 body.url, model_key=body.model_key, sees=sees, vision_key=vision_key, language=body.language,
                 workspace=place.workspace, protect_existing=place.protect_existing, source=place.source, approval=body.approval,
-                extra=body.extra, study_id=study_id,
+                extra=body.extra, study_id=study_id, mode=body.mode,
             )
+        except (CloneError, RunError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return {"study": entry["id"], "run": record.id}
+
+    @app.post("/api/clone/picture", dependencies=guard)
+    def clone_picture(body: PictureBody) -> dict[str, Any]:
+        """Build a site from a picture: a model that sees writes it region by region, and the page is measured against the picture."""
+        check_model(body.model_key)
+        if svc.browser_install.installed_version() is None:
+            raise HTTPException(status_code=409, detail="The browser engine is not installed yet: press Prepare.")
+        if not svc.browser_install.node()["ok"] or find_browser() is None:
+            raise HTTPException(status_code=409, detail="Node.js, and Chrome or Edge, are needed.")
+        _ = svc.skills  # the run copies the skills it finds there into the project
+        sees = model_sees(body.model_key)
+        vision_key = ""
+        if not sees and body.vision_key:
+            check_model(body.vision_key)
+            if not model_sees(body.vision_key):
+                raise HTTPException(status_code=400, detail="That model cannot see pictures: choose one with vision.")
+            vision_key = body.vision_key
+        try:
+            entry, record = svc.clone.start_picture(body.reference.model_dump(), brief=body.brief, model_key=body.model_key, sees=sees, vision_key=vision_key,
+                                                   language=body.language, skills=body.skills, approval=body.approval)
         except (CloneError, RunError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"study": entry["id"], "run": record.id}

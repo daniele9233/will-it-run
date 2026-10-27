@@ -1265,9 +1265,7 @@ fetches the kit, puts its project in the folder, installs the packages and the b
 follows the kit's /clone-website skill: asks which pages, studies the site, writes the components ||| segue la skill /clone-website del kit: chiede quali pagine, studia il sito, scrive i componenti
 runs the project's check: lint, typecheck, production build ||| esegue il controllo del progetto: lint, typecheck, build di produzione
 Chromium for the kit's scripts (npm run setup) ||| Chromium per gli script del kit (npm run setup)
-Will It Run drives the Chrome or Edge you already have with Playwright's library (a few MB, kept in its own folder). The cloning kit is fetched from GitHub the first time you use it, at one exact version; its own scripts also download a copy of Chromium (about 170 MB, once). ||| Will It Run pilota il Chrome o l'Edge che hai già con la libreria di Playwright (pochi MB, in una cartella tutta sua). Il kit di clonazione viene scaricato da GitHub la prima volta che lo usi, a una versione precisa; i suoi script scaricano anche una copia di Chromium (circa 170 MB, una volta sola).
 A Next.js project, cloned the way the kit does it ||| Un progetto Next.js, clonato come fa il kit
-The kit's project is put in the folder, its packages are installed, and the model runs its /clone-website skill, exactly as in a coding agent in the terminal: it opens the site, finds the pages and asks you which ones to clone (only the home page, two pages, three…), then studies and rebuilds them as Next.js components. ||| Il progetto del kit viene messo nella cartella, i suoi pacchetti vengono installati e il modello esegue la sua skill /clone-website, esattamente come un agente di programmazione nel terminale: apre il sito, trova le pagine e ti chiede quali clonare (solo la home page, due pagine, tre…), poi le studia e le ricostruisce come componenti Next.js.
 The model can see: it looks at the screenshots itself. ||| Il modello vede: guarda gli screenshot da sé.
 An empty folder gets the project; a folder that already is a project of the kit is built into; any other folder gets a subfolder for the clone. ||| Una cartella vuota riceve il progetto; in una cartella che è già un progetto del kit si costruisce dentro; ogni altra cartella riceve una sottocartella per il clone.
 The repository is copied to a folder of Will It Run and the agent writes in the copy. Nothing is sent to GitHub unless you approve it. ||| Il repository viene copiato in una cartella di Will It Run e l'agente scrive nella copia. Nulla viene inviato a GitHub se non lo approvi.
@@ -1286,7 +1284,6 @@ waiting for you ||| aspetta te
 commands ||| comandi
 The result appears here when the agent has finished. ||| Il risultato compare qui quando l'agente ha finito.
 The screenshots appear here as the agent takes them. ||| Gli screenshot compaiono qui man mano che l'agente li scatta.
-Give an address: the ai-site-cloner kit and the model you choose (on this PC or in the cloud) rebuild the site as a Next.js project in a folder or a GitHub repository. It asks you which pages to clone. ||| Dai un indirizzo: il kit ai-site-cloner e il modello che scegli (su questo PC o nel cloud) ricostruiscono il sito come progetto Next.js in una cartella o in un repository GitHub. Ti chiede quali pagine clonare.
 You give the address of a website and choose a model, on this PC or in the cloud. It runs the ai-site-cloner kit the way it runs in a coding agent: the agent opens the site in your Chrome or Edge, asks you which pages to clone (only the home page, two pages, three…), measures them, downloads what it needs and rebuilds them as a Next.js project in a folder or a GitHub repository you choose. It is meant for sites you own, for migrations and for learning. ||| Dai l'indirizzo di un sito e scegli un modello, su questo PC o nel cloud. Esegue il kit ai-site-cloner come si esegue in un agente di programmazione: l'agente apre il sito nel tuo Chrome o Edge, ti chiede quali pagine clonare (solo la home page, due pagine, tre…), le misura, scarica ciò che serve e le ricostruisce come progetto Next.js in una cartella o in un repository GitHub che scegli. È pensato per siti tuoi, per migrazioni e per imparare.
 Faster generation (MTP) ||| Generazione più veloce (MTP)
 Some models carry a small extra head that guesses the next words (the "-mtp" files of Qwen3.8, for example). LM Studio checks the guesses and keeps the right ones, so the answers keep their quality and come 1.4 to 1.6 times faster. Will It Run turns it on for those models, loads them with one slot and sends no repeat penalty, which would lower the number of right guesses. Turn it off if a model misbehaves. ||| Alcuni modelli hanno una piccola testa in più che indovina le parole successive (per esempio i file "-mtp" di Qwen3.8). LM Studio controlla le ipotesi e tiene quelle giuste: le risposte restano di pari qualità e arrivano 1,4–1,6 volte più veloci. Will It Run lo attiva per questi modelli, li carica con un solo slot e non invia penalità di ripetizione, che ridurrebbe le ipotesi giuste. Disattivalo se un modello si comporta male.
@@ -1806,3 +1803,88 @@ Save the picture ||| Salva l'immagine
 Picture saved ||| Immagine salvata
 The picture could not be saved ||| Non è stato possibile salvare l'immagine
 Zoom ||| Ingrandisci
+Capture ||| Cattura
+opens the page in Chrome, hides banners and pop-ups, takes screenshots and freezes the rendered page ||| apre la pagina in Chrome, nasconde banner e popup, fa gli screenshot e congela la pagina così come è stata disegnata
+writes the Next.js project, one component for each section, and builds it ||| scrive il progetto Next.js, un componente per ogni sezione, e lo compila
+Measure ||| Misura
+compares the clone with the original, pixel by pixel and section by section ||| confronta il clone con l'originale, pixel per pixel e sezione per sezione
+Polisher ||| Rifinitore
+a model fixes the weak sections with style rules: only if the measure finds some ||| un modello corregge le sezioni deboli con regole di stile: solo se la misura ne trova
+Page captured ||| Pagina catturata
+Components named by the model ||| Componenti battezzati dal modello
+Project built (npm run build) ||| Progetto compilato (npm run build)
+Clone measured against the original ||| Clone misurato contro l'originale
+Phone ||| Telefono
+Desktop ||| Desktop
+Open it larger ||| Aprila più grande
+Above the target of {target}. The accuracy is the mean, over the widths, of how many pixels match the original and how well its structure matches. ||| Sopra l'obiettivo del {target}. L'accuratezza è la media, sulle larghezze, di quanti pixel coincidono con l'originale e di quanto ne coincide la struttura.
+Below the target of {target}. ||| Sotto l'obiettivo del {target}.
+Visual ||| Visiva
+Pixels ||| Pixel
+Structure ||| Struttura
+Layout ||| Layout
+Text ||| Testo
+Weakest sections ||| Sezioni più deboli
+Original ||| Originale
+Clone ||| Clone
+Page height: original {a}px, clone {b}px. Red marks the pixels that differ. ||| Altezza della pagina: originale {a}px, clone {b}px. Il rosso segna i pixel diversi.
+The clone logged {n} console messages and {m} failed requests. ||| Il clone ha scritto {n} messaggi in console e {m} richieste fallite.
+Will It Run drives the Chrome or Edge you already have with Playwright's library (a few MB, kept in its own folder). ||| Will It Run guida il Chrome o l'Edge che hai già con la libreria Playwright (pochi MB, tenuta in una cartella sua).
+Exact copy ||| Copia esatta
+Agent rebuilds it (kit) ||| L'agente lo ricostruisce (kit)
+The page as a browser renders it, as a Next.js project ||| La pagina come la disegna un browser, come progetto Next.js
+measured against the original, no model needed for the copy ||| misurata contro l'originale, per la copia non serve un modello
+Chrome opens the site like a visitor, removes cookie banners and pop-ups, and freezes what it rendered: the markup, every style rule, the pictures and the fonts. That becomes a Next.js project with a component for each section, which is then built, shown in the same browser at desktop and phone width and compared with the original, pixel by pixel. The model you choose names the components and, only if the measure finds a weak section, looks at it and fixes it with style rules. ||| Chrome apre il sito come un visitatore, toglie banner dei cookie e popup, e congela ciò che ha disegnato: il markup, ogni regola di stile, le immagini e i font. Ne nasce un progetto Next.js con un componente per ogni sezione, che viene compilato, mostrato nello stesso browser a larghezza desktop e telefono e confrontato con l'originale, pixel per pixel. Il modello che scegli dà i nomi ai componenti e, solo se la misura trova una sezione debole, la guarda e la corregge con regole di stile.
+The kit's project is put in the folder, its packages are installed, and the model runs its /clone-website skill, exactly as in a coding agent in the terminal: it opens the site, finds the pages and asks you which ones to clone (only the home page, two pages, three…), then studies and rebuilds them as Next.js components. A small local model often runs out of room for this: use the exact copy, or a cloud model. ||| Il progetto del kit viene messo nella cartella, i suoi pacchetti vengono installati e il modello esegue la sua skill /clone-website, proprio come un agente di programmazione nel terminale: apre il sito, trova le pagine e ti chiede quali clonare (solo la home, due pagine, tre…), poi le studia e le ricostruisce come componenti Next.js. Un modello locale piccolo spesso non ha abbastanza spazio per farlo: usa la copia esatta, o un modello cloud.
+Model: names the components, fixes weak sections ||| Modello: dà i nomi ai componenti, corregge le sezioni deboli
+A model that sees compares the original and the clone when a section is weak. Without one the polisher works from the numbers of the measure only. ||| Un modello che vede confronta l'originale e il clone quando una sezione è debole. Senza, il rifinitore lavora solo sui numeri della misura.
+An empty folder gets the project; any other folder gets a subfolder for the clone. ||| Una cartella vuota riceve il progetto; ogni altra cartella riceve una sottocartella per il clone.
+The polisher runs only when the measure finds a weak section, at most twice; a fix counts only if the next measure is better. ||| Il rifinitore interviene solo se la misura trova una sezione debole, al massimo due volte; una correzione vale solo se la misura dopo è migliore.
+weak section → polisher → measure again ||| sezione debole → rifinitore → misura di nuovo
+The page is captured again (useful when the site changed), the project is rebuilt and measured. ||| La pagina viene catturata di nuovo (utile se il sito è cambiato), il progetto viene rifatto e misurato.
+What was captured ||| Che cosa è stato catturato
+Hidden, because they are not part of the site: {list}. ||| Nascosti, perché non fanno parte del sito: {list}.
+The result appears here when the measure has run. ||| Il risultato compare qui quando la misura è stata fatta.
+The screenshots appear here as the capture takes them. ||| Gli screenshot compaiono qui man mano che la cattura li fa.
+Give an address: the page is copied as a browser renders it into a Next.js project, in a folder or a GitHub repository, and measured against the original. A model on this PC or in the cloud helps where the measure says it is needed. ||| Dai un indirizzo: la pagina viene copiata come la disegna un browser in un progetto Next.js, in una cartella o in un repository GitHub, e misurata contro l'originale. Un modello su questo PC o nel cloud aiuta dove la misura dice che serve.
+the project, the skills, the colours of the picture ||| il progetto, le skill, i colori dell'immagine
+Analyze ||| Analizza
+the model that sees writes the composition: regions, places, depths ||| il modello che vede scrive la composizione: regioni, posizioni, profondità
+Compose ||| Componi
+the model writes one component for each region from its crop ||| il modello scrive un componente per ogni regione dal suo ritaglio
+shows the page at the picture's size and compares it, region by region ||| mostra la pagina alla dimensione dell'immagine e la confronta, regione per regione
+Refine ||| Rifinisci
+the weakest regions are written again; the old code comes back if it is not better ||| le regioni più deboli vengono riscritte; il vecchio codice torna se non è migliore
+Motion ||| Movimento
+GSAP, from its skills: kept only if the page at rest still matches ||| GSAP, dalle sue skill: resta solo se la pagina ferma coincide ancora
+Reviewer ||| Revisore
+an agent reports on the result, from the numbers ||| un agente riferisce sul risultato, dai numeri
+From a picture ||| Da un'immagine
+A site written from a reference picture, with local models ||| Un sito scritto da un'immagine di riferimento, con modelli locali
+every region measured against the picture ||| ogni regione misurata contro l'immagine
+A model that sees reads the picture and writes its composition; then it writes one component for each region, looking at that region. Code places the regions, builds the page, shows it at the picture's size and compares it with the picture; a rewrite stays only if the measure says it is better. GSAP motion, written from the GSAP skills, stays only if the page at rest still matches the picture. ||| Un modello che vede legge l'immagine e ne scrive la composizione; poi scrive un componente per ogni regione, guardando quella regione. Il codice posiziona le regioni, compila la pagina, la mostra alla dimensione dell'immagine e la confronta con l'immagine; una riscrittura resta solo se la misura dice che è migliore. Il movimento GSAP, scritto dalle skill di GSAP, resta solo se la pagina ferma coincide ancora con l'immagine.
+The picture is read again and the site is written again from it, then measured. ||| L'immagine viene riletta e il sito viene riscritto da essa, poi misurato.
+What each step found ||| Che cosa ha trovato ogni passo
+Report ||| Rapporto
+The weakest regions are written again at most twice; the new code stays only if the next measure is better. ||| Le regioni più deboli vengono riscritte al massimo due volte; il nuovo codice resta solo se la misura successiva è migliore.
+weak region → rewrite → measure again ||| regione debole → riscrittura → misura di nuovo
+Over the regions the model wrote: {built}. {share} of the picture is its own crops (photographs, and regions the model could not write), not built. ||| Sulle regioni scritte dal modello: {built}. {share} dell'immagine sono i suoi stessi ritagli (fotografie e regioni che il modello non ha saputo scrivere), non costruiti.
+The skills could not be installed ||| Non è stato possibile installare le skill
+Skills ||| Skill
+Skills the model can read ||| Skill che il modello può leggere
+Install the skills ||| Installa le skill
+Fetching from GitHub ||| Scarico da GitHub
+The skills of a coding agent, fetched from GitHub at one exact version each and copied into the project, where the model reads the ones it needs. {n} installed. ||| Le skill di un agente di programmazione, scaricate da GitHub a una versione esatta ciascuna e copiate nel progetto, dove il modello legge quelle che gli servono. {n} installate.
+That file is not a picture ||| Quel file non è un'immagine
+Choose a PNG, JPEG, WebP or GIF file. ||| Scegli un file PNG, JPEG, WebP o GIF.
+The site could not start ||| Il sito non è partito
+The reference picture ||| L'immagine di riferimento
+Click to choose another ||| Clicca per sceglierne un'altra
+Drop the picture here, or click to choose it ||| Trascina qui l'immagine, o clicca per sceglierla
+PNG, JPEG, WebP or GIF, up to 25 MB. The site is built to look like it. ||| PNG, JPEG, WebP o GIF, fino a 25 MB. Il sito viene costruito per assomigliarle.
+What should the site be? ||| Che sito deve essere?
+For example: the homepage of a menswear brand, in Italian; an intro of two seconds, a gentle parallax with the mouse, a lift when the pointer is over a card. The last frame must be the picture. ||| Per esempio: la homepage di un marchio di moda maschile, in italiano; un'intro di due secondi, un parallax delicato con il mouse, un sollevamento quando il puntatore è su una scheda. L'ultimo fotogramma deve essere l'immagine.
+Model that sees ||| Modello che vede
+No model that sees yet ||| Ancora nessun modello che vede
+The model looks at the picture, writes its composition, then one component for each region; the page is measured against the picture and the weak regions are written again. A smaller model is faster and has more room; a larger one writes better code. ||| Il modello guarda l'immagine, ne scrive la composizione, poi un componente per ogni regione; la pagina viene misurata contro l'immagine e le regioni deboli vengono riscritte. Un modello più piccolo è più veloce e ha più spazio; uno più grande scrive codice migliore.
+Build the site ||| Costruisci il sito

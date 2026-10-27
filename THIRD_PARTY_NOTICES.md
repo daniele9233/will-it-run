@@ -84,3 +84,15 @@ is original. Interface icons are from [Lucide](https://lucide.dev) (ISC License)
 
 LM Studio, Hugging Face, NVIDIA, AMD, Intel, Windows and other names are trademarks of
 their respective owners. Will It Run is not affiliated with or endorsed by any of them.
+
+## Agent skills (not bundled)
+
+The skills of a coding agent are fetched from GitHub on the user's PC, at one pinned commit each, with Git
+(`backend/src/agentfit/clone/skills.py`), and kept with the licence of their authors under the app's data folder.
+Will It Run does not ship their files; a run copies the ones it uses into the project it builds, for the model to read.
+
+- **greensock/gsap-skills**, commit `aed9cfd32777`: MIT, GreenSock.
+- **anthropics/skills** (`frontend-design`), commit `dbd4588f9e10`: Apache-2.0, Anthropic.
+- **vercel-labs/agent-skills** (`react-best-practices`, `web-design-guidelines`), commit `6ec269328bc4`: MIT, Vercel.
+- **cesartevisual/threejs-skills**, commit `84f9bcb4bea1`: MIT.
+- **microsoft/playwright-cli** (`playwright-cli`), commit `b1a5903c5b63`: Apache-2.0, Microsoft.

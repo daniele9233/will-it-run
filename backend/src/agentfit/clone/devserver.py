@@ -81,16 +81,23 @@ class DevServer:
     def running(self) -> bool:
         return self._process is not None and self._process.poll() is None
 
-    def start(self, cancelled: Callable[[], bool] | None = None, timeout: float = START_TIMEOUT, production: bool = False) -> str:
-        """Serve the project. ``production``: build it first and serve the build (``npm start``), as the kit's QA wants."""
+    def start(self, cancelled: Callable[[], bool] | None = None, timeout: float = START_TIMEOUT, production: bool = False,
+              build: bool = True) -> str:
+        """Serve the project. ``production``: build it first and serve the build (``npm start``), as the kit's QA wants.
+
+        ``build=False`` serves the build that is there (a step that has just built the project does not build it twice).
+        """
         if self.running and self.url:
             return self.url
         if not (self.folder / "node_modules").is_dir():
             raise DevServerError("The project's packages are not installed yet (no node_modules): run npm install first.")
+        if production and not build and not (self.folder / ".next" / "BUILD_ID").is_file():
+            raise DevServerError("The project has not been built yet, so there is no build to serve.")
         port = proc.free_port()
         self.production = production
         if production:
-            _build(self.folder, self.npm, cancelled)
+            if build:
+                _build(self.folder, self.npm, cancelled)
             argv = [self.npm, "start", "--", *_flags(self.folder, port, script="start")]
         else:
             argv = [self.npm, "run", "dev", "--", *_flags(self.folder, port)]

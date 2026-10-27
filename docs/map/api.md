@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-134 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+137 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -25,7 +25,7 @@
 | POST | `/api/arena/runs/{run_id}/resume` | `arena_resume` |  |
 | POST | `/api/arena/runs/{run_id}/stop` | `arena_stop` |  |
 
-## `api/clone_routes.py` (10)
+## `api/clone_routes.py` (13)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
@@ -33,6 +33,9 @@
 | POST | `/api/clone` | `clone_create` |  |
 | POST | `/api/clone/install` | `clone_install` |  |
 | POST | `/api/clone/install/cancel` | `clone_install_cancel` |  |
+| POST | `/api/clone/picture` | `clone_picture` | Build a site from a picture: a model that sees writes it region by region, and the page is measured against the picture. |
+| GET | `/api/clone/skills` | `skills_status` | The agent skills: which packs are on this PC (GSAP, frontend design, Vercel, Three.js, Playwright), at which commit and… |
+| POST | `/api/clone/skills/install` | `skills_install` | Fetch the skill packs at their pinned commits, in the background; ``GET /api/clone/skills`` follows the job. |
 | DELETE | `/api/clone/{study_id}` | `clone_delete` |  |
 | GET | `/api/clone/{study_id}` | `clone_get` |  |
 | POST | `/api/clone/{study_id}/answer` | `clone_answer` | The person's answer to the question the agent is asking (which pages to clone, for one). |

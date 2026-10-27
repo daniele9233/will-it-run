@@ -16,6 +16,7 @@ The agent may ask the person one thing: which pages to clone (``ask_user``, ``as
 
 from __future__ import annotations
 
+import base64
 import contextlib
 import json
 import shutil
@@ -27,7 +28,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from agentfit import paths
-from agentfit.clone import asking, proc, prompts, tools
+from agentfit.clone import asking, picture, pipeline, proc, prompts, tools
 from agentfit.clone.devserver import DevServer, DevServerError
 from agentfit.clone.install import BrowserInstall
 from agentfit.clone.kits import (
@@ -424,15 +425,30 @@ class CloneStudio:
             runs = self._runs(entry["id"])
             last = runs[-1] if runs else None
             shots = self._shots(entry, limit=1)
+            measure = (((last.result or {}).get("outputs") or {}).get("measure") if last is not None and isinstance(last.result, dict) else None) or {}
             out.append({**entry, "status": last.status if last else "none", "active": any(r.status not in TERMINAL for r in runs),
-                        "thumbnail": shots[0] if shots else None})
+                        "thumbnail": shots[0] if shots else None, "accuracy": measure.get("accuracy") if isinstance(measure, dict) else None})
         return sorted(out, key=lambda e: e.get("updated_at") or "", reverse=True)
 
     def _shots(self, entry: dict[str, Any], limit: int = 60) -> list[str]:
         """Screenshots the kit's scripts and the agent saved, as paths relative to the project. The full-size picture is left out when
-        it has a ``-review.png`` twin (the half-size one the skill looks at): the page shows the small ones."""
+        it has a ``-review.png`` twin (the half-size one the skill looks at): the page shows the small ones.
+
+        For an exact copy these are the small pictures of the capture and of the measure: the first screen, the original and the
+        clone at half size, and where they differ. The full-page screenshots are several MB each and stay in the project's folder.
+        """
         root = self.workspace(entry)
         found: list[str] = []
+        if entry.get("mode") == "picture":
+            report = root / picture.RESEARCH / "report"
+            found = [str(p.relative_to(root)).replace("\\", "/") for p in sorted((root / picture.REFERENCE_DIR).glob("reference.*"))]
+            found += [str(p.relative_to(root)).replace("\\", "/") for pattern in ("clone-*.jpg", "diff-*.png") for p in sorted(report.glob(pattern))]
+            return found[:limit]
+        if entry.get("mode") == "replica":
+            for base in sorted((root / "docs" / "research").glob("*/capture")) + sorted((root / "docs" / "research").glob("*/report")):
+                for pattern in ("thumb.jpg", "original-*.jpg", "clone-*.jpg", "diff-*.png"):
+                    found += [str(p.relative_to(root)).replace("\\", "/") for p in sorted(base.glob(pattern))]
+            return found[:limit]
         for folder in ("docs/research", "docs/design-references"):
             base = root / folder
             if not base.is_dir():
@@ -457,28 +473,46 @@ class CloneStudio:
 
     def start(self, url: str, *, model_key: str, sees: bool, vision_key: str = "", language: str = "en", workspace: str | None = None,
               protect_existing: bool = True, source: dict[str, Any] | None = None, approval: str = "ask", extra: str = "",
-              study_id: str | None = None) -> tuple[dict[str, Any], RunRecord]:
-        """Start a clone, or a new run of one (``study_id``): the agent carries on in the project the earlier run left, from the kit's manifest."""
+              study_id: str | None = None, mode: str = "agent") -> tuple[dict[str, Any], RunRecord]:
+        """Start a clone, or a new run of one (``study_id``).
+
+        ``mode`` "replica": the page as a browser rendered it, copied into a Next.js project and measured against the original
+        (``pipeline.py``). "agent": a model follows the kit's skill and rebuilds the page (what the first version did). A new run of
+        a clone goes on in the project the earlier run left, in the mode it was made in.
+        """
         if study_id:
             entry = self._entry(study_id)
             if any(r.status not in TERMINAL for r in self._runs(study_id)):
                 raise CloneError("This clone is still working: stop it first.")
+            if entry.get("mode") == "picture":
+                return self.start_picture(None, model_key=model_key, sees=sees, vision_key=vision_key, language=language, approval=approval, study_id=study_id)
             url = entry["url"]
             target = self.workspace(entry)
+            mode = str(entry.get("mode") or "agent")
         else:
             url = normalize_url(url)
             study_id = uuid.uuid4().hex[:12]
             slug = host_slug(url)
-            target = self.target(workspace, slug, self.home(study_id))
+            target = self.target(workspace, slug, self.home(study_id)) if mode == "agent" else (Path(workspace) if workspace else self.home(study_id))
             entry = {"id": study_id, "url": url, "title": site_title(url), "slug": slug, "host": host_of(url), "created_at": utcnow()}
-        try:
-            # The agent is given what the kit's skill says, so the kit is on this PC before the run is built.
-            self.store.ensure()
-        except KitError as exc:
-            raise CloneError(str(exc)) from exc
+        if mode not in ("replica", "agent"):
+            raise CloneError("Choose how to clone: an exact copy, or an agent that rebuilds the page.")
+        if mode == "agent":
+            try:
+                # The agent is given what the kit's skill says, so the kit is on this PC before the run is built.
+                self.store.ensure()
+            except KitError as exc:
+                raise CloneError(str(exc)) from exc
         target.mkdir(parents=True, exist_ok=True)
         target = proc.resolve_true_case(target)
-        definition_ = definition(store=self.store, url=url, model_key=model_key, sees=sees, vision_key=vision_key, extra=extra)
+        if mode == "replica":
+            if any(p.name != ".git" for p in target.iterdir()) and not (target / "package.json").is_file() and not self._runs(study_id):
+                # A folder with something else in it: the clone goes in a folder of its own inside it.
+                target = proc.resolve_true_case(target / host_slug(url))
+                target.mkdir(parents=True, exist_ok=True)
+            definition_ = pipeline.definition(url=url, model_key=model_key, sees=sees, vision_key=vision_key)
+        else:
+            definition_ = definition(store=self.store, url=url, model_key=model_key, sees=sees, vision_key=vision_key, extra=extra)
         again = bool(self._runs(study_id))
         task = ("Improve the clone of " if again else "Clone this website: ") + url
         if extra.strip():
@@ -491,9 +525,57 @@ class CloneStudio:
         # Built for this clone, not saved with the workflows: the live graph of the session reads it from here.
         self.db.kv_set("run_definition", record.id, definition_.model_dump(mode="json", by_alias=True))
         entry = {**entry, "model_key": model_key, "vision_key": vision_key, "sees": sees, "source": source or {"kind": "none"},
-                 "workspace": str(target), "updated_at": utcnow()}
+                 "workspace": str(target), "updated_at": utcnow(), "mode": mode}
         self.db.kv_set(self.namespace, study_id, entry)
         log_event(log, "site clone started", study=study_id, run=record.id)
+        return entry, record
+
+    def start_picture(self, reference: dict[str, Any] | None, *, brief: str = "", model_key: str, sees: bool, vision_key: str = "", language: str = "en",
+                      skills: list[str] | None = None, approval: str = "ask", study_id: str | None = None) -> tuple[dict[str, Any], RunRecord]:
+        """Build a site from a picture (``picture.py``), or run again the one that was made (``study_id``: the picture and the brief stay).
+
+        ``reference`` is ``{"name": "template.png", "data": "<base64>"}``: what the browser's file chooser gives.
+        """
+        if not (sees or vision_key):
+            raise CloneError("Choose a model that can see: it has to look at the picture.")
+        if study_id:
+            entry = self._entry(study_id)
+            relative, brief, skills = str(entry["reference"]), str(entry.get("brief") or ""), entry.get("skills")
+            target = self.workspace(entry)
+            shutil.rmtree(target / picture.RESEARCH, ignore_errors=True)
+        else:
+            study_id = uuid.uuid4().hex[:12]
+            target = self.home(study_id)
+            name = Path(str((reference or {}).get("name") or "reference.png")).name
+            try:
+                data = base64.b64decode(str((reference or {}).get("data") or ""), validate=False)
+            except ValueError as exc:
+                raise CloneError("The picture could not be read.") from exc
+            if not data or len(data) > 25_000_000:
+                raise CloneError("Choose a picture of at most 25 MB.")
+            target.mkdir(parents=True, exist_ok=True)
+            (target / picture.REFERENCE_DIR).mkdir(parents=True, exist_ok=True)
+            suffix = Path(name).suffix.lower() if Path(name).suffix.lower() in (".png", ".jpg", ".jpeg", ".webp", ".gif") else ".png"
+            relative = f"{picture.REFERENCE_DIR}/reference{suffix}"
+            (target / relative).write_bytes(data)
+            if picture.image_type(target / relative) is None:
+                shutil.rmtree(target, ignore_errors=True)
+                raise CloneError("That file is not a picture (PNG, JPEG, WebP or GIF).")
+            title = (brief.strip().split("\n")[0][:48] or Path(name).stem)
+            entry = {"id": study_id, "url": name, "title": title, "slug": "picture", "host": "picture", "created_at": utcnow(), "mode": "picture"}
+        target = proc.resolve_true_case(target)
+        definition_ = picture.definition(model_key=model_key, sees=sees, vision_key=vision_key, brief=brief, reference=relative, title=str(entry["title"]),
+                                         language=language, skills=skills)
+        task = brief.strip() or "Build a website that matches the picture."
+        if language == "it":
+            task += "\n(scrivi il rapporto in italiano)"
+        record = self.runs.start(definition_, task, title=str(entry["title"]), project=self.project(study_id), workspace=str(target), protect_existing=False,
+                                 source={"kind": "none"}, approval=approval)
+        self.db.kv_set("run_definition", record.id, definition_.model_dump(mode="json", by_alias=True))
+        entry = {**entry, "model_key": model_key, "vision_key": vision_key, "sees": sees, "workspace": str(target), "updated_at": utcnow(), "reference": relative,
+                 "brief": brief, "skills": skills, "source": {"kind": "none"}}
+        self.db.kv_set(self.namespace, study_id, entry)
+        log_event(log, "site from a picture started", study=study_id, run=record.id)
         return entry, record
 
     # -- reading ---------------------------------------------------------------
@@ -557,7 +639,9 @@ class CloneStudio:
             if server is None or server.folder != root:
                 server = self._previews[study_id] = DevServer(root, npm)
         try:
-            url = server.start()
+            # An exact copy that was built is served as built (no development overlay over the page, and it starts at once).
+            built = entry.get("mode") == "replica" and (root / ".next" / "BUILD_ID").is_file()
+            url = server.start(production=True, build=False) if built else server.start()
         except DevServerError as exc:
             raise CloneError(str(exc)) from exc
         # The app's link opener only allows 127.0.0.1 addresses that have a path, so the slash is never left out.

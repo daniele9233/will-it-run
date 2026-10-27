@@ -18,13 +18,12 @@ from pathlib import Path
 os.environ.setdefault("AGENTFIT_HOME", str(Path(tempfile.gettempdir()) / "willitrun-stub-home"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "backend" / "tests"))
 
-from arena_fakes import ArenaRuntime, installed
-
 from agentfit.arena.runner import ArenaService, RunRequest
 from agentfit.arena.store import ArenaStore
 from agentfit.db import get_db
 from agentfit.events import EventBus
 from agentfit.workflows.model_manager import ModelManager
+from arena_fakes import ArenaRuntime, installed
 
 # key -> (name, share of right answers, tokens per second, sees pictures, parameters)
 MODELS = {

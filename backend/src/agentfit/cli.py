@@ -546,6 +546,15 @@ def _memory_project(svc: Any, name: str) -> Any:
     return match
 
 
+@memory_app.callback()
+def memory_output() -> None:
+    # What the memory holds is text in any language and any character. A pipe or a console on Windows is often cp1252,
+    # and printing an arrow or a star to it raises; every memory command prints as UTF-8 instead.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 @memory_app.command("list")
 def memory_list(json_out: bool = typer.Option(False, "--json", help="Print JSON.")) -> None:
     """List the projects that have a memory."""
@@ -585,6 +594,123 @@ def memory_search(
     for hit in found.hits:
         console.print("")
         console.print(render_entry(hit.memory, 600, svc.brain.links(hit.memory), hit), markup=False, highlight=False)
+
+
+# The commands below are for coding agents and hooks that work on a folder: they name the folder (the current one by default),
+# load no embedding model and print nothing but their answer.
+
+
+def _project_memory(workspace: str) -> Any:
+    from agentfit.brain.external import ProjectMemory, project_root
+
+    return ProjectMemory.open(project_root(workspace))
+
+
+@memory_app.command("recall")
+def memory_recall(
+    query: str = typer.Argument("", help="What you want to know, in your own words."),
+    file: str = typer.Option("", "--file", "-f", help="A path: what is known about that file."),
+    entry: int = typer.Option(0, "--id", help="The number of one entry, to read all of it."),
+    kind: str = typer.Option("", "--kind", "-k", help="architecture, decision, change, error, solution, note or session."),
+    workspace: str = typer.Option(".", "--workspace", "-w", help="The project folder (the current one by default)."),
+) -> None:
+    """Recall what the memory of this folder knows: by words, by file, or one entry by id."""
+    sys.stdout.write(_project_memory(workspace).recall(query=query, file=file, id=entry, kind=kind) + "\n")
+
+
+@memory_app.command("remember")
+def memory_remember(
+    title: str = typer.Argument(..., help="The fact in one line."),
+    text: str = typer.Option(..., "--text", "-t", help="The fact in full, with the reason."),
+    kind: str = typer.Option("note", "--kind", "-k", help="decision, architecture, error, solution or note."),
+    files: str = typer.Option("", "--files", help="Comma-separated paths the fact is about."),
+    fixes: int = typer.Option(0, "--fixes", help="The number of the error entry this solution closes."),
+    workspace: str = typer.Option(".", "--workspace", "-w"),
+) -> None:
+    """Save one fact in the memory of this folder."""
+    sys.stdout.write(_project_memory(workspace).remember(kind=kind, title=title, text=text, files=files, fixes=fixes, agent="cli") + "\n")
+
+
+@memory_app.command("recent")
+def memory_recent(
+    kind: str = typer.Option("", "--kind", "-k"),
+    open_only: bool = typer.Option(False, "--open", help="Only the errors nobody has fixed."),
+    limit: int = typer.Option(8, "--limit", "-n"),
+    workspace: str = typer.Option(".", "--workspace", "-w"),
+) -> None:
+    """The newest entries of the memory of this folder, one line each."""
+    sys.stdout.write(_project_memory(workspace).recent(kind=kind, open_only=open_only, limit=limit) + "\n")
+
+
+@memory_app.command("ledger")
+def memory_ledger(
+    transcript: str = typer.Option("", "--transcript", help="A Claude Code session file (.jsonl)."),
+    hook: bool = typer.Option(False, "--hook", help="Read the hook's JSON on standard input (transcript_path, cwd). Never fails loudly."),
+    workspace: str = typer.Option("", "--workspace", "-w"),
+) -> None:
+    """Write what a Claude Code session did (requests, files, checks, commits, errors and their fixes) into the memory."""
+    from agentfit.brain import ledger as brain_ledger
+
+    folder, path = workspace, transcript
+    try:
+        if hook:
+            payload = json.loads(sys.stdin.read() or "{}")
+            path = path or str(payload.get("transcript_path") or "")
+            folder = folder or str(payload.get("cwd") or ".")
+        if not path:
+            raise typer.BadParameter("give --transcript, or --hook with the hook's JSON on standard input")
+        saved = brain_ledger.write(_project_memory(folder or "."), brain_ledger.read_transcript(path))
+    except typer.BadParameter:
+        raise
+    except Exception as exc:  # a hook must never break the session it observes
+        if not hook:
+            raise
+        sys.stderr.write(f"ledger: {type(exc).__name__}: {exc}\n")
+        return
+    if not hook:
+        console.print(f"Session recorded: {saved or 'nothing to record'}.")
+
+
+@memory_app.command("commit")
+def memory_commit(
+    rev: str = typer.Argument("HEAD", help="The commit to record, or the newest one of a range."),
+    last: int = typer.Option(1, "--last", "-n", help="How many commits to record, counting back from REV (50 catches up a long history)."),
+    workspace: str = typer.Option(".", "--workspace", "-w"),
+) -> None:
+    """Write commits of this folder's git history into its memory, one entry each: what changed, in whose words, in which files."""
+    from agentfit.brain.gitlog import record
+
+    console.print(f"{record(_project_memory(workspace), rev, last=last)} commits recorded.")
+
+
+@memory_app.command("import-docs")
+def memory_import_docs(workspace: str = typer.Option(".", "--workspace", "-w")) -> None:
+    """Copy the sections of docs/DECISIONS.md and docs/LESSONS.md into the memory of this folder."""
+    from agentfit.brain.docs_import import import_docs
+
+    counts = import_docs(_project_memory(workspace))
+    console.print(", ".join(f"{name}: {n} entries" for name, n in counts.items()) or "No decision or lesson document found in docs/.")
+
+
+@memory_app.command("map")
+def memory_map(workspace: str = typer.Option(".", "--workspace", "-w")) -> None:
+    """Read the folder again for the project map and its import graph, if its files changed."""
+    info = _project_memory(workspace).scan()
+    console.print(f"{info['files']} files, {info['imports']} imports." if info else "The folder could not be read.")
+
+
+@memory_app.command("mcp")
+def memory_mcp(workspace: str = typer.Option(".", "--workspace", "-w", help="The project folder this server remembers.")) -> None:
+    """Serve this folder's memory to a coding agent over MCP (standard input and output). Needs: pip install "agentfit[mcp]"."""
+    from agentfit.brain.external import project_root
+
+    try:
+        from agentfit.brain.mcp_server import serve
+
+        serve(project_root(workspace))
+    except ImportError as exc:
+        sys.stderr.write(f"The MCP package is not installed ({exc}). Run: pip install \"agentfit[mcp]\"\n")
+        raise typer.Exit(1) from exc
 
 
 # -- the Arena ---------------------------------------------------------------------------------------

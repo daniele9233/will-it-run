@@ -17,14 +17,14 @@ from pathlib import Path
 
 os.environ.setdefault("AGENTFIT_HOME", str(Path(tempfile.gettempdir()) / "willitrun-stub-home"))
 
-import uvicorn  # noqa: E402
+import uvicorn
 
-from agentfit.api.server import create_app  # noqa: E402
-from agentfit.app import AppServices  # noqa: E402
-from agentfit.lmstudio.cli import LmsCli  # noqa: E402
-from agentfit.lmstudio.client import LMStudioClient  # noqa: E402
-from agentfit.lmstudio.runtime import LMStudioRuntime  # noqa: E402
-from agentfit.workflows.runner import RunManager  # noqa: E402
+from agentfit.api.server import create_app
+from agentfit.app import AppServices
+from agentfit.lmstudio.cli import LmsCli
+from agentfit.lmstudio.client import LMStudioClient
+from agentfit.lmstudio.runtime import LMStudioRuntime
+from agentfit.workflows.runner import RunManager
 
 port = int(sys.argv[1]) if len(sys.argv) > 1 else 8791
 stub = int(sys.argv[2]) if len(sys.argv) > 2 else 12399

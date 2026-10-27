@@ -142,7 +142,7 @@ async def completions(request: Request) -> Any:
         def chunk(delta: dict[str, Any], finish: str | None = None) -> str:
             return "data: " + json.dumps({"choices": [{"index": 0, "delta": delta, "finish_reason": finish}]}) + "\n\n"
 
-        for word in "Thinking about what was asked, briefly.".split():
+        for word in ["Thinking", "about", "what", "was", "asked,", "briefly."]:
             yield chunk({"reasoning_content": word + " "})
             await asyncio.sleep(WORD_SECONDS)
         if call:

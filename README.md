@@ -100,7 +100,8 @@ backend\.venv\Scripts\willitrun.exe serve --port 8765     # core
 cd desktop; npm run dev                                   # UI at http://127.0.0.1:1420
 cd desktop; npx tauri dev                                 # or: the real desktop shell
 
-# test
+# test (only what your change needs; --all is what CI runs)
+python scripts/check.py
 cd backend; .venv\Scripts\python.exe -m pytest
 cd desktop; npm run typecheck; npm run lint; npm test
 
@@ -128,6 +129,7 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 - [LangGraph](docs/LANGGRAPH.md): how definitions compile and run
 - [Security](docs/SECURITY.md)
 - [Development](docs/DEVELOPMENT.md)
+- [Working with an AI model on this code](docs/AGENT_CONTEXT.md): [AGENTS.md](AGENTS.md), the generated map in `docs/map/`, the code graph, the project memory, [decisions](docs/DECISIONS.md) and [lessons](docs/LESSONS.md)
 
 ## What version 1 does not do
 

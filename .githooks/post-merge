@@ -1,0 +1,10 @@
+#!/bin/sh
+# After a pull or a merge: the code graph and the project memory catch up, in the background. Never blocks.
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+for py in "$root/backend/.venv/Scripts/python.exe" "$root/backend/.venv/bin/python" python python3; do
+  if command -v "$py" >/dev/null 2>&1; then
+    "$py" "$root/scripts/hooks/git_hook.py" "$(basename "$0")" "$@" || true
+    exit 0
+  fi
+done
+exit 0

@@ -25,3 +25,6 @@ desktop/src-tauri/resources/willitrun-core/
 
 # Development screenshots of the app (they can show generated pictures)
 .shots/
+
+# CodeGraph index of the project (local to each machine, rebuilt by the git hook)
+.codegraph/

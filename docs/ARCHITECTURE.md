@@ -33,6 +33,16 @@ Cloud providers               optional, with the user's own API keys
 `AppServices` (`app.py`) wires the engines together. Both the HTTP API and the CLI go
 through it, so they cannot drift apart.
 
+**Who may import whom** is written down as eight contracts in `backend/.importlinter` and checked by
+`lint-imports` (in CI and by `scripts/check.py`): the entry stack is `cli` over `api` over `doctor` over `app`;
+engines and libraries never import the entry points; paths, config, the database, events, translations and
+branding import no feature; hardware and fit know nothing of models or workflows; the Brain depends on the
+database and the log only; the image studio is independent of the Arena, workflows, teams, cloning and the LLM
+runtime; the Arena, the benchmark and chat do not import one another. Two cycles exist and are accepted
+(`teams` and `workflows`, `lmstudio` and `runtime`). A map of every package, module, route, table and UI file,
+generated from the code, is in [map/INDEX.md](map/INDEX.md); the choices behind all this are in
+[DECISIONS.md](DECISIONS.md).
+
 ## Why this shape
 
 **Tauri + React, not a native Windows toolkit.** The interface is dense and custom (model

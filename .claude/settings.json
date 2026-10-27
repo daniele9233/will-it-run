@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(codegraph explore *)",
+      "Bash(codegraph callers *)",
+      "Bash(codegraph callees *)",
+      "Bash(codegraph impact *)",
+      "Bash(codegraph affected *)",
+      "Bash(codegraph status*)",
+      "Bash(codegraph sync*)",
+      "Bash(python scripts/check.py*)",
+      "Bash(python scripts/build_context.py*)",
+      "Bash(willitrun memory *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/claude_hook.py", "session-start"],
+            "timeout": 60,
+            "statusMessage": "Reading the state of the repository"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/claude_hook.py", "pre-edit"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/claude_hook.py", "post-edit"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/claude_hook.py", "stop"],
+            "async": true,
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

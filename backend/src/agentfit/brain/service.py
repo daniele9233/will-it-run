@@ -463,6 +463,99 @@ TOOL_SCHEMAS: dict[str, dict[str, Any]] = {
 TOOL_LABELS = {RECALL: "Recall", REMEMBER: "Remember"}
 
 
+def how_searched(service: BrainService, result: SearchResult) -> str:
+    if result.semantic:
+        return "Searched by meaning, by words and through the graph."
+    why = getattr(service.embedder, "last_skip", "") or service.embed_status().reason
+    return f"Searched by words and through the graph only. {why}".strip()
+
+
+def recall_text(service: BrainService, project: Project, args: dict[str, Any]) -> str:
+    """What the ``recall`` tool answers: to an agent of a run, to a coding agent over MCP, to a person at the command line."""
+    store = service.store
+    raw_id = args.get("id")
+    if raw_id not in (None, "", 0):
+        try:
+            memory = store.get(int(raw_id))
+        except (TypeError, ValueError):
+            memory = None
+        if memory is None or memory.project_id != project.id:
+            return f"ERROR: there is no entry #{raw_id} in this project's memory."
+        store.used([memory.id])
+        links = service.links(memory)
+        lines = [render_entry(memory, 6000, links)]
+        related = [f"- {row['relation'].replace('_', ' ')} #{row['memory_id']} ({row['kind']}): {row['label']}" for row in links if row["type"] == "memory"]
+        if related:
+            lines.append("Linked entries:\n" + "\n".join(related[:12]))
+        if memory.superseded_by:
+            lines.append(f"This entry was replaced by #{memory.superseded_by}: read that one.")
+        return "\n".join(lines)
+    path = str(args.get("file") or "").strip()
+    if path:
+        card = service.searcher.about_file(project.id, path)
+        if card is None:
+            return f"Nothing is recorded about '{path}': no memory mentions it and the project map has no imports for it."
+        lines = [f"{card['file']}"]
+        if card["imports"]:
+            lines.append("imports: " + ", ".join(card["imports"][:20]))  # type: ignore[index]
+        if card["imported_by"]:
+            lines.append("imported by: " + ", ".join(card["imported_by"][:20]))  # type: ignore[index]
+        memories: list[Memory] = card["memories"]  # type: ignore[assignment]
+        if not memories:
+            lines.append("No memory is about this file.")
+        for memory in memories[:6]:
+            lines.append("")
+            lines.append(render_entry(memory, 400, service.links(memory)))
+        if len(memories) > 6:
+            lines.append(f"\n{len(memories) - 6} older entries are about this file too.")
+        if card["others"]:
+            lines.append("\nOther files with this name: " + ", ".join(card["others"]))  # type: ignore[arg-type]
+        store.used(m.id for m in memories[:6])
+        return "\n".join(lines)
+    query = str(args.get("query") or "").strip()
+    if not query:
+        return "ERROR: give query (what you want to know), file (a path) or id (the number of an entry)."
+    kind = str(args.get("kind") or "").strip()
+    result = service.searcher.search(project.id, query, kinds=[kind] if kind in KINDS else None, limit=6)
+    if not result.hits:
+        return f"Nothing matches among the {result.total} entries of this project's memory. {how_searched(service, result)}"
+    store.used(hit.memory.id for hit in result.hits)
+    blocks = [render_entry(hit.memory, 500, service.links(hit.memory), hit) for hit in result.hits]
+    return f"{len(result.hits)} of {result.total} entries. {how_searched(service, result)}\n\n" + "\n\n".join(blocks)
+
+
+def remember_text(service: BrainService, project: Project, args: dict[str, Any], *, agent: str, run_id: str | None) -> tuple[str, int | None]:
+    """What the ``remember`` tool does and answers. Returns the words for the agent and the id of the entry, when there is one."""
+    kind = str(args.get("kind") or "note").strip().lower()
+    if kind not in WRITABLE_KINDS:
+        return f"ERROR: kind must be one of: {', '.join(WRITABLE_KINDS)}.", None
+    title = str(args.get("title") or "").strip()
+    body = str(args.get("text") or args.get("body") or "").strip()
+    if not title or not body:
+        return "ERROR: give a title (the fact in one line) and text (the fact in full, with the reason).", None
+    files = args.get("files") or []
+    if isinstance(files, str):
+        files = [part for part in files.replace(";", ",").split(",") if part.strip()]
+    fixes: int | None = None
+    if args.get("fixes") not in (None, "", 0):
+        try:
+            fixes = int(args["fixes"])
+        except (TypeError, ValueError):
+            return "ERROR: fixes is the number of an error entry, as recall shows it.", None
+    try:
+        memory, state = service.add(
+            project.id, kind=kind, title=title, body=body, files=[str(f) for f in files], source="agent",
+            agent=agent, run_id=run_id, fixes=fixes,
+        )
+    except BrainError as exc:
+        return f"ERROR: {exc}", None
+    if state == "known":
+        return f"Already in the project's memory as #{memory.id}. Nothing was added.", memory.id
+    if state == "updated":
+        return f"Saved as #{memory.id}. It replaces an older entry that said the same.", memory.id
+    return f"Saved as #{memory.id}.", memory.id
+
+
 class BrainSession:
     def __init__(self, service: BrainService, project: Project, run_id: str, definition: Any, workspace: Path, task: str) -> None:
         self.service = service
@@ -576,95 +669,15 @@ class BrainSession:
             return self._remember(arguments, agent_role)
         raise BrainError(f"Unknown memory tool '{name}'")
 
-    def _how_searched(self, result: SearchResult) -> str:
-        if result.semantic:
-            return "Searched by meaning, by words and through the graph."
-        why = getattr(self.service.embedder, "last_skip", "") or self.service.embed_status().reason
-        return f"Searched by words and through the graph only. {why}".strip()
-
     def _recall(self, args: dict[str, Any]) -> str:
-        store = self.service.store
-        raw_id = args.get("id")
-        if raw_id not in (None, ""):
-            try:
-                memory = store.get(int(raw_id))
-            except (TypeError, ValueError):
-                memory = None
-            if memory is None or memory.project_id != self.project.id:
-                return f"ERROR: there is no entry #{raw_id} in this project's memory."
-            store.used([memory.id])
-            links = self.service.links(memory)
-            lines = [render_entry(memory, 6000, links)]
-            related = [f"- {row['relation'].replace('_', ' ')} #{row['memory_id']} ({row['kind']}): {row['label']}" for row in links if row["type"] == "memory"]
-            if related:
-                lines.append("Linked entries:\n" + "\n".join(related[:12]))
-            if memory.superseded_by:
-                lines.append(f"This entry was replaced by #{memory.superseded_by}: read that one.")
-            return "\n".join(lines)
-        path = str(args.get("file") or "").strip()
-        if path:
-            card = self.service.searcher.about_file(self.project.id, path)
-            if card is None:
-                return f"Nothing is recorded about '{path}': no memory mentions it and the project map has no imports for it."
-            lines = [f"{card['file']}"]
-            if card["imports"]:
-                lines.append("imports: " + ", ".join(card["imports"][:20]))  # type: ignore[index]
-            if card["imported_by"]:
-                lines.append("imported by: " + ", ".join(card["imported_by"][:20]))  # type: ignore[index]
-            memories: list[Memory] = card["memories"]  # type: ignore[assignment]
-            if not memories:
-                lines.append("No memory is about this file.")
-            for memory in memories[:6]:
-                lines.append("")
-                lines.append(render_entry(memory, 400, self.service.links(memory)))
-            if len(memories) > 6:
-                lines.append(f"\n{len(memories) - 6} older entries are about this file too.")
-            if card["others"]:
-                lines.append("\nOther files with this name: " + ", ".join(card["others"]))  # type: ignore[arg-type]
-            store.used(m.id for m in memories[:6])
-            return "\n".join(lines)
-        query = str(args.get("query") or "").strip()
-        if not query:
-            return "ERROR: give query (what you want to know), file (a path) or id (the number of an entry)."
-        kind = str(args.get("kind") or "").strip()
-        result = self.service.searcher.search(self.project.id, query, kinds=[kind] if kind in KINDS else None, limit=6)
-        if not result.hits:
-            return f"Nothing matches among the {result.total} entries of this project's memory. {self._how_searched(result)}"
-        store.used(hit.memory.id for hit in result.hits)
-        blocks = [render_entry(hit.memory, 500, self.service.links(hit.memory), hit) for hit in result.hits]
-        return f"{len(result.hits)} of {result.total} entries. {self._how_searched(result)}\n\n" + "\n\n".join(blocks)
+        return recall_text(self.service, self.project, args)
 
     def _remember(self, args: dict[str, Any], agent_role: str) -> str:
-        kind = str(args.get("kind") or "note").strip().lower()
-        if kind not in WRITABLE_KINDS:
-            return f"ERROR: kind must be one of: {', '.join(WRITABLE_KINDS)}."
-        title = str(args.get("title") or "").strip()
-        body = str(args.get("text") or args.get("body") or "").strip()
-        if not title or not body:
-            return "ERROR: give a title (the fact in one line) and text (the fact in full, with the reason)."
-        files = args.get("files") or []
-        if isinstance(files, str):
-            files = [part for part in files.replace(";", ",").split(",") if part.strip()]
-        fixes: int | None = None
-        if args.get("fixes") not in (None, "", 0):
-            try:
-                fixes = int(args["fixes"])
-            except (TypeError, ValueError):
-                return "ERROR: fixes is the number of an error entry, as recall shows it."
-        try:
-            memory, state = self.service.add(
-                self.project.id, kind=kind, title=title, body=body, files=[str(f) for f in files], source="agent",
-                agent=agent_role, run_id=self.run_id, fixes=fixes,
-            )
-        except BrainError as exc:
-            return f"ERROR: {exc}"
-        with self._lock:
-            self._written.append(memory.id)
-        if state == "known":
-            return f"Already in the project's memory as #{memory.id}. Nothing was added."
-        if state == "updated":
-            return f"Saved as #{memory.id}. It replaces an older entry that said the same."
-        return f"Saved as #{memory.id}."
+        text, memory_id = remember_text(self.service, self.project, args, agent=agent_role, run_id=self.run_id)
+        if memory_id is not None:
+            with self._lock:
+                self._written.append(memory_id)
+        return text
 
     # -- watching and recording ---------------------------------------------
     def scan(self) -> None:

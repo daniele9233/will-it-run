@@ -30,7 +30,12 @@ dev = [
     "respx>=0.21",
     "ruff>=0.7",
     "pyinstaller>=6.11",
+    # Architecture contracts (backend/.importlinter) and the MCP server of the project memory are tested.
+    "import-linter>=2.0",
+    "mcp>=1.2",
 ]
+# The project's memory as a Model Context Protocol server: `willitrun memory mcp`.
+mcp = ["mcp>=1.2"]
 
 [project.scripts]
 willitrun = "agentfit.cli:app"

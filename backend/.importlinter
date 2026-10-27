@@ -1,0 +1,174 @@
+# The architecture of the backend as rules a machine checks (import-linter). Run it from this folder: `lint-imports`.
+# Every contract describes how the code is arranged today; none is a wish. A contract that fails means an import crossed a
+# line the rest of the code keeps: either move the code, or change the rule here and say why in docs/DECISIONS.md.
+#
+# Two cycles exist and are left alone: teams <-> workflows (a team is built from workflow definitions, and a workflow store
+# seeds the team templates) and lmstudio <-> runtime (the runtime protocol and the LM Studio models). No contract covers them.
+
+[importlinter]
+root_package = agentfit
+
+[importlinter:contract:entry-stack]
+name = The entry stack: cli over api over doctor over app
+type = layers
+layers =
+    agentfit.cli
+    agentfit.api
+    agentfit.doctor
+    agentfit.app
+
+[importlinter:contract:engines-never-import-the-entry-points]
+name = Only the entry points import the entry points: engines and libraries never reach api, app, cli or doctor
+type = forbidden
+source_modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.brain
+    agentfit.branding
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.cloud
+    agentfit.config
+    agentfit.db
+    agentfit.downloads
+    agentfit.events
+    agentfit.fit
+    agentfit.github
+    agentfit.hardware
+    agentfit.i18n
+    agentfit.imagegen
+    agentfit.lmstudio
+    agentfit.locales
+    agentfit.logging_setup
+    agentfit.paths
+    agentfit.runtime
+    agentfit.storage
+    agentfit.teams
+    agentfit.workflows
+forbidden_modules =
+    agentfit.api
+    agentfit.app
+    agentfit.cli
+    agentfit.doctor
+
+[importlinter:contract:foundations-import-nothing-above-them]
+name = Paths, config, database, events, translations and branding import none of the features that use them
+type = forbidden
+source_modules =
+    agentfit.branding
+    agentfit.config
+    agentfit.db
+    agentfit.events
+    agentfit.github
+    agentfit.i18n
+    agentfit.locales
+    agentfit.logging_setup
+    agentfit.paths
+forbidden_modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.brain
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.cloud
+    agentfit.downloads
+    agentfit.fit
+    agentfit.hardware
+    agentfit.imagegen
+    agentfit.lmstudio
+    agentfit.runtime
+    agentfit.storage
+    agentfit.teams
+    agentfit.workflows
+
+[importlinter:contract:hardware-and-fit-read-the-machine-only]
+name = Hardware detection and the fit engine know nothing of models, downloads or workflows
+type = forbidden
+source_modules =
+    agentfit.fit
+    agentfit.hardware
+forbidden_modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.brain
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.cloud
+    agentfit.downloads
+    agentfit.imagegen
+    agentfit.lmstudio
+    agentfit.runtime
+    agentfit.storage
+    agentfit.teams
+    agentfit.workflows
+
+[importlinter:contract:brain-is-self-contained]
+name = The Project Brain depends on the database and the log, and on nothing else of the app
+type = forbidden
+source_modules =
+    agentfit.brain
+forbidden_modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.cloud
+    agentfit.downloads
+    agentfit.fit
+    agentfit.hardware
+    agentfit.imagegen
+    agentfit.lmstudio
+    agentfit.runtime
+    agentfit.storage
+    agentfit.teams
+    agentfit.workflows
+
+[importlinter:contract:image-studio-is-its-own-engine]
+name = The image studio (ComfyUI) is independent of the Arena, the workflows, the teams, the cloning and the LLM runtime
+type = forbidden
+source_modules =
+    agentfit.imagegen
+forbidden_modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.brain
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.cloud
+    agentfit.downloads
+    agentfit.lmstudio
+    agentfit.runtime
+    agentfit.teams
+    agentfit.workflows
+
+[importlinter:contract:features-do-not-know-each-other]
+name = Arena, benchmark, image studio, cloning, chat and downloads never import one another, not even through a third module
+type = independence
+modules =
+    agentfit.arena
+    agentfit.benchmark
+    agentfit.chat
+    agentfit.clone
+    agentfit.downloads
+    agentfit.imagegen
+
+[importlinter:contract:arena-uses-the-shared-gateway]
+name = The Arena reaches models through the workflow gateway and imports no other feature (direct imports only)
+type = forbidden
+allow_indirect_imports = True
+source_modules =
+    agentfit.arena
+forbidden_modules =
+    agentfit.benchmark
+    agentfit.brain
+    agentfit.catalog
+    agentfit.chat
+    agentfit.clone
+    agentfit.downloads
+    agentfit.imagegen
+    agentfit.teams

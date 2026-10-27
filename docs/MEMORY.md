@@ -208,6 +208,26 @@ read nor write it, and what is already remembered stays.
 Run events: `memory.recalled` (what a step was given) and `memory.saved` (what the run
 left behind); `run.started` carries `memory` with the project and how much it held.
 
+## The memory of the project's own code, for coding agents
+
+The Brain is also the memory of this repository for the models that change it (Claude Code, Codex, a local Qwen in
+LM Studio): `D:\SotwareKikko` is a project like any other, with no run involved and no embedding model loaded (search
+is by words and through the graph). `agentfit/brain/external.py` is that door; four writers feed it without asking a
+model anything, and every entry has a slot so that writing it again rewrites it:
+
+| Writer | What it stores | Runs |
+|---|---|---|
+| `ledger.py` | A Claude Code session read from its transcript: what was asked, the project files it wrote, the checks it ran (pytest, ruff, tsc, ...) and whether they passed, the commits, and every failure with the files edited before the run that passed | `willitrun memory ledger --hook`, from the Stop hook |
+| `gitlog.py` | A commit: its message, its author, its files | `willitrun memory commit`, from the post-commit hook |
+| `docs_import.py` | Every `##` section of `docs/DECISIONS.md` and `docs/LESSONS.md` | `willitrun memory import-docs`, from the git hooks |
+| `external.py` | What an agent saves on purpose with `remember` | on request |
+
+It is read with `willitrun memory recall "<words>"` (also `--file <path>`, `--id <n>`, `--kind error`),
+`willitrun memory recent --open` (errors nobody fixed) and, over MCP, with three tools (`recall`, `remember`, `recent`):
+`willitrun memory mcp --workspace <folder>` (needs the optional `mcp` package: `pip install "agentfit[mcp]"`, already
+in the `dev` extra). Every tool a client lists is sent to the model on every request, so there are only three, about
+400 tokens. How the pieces fit together, and what they cannot do: [AGENT_CONTEXT.md](AGENT_CONTEXT.md).
+
 ## Why it is built in, and what it borrows
 
 Before writing this, the most used open-source memory projects were looked at (stars as

@@ -16,9 +16,19 @@ desktop/                Tauri + React + TypeScript UI
 scripts/
   build.ps1             full build -> dist\WillItRun-Setup-x64.exe
   build_seed_catalog.py regenerate the offline model catalog from llmfit data
+  build_context.py      write docs/map/ (the map of the code) from the code; --check for CI
+  check.py              run the checks your change needs; --all is what CI runs
+  hooks/                the scripts behind the git hooks and the Claude Code hooks
   make_hardware_fixtures.py
-docs/                   DESIGN.md maps the design files, SCREENS.md the screenshots
+docs/                   DESIGN.md maps the design files, SCREENS.md the screenshots,
+                        map/ is generated, DECISIONS.md and LESSONS.md are the memory in plain text
+.githooks/              git hooks (turned on with: git config core.hooksPath .githooks)
+.github/workflows/      CI
+.claude/                Claude Code settings (hooks) and rules by path
+AGENTS.md               the instructions every coding agent reads first (CLAUDE.md imports it)
 ```
+
+Working with a model on this code is described in [AGENT_CONTEXT.md](AGENT_CONTEXT.md).
 
 ## Prerequisites
 
@@ -58,9 +68,14 @@ Will It Run data.
 ## Checks
 
 ```powershell
+python scripts\check.py                     # what your change needs: lint, import contracts, the tests that import
+                                            # what you touched, tsc, eslint, vitest, the Italian catalog
+python scripts\check.py --all               # everything CI runs
+
 cd backend
-.venv\Scripts\python.exe -m pytest          # 348 tests
-.venv\Scripts\python.exe -m ruff check src tests
+.venv\Scripts\python.exe -m pytest          # about 900 tests
+.venv\Scripts\ruff.exe check src tests ..\scripts   # run from backend\: its settings name the `src` folders
+.venv\Scripts\lint-imports.exe              # the architecture contracts in backend\.importlinter
 
 cd ..\desktop
 npm run typecheck                           # tsc, strict
@@ -68,6 +83,23 @@ npm run lint                                # eslint
 npm test                                    # vitest
 cd src-tauri; cargo test; cargo clippy
 ```
+
+CI (`.github/workflows/ci.yml`, Windows) runs the same: ruff, the import contracts, pytest, the Italian catalog
+(`it.ts` must be what `it.txt` says), `scripts/build_context.py --check` (the map must be what the code says), then tsc,
+eslint and vitest in a second job.
+
+### Hooks
+
+`git config core.hooksPath .githooks` turns on the versioned git hooks (a Claude Code session does it by itself):
+**pre-commit** regenerates `docs/map/` and adds it to the commit; **post-commit**, **post-merge** and **post-checkout**
+bring the code graph (`codegraph sync`) and the project memory up to date in the background. They help and never
+block a commit. The Claude Code hooks are in `.claude/settings.json`; both sets are described in [AGENT_CONTEXT.md](AGENT_CONTEXT.md).
+
+### Migrations
+
+`backend/src/agentfit/migrations/NNNN_name.sql`, forward-only. A committed migration is never edited: add the next
+number (a Claude Code hook asks before it lets an edit through). Put a `--` comment above each `CREATE TABLE`; the map
+copies it into `docs/map/db.md`.
 
 The Python tests never touch LM Studio, the network or your data: `conftest.py` points
 `AGENTFIT_HOME` at a temp directory, hardware comes from fixtures, LM Studio from
@@ -96,6 +128,9 @@ against `tests/fakes.py::FakeRuntime`, a scripted model.
 | `test_arena_runner.py` | A run end to end on a fake runtime: the same prompt for every model, one model in memory, stop and resume, run errors kept apart from wrong answers, models that do not load, what needs the person's agreement |
 | `test_arena_api.py` | The Arena over HTTP: overview, models, a run from start to report, the answers, the files in four formats, Italian |
 | `test_core.py` | Migrations, settings, redaction, paths, events, benchmark storage |
+| `test_project_memory.py` | The memory for coding agents: the session ledger, commits, `docs/DECISIONS.md` and `docs/LESSONS.md` as entries, the MCP server |
+| `test_agent_hooks.py` | The hook scripts (`scripts/hooks`), `.githooks/` and `.claude/settings.json` |
+| `test_context_map.py` | The generated map: its routes are the routes the app serves, it is deterministic and small enough to read |
 
 ### Checks against real hardware
 

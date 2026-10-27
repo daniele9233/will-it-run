@@ -35,7 +35,7 @@ Working with a model on this code is described in [AGENT_CONTEXT.md](AGENT_CONTE
 - Windows 11 x64
 - Python 3.11+ (developed on 3.13) and [uv](https://docs.astral.sh/uv/)
 - Node.js 20+ and npm
-- Rust (stable) for the desktop shell
+- Rust (stable) for the desktop shell. `scripts\build.ps1` finds `cargo` by itself when the shell has no Rust folder on PATH (`CARGO_HOME`, `%USERPROFILE%\.cargo\bin`, then the rustup toolchains)
 - LM Studio for anything that runs a model
 
 ## Setup

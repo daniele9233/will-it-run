@@ -35,5 +35,7 @@ What it does:
 ## Notes
 
 - The installer is not code-signed: Windows SmartScreen warns on first run. The release notes say so.
+- If the script stops after it wrote the version (a build step failed), nothing was committed, tagged or published, but the six version files are left modified. Look at `git status`, restore them with `git checkout -- <files>` (they are the only changes) and run it again.
+- The Tauri step needs Rust; `build.ps1` looks for `cargo` on PATH, then in the cargo and rustup folders of the user, and stops at the start when it is nowhere.
 - `dist\` is not in git: the installer exists only as a release asset.
 - Releases are public. Do not publish a build that contains anything that is not meant to be public.

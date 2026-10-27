@@ -71,10 +71,18 @@ def test_the_reference_answer_passes(question):
 
 @pytest.mark.parametrize("question", [q for q in SUITE.questions if q.category != "writing"], ids=[q.id for q in SUITE.questions if q.category != "writing"])
 def test_every_wrong_answer_is_not_a_pass(question):
+    judged_on_structure_only = []
     for entry in question.wrong:
         verdict = verify(question, kit.scripted(entry), CONTEXT)
+        if verdict.status == "passed" and question.category == "terraform" and CONTEXT.tools.get("terraform") is None:
+            # Without Terraform a configuration is judged on its shape (the verdict says so): one that computes the wrong
+            # value cannot be told from the right one. That is the documented limit, not a defect of the bank.
+            judged_on_structure_only.append(entry)
+            continue
         assert verdict.status in ("failed", "partial"), f"{question.id}: {entry[:80]!r} was judged {verdict.status}"
         assert verdict.score is not None and verdict.score < 1.0
+    if judged_on_structure_only:
+        pytest.skip(f"terraform is not installed: {len(judged_on_structure_only)} wrong answer(s) of {question.id} can only be told apart by running it")
 
 
 def test_two_builds_of_the_same_seed_are_the_same_suite():

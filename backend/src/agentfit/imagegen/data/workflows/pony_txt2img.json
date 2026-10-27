@@ -1,0 +1,119 @@
+{
+  "key": "pony_txt2img",
+  "name": "Text to image — Pony (clip skip 2)",
+  "family": "sdxl",
+  "kind": "txt2img",
+  "description": "SDXL con clip skip 2, come Pony Diffusion V6 XL è stato addestrato. Il prompt comincia con i tag di qualità (score_9, score_8_up, score_7_up), che il software aggiunge da solo; poi tag o frasi.",
+  "roles": [
+    "checkpoint"
+  ],
+  "lora_mode": "model_and_clip",
+  "lora_source": "1",
+  "needs": [
+    "CLIPSetLastLayer"
+  ],
+  "defaults": {
+    "negative": "score_6, score_5, score_4, lowres, bad anatomy, bad hands, text, watermark, signature",
+    "steps": 25,
+    "cfg": 7.0,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal",
+    "denoise": 1.0
+  },
+  "graph": {
+    "1": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "{{checkpoint}}"
+      }
+    },
+    "10": {
+      "class_type": "CLIPSetLastLayer",
+      "inputs": {
+        "clip": [
+          "1",
+          1
+        ],
+        "stop_at_clip_layer": -2
+      }
+    },
+    "2": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "10",
+          0
+        ],
+        "text": "{{prompt}}"
+      }
+    },
+    "3": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "10",
+          0
+        ],
+        "text": "{{negative}}"
+      }
+    },
+    "4": {
+      "class_type": "EmptyLatentImage",
+      "inputs": {
+        "width": "{{width}}",
+        "height": "{{height}}",
+        "batch_size": "{{batch_size}}"
+      }
+    },
+    "5": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "2",
+          0
+        ],
+        "negative": [
+          "3",
+          0
+        ],
+        "latent_image": [
+          "4",
+          0
+        ],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "6": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "5",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      }
+    },
+    "7": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "6",
+          0
+        ],
+        "filename_prefix": "{{filename_prefix}}"
+      }
+    }
+  }
+}

@@ -52,6 +52,8 @@ class ModelProfile:
     presets: tuple[dict[str, Any], ...] = ()
     #: What this model is told not to draw when the person writes nothing of their own.
     negative: str = ""
+    #: Words every prompt for this model must begin with (Pony's quality tags), added by the app.
+    prompt_prefix: str = ""
     #: The shape and size its author recommends, so the page can start from it.
     aspect: str = ""
     megapixels: float | None = None
@@ -84,6 +86,7 @@ class ModelProfile:
             "template": self.template,
             "presets": [dict(item) for item in self.presets],
             "negative": self.negative,
+            "prompt_prefix": self.prompt_prefix,
             "aspect": self.aspect,
             "megapixels": self.megapixels,
             "loras": list(self.loras),
@@ -111,6 +114,7 @@ def _profile(raw: dict[str, Any]) -> ModelProfile:
         template=str(raw.get("template") or ""),
         presets=tuple(raw.get("presets") or ()),
         negative=str(raw.get("negative") or ""),
+        prompt_prefix=str(raw.get("prompt_prefix") or ""),
         aspect=str(raw.get("aspect") or ""),
         megapixels=(float(raw["megapixels"]) if raw.get("megapixels") else None),
         loras=tuple(str(cid) for cid in (raw.get("loras") or ())),

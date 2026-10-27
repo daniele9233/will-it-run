@@ -522,6 +522,155 @@
       "vram_gb": 12.8,
       "licence": "Civitai: solo immagini e noleggio",
       "notes": "Mix NSFW fotografico di Krea 2 con PornMaster V4. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    },
+    {
+      "id": "krea2-pornmaster-v4",
+      "name": "PornMaster Krea2 V4 (INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "pornmasterKrea2_v4_3262057.safetensors",
+      "size_bytes": 14132270196,
+      "source": {
+        "kind": "civitai",
+        "model_id": 2735032,
+        "version_id": 3373630,
+        "file_id": 3262057,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/2735032",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 13.2,
+      "licence": "Civitai: solo immagini e noleggio",
+      "notes": "Merge NSFW fotografico di Krea 2 Turbo. 14,1 GB: pesa 0,6 GB più di KreaNoct, quindi su 16 GB è al limite. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    },
+    {
+      "id": "krea2-pornmaster-v4-int4",
+      "name": "PornMaster Krea2 V4 (INT4, leggero)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "pornmasterKrea2_v4_3262023.safetensors",
+      "size_bytes": 8054725348,
+      "source": {
+        "kind": "civitai",
+        "model_id": 2735032,
+        "version_id": 3373630,
+        "file_id": 3262023,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/2735032",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 7.5,
+      "licence": "Civitai: solo immagini e noleggio",
+      "notes": "La stessa V4 in INT4: 8,1 GB, comoda anche con LM Studio aperto, con un po' meno qualità dell'INT8. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    },
+    {
+      "id": "zimage-te",
+      "name": "Text encoder Z-Image (Qwen3 4B, fp8)",
+      "role": "text_encoder",
+      "folder": "text_encoders",
+      "file": "qwen_3_4b_fp8_mixed.safetensors",
+      "size_bytes": 5631994051,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Z-Image-Turbo",
+        "revision": "main",
+        "filename": "split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "families": [
+        "zimage"
+      ],
+      "vram_gb": 5.2,
+      "licence": "Apache-2.0",
+      "notes": "Va caricato con CLIPLoader, type lumina2."
+    },
+    {
+      "id": "zimage-vae",
+      "name": "VAE Z-Image (ae, 16 canali)",
+      "role": "vae",
+      "folder": "vae",
+      "file": "ae.safetensors",
+      "size_bytes": 335304388,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Z-Image-Turbo",
+        "revision": "main",
+        "filename": "split_files/vae/ae.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "families": [
+        "zimage"
+      ],
+      "vram_gb": 0.3,
+      "licence": "Apache-2.0",
+      "notes": "È la VAE a 16 canali di Flux: se hai già un ae.safetensors è lo stesso file."
+    },
+    {
+      "id": "zimage-nsfw-v2-q8",
+      "name": "Z-Image Turbo NSFW v2 (Q8_0, GGUF)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "z_image_nsfw_v2-Q8_0.gguf",
+      "size_bytes": 7224707264,
+      "source": {
+        "kind": "huggingface",
+        "repo": "lesliemore/z-image-turbo-nsfw-v2-GGUF",
+        "revision": "main",
+        "filename": "z_image_nsfw_v2-Q8_0.gguf"
+      },
+      "url": "https://huggingface.co/lesliemore/z-image-turbo-nsfw-v2-GGUF",
+      "families": [
+        "zimage"
+      ],
+      "vram_gb": 6.7,
+      "licence": "Apache-2.0",
+      "notes": "Finetune NSFW di Z-Image Turbo (tewea/z_image_turbo_bf16_nsfw v2), convertito in GGUF Q8_0. Serve ComfyUI-GGUF."
+    },
+    {
+      "id": "zimage-cyberrealistic-v9-q6k",
+      "name": "CyberRealistic Z-Image v9 (Q6_K, GGUF)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "zit_CyberRealistic_v9-Q6_K.gguf",
+      "size_bytes": 6049667136,
+      "source": {
+        "kind": "huggingface",
+        "repo": "gimly13/z-image-cyberrealistic-v9-gguf",
+        "revision": "main",
+        "filename": "zit_CyberRealistic_v9-Q6_K.gguf"
+      },
+      "url": "https://huggingface.co/gimly13/z-image-cyberrealistic-v9-gguf",
+      "families": [
+        "zimage"
+      ],
+      "vram_gb": 5.6,
+      "licence": "CreativeML OpenRAIL-M",
+      "notes": "Realismo fotografico: pelle con pori, mani coerenti, luce mista. Conversione GGUF Q6_K di CyberRealistic Z-Image v9. Serve ComfyUI-GGUF."
+    },
+    {
+      "id": "sdxl-pony-v6",
+      "name": "Pony Diffusion V6 XL",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "ponyDiffusionV6XL_v6StartWithThisOne.safetensors",
+      "size_bytes": 6938041050,
+      "source": {
+        "kind": "huggingface",
+        "repo": "LyliaEngine/Pony_Diffusion_V6_XL",
+        "revision": "main",
+        "filename": "ponyDiffusionV6XL_v6StartWithThisOne.safetensors"
+      },
+      "url": "https://huggingface.co/AstraliteHeart/pony-diffusion-v6",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.0,
+      "licence": "CreativeML OpenRAIL-M",
+      "notes": "Il file ufficiale 'v6 start with this one'. Lo stesso SHA-256 (67ab2fd8ec43…) dello v6.safetensors di AstraliteHeart, l'autore, con un nome che si capisce. Gratuito, senza token."
     }
   ]
 }

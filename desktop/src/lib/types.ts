@@ -978,6 +978,8 @@ export interface ImageModel {
   recommended: boolean;
   /** What the model is told not to draw when the person writes nothing. */
   negative: string;
+  /** Words every prompt for this model starts with, added by the app (Pony's score tags). */
+  prompt_prefix: string;
   /** The shape and size its author recommends. */
   aspect: string;
   megapixels: number | null;

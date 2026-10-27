@@ -20,6 +20,7 @@ from typing import Any
 COST_PER_MEGAPIXEL = {
     "sdxl": 1.3,
     "krea2": 2.1,
+    "zimage": 1.5,
     "qwen_image": 2.3,
 }
 

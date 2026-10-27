@@ -1,0 +1,126 @@
+{
+  "key": "zimage_txt2img",
+  "name": "Text to image — Z-Image Turbo",
+  "family": "zimage",
+  "kind": "txt2img",
+  "default": true,
+  "description": "Z-Image Turbo (6B, Lumina 2): nove passi a CFG 1, il text encoder è un Qwen3 4B. Prompt in frasi, come la didascalia di una foto. Il negativo è azzerato: a CFG 1 non conta.",
+  "roles": [
+    "unet",
+    "clip",
+    "vae"
+  ],
+  "lora_mode": "model",
+  "lora_source": "1",
+  "needs": [
+    "ConditioningZeroOut"
+  ],
+  "defaults": {
+    "negative": " ",
+    "steps": 9,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "denoise": 1.0
+  },
+  "graph": {
+    "1": {
+      "class_type": "{{unet_loader}}",
+      "inputs": {
+        "unet_name": "{{unet}}",
+        "weight_dtype": "{{weight_dtype}}"
+      }
+    },
+    "2": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "{{clip}}",
+        "type": "{{clip_type}}",
+        "device": "default"
+      }
+    },
+    "3": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "{{vae}}"
+      }
+    },
+    "4": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "text": "{{prompt}}"
+      }
+    },
+    "9": {
+      "class_type": "ConditioningZeroOut",
+      "inputs": {
+        "conditioning": [
+          "4",
+          0
+        ]
+      }
+    },
+    "5": {
+      "class_type": "EmptyLatentImage",
+      "inputs": {
+        "width": "{{width}}",
+        "height": "{{height}}",
+        "batch_size": "{{batch_size}}"
+      }
+    },
+    "6": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "9",
+          0
+        ],
+        "latent_image": [
+          "5",
+          0
+        ],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "7": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "6",
+          0
+        ],
+        "vae": [
+          "3",
+          0
+        ]
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "7",
+          0
+        ],
+        "filename_prefix": "{{filename_prefix}}"
+      }
+    }
+  }
+}

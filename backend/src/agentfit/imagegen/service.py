@@ -225,7 +225,7 @@ class ImageStudio:
         values.update(profile.sampling)
         values.update(
             {
-                "prompt": request.prompt,
+                "prompt": _with_prefix(profile.prompt_prefix, request.prompt),
                 "negative": request.negative or profile.negative or str(template.defaults.get("negative", "")),
                 "width": request.width,
                 "height": request.height,
@@ -606,6 +606,13 @@ class ImageStudio:
         path.unlink(missing_ok=True)
         self.db.execute("DELETE FROM image_generation WHERE id = ?", (image_id,))
         return True
+
+
+def _with_prefix(prefix: str, prompt: str) -> str:
+    """The model's own opening words, once: a prompt that already starts with them is left alone."""
+    if not prefix or prompt.lstrip().lower().startswith(prefix.strip().lower()):
+        return prompt
+    return f"{prefix}{prompt}"
 
 
 def _json(value: Any) -> str:

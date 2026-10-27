@@ -188,9 +188,14 @@ A `.gguf` unet needs [ComfyUI-GGUF](https://github.com/city96/ComfyUI-GGUF); the
 
 ### What the app knows by name
 
-This catalog is **photographic only**. Anime, cartoon and illustration models are not offered
+This catalog is **photographic**. Anime, cartoon and illustration models are not offered
 (NoobAI, Illustrious and the Kroma builds, which drew an animated look, were removed on
-2026-10-27). `data/models.json` and `data/components.json` hold models whose files, loaders and
+2026-10-27), with one exception the person asked for by name: **Pony Diffusion V6 XL**, the NSFW
+standard of SDXL, which draws anime by default. Its entry starts from a photographic negative prompt
+(`source_anime, source_cartoon, 3d, drawing`) and adds its quality tags (`score_9, score_8_up, score_7_up`)
+and clip skip 2 on its own workflow, `pony_txt2img`; clear the negative to draw anime.
+Checked on this PC: asked with a descriptive sentence it drew an illustration; asked with photographic
+tags (`photo (medium), realistic, real life, 1girl, solo, …`) it made a photograph, in 9–14 s at 832×1216. `data/models.json` and `data/components.json` hold models whose files, loaders and
 sampling were checked, with sizes and download sources read from the publishers' APIs.
 
 | Model | Family | Source | On 16 GB | Licence |
@@ -202,15 +207,30 @@ sampling were checked, with sizes and download sources read from the publishers'
 | Big Love KreaEdit3 (INT8) | `krea2` | Civitai 897413, **needs a token** | 13.5 GB | Civitai: images, rent |
 | Real Dream Krea 2 V3 (INT8) | `krea2` | Civitai 153568, **needs a token** | 13.5 GB | Civitai: images, rent, sell |
 | Moody Krea 2 Mix V9 (INT8) | `krea2` | Civitai 2731187, **needs a token** | 13.8 GB | Civitai: images, rent |
+| PornMaster Krea2 V4 (INT8 and INT4) | `krea2` | Civitai 2735032, **needs a token** | INT8 14.1 GB (at the limit), INT4 8.1 GB | Civitai: images, rent |
+| Z-Image Turbo NSFW v2 (Q8_0, GGUF) | `zimage` | Hugging Face `lesliemore/z-image-turbo-nsfw-v2-GGUF` — **free, no token** | 7.2 GB model + 5.6 GB encoder (staged: fits easily) | Apache-2.0, commercial use allowed |
+| CyberRealistic Z-Image v9 (Q6_K, GGUF) | `zimage` | Hugging Face `gimly13/z-image-cyberrealistic-v9-gguf` — **free, no token** | 6 GB model | OpenRAIL-M |
 | LUSTIFY! ZENITH V9, bigASP v2.5 | `sdxl` | Civitai, **needs a token** | 7 GB, comfortable | Civitai: images |
-| CyberRealistic XL v10, Juggernaut XL Ragnarok, RealVisXL V5 | `sdxl` | Civitai / Hugging Face | 7 GB | OpenRAIL / Civitai |
+| RealVisXL V5.0 | `sdxl` | Hugging Face `SG161222/RealVisXL_V5.0` — **free, no token** | 7 GB | OpenRAIL++ |
+| **Pony Diffusion V6 XL** | `sdxl` | Hugging Face `LyliaEngine/Pony_Diffusion_V6_XL` (same SHA-256 as the author's `AstraliteHeart/pony-diffusion-v6`) — **free, no token** | 7 GB | CreativeML OpenRAIL-M |
+| CyberRealistic XL v10, Juggernaut XL Ragnarok | `sdxl` | Civitai, **needs a token** | 7 GB | Civitai: images |
 | Qwen-Image 2.1 Turbo and base (official) | `qwen_image` | Hugging Face `Comfy-Org` | 7.3 GB | Qwen Research: non-commercial |
 | MOSS Image SFT | `moss_image` | by hand | — (blocked: ComfyUI 0.38.0 has no loader) | see model card |
 
-The three Civitai Krea 2 checkpoints are the most-downloaded photoreal NSFW builds of the
-month on Civitai (211 k, 190 k and 121 k downloads on 2026-10-27) and are the same architecture
+The Civitai Krea 2 checkpoints are the most-downloaded photoreal NSFW builds of the
+month on Civitai (211 k, 190 k, 121 k and 43 k downloads on 2026-10-27) and are the same architecture
 and INT8 format as KreaNoct, so they run on the same template — but **they have not been run on
 this PC**: Civitai would not give them without a token. The page says so in the model's note.
+
+**What needs no account.** Everything from Hugging Face: KreaNoct, the Krea 2 encoder/VAE, Qwen UC, Noct Q,
+the Qwen encoder/VAE and the four Z-Image parts. Only the Civitai rows ask for a token, which is a personal
+API key of a Civitai account (civitai.com → account settings → API keys): Civitai refuses downloads from
+anonymous requests, and the key says whose account is asking. It is free to create, it is never needed for
+Hugging Face, and it is pasted by the person in Settings → Images, never into a chat.
+
+Z-Image Turbo is the fast family: one `zimage_txt2img` workflow (`UnetLoaderGGUF` + `CLIPLoader` type `lumina2` +
+the 16-channel `ae` VAE, a zeroed negative, 9 steps, CFG 1, euler / simple), taken from the NSFW v2 author's own
+ComfyUI workflow. The two GGUF models need the ComfyUI-GGUF node, like Qwen UC.
 
 The Krea 2 encoder and VAE, KreaNoct, the Qwen UC diffusion model, Noct Q and the encoder/VAE of
 Qwen-Image 2.1 all have a **verified Hugging Face source** (path, size and SHA-256 come from the
@@ -288,7 +308,9 @@ photoreal checkpoint, which is the biggest file and the biggest licence question
 | Z-Image-Turbo, 6B, Apache-2.0, 9 steps, CFG 0 | verified (`Tongyi-MAI/Z-Image-Turbo`); **Z-Image-Edit is still "to be released"** on its card |
 | Qwen UC Q6_K, KreaNoct V4, Noct Q V4: file names, sizes and SHA-256 | read from the Hugging Face tree API on 2026-10-27 |
 | KreaNoct V4, Qwen UC Q6_K and Noct Q V4 generate through the app | **verified** on this PC (RTX 4080 SUPER), one clothed-portrait prompt each, through `ImageStudio` against the real ComfyUI 0.38.0: KreaNoct 1024×1536 in 14 s (8 steps); Qwen UC Q6_K 1024×1024 in 36 s (25 steps, CFG 1); Noct Q V4 1024×1536 in 34 s (25 steps, CFG 3). The first run of each includes loading the model |
+| Z-Image NSFW v2, CyberRealistic Z-Image v9, RealVisXL V5 and Pony V6 XL generate through the app | **verified** the same way, all four downloaded by the app's own downloader with SHA-256 checked: Z-Image NSFW v2 1024×1536 in 64 s (first run, loading), CyberRealistic v9 1024×1536 in 20 s, RealVisXL 832×1216 in 11 s, Pony 832×1216 in 9–14 s (illustration unless prompted with photographic tags) |
 | Civitai downloads without a token | **no**: HTTP 401 on 2026-10-27 for every version tried |
+| AtomicChat "Qwen-Image-2.1-Turbo-Uncensored" | **not added**: only the text encoder is abliterated, the denoiser is unchanged, and its own measurements show 0 of 45 prompts changing outcome against the stock encoder (550 k downloads, but no effect on pictures) |
 | Pony Diffusion V7 | **not verified — treat as rumour** |
 | HiDream, Chroma, ACE++, CatVTON, PuLID, SUPIR, CCSR current status | **not verified in this survey**; not used by any template here |
 | A 4080 SUPER timing for any of these | **not published anywhere reached.** The only 16 GB-class figures found are for an RTX 5060 Ti: Qwen-Image 2.1 INT8 at 21.4 s (1024²) and 124.1 s (2048²). Do not read them as this card's numbers. |

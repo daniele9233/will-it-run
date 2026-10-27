@@ -284,6 +284,144 @@
       "notes": "Mix fotografico NSFW con PornMaster V4. Richiede il token Civitai. Non provato su questo PC."
     },
     {
+      "key": "pornmaster-krea2-v4",
+      "name": "PornMaster Krea2 V4 (INT8)",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-pornmaster-v4",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "template": "krea2_txt2img",
+      "vram_gb": 19.6,
+      "licence": "Civitai: solo immagini e noleggio",
+      "source": "https://civitai.com/models/2735032",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "Specializzato in porno, fotografico. 14,1 GB di pesi: al limite su 16 GB. La V4 è molto diversa dalle precedenti: i prompt vanno riscritti e vanno più dettagliati (soprattutto i vestiti e i costumi). Richiede il token Civitai. Non provato su questo PC."
+    },
+    {
+      "key": "pornmaster-krea2-v4-int4",
+      "name": "PornMaster Krea2 V4 (INT4, leggero)",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-pornmaster-v4-int4",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "template": "krea2_txt2img",
+      "vram_gb": 13.5,
+      "licence": "Civitai: solo immagini e noleggio",
+      "source": "https://civitai.com/models/2735032",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "La stessa V4 in INT4 (8,1 GB): la scelta se l'INT8 è troppo pesante o LM Studio resta aperto. La V4 è molto diversa dalle precedenti: i prompt vanno riscritti e vanno più dettagliati (soprattutto i vestiti e i costumi). Richiede il token Civitai. Non provato su questo PC."
+    },
+    {
+      "key": "zimage-nsfw-v2",
+      "name": "Z-Image Turbo NSFW v2 (Q8_0, GGUF)",
+      "family": "zimage",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "zimage-nsfw-v2-q8",
+        "text_encoder": "zimage-te",
+        "vae": "zimage-vae"
+      },
+      "requires": [
+        "node-gguf"
+      ],
+      "loader": {
+        "unet_loader": "UnetLoaderGGUF",
+        "weight_dtype": null,
+        "clip_type": "lumina2"
+      },
+      "sampling": {
+        "steps": 9,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.0,
+      "template": "zimage_txt2img",
+      "vram_gb": 12.5,
+      "licence": "Apache-2.0",
+      "source": "https://huggingface.co/lesliemore/z-image-turbo-nsfw-v2-GGUF",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "Veloce e leggero (7 GB di modello): nove passi, CFG 1, euler/simple. Finetune NSFW di Z-Image Turbo con licenza Apache 2.0, quindi uso commerciale consentito. Prompt in frasi, in inglese o in cinese."
+    },
+    {
+      "key": "zimage-cyberrealistic-v9",
+      "name": "CyberRealistic Z-Image v9 (Q6_K, GGUF)",
+      "family": "zimage",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "zimage-cyberrealistic-v9-q6k",
+        "text_encoder": "zimage-te",
+        "vae": "zimage-vae"
+      },
+      "requires": [
+        "node-gguf"
+      ],
+      "loader": {
+        "unet_loader": "UnetLoaderGGUF",
+        "weight_dtype": null,
+        "clip_type": "lumina2"
+      },
+      "sampling": {
+        "steps": 9,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.0,
+      "template": "zimage_txt2img",
+      "vram_gb": 11.2,
+      "licence": "CreativeML OpenRAIL-M",
+      "source": "https://huggingface.co/gimly13/z-image-cyberrealistic-v9-gguf",
+      "nsfw": "standard",
+      "recommended": false,
+      "notes": "Pensato per il realismo fotografico (pelle, mani, luce), non per l'NSFW: il suo uso esplicito non è dichiarato dall'autore, provalo. Prompt descrittivi, senza 'masterpiece' né '8k'. Nove passi, CFG 1."
+    },
+    {
       "key": "lustify-v9",
       "name": "LUSTIFY! ZENITH V9",
       "family": "sdxl",
@@ -408,6 +546,36 @@
       "source": "https://huggingface.co/SG161222/RealVisXL_V5.0",
       "nsfw": "standard",
       "notes": "Fotorealismo pulito, non NSFW nativo."
+    },
+    {
+      "key": "pony-diffusion-v6-xl",
+      "name": "Pony Diffusion V6 XL",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-pony-v6"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 25,
+        "cfg": 7.0,
+        "sampler": "euler_ancestral",
+        "scheduler": "normal"
+      },
+      "prompt_prefix": "score_9, score_8_up, score_7_up, ",
+      "negative": "score_6, score_5, score_4, source_cartoon, source_anime, source_furry, 3d, drawing, illustration, bad anatomy, bad hands, text, watermark",
+      "aspect": "2:3",
+      "megapixels": 1.0,
+      "template": "pony_txt2img",
+      "vram_gb": 7.0,
+      "licence": "CreativeML OpenRAIL-M",
+      "source": "https://huggingface.co/AstraliteHeart/pony-diffusion-v6",
+      "nsfw": "native",
+      "notes": "Lo standard NSFW di SDXL: capisce pose, anatomia e prompt complessi, ma di suo disegna in stile illustrazione. Verificato su questo PC: con una frase descrittiva esce un disegno; con tag fotografici ('photo (medium), realistic, real life, 1girl, solo, …') esce una foto. Parte con il negativo che chiede una foto (source_anime, source_cartoon, 3d, drawing): per l'anime svuotalo. Clip skip 2 e i tag score_9, score_8_up, score_7_up li mette il software. Per pelle e luce da vera fotografia restano meglio Qwen UC, KreaNoct e Noct Q."
     },
     {
       "key": "qwen-image-2.1",

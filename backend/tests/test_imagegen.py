@@ -258,22 +258,22 @@ def test_components_shared_by_two_models_are_named_once(studio: ImageStudio) -> 
     store = studio.components
     # Every Krea 2 model shares one encoder: adding another did not add a second copy.
     krea = store.references("krea2-te")
-    assert "KreaNoct V4 INT8" in krea and len(krea) == 4
+    assert "KreaNoct V4 INT8" in krea and len(krea) == 6
     qwen = store.references("qwen21-vae")
     assert "Qwen-Image 2.1 UC (Q6_K, GGUF)" in qwen and "Noct Q V4 (Qwen-Image 2.1 UC, INT8)" in qwen
 
 
 def test_the_catalog_has_no_cartoon_model() -> None:
-    """The images here are photographs: nothing anime, illustration or Kroma is offered."""
+    """The catalog is photographic: no anime checkpoint by name. Pony V6 XL is here because the person asked for it."""
     for profile in catalog.profiles():
         text = f"{profile.key} {profile.name}".lower()
         assert not any(word in text for word in ("anime", "illustrious", "noobai", "danbooru", "kroma")), profile.key
     assert catalog.by_key("kroma-v0.3-turbo") is None
-    assert {profile.family for profile in catalog.profiles()} <= {"krea2", "qwen_image", "sdxl", "moss_image"}
+    assert {profile.family for profile in catalog.profiles()} <= {"krea2", "qwen_image", "zimage", "sdxl", "moss_image"}
 
 
 def test_a_shared_component_cannot_be_removed(studio: ImageStudio) -> None:
-    with pytest.raises(ComponentError, match="4 models"):
+    with pytest.raises(ComponentError, match="6 models"):
         studio.components.remove("krea2-te")
     # A component only one model uses can go.
     result = studio.components.remove("krea2-kreanoct")
@@ -315,7 +315,9 @@ def test_the_plan_says_what_to_change_when_it_does_not_fit(studio: ImageStudio) 
     suggestions = {item["code"] for item in estimate["suggestions"]}
     assert {"lower_resolution", "lighter_model"} <= suggestions
     # Everything smaller in the family is offered, in catalog order.
-    assert [item["key"] for item in result["lighter"]] == ["kreanoct-v4", "biglove-kreaedit3", "realdream-krea2-v3"]
+    assert [item["key"] for item in result["lighter"]] == [
+        "kreanoct-v4", "biglove-kreaedit3", "realdream-krea2-v3", "pornmaster-krea2-v4-int4",
+    ]
 
 
 def test_a_model_that_fits_is_reported_as_fitting(studio: ImageStudio) -> None:
@@ -715,3 +717,94 @@ def test_the_catalog_only_names_components_that_exist() -> None:
     for profile in catalog.profiles():
         for component_id in profile.component_ids():
             assert definition(component_id) is not None, f"{profile.key} -> {component_id}"
+
+
+def test_the_civitai_krea_models_name_the_file_and_need_a_token() -> None:
+    """Big Love, Real Dream and PornMaster each point at one exact Civitai file, not the version's first."""
+    from agentfit.imagegen.components import definition
+
+    expected = {
+        "krea2-biglove-kreaedit3": 3314179,
+        "krea2-realdream-v3": 3304483,
+        "krea2-pornmaster-v4": 3262057,
+        "krea2-pornmaster-v4-int4": 3262023,
+    }
+    for component_id, file_id in expected.items():
+        component = definition(component_id)
+        assert component is not None, component_id
+        assert component.source["kind"] == "civitai" and component.source["file_id"] == file_id
+        assert component.source["needs_token"] is True
+    for key in ("biglove-kreaedit3", "realdream-krea2-v3", "pornmaster-krea2-v4", "pornmaster-krea2-v4-int4"):
+        profile = catalog.by_key(key)
+        assert profile is not None and profile.family == "krea2" and profile.nsfw == "native"
+        assert profile.template == "krea2_txt2img"
+
+
+def test_the_zimage_models_use_the_lumina2_graph(studio: ImageStudio) -> None:
+    """Unet Loader (GGUF) + CLIPLoader lumina2 + the 16-channel VAE; a zeroed negative; nine steps at CFG 1."""
+    profile = catalog.by_key("zimage-nsfw-v2")
+    assert profile is not None and profile.family == "zimage" and profile.requires == ("node-gguf",)
+    assert profile.component_ids() == ["zimage-nsfw-v2-q8", "zimage-te", "zimage-vae", "node-gguf"]
+    template = templates.by_key(profile.template)
+    for cid in profile.component_ids():
+        part = studio.components.component_state(cid)
+        if part["role"] != "custom_node":
+            write(studio.components.models_dir / part["folder"] / part["file"])
+    graph = studio.graph_for(profile, template, GenerationRequest(model_key=profile.key, prompt="a photograph", seed=3).normalised())
+    assert graph["1"]["class_type"] == "UnetLoaderGGUF"
+    assert graph["1"]["inputs"] == {"unet_name": "z_image_nsfw_v2-Q8_0.gguf"}
+    assert graph["2"]["inputs"] == {"clip_name": "qwen_3_4b_fp8_mixed.safetensors", "type": "lumina2", "device": "default"}
+    assert graph["3"]["inputs"] == {"vae_name": "ae.safetensors"}
+    assert graph["9"]["class_type"] == "ConditioningZeroOut" and graph["6"]["inputs"]["negative"] == ["9", 0]
+    sampler = graph["6"]["inputs"]
+    assert (sampler["steps"], sampler["cfg"], sampler["sampler_name"], sampler["scheduler"]) == (9, 1.0, "euler", "simple")
+
+
+def test_the_zimage_parts_have_free_hugging_face_sources() -> None:
+    from agentfit.imagegen.components import definition
+
+    for component_id in ("zimage-te", "zimage-vae", "zimage-nsfw-v2-q8", "zimage-cyberrealistic-v9-q6k"):
+        component = definition(component_id)
+        assert component is not None and component.source["kind"] == "huggingface", component_id
+        assert not component.source.get("needs_token")
+
+
+def test_pony_runs_with_clip_skip_two_and_its_score_tags(studio: ImageStudio) -> None:
+    profile = catalog.by_key("pony-diffusion-v6-xl")
+    assert profile is not None and profile.template == "pony_txt2img"
+    assert profile.components == {"checkpoint": "sdxl-pony-v6"}
+    template = templates.by_key(profile.template)
+    write(studio.components.models_dir / "checkpoints" / "ponyDiffusionV6XL_v6StartWithThisOne.safetensors")
+    request = GenerationRequest(model_key=profile.key, prompt="photo, a woman on a balcony", seed=5).normalised()
+    graph = studio.graph_for(profile, template, request)
+    assert graph["10"]["class_type"] == "CLIPSetLastLayer" and graph["10"]["inputs"]["stop_at_clip_layer"] == -2
+    assert graph["2"]["inputs"]["clip"] == ["10", 0] and graph["3"]["inputs"]["clip"] == ["10", 0]
+    assert graph["2"]["inputs"]["text"] == "score_9, score_8_up, score_7_up, photo, a woman on a balcony"
+    assert "source_anime" in graph["3"]["inputs"]["text"]  # the photographic negative is the starting point
+    # A prompt that already begins with the tags is not given them twice.
+    again = studio.graph_for(
+        profile, template,
+        GenerationRequest(model_key=profile.key, prompt="score_9, score_8_up, score_7_up, a woman", seed=5).normalised(),
+    )
+    assert again["2"]["inputs"]["text"].count("score_9") == 1
+
+
+def test_a_lora_on_pony_sits_before_the_clip_skip(studio: ImageStudio) -> None:
+    template = templates.by_key("pony_txt2img")
+    values = {
+        "prompt": "x", "negative": "y", "width": 832, "height": 1216, "seed": 1, "steps": 25, "cfg": 7.0,
+        "sampler": "euler_ancestral", "scheduler": "normal", "denoise": 1.0, "batch_size": 1,
+        "filename_prefix": "t", "checkpoint": "pony.safetensors",
+    }
+    graph = templates.apply_loras(templates.bind(template, values), template, [{"name": "a.safetensors", "weight": 0.7}])
+    assert graph["10"]["inputs"]["clip"] == ["lora1", 1]
+    assert graph["5"]["inputs"]["model"] == ["lora1", 0]
+
+
+def test_the_free_sdxl_checkpoints_download_without_a_token() -> None:
+    from agentfit.imagegen.components import definition
+
+    for component_id in ("sdxl-pony-v6", "sdxl-realvisxl-v5"):
+        component = definition(component_id)
+        assert component is not None and component.source["kind"] == "huggingface", component_id
+        assert not component.source.get("needs_token")

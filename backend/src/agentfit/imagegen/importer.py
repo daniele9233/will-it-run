@@ -165,6 +165,7 @@ def guess_family(filename: str) -> str | None:
     low = filename.lower()
     for family, words in (
         ("krea2", ("krea", "kroma")),
+        ("zimage", ("z_image", "zimage", "z-image")),
         ("qwen_image", ("qwen",)),
         ("moss_image", ("moss",)),
         ("sdxl", ("sdxl", "lustify", "bigasp", "juggernaut", "realvis")),

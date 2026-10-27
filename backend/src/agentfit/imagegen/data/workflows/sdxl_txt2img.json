@@ -1,0 +1,43 @@
+{
+  "key": "sdxl_txt2img",
+  "name": "Text to image — SDXL family",
+  "family": "sdxl",
+  "kind": "txt2img",
+  "default": true,
+  "description": "Any SDXL-based checkpoint: Pony, Illustrious, NoobAI, Lustify, bigASP, photorealism finetunes. The prompt is written the way the checkpoint was trained (Danbooru tags for anime models, a sentence for photoreal ones).",
+  "roles": ["checkpoint"],
+  "lora_mode": "model_and_clip",
+  "lora_source": "1",
+  "needs": [],
+  "defaults": {
+    "negative": "lowres, bad anatomy, bad hands, text, watermark, signature, jpeg artifacts, worst quality",
+    "steps": 28,
+    "cfg": 5.5,
+    "sampler": "dpmpp_2m",
+    "scheduler": "karras",
+    "denoise": 1.0
+  },
+  "graph": {
+    "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "{{checkpoint}}"}},
+    "2": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": "{{prompt}}"}},
+    "3": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": "{{negative}}"}},
+    "4": {"class_type": "EmptyLatentImage", "inputs": {"width": "{{width}}", "height": "{{height}}", "batch_size": "{{batch_size}}"}},
+    "5": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": ["1", 0],
+        "positive": ["2", 0],
+        "negative": ["3", 0],
+        "latent_image": ["4", 0],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "6": {"class_type": "VAEDecode", "inputs": {"samples": ["5", 0], "vae": ["1", 2]}},
+    "7": {"class_type": "SaveImage", "inputs": {"images": ["6", 0], "filename_prefix": "{{filename_prefix}}"}}
+  }
+}

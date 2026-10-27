@@ -1,0 +1,20 @@
+{
+  "key": "upscale_fast",
+  "name": "Upscale — no model",
+  "family": "any",
+  "kind": "upscale",
+  "description": "A plain resize with Lanczos. Instant, and it adds no detail: use it to hand a bigger file to a tool that needs one, not to improve a picture.",
+  "roles": [],
+  "lora_mode": "none",
+  "lora_source": "",
+  "needs": ["LoadImage", "ImageScale"],
+  "defaults": {},
+  "graph": {
+    "10": {"class_type": "LoadImage", "inputs": {"image": "{{image}}"}},
+    "20": {
+      "class_type": "ImageScale",
+      "inputs": {"image": ["10", 0], "upscale_method": "lanczos", "width": "{{width}}", "height": "{{height}}", "crop": "disabled"}
+    },
+    "8": {"class_type": "SaveImage", "inputs": {"images": ["20", 0], "filename_prefix": "{{filename_prefix}}"}}
+  }
+}

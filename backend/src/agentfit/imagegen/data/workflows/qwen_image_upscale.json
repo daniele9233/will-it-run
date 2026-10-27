@@ -1,0 +1,146 @@
+{
+  "key": "qwen_image_upscale",
+  "name": "Upscale with new detail — Qwen-Image",
+  "family": "qwen_image",
+  "kind": "upscale",
+  "description": "Enlarges the picture and repaints it at low denoise, so the extra pixels carry skin, fabric and hair instead of blur. Slower than a plain resize and far better.",
+  "roles": [
+    "unet",
+    "clip",
+    "vae"
+  ],
+  "lora_mode": "model",
+  "lora_source": "1",
+  "needs": [
+    "TextEncodeQwenImage21",
+    "LoadImage",
+    "ImageScale",
+    "VAEEncode"
+  ],
+  "defaults": {
+    "negative": " ",
+    "steps": 16,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "denoise": 0.35,
+    "resolution": 1024
+  },
+  "graph": {
+    "1": {
+      "class_type": "{{unet_loader}}",
+      "inputs": {
+        "unet_name": "{{unet}}",
+        "weight_dtype": "{{weight_dtype}}"
+      }
+    },
+    "2": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "{{clip}}",
+        "type": "{{clip_type}}",
+        "device": "default"
+      }
+    },
+    "3": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "{{vae}}"
+      }
+    },
+    "4": {
+      "class_type": "TextEncodeQwenImage21",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "prompt": "{{prompt}}",
+        "negative_prompt": "{{negative}}",
+        "resolution": "{{resolution}}"
+      }
+    },
+    "10": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "{{image}}"
+      }
+    },
+    "20": {
+      "class_type": "ImageScale",
+      "inputs": {
+        "image": [
+          "10",
+          0
+        ],
+        "upscale_method": "lanczos",
+        "width": "{{width}}",
+        "height": "{{height}}",
+        "crop": "disabled"
+      }
+    },
+    "21": {
+      "class_type": "VAEEncode",
+      "inputs": {
+        "pixels": [
+          "20",
+          0
+        ],
+        "vae": [
+          "3",
+          0
+        ]
+      }
+    },
+    "6": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "4",
+          1
+        ],
+        "latent_image": [
+          "21",
+          0
+        ],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "7": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "6",
+          0
+        ],
+        "vae": [
+          "3",
+          0
+        ]
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "7",
+          0
+        ],
+        "filename_prefix": "{{filename_prefix}}"
+      }
+    }
+  }
+}

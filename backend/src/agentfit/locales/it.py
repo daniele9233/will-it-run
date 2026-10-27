@@ -264,6 +264,91 @@ MESSAGES: dict[str, str] = {
     "Refusal": "Rifiuto",
     "Ends the run without an answer, with a named verdict. A workflow routes here when no trusted path produced something that could be verified: refusing is the outcome, not a failure to be worked around.":
         "Chiude l'esecuzione senza risposta, con un verdetto esplicito. Un workflow arriva qui quando nessun percorso affidabile ha prodotto qualcosa di verificabile: rifiutare è l'esito, non un errore da aggirare.",
+    # -- image studio: the engine, the components, the downloads ---------------------
+    "ComfyUI is not installed on this PC. Install it, then ask Will It Run to look again.":
+        "ComfyUI non è installato su questo PC. Installalo, poi chiedi a Will It Run di cercarlo di nuovo.",
+    "ComfyUI was found in {root} but no Python interpreter is next to it. Reinstall it, or point Settings > Images at the folder that holds main.py.":
+        "ComfyUI è stato trovato in {root} ma non c'è un interprete Python accanto. Reinstallalo, oppure indica in Impostazioni > Immagini la cartella che contiene main.py.",
+    "ComfyUI is already starting.": "ComfyUI si sta già avviando.",
+    "ComfyUI stopped while starting (exit code {code}). {detail}":
+        "ComfyUI si è fermato durante l'avvio (codice {code}). {detail}",
+    "ComfyUI did not answer on {url} within {timeout} seconds. See {log}.":
+        "ComfyUI non ha risposto su {url} entro {timeout} secondi. Vedi {log}.",
+    "ComfyUI could not be started: {error}": "ComfyUI non è stato avviato: {error}",
+    "ComfyUI was not started from here.": "ComfyUI non è stato avviato da qui.",
+    "This component has no download source. Open {url} and put the file in {folder}.":
+        "Questo componente non ha una sorgente di download. Apri {url} e metti il file in {folder}.",
+    "its page": "la sua pagina",
+    "the expected file": "il file atteso",
+    "Hugging Face is not reachable: {error}": "Hugging Face non è raggiungibile: {error}",
+    "{repo} needs a Hugging Face token. Add it in Settings > Images.":
+        "{repo} richiede un token di Hugging Face. Aggiungilo in Impostazioni > Immagini.",
+    "Hugging Face does not know the repository {repo}.": "Hugging Face non conosce il repository {repo}.",
+    "Hugging Face answered {code}.": "Hugging Face ha risposto {code}.",
+    "Hugging Face answered with something that is not JSON.": "Hugging Face ha risposto con qualcosa che non è JSON.",
+    "{file} is not in {repo}.": "{file} non è in {repo}.",
+    "Civitai is not reachable: {error}": "Civitai non è raggiungibile: {error}",
+    "Civitai answered {code} for version {id}.": "Civitai ha risposto {code} per la versione {id}.",
+    "Civitai answered {code} for model {id}.": "Civitai ha risposto {code} per il modello {id}.",
+    "Civitai lists no versions for model {id}.": "Civitai non elenca versioni per il modello {id}.",
+    "Civitai lists no file for this version.": "Civitai non elenca nessun file per questa versione.",
+    "Civitai did not give a download address for this file.":
+        "Civitai non ha dato un indirizzo di download per questo file.",
+    "Civitai answered with something that is not JSON.": "Civitai ha risposto con qualcosa che non è JSON.",
+    "Civitai version {id} no longer lists file {file}.":
+        "La versione {id} di Civitai non elenca più il file {file}.",
+    "Civitai gives this file only to a signed-in account. Add your Civitai token in Settings > Images, then download again.":
+        "Civitai dà questo file solo a un account con accesso. Aggiungi il tuo token Civitai in Impostazioni > Immagini e scarica di nuovo.",
+    "This Civitai component names neither a model nor a version.":
+        "Questo componente Civitai non indica né un modello né una versione.",
+    "A custom node is installed with git, not downloaded as a file.":
+        "Un nodo personalizzato si installa con git, non si scarica come file.",
+    "ComfyUI was not found on this PC, so there is nowhere to put the file.":
+        "ComfyUI non è stato trovato su questo PC, quindi non c'è dove mettere il file.",
+    "ComfyUI was not found on this PC, so there is nowhere to put the files.":
+        "ComfyUI non è stato trovato su questo PC, quindi non c'è dove mettere i file.",
+    "ComfyUI was not found on this PC.": "ComfyUI non è stato trovato su questo PC.",
+    "Unknown component.": "Componente sconosciuto.",
+    "Unknown component: {id}.": "Componente sconosciuto: {id}.",
+    "There is no model called {key}.": "Non esiste un modello chiamato {key}.",
+    "The size of what is missing is known only once the download starts.":
+        "La dimensione di ciò che manca si conosce solo quando parte il download.",
+    "{name} has no download source. Open its page and put the file in models/{folder}.":
+        "{name} non ha una sorgente di download. Apri la sua pagina e metti il file in models/{folder}.",
+    "The download needs a token. Add it in Settings > Images.":
+        "Il download richiede un token. Aggiungilo in Impostazioni > Immagini.",
+    "The download failed with HTTP {code}.": "Il download è fallito con HTTP {code}.",
+    "The download stopped: {error}": "Il download si è fermato: {error}",
+    "The file does not match its checksum: expected {expected}, got {actual}.":
+        "Il file non corrisponde al suo checksum: atteso {expected}, ottenuto {actual}.",
+    "{name} is used by {count} models ({models}). Removing it would break them.":
+        "{name} è usato da {count} modelli ({models}). Rimuoverlo li romperebbe.",
+    "This custom node has no repository address.": "Questo nodo personalizzato non ha un indirizzo di repository.",
+    "git could not install the node: {error}": "git non è riuscito a installare il nodo: {error}",
+    "This workflow needs a picture: upload one first.": "Questo workflow richiede una foto: caricane una prima.",
+    "Missing: {names}.": "Mancano: {names}.",
+    "Nodes this ComfyUI does not have: {names}.": "Nodi che questo ComfyUI non ha: {names}.",
+    "No workflow template for {name} yet.": "Non c'è ancora un workflow per {name}.",
+    "{template} does not run {model}.": "{template} non esegue {model}.",
+    "This model is not complete: {names}.": "Questo modello non è completo: {names}.",
+    "Write what the picture should show.": "Scrivi cosa deve mostrare l'immagine.",
+    "The engine finished without producing a picture.": "Il motore ha finito senza produrre un'immagine.",
+    # -- image import: what the files on disk turn out to be --
+    'That folder does not exist: {path}.': 'Quella cartella non esiste: {path}.',
+    'There is no .safetensors file in {path}.': "Non c'è nessun file .safetensors in {path}.",
+    'Unknown import mode: {mode}.': 'Modalità di importazione sconosciuta: {mode}.',
+    'a different file with this name already exists ({size}).': 'esiste già un file diverso con questo nome ({size}).',
+    'imported from {source}': 'importato da {source}',
+    'matches the catalog: {name}': 'corrisponde al catalogo: {name}',
+    'no known layout in its tensors': 'nessuna struttura nota nei suoi tensori',
+    '{name} cannot run on this engine.': '{name} non può girare su questo motore.',
+    '{name} could not be read: {error}': '{name} non è leggibile: {error}',
+    '{name} has a header this program will not read.': "{name} ha un'intestazione che questo programma non legge.",
+    '{name} is not a safetensors file.': '{name} non è un file safetensors.',
+    '{name} is not in a folder ComfyUI reads. With a flat folder, choosing "use the existing location" would put text encoders among the diffusion models: copy it, or move it.': '{name} non è in una cartella che ComfyUI legge. Con una cartella piatta, scegliere "usa la posizione esistente" metterebbe i text encoder tra i diffusion model: copialo, o spostalo.',
+    '{target} already exists and is a different file. Confirm replacing it first.': '{target} esiste già ed è un file diverso. Conferma prima di sostituirlo.',
+    "{name} is in a folder ComfyUI knows but this app does not, so it is not deleted from here.":
+        "{name} è in una cartella che ComfyUI conosce ma questa app no, quindi non viene cancellato da qui.",
 }
 
 # What the Arena's core says (why an answer was judged as it was, its messages and its reports). A key above keeps its translation.

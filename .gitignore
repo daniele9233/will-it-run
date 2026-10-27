@@ -22,3 +22,6 @@ desktop/src-tauri/resources/willitrun-core/
 
 # Build output
 /dist/
+
+# Development screenshots of the app (they can show generated pictures)
+.shots/

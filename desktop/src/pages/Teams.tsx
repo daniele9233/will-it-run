@@ -589,7 +589,7 @@ export function TeamsPage() {
               {unsupported.length > 0 && (
                 <div className="mt-3">
                   <Note tone="warn">
-                    {titleCase(unsupported[0]?.unsupported_modality ?? "image")} generation models do not run in LM Studio. Will It Run will build the prompt-writing and review agents; the generator itself needs a separate runtime such as ComfyUI, which this version does not include.
+                    {titleCase(unsupported[0]?.unsupported_modality ?? "image")} generation models do not run in LM Studio. Will It Run will build the prompt-writing and review agents; the generator itself needs a separate runtime such as ComfyUI, which you connect on the Images page.
                   </Note>
                 </div>
               )}

@@ -145,3 +145,29 @@ export function saveApproval(mode: ApprovalMode): void {
     // Not remembered this time.
   }
 }
+
+// Clone a site keeps its own choice: the project goes in a folder of its own, so nothing of the person's is at risk, and
+// the person asked not to be asked every time. Ignoring permissions is therefore the default there, until they turn it off.
+const CLONE_APPROVAL_KEY = "agentfit.clone.approval";
+
+export function loadCloneApproval(): ApprovalMode {
+  try {
+    return window.localStorage.getItem(CLONE_APPROVAL_KEY) === "ask" ? "ask" : "bypass";
+  } catch {
+    return "bypass";
+  }
+}
+
+export function saveCloneApproval(mode: ApprovalMode): void {
+  try {
+    window.localStorage.setItem(CLONE_APPROVAL_KEY, mode);
+  } catch {
+    // Not remembered this time.
+  }
+}
+
+/** The mode a clone really starts with. With a repository of the person's the agent could push to it, which is
+ *  something that leaves the PC, so permissions are always asked there whatever the switch says. */
+export function cloneApproval(chosen: ApprovalMode, source: { kind: string } | null | undefined): ApprovalMode {
+  return source?.kind === "github" ? "ask" : chosen;
+}

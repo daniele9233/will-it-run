@@ -1,4 +1,4 @@
-"""Database, settings, logging redaction, paths, events and benchmark storage."""
+﻿"""Database, settings, logging redaction, paths, events and benchmark storage."""
 
 from __future__ import annotations
 
@@ -23,9 +23,10 @@ def test_migrations_create_every_entity(db):
     tables = {r["name"] for r in db.query("SELECT name FROM sqlite_master WHERE type = 'table'")}
     expected = {"hardware_profile", "model_metadata", "installed_model", "benchmark", "download", "workflow", "team",
                 "workflow_run", "run_event", "model_usage", "tool_call", "approval", "kv", "schema_migrations",
-                "brain_project", "brain_memory", "brain_entity", "brain_edge", "arena_run", "arena_question", "arena_model", "arena_result"}
+                "brain_project", "brain_memory", "brain_entity", "brain_edge", "arena_run", "arena_question", "arena_model", "arena_result",
+                "image_generation", "image_component"}
     assert expected <= tables
-    assert db.schema_version() == 4
+    assert db.schema_version() == 6
 
 
 def test_migrations_are_idempotent(tmp_path):
@@ -34,7 +35,7 @@ def test_migrations_are_idempotent(tmp_path):
     first.kv_set("ns", "k", {"a": 1})
     first.close()
     second = Database(path)
-    assert second.migrate() == 4 and second.kv_get("ns", "k") == {"a": 1}
+    assert second.migrate() == 6 and second.kv_get("ns", "k") == {"a": 1}
     second.close()
 
 

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
-  SESSION_PANEL, clampPanelWidth, isGithubUrl, loadApproval, loadPanelPrefs, looksLikeQuestion, PANEL_MAX, PANEL_MIN, repoName, saveApproval, savePanelPrefs,
+  SESSION_PANEL, cloneApproval, clampPanelWidth, isGithubUrl, loadApproval, loadCloneApproval, loadPanelPrefs, looksLikeQuestion, PANEL_MAX, PANEL_MIN, repoName, saveApproval, saveCloneApproval, savePanelPrefs,
   sourceFromEvent, sourcePayload, sourceProblem,
 } from "./runSource";
 
@@ -72,6 +72,28 @@ describe("run source", () => {
     expect(loadApproval()).toBe("bypass");
     window.localStorage.setItem("agentfit.run.approval", "anything else");
     expect(loadApproval()).toBe("ask");
+  });
+
+  it("ignores permissions in Clone a site by default, until the person asks to be asked, with a choice of its own", () => {
+    withStorage();
+    expect(loadCloneApproval()).toBe("bypass");
+    saveCloneApproval("ask");
+    expect(loadCloneApproval()).toBe("ask");
+    // The other pages keep theirs.
+    expect(loadApproval()).toBe("ask");
+    saveApproval("bypass");
+    saveCloneApproval("bypass");
+    window.localStorage.setItem("agentfit.run.approval", "ask");
+    expect(loadCloneApproval()).toBe("bypass");
+  });
+
+  it("always asks for permissions in Clone a site when a repository of the person's is involved, because the agent could push to it", () => {
+    expect(cloneApproval("bypass", { kind: "github" })).toBe("ask");
+    expect(cloneApproval("ask", { kind: "github" })).toBe("ask");
+    expect(cloneApproval("bypass", { kind: "folder" })).toBe("bypass");
+    expect(cloneApproval("bypass", { kind: "none" })).toBe("bypass");
+    expect(cloneApproval("bypass", undefined)).toBe("bypass");
+    expect(cloneApproval("ask", null)).toBe("ask");
   });
 });
 

@@ -38,6 +38,7 @@ def make_entry(repo: str, params_b: float, *, files: dict[str, float] | None = N
         for quant, gb in (files or {}).items()
     ]
     capabilities = kwargs.pop("capabilities", ["tool_use"])
+    kwargs.setdefault("nominal_params_b", classify.parse_params_from_name(repo)[0])
     return ModelEntry(
         repo=repo, name=repo.split("/")[-1].removesuffix("-GGUF"), publisher=repo.split("/")[0], params_b=params_b,
         context_length=131072, license="apache-2.0", capabilities=capabilities,
@@ -143,6 +144,27 @@ def test_uncensored_models_are_never_hidden_by_name(catalog, budget_4080s):
 def test_uncensored_search_tries_each_community_term(catalog, budget_4080s):
     catalog.search("coding uncensored", budget_4080s)
     assert {"abliterated", "uncensored", "heretic"} <= {s.split()[-1] for s in catalog.hub.searches}
+
+
+def test_search_filters_by_the_size_a_model_name_states(catalog, budget_4080s):
+    """27B finds a model whose metadata says 27.8, because its name says 27B."""
+    qwen = make_entry("x/Qwen3.8-27B-GGUF", 27.8, files={"Q4_K_M": 16.5}, nominal_params_b=27.0)
+    catalog.hub.entries[qwen.repo.lower()] = qwen
+    result = catalog.search("qwen", budget_4080s, SearchFilters(params_exact_b=27))
+    assert {c.entry.repo for c in result.cards} == {UNC_27B.repo, qwen.repo}
+    assert result.total_candidates == 2
+
+
+def test_search_can_filter_a_parameter_range(catalog, budget_4080s):
+    result = catalog.search("qwen", budget_4080s, SearchFilters(params_min_b=8, params_max_b=20))
+    assert {c.entry.repo for c in result.cards} == {STD_14B.repo, UNC_14B.repo, CODER.repo}
+
+
+def test_size_facets_list_the_sizes_with_several_models(catalog, budget_4080s):
+    result = catalog.search("qwen", budget_4080s)
+    facets = {facet.params_b: facet.models for facet in result.sizes}
+    assert facets[14.0] == 3
+    assert 27.0 not in facets  # one model: not a useful menu entry
 
 
 def test_selected_uncensored_model_shows_full_trust_information(catalog, budget_4080s):
@@ -344,9 +366,11 @@ def test_sharded_gguf_counts_as_one_file_with_summed_size():
 
 def test_name_size_wins_when_metadata_disagrees():
     entry = entry_from_hub({"id": "p/Model-27B-GGUF", "tags": ["gguf"], "gguf": {"total": 1_500_000_000}, "siblings": []})
-    assert entry.params_b == 27.0 and any("disagree" in f for f in entry.unknown_fields)
+    assert entry.params_b == 27.0 and entry.nominal_params_b == 27.0
+    assert any("disagree" in f for f in entry.unknown_fields)
     seeded = entry_from_seed({"name": "openai/gpt-oss-20b", "gguf_repos": ["unsloth/gpt-oss-20b-GGUF"], "parameters": 1_774_000_000, "is_moe": True, "active_parameters": 299_000_000})
-    assert seeded.params_b == 20.0 and seeded.active_params_b == pytest.approx(3.37, abs=0.05)
+    assert seeded.params_b == 20.0 and seeded.nominal_params_b == 20.0
+    assert seeded.active_params_b == pytest.approx(3.37, abs=0.05)
 
 
 @pytest.mark.parametrize(

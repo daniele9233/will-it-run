@@ -60,6 +60,14 @@ lineage (base model), quantizer, architecture, parameters, quantization, downloa
 and the file's SHA-256. Missing fields are shown as **Unknown** with
 `Metadata confidence: LOW`. Nothing is filled in by guesswork.
 
+## Images
+
+Pictures work the same way: any checkpoint or LoRA you put in ComfyUI's folders can be used,
+including the ones published as *uncensored*, and the licence of each model is shown next to it.
+Will It Run does not scan prompts, filter outputs or keep a record of what you asked for beyond
+your own gallery. It does not decide what you may draw; it does ask the engine what it can run
+before it runs it. Models, settings and licences: [IMAGE_STUDIO.md](IMAGE_STUDIO.md).
+
 ## Your responsibility
 
 Will It Run ranks and runs models; it does not vet their content or their licenses. Read

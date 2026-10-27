@@ -9,6 +9,7 @@ Sources, merged by repository id:
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
@@ -66,6 +67,18 @@ class SearchFilters(BaseModel):
     tool_use: bool = False
     vision: bool = False
     max_params_b: float | None = None
+    # A size the model's name states ("27B"), or a range of them. The explorer's filters
+    # send these so a size is chosen across the whole catalog, not only the loaded cards.
+    params_exact_b: float | None = None
+    params_min_b: float | None = None
+    params_max_b: float | None = None
+
+
+class SizeFacet(BaseModel):
+    """A model size present in the catalog, with how many models state it."""
+
+    params_b: float
+    models: int
 
 
 class SearchResponse(BaseModel):
@@ -75,6 +88,8 @@ class SearchResponse(BaseModel):
     notes: list[str] = Field(default_factory=list)
     hub_unreachable: bool = False
     total_candidates: int = 0
+    # The exact sizes the explorer can offer, independent of how many cards fit the page.
+    sizes: list[SizeFacet] = Field(default_factory=list)
 
 
 def hypothetical_budget(base: ResourceBudget, vram_gb: float, settings: Settings) -> ResourceBudget:
@@ -116,6 +131,7 @@ def entry_from_installed(model: InstalledModel) -> ModelEntry:
         family=classify.detect_family(model.model_key),
         architecture=model.architecture,
         params_b=total,
+        nominal_params_b=total,
         active_params_b=active,
         is_moe=active is not None,
         context_length=model.max_context_length,
@@ -177,8 +193,9 @@ class CatalogService:
     # -- knowledge ----------------------------------------------------------
     def known_entries(self) -> dict[str, ModelEntry]:
         """Seed plus everything cached from the Hub; cached data wins (it has real files)."""
-        known = {e.repo.lower(): e for e in load_seed()}
+        known = {e.repo.lower(): _with_named_size(e) for e in load_seed()}
         for entry in self.cached_entries():
+            entry = _with_named_size(entry)
             seed = known.get(entry.repo.lower())
             known[entry.repo.lower()] = _merge(seed, entry) if seed else entry
         return known
@@ -186,6 +203,7 @@ class CatalogService:
     def details(self, repo: str, *, refresh: bool = False) -> tuple[ModelEntry | None, bool]:
         """Return (entry, online). Fetches exact files from the Hub unless cached."""
         cached = self._cache_get(repo)
+        cached = _with_named_size(cached) if cached else None
         if cached and cached.files_complete and not refresh:
             return cached, True
         seed = next((e for e in load_seed() if e.repo.lower() == repo.lower()), None)
@@ -354,6 +372,7 @@ class CatalogService:
             for key, entry in known.items():
                 if key not in seen:
                     candidates.append((entry, installed_by_repo.get(key)))
+        sizes = _size_facets(entry for entry, _ in candidates)
 
         def keep(entry: ModelEntry) -> bool:
             haystack = f"{entry.repo} {entry.name} {' '.join(entry.base_models)}".lower()
@@ -370,6 +389,13 @@ class CatalogService:
             if parsed.params_b and entry.params_b and abs(entry.params_b - parsed.params_b) / parsed.params_b > 0.15:
                 return False
             if parsed.params_b and not entry.params_b:
+                return False
+            size = entry.size_b
+            if filters.params_exact_b is not None and (size is None or abs(size - filters.params_exact_b) > 0.01):
+                return False
+            if filters.params_min_b is not None and (size is None or size < filters.params_min_b):
+                return False
+            if filters.params_max_b is not None and (size is None or size > filters.params_max_b):
                 return False
             return not (filters.max_params_b and (entry.params_b or 0) > filters.max_params_b)
 
@@ -408,7 +434,7 @@ class CatalogService:
             notes.append(tr("No uncensored models are cached yet. Connect to the Internet to search Hugging Face."))
         return SearchResponse(
             cards=top[:limit], parsed=parsed, online=is_online, notes=notes, hub_unreachable=hub_unreachable,
-            total_candidates=len(filtered),
+            total_candidates=len(filtered), sizes=sizes,
         )
 
     def _hub_search(self, text: str) -> list[ModelEntry]:
@@ -496,6 +522,14 @@ class CatalogService:
 # -- helpers ------------------------------------------------------------------
 
 
+def _with_named_size(entry: ModelEntry) -> ModelEntry:
+    """Fill a missing nominal size from the model's name, for entries cached before it existed."""
+    if entry.nominal_params_b is not None or not entry.name:
+        return entry
+    total, _ = classify.parse_params_from_name(entry.name)
+    return entry.model_copy(update={"nominal_params_b": total}) if total else entry
+
+
 def _merge(seed: ModelEntry | None, fresh: ModelEntry) -> ModelEntry:
     """Keep the seed's architecture geometry when the Hub document lacks it."""
     if seed is None:
@@ -503,7 +537,7 @@ def _merge(seed: ModelEntry | None, fresh: ModelEntry) -> ModelEntry:
     update: dict[str, Any] = {}
     for field in (
         "num_layers", "num_kv_heads", "head_dim", "num_experts", "active_experts", "active_params_b",
-        "architecture", "context_length", "license", "params_b", "release_date",
+        "architecture", "context_length", "license", "params_b", "nominal_params_b", "release_date",
     ):
         if getattr(fresh, field) in (None, "") and getattr(seed, field) not in (None, ""):
             update[field] = getattr(seed, field)
@@ -562,6 +596,23 @@ def _dedupe(cards: list[ModelCard]) -> list[ModelCard]:
             seen.add(key)
             out.append(card)
     return out
+
+
+def _size_facets(entries: Iterable[ModelEntry], min_models: int = 3) -> list[SizeFacet]:
+    """The exact sizes the catalog states, with how many models carry each.
+
+    Sizes with one or two models are left out: they would make the explorer's size menu
+    endless without being a useful way to browse.
+    """
+    counts: dict[float, int] = {}
+    for entry in entries:
+        # Only a size the name states: metadata counts produce one-off sizes such as 3.821B
+        # that nobody looks for. A model without a size in its name stays under its band.
+        size = entry.nominal_params_b
+        if size and size > 0:
+            key = round(size, 3)
+            counts[key] = counts.get(key, 0) + 1
+    return [SizeFacet(params_b=size, models=count) for size, count in sorted(counts.items()) if count >= min_models]
 
 
 def _profile_for(categories: list[str], needs_tools: bool) -> TaskProfile:

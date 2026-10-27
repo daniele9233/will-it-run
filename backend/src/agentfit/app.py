@@ -28,6 +28,9 @@ from agentfit.downloads import DownloadManager
 from agentfit.events import EventBus, bus
 from agentfit.hardware import HardwareProfile, ResourceBudget, compute_budget, detect_hardware
 from agentfit.hardware.windows import model_spill_mib
+from agentfit.imagegen import ImageStudio
+from agentfit.imagegen.components import ComponentStore
+from agentfit.imagegen.engine import ComfyEngine
 from agentfit.lmstudio import LMStudioRuntime
 from agentfit.lmstudio.models import InstalledModel, LMStudioInstall
 from agentfit.logging_setup import configure_logging, get_logger, log_event
@@ -65,6 +68,7 @@ class AppServices:
         self._kits: KitStore | None = None
         self._clone_sessions: SessionRegistry | None = None
         self._clone: clone_studio.CloneStudio | None = None
+        self._images: ImageStudio | None = None
         self.cloud = CloudService(self.db, max_context=lambda: self.settings.cloud.max_context)
         self.catalog = CatalogService(self.db, self.settings)
         self.workflows = WorkflowStore(self.db)
@@ -82,6 +86,11 @@ class AppServices:
                 self._downloads.runtime = self.runtime
             if self._runs is not None:
                 self._runs.runtime = self.models_runtime
+            if self._images is not None:
+                self._images.settings = self.settings
+                self._images.engine.settings = self.settings
+                self._images.engine.forget_install()
+                self._images.components.settings = self.settings
             return self.settings
 
     # -- hardware -----------------------------------------------------------
@@ -201,6 +210,33 @@ class AppServices:
             if self._clone is None:
                 self._clone = clone_studio.CloneStudio(self.db, self.runs, self.kits, self.browser_install)
             return self._clone
+
+    @property
+    def images(self) -> ImageStudio:
+        """The image studio: ComfyUI draws on this PC, Will It Run asks and keeps the result."""
+        with self._lock:
+            if self._images is None:
+                engine = ComfyEngine(self.settings, self.bus)
+                components = ComponentStore(
+                    self.db, self.settings, self.bus, engine, drives=self.refreshed_drives
+                )
+                self._images = ImageStudio(
+                    self.db,
+                    self.settings,
+                    self.bus,
+                    engine=engine,
+                    components=components,
+                    vram_budget_gb=lambda: self.budget().vram_usable_gb,
+                    lmstudio_loaded=self._model_loaded,
+                )
+            return self._images
+
+    def _model_loaded(self) -> bool:
+        """Whether LM Studio holds a model right now: it competes for the same VRAM."""
+        try:
+            return bool(self.runtime.list_loaded())
+        except Exception:
+            return False
 
     @property
     def brain(self) -> BrainService:

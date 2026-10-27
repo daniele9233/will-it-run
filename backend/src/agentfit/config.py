@@ -93,6 +93,29 @@ class CloudSettings(BaseModel):
     max_context: int = 200_000
 
 
+class ImageSettings(BaseModel):
+    # ComfyUI is the engine. Will It Run queues a workflow to it and fetches the picture:
+    # no diffusion model runs inside this app, and none is downloaded by it.
+    comfy_url: str = "http://127.0.0.1:8188"
+    # The folder that holds ComfyUI's main.py. Empty: looked for in the usual places.
+    comfy_dir: str = ""
+    # How long one picture may take before the job gives up. A first run loads the model.
+    timeout_seconds: int = 900
+    # Seconds an ordinary call to ComfyUI may take (everything except generating).
+    request_timeout_seconds: int = 30
+    # The app's own copy of every picture, so clearing ComfyUI's output keeps the gallery.
+    # Empty: <local app data>\images.
+    gallery_dir: str = ""
+    # Empty ComfyUI's VRAM when the Images page is left, so a language model can have the card.
+    # Off by default: the next picture then has to load the model again, and it may be someone
+    # else's ComfyUI session. The Free VRAM button does the same thing on demand.
+    free_vram_on_leave: bool = False
+    # Civitai serves most of the good checkpoints, and some of them only to a signed-in account.
+    civitai_token: str = ""
+    # Hugging Face token, only needed for gated repositories.
+    hf_token: str = ""
+
+
 class DownloadSettings(BaseModel):
     # auto: Will It Run's own downloader (pause, stop, resume); LM Studio's only as a fallback.
     backend: str = "auto"
@@ -139,6 +162,7 @@ class Settings(BaseModel):
     workflow: WorkflowSettings = Field(default_factory=WorkflowSettings)
     memory: MemorySettings = Field(default_factory=MemorySettings)
     cloud: CloudSettings = Field(default_factory=CloudSettings)
+    images: ImageSettings = Field(default_factory=ImageSettings)
     downloads: DownloadSettings = Field(default_factory=DownloadSettings)
     scoring: ScoringWeights = Field(default_factory=ScoringWeights)
     ui: UiSettings = Field(default_factory=UiSettings)

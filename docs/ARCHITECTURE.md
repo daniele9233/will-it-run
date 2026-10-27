@@ -86,6 +86,10 @@ The Project Brain adds `brain_project`, `brain_memory`, `brain_entity` and `brai
 this file instead of adding a memory library: the reasons, and what was borrowed from
 claude-mem, mem0 and Graphiti, are in [MEMORY.md](MEMORY.md).
 
+The image studio adds `image_generation` (`migrations/0005_images.sql`): one row per picture,
+with the prompt, the sampler settings, the seed and the LoRAs that produced it, and the path of
+the app's own copy of the file. ComfyUI's output folder is not the record — it can be cleared.
+
 Settings are a YAML file (`%APPDATA%\Will It Run\settings.yaml`) so they can be read and
 edited by hand.
 
@@ -99,8 +103,15 @@ a cloud slot out without loading anything.
 `list_installed`, `list_loaded`, `load`, `unload`, `complete`, `measure`, and a set of
 `modalities` the runtime can actually serve. `embed` is optional: a runtime that has it
 gives the Project Brain its vectors. `LMStudioRuntime` is the only
-implementation. A future `ComfyUIRuntime` would declare `image` / `video`; until then
-Will It Run tells the user those generators are not available rather than pretending.
+implementation.
+
+Image generation is **not** a `ModelRuntime`, deliberately. A diffusion model is not loaded,
+given a conversation and unloaded: it is a graph of nodes that runs once and writes a file, and
+its "model" is three separate files whose names must match. Forcing it into `complete()` would
+have meant pretending a workflow is a chat. Instead `agentfit/imagegen` is a job runner of its
+own, against ComfyUI's HTTP API, and the Images page is its front end. What the two share is the
+rule: the engine is asked what it can do (`/object_info`, `/models/<folder>`) and nothing is
+claimed that it did not confirm. See [IMAGE_STUDIO.md](IMAGE_STUDIO.md).
 
 ## Offline behaviour
 

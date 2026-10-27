@@ -1,0 +1,548 @@
+{
+  "note": "A model names its components; the files, sizes and sources are in components.json. Two models that name the same component share one download: that is the whole point of the split.",
+  "models": [
+    {
+      "key": "qwen-image-2.1-uc",
+      "name": "Qwen-Image 2.1 UC (Q6_K, GGUF)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21uc-unet",
+        "text_encoder": "qwen21-te-int8",
+        "vae": "qwen21-vae"
+      },
+      "requires": [
+        "node-gguf"
+      ],
+      "loader": {
+        "unet_loader": "UnetLoaderGGUF",
+        "weight_dtype": null,
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 25,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "vram_gb": 16.0,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "nsfw": "native",
+      "recommended": true,
+      "notes": "È il flusso ComfyUI che funziona: Unet Loader (GGUF), CLIP qwen3vl 8B int8, VAE 2.1 bf16, TextEncodeQwenImage21, KSampler 25 passi, CFG 1, euler/simple. A CFG 1 il prompt negativo è ignorato: alza il CFG a 3-4 solo se vuoi usarlo. 40-50 passi per la qualità massima; fino a 2048×2048 in multipli di 32.",
+      "aspect": "1:1",
+      "megapixels": 1.0,
+      "presets": [
+        {
+          "key": "uc-max",
+          "name": "Qualità massima (45 passi)",
+          "loras": [],
+          "sampling": {
+            "steps": 45,
+            "cfg": 1.0
+          }
+        },
+        {
+          "key": "uc-fast",
+          "name": "Veloce (25 passi)",
+          "loras": [],
+          "sampling": {
+            "steps": 25,
+            "cfg": 1.0
+          }
+        }
+      ],
+      "template": "qwen_image_txt2img"
+    },
+    {
+      "key": "kreanoct-v4",
+      "name": "KreaNoct V4 INT8",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-kreanoct",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "template": "krea2_txt2img",
+      "vram_gb": 19.0,
+      "licence": "Krea 2 Community Licence (pesi di base); build Noct non censurata",
+      "source": "https://huggingface.co/Noctaluna/Krea2-Noct-Uncensored",
+      "nsfw": "native",
+      "recommended": true,
+      "notes": "Krea 2 Turbo fotorealistico senza censura: otto passi, CFG 1, euler/simple, 1024×1536, nessun prompt negativo. Scrivi come la didascalia di una foto già scattata (chi, che cosa fa, dove, la luce); niente 'masterpiece' o '8k'. 19 GB è la somma dei file: ComfyUI scarica l'encoder dalla scheda dopo aver letto il prompt.",
+      "aspect": "2:3",
+      "megapixels": 1.5
+    },
+    {
+      "key": "noctq-v4",
+      "name": "Noct Q V4 (Qwen-Image 2.1 UC, INT8)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21-noctq-v4",
+        "text_encoder": "qwen21-te-int8",
+        "vae": "qwen21-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 25,
+        "cfg": 3.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "negative": "artifacts, gpt-image, washed-out colors, low quality, low resolution, AI slop, deviantart, sloppy lines, rough sketch, blurry, indistinct, missing fingers, badly drawn hands, wrong number of fingers",
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "presets": [
+        {
+          "key": "noctq-fast",
+          "name": "Veloce (CFG 1, senza negativo)",
+          "loras": [],
+          "sampling": {
+            "steps": 25,
+            "cfg": 1.0
+          }
+        }
+      ],
+      "template": "qwen_image_txt2img",
+      "vram_gb": 17.3,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/Noctaluna/Noct-Q-Uncensored-Qwen-Image-2.1",
+      "nsfw": "native",
+      "recommended": true,
+      "notes": "Qwen-Image 2.1 non censurato e orientato al realismo: nudi ed esplicito senza LoRA, testo leggibile. Ricetta dell'autore: 25 passi, CFG 3 con il prompt negativo (circa il doppio del tempo del CFG 1), 1024×1536. Prompt in frasi, come la didascalia di una foto, con un'età adulta ('una donna sui vent'anni')."
+    },
+    {
+      "key": "qwen-image-2.1-uc-int8",
+      "name": "Qwen-Image 2.1 UC (INT8, senza GGUF)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21uc-int8",
+        "text_encoder": "qwen21-te-int8",
+        "vae": "qwen21-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 25,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "1:1",
+      "megapixels": 1.0,
+      "presets": [
+        {
+          "key": "uc8-max",
+          "name": "Qualità massima (45 passi)",
+          "loras": [],
+          "sampling": {
+            "steps": 45,
+            "cfg": 1.0
+          }
+        }
+      ],
+      "template": "qwen_image_txt2img",
+      "vram_gb": 17.3,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "nsfw": "native",
+      "notes": "La stessa build UC del Q6_K, in INT8: usa solo nodi di base, quindi parte anche senza ComfyUI-GGUF."
+    },
+    {
+      "key": "biglove-kreaedit3",
+      "name": "Big Love KreaEdit3 (INT8)",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-biglove-kreaedit3",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "template": "krea2_txt2img",
+      "vram_gb": 19.0,
+      "licence": "Civitai: immagini e noleggio",
+      "source": "https://civitai.com/models/897413",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "Solo fotorealismo (niente anime), anatomia migliore della serie, scrive con tag booru. Richiede il token Civitai. Non provato su questo PC."
+    },
+    {
+      "key": "realdream-krea2-v3",
+      "name": "Real Dream Krea 2 V3 (INT8)",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-realdream-v3",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "template": "krea2_txt2img",
+      "vram_gb": 19.0,
+      "licence": "Civitai: immagini, noleggio e vendita",
+      "source": "https://civitai.com/models/153568",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "Realismo spinto e NSFW completo. Richiede il token Civitai. Non provato su questo PC."
+    },
+    {
+      "key": "moody-krea2-v9",
+      "name": "Moody Krea 2 Mix V9 (INT8)",
+      "family": "krea2",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "krea2-moody-v9",
+        "text_encoder": "krea2-te",
+        "vae": "krea2-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "krea2"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "aspect": "2:3",
+      "megapixels": 1.5,
+      "template": "krea2_txt2img",
+      "vram_gb": 19.3,
+      "licence": "Civitai: solo immagini e noleggio",
+      "source": "https://civitai.com/models/2731187",
+      "nsfw": "native",
+      "recommended": false,
+      "notes": "Mix fotografico NSFW con PornMaster V4. Richiede il token Civitai. Non provato su questo PC."
+    },
+    {
+      "key": "lustify-v9",
+      "name": "LUSTIFY! ZENITH V9",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-lustify-v9"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 30,
+        "cfg": 4.5,
+        "sampler": "dpmpp_2m_sde",
+        "scheduler": "karras"
+      },
+      "vram_gb": 7.0,
+      "licence": "Civitai: immagini commerciali consentite, credito non richiesto",
+      "source": "https://civitai.com/models/573152",
+      "nsfw": "native",
+      "recommended": true,
+      "notes": "SDXL fotorealistico NSFW: un file solo, encoder e VAE sono dentro. Comodo anche con LM Studio aperto, perché occupa metà scheda."
+    },
+    {
+      "key": "bigasp-v2.5",
+      "name": "bigASP v2.5",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-bigasp-v25"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 30,
+        "cfg": 5.0,
+        "sampler": "dpmpp_2m",
+        "scheduler": "karras"
+      },
+      "vram_gb": 7.0,
+      "licence": "Civitai: immagini, noleggio e vendita consentiti",
+      "source": "https://civitai.com/models/1789765",
+      "nsfw": "native",
+      "notes": "Fotorealismo NSFW, pelle e luci naturali."
+    },
+    {
+      "key": "cyberrealistic-xl-v10",
+      "name": "CyberRealistic XL v10",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-cyberrealistic-v10"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 28,
+        "cfg": 5.0,
+        "sampler": "dpmpp_2m",
+        "scheduler": "karras"
+      },
+      "vram_gb": 7.0,
+      "licence": "Civitai: immagini, noleggio, vendita e merge consentiti",
+      "source": "https://civitai.com/models/312530",
+      "nsfw": "standard",
+      "notes": "Fotorealismo con luce da studio: base solida per poi aggiungere LoRA."
+    },
+    {
+      "key": "juggernaut-xl-ragnarok",
+      "name": "Juggernaut XL Ragnarok",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-juggernaut-ragnarok"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 30,
+        "cfg": 5.5,
+        "sampler": "dpmpp_2m",
+        "scheduler": "karras"
+      },
+      "vram_gb": 7.1,
+      "licence": "Civitai: immagini e noleggio, credito richiesto",
+      "source": "https://civitai.com/models/133005",
+      "nsfw": "standard",
+      "notes": "Generalista: paesaggi, ritratti, interni. NSFW leggero."
+    },
+    {
+      "key": "realvisxl-v5",
+      "name": "RealVisXL V5.0",
+      "family": "sdxl",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "checkpoint": "sdxl-realvisxl-v5"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 30,
+        "cfg": 4.5,
+        "sampler": "dpmpp_2m_sde",
+        "scheduler": "karras"
+      },
+      "vram_gb": 7.0,
+      "licence": "OpenRAIL++",
+      "source": "https://huggingface.co/SG161222/RealVisXL_V5.0",
+      "nsfw": "standard",
+      "notes": "Fotorealismo pulito, non NSFW nativo."
+    },
+    {
+      "key": "qwen-image-2.1",
+      "name": "Qwen-Image 2.1 Turbo (INT8, ufficiale)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21-diffusion-turbo-int8",
+        "text_encoder": "qwen21-te-w4a8",
+        "vae": "qwen21-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "vram_gb": 14.2,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "nsfw": "standard",
+      "notes": "Il Turbo ufficiale, non sbloccato: veloce ma con i filtri originali. Per il realismo non censurato usa Qwen UC o Noct Q."
+    },
+    {
+      "key": "qwen-image-2.1-int8",
+      "name": "Qwen-Image 2.1 INT8 (base ufficiale)",
+      "family": "qwen_image",
+      "kinds": [
+        "txt2img",
+        "edit",
+        "upscale"
+      ],
+      "components": {
+        "diffusion_model": "qwen21-diffusion-int8",
+        "text_encoder": "qwen21-te-int8",
+        "vae": "qwen21-vae"
+      },
+      "loader": {
+        "unet_loader": "UNETLoader",
+        "weight_dtype": "default",
+        "clip_type": "qwen_image"
+      },
+      "sampling": {
+        "steps": 25,
+        "cfg": 2.5,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "template": "qwen_image_txt2img",
+      "loras": [
+        "qwen21-omni-lora"
+      ],
+      "presets": [
+        {
+          "key": "qwen-omni",
+          "name": "Qwen Image 2.1 + Omni LoRA",
+          "loras": [
+            {
+              "component": "qwen21-omni-lora",
+              "weight": 1.0,
+              "weight_clip": 1.0
+            }
+          ],
+          "sampling": {
+            "steps": 25,
+            "cfg": 2.5
+          }
+        }
+      ],
+      "vram_gb": 16.1,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "source": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "nsfw": "lora",
+      "recommended": false,
+      "notes": "Scrive e modifica con lo stesso modello. Il 'true CFG 4.0' dei workflow ufficiali vale per CFGGuider: con KSampler la stessa ricetta sta intorno a 2,5-3,5."
+    },
+    {
+      "key": "moss-image-sft",
+      "name": "MOSS Image SFT INT8",
+      "family": "moss_image",
+      "kinds": [
+        "txt2img"
+      ],
+      "components": {
+        "diffusion_model": "moss-diffusion-sft",
+        "text_encoder": "moss-te-9b",
+        "vae": "moss-vae"
+      },
+      "loader": {},
+      "sampling": {
+        "steps": 30,
+        "cfg": 3.0,
+        "sampler": "euler",
+        "scheduler": "simple"
+      },
+      "loras": [
+        "moss-lora-nsfw"
+      ],
+      "presets": [
+        {
+          "key": "moss-nsfw",
+          "name": "MOSS Image SFT + NSFW LoRA",
+          "loras": [
+            {
+              "component": "moss-lora-nsfw",
+              "weight": 0.8,
+              "weight_clip": 0.0
+            }
+          ],
+          "sampling": {
+            "steps": 30,
+            "cfg": 3.0
+          }
+        }
+      ],
+      "vram_gb": 14.4,
+      "licence": "MOSS-Image (vedi la model card)",
+      "source": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "nsfw": "lora",
+      "notes": "Riconosciuto e importabile, ma non eseguibile qui: ComfyUI 0.38.0 non ha nodi MOSS né un tipo di text encoder per questa architettura.",
+      "blocked": {
+        "reason": "ComfyUI 0.38.0 non supporta MOSS-Image: nessuna delle 970 classi di nodi caricate riguarda MOSS, e CLIPLoader non ha un tipo per il suo encoder.",
+        "missing": [
+          "un loader per il DiT MOSS",
+          "un tipo di text encoder MOSS in CLIPLoader"
+        ]
+      }
+    }
+  ]
+}

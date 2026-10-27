@@ -59,6 +59,9 @@ class ModelEntry(BaseModel):
     family: str | None = None
     architecture: str | None = None
     params_b: float | None = None
+    # The size the publisher put in the model's name ("27B"), when it says one. Metadata
+    # counts can differ slightly (27.8 for a 27B model), so a filter by size uses this.
+    nominal_params_b: float | None = None
     active_params_b: float | None = None
     is_moe: bool = False
     num_experts: int | None = None
@@ -93,6 +96,11 @@ class ModelEntry(BaseModel):
     @property
     def model_card_url(self) -> str:
         return f"https://huggingface.co/{self.repo}"
+
+    @property
+    def size_b(self) -> float | None:
+        """The size to show and filter by: the name's figure when it states one, else the metadata count."""
+        return self.nominal_params_b if self.nominal_params_b is not None else self.params_b
 
     @property
     def vision(self) -> bool:

@@ -1,0 +1,47 @@
+{
+  "key": "sdxl_upscale",
+  "name": "Upscale with new detail — SDXL family",
+  "family": "sdxl",
+  "kind": "upscale",
+  "description": "Enlarges the picture, then repaints it at low denoise so the extra pixels carry detail instead of blur. Uses the same checkpoint that drew it.",
+  "roles": ["checkpoint"],
+  "lora_mode": "model_and_clip",
+  "lora_source": "1",
+  "needs": ["LoadImage", "ImageScale", "VAEEncode"],
+  "defaults": {
+    "negative": "lowres, blurry, jpeg artifacts, watermark",
+    "steps": 20,
+    "cfg": 5.0,
+    "sampler": "dpmpp_2m",
+    "scheduler": "karras",
+    "denoise": 0.38
+  },
+  "graph": {
+    "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "{{checkpoint}}"}},
+    "2": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": "{{prompt}}"}},
+    "3": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": "{{negative}}"}},
+    "10": {"class_type": "LoadImage", "inputs": {"image": "{{image}}"}},
+    "12": {
+      "class_type": "ImageScale",
+      "inputs": {"image": ["10", 0], "upscale_method": "lanczos", "width": "{{width}}", "height": "{{height}}", "crop": "disabled"}
+    },
+    "11": {"class_type": "VAEEncode", "inputs": {"pixels": ["12", 0], "vae": ["1", 2]}},
+    "5": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": ["1", 0],
+        "positive": ["2", 0],
+        "negative": ["3", 0],
+        "latent_image": ["11", 0],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "6": {"class_type": "VAEDecode", "inputs": {"samples": ["5", 0], "vae": ["1", 2]}},
+    "7": {"class_type": "SaveImage", "inputs": {"images": ["6", 0], "filename_prefix": "{{filename_prefix}}"}}
+  }
+}

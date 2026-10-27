@@ -7,6 +7,7 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from agentfit.config import Settings, load_settings
 from agentfit.fit.quant import normalize_quant, parse_quant_from_filename
@@ -35,6 +36,8 @@ MTP_REPEAT_PENALTY = 1.0
 _MTP_REFUSED = re.compile(r"mtp|speculative", re.IGNORECASE)
 # What a model needs on top of its file in VRAM (KV cache of a 16-32K context, compute buffers, the MTP head's own state).
 FULL_OFFLOAD_ALLOWANCE_MIB = 2560
+# A local LM Studio may pick another port when the configured one is busy (Bionic keeps its own in apps/*/).
+_LOOPBACK_HOSTS = frozenset({"127.0.0.1", "localhost", "::1", "[::1]"})
 
 
 def _first_gpu_total_mib() -> float | None:
@@ -159,6 +162,11 @@ class LMStudioRuntime(ModelRuntime):
         self._total_vram_mib = total_vram_mib or _first_gpu_total_mib
         self._install = install or detect.detect_install()
         self.client = client or LMStudioClient(self.settings.lmstudio_base_url, self.settings.runtime.lmstudio_api_token)
+        # LM Studio is the authority on its own port: a reinstall or a busy 1234 leaves the settings behind. Follow the
+        # port the program is configured with when the client was built here; status() and ensure_server() also follow
+        # the port the lms CLI reports, so an already-running server is found too.
+        if client is None:
+            self._adopt_port(self._install.server_port)
         self.cli = cli or LmsCli(self._install.cli_path)
         # Which model files carry an MTP head (by size and modified time), where they are, and the models loaded with it.
         self._mtp_files: dict[str, tuple[tuple[int, int], bool]] = {}
@@ -167,22 +175,87 @@ class LMStudioRuntime(ModelRuntime):
         self._mtp_refused: set[str] = set()
 
     # -- status -------------------------------------------------------------
+    def _client_port(self) -> int | None:
+        try:
+            return urlsplit(self.client.base_url).port
+        except ValueError:
+            return None
+
+    def _base_url(self, port: int) -> str:
+        return f"http://{self.settings.runtime.lmstudio_host}:{port}"
+
+    def _local_server(self) -> bool:
+        return self.settings.runtime.lmstudio_host.strip().lower() in _LOOPBACK_HOSTS
+
+    def _adopt_port(self, port: int | None) -> bool:
+        """Point the client at ``port`` when it is a plausible local server port."""
+        if not port or not (0 < port < 65536) or not self._local_server():
+            return False
+        if port != self._client_port():
+            self.client.base_url = self._base_url(port)
+        return True
+
+    def _reachable_at(self, port: int) -> bool:
+        if port == self._client_port():
+            return self.client.is_reachable()
+        original = self.client.base_url
+        self.client.base_url = self._base_url(port)
+        try:
+            return self.client.is_reachable()
+        finally:
+            self.client.base_url = original
+
+    def _cli_server(self) -> tuple[bool, int | None]:
+        if not self.cli.available:
+            return False, None
+        try:
+            state = self.cli.server_status()
+        except (LmsCliError, ValueError):
+            return False, None
+        port = state.get("port")
+        running = bool(state.get("running"))
+        return running, int(port) if isinstance(port, int) and 0 < port < 65536 else None
+
+    def _sync_endpoint(self) -> bool:
+        """Use the port LM Studio actually listens on, and say whether its API answers.
+
+        The configured port is tried first, then the port LM Studio is configured with, then the
+        one a running server reports. A fresh install, or a default port already in use, can leave
+        those apart: following LM Studio is what makes the server reachable without editing a port.
+        """
+        if self.client.is_reachable():
+            return True
+        if not self._local_server():
+            return False
+        candidates = [self._install.server_port]
+        running, cli_port = self._cli_server()
+        if running:
+            candidates.append(cli_port)
+        candidates.append(self.settings.runtime.lmstudio_port)
+        for port in dict.fromkeys(candidates):
+            if not port or port == self._client_port():
+                continue
+            if self._reachable_at(port):
+                self._adopt_port(port)
+                return True
+        return False
+
     def status(self, *, deep: bool = False) -> LMStudioInstall:
         """Installation plus live server state. ``deep`` also queries CLI version and engines."""
         info = self._install.model_copy(deep=True)
-        info.api_reachable = self.client.is_reachable()
+        info.api_reachable = self._sync_endpoint()
         info.server_running = info.api_reachable
         if info.api_reachable:
-            info.server_port = self.settings.runtime.lmstudio_port
+            info.server_port = self._client_port()
         elif self.cli.available:
-            state = self.cli.server_status()
-            info.server_running = bool(state.get("running"))
-            if state.get("port"):
-                info.server_port = int(state["port"])
-                if info.server_running and info.server_port != self.settings.runtime.lmstudio_port:
+            running, cli_port = self._cli_server()
+            info.server_running = running
+            if cli_port:
+                info.server_port = cli_port
+                if running:
                     info.notes.append(
-                        f"LM Studio server runs on port {info.server_port}, but Will It Run is configured "
-                        f"for port {self.settings.runtime.lmstudio_port}. Update Settings > Runtime."
+                        f"LM Studio server runs on port {info.server_port}, but Will It Run could not reach it. "
+                        f"Check the port and the API token in Settings > Runtime."
                     )
         if deep and self.cli.available:
             info.cli_version = self.cli.version()
@@ -196,7 +269,7 @@ class LMStudioRuntime(ModelRuntime):
 
     def ensure_server(self) -> bool:
         """Start the local server through the CLI when it is not running."""
-        if self.client.is_reachable():
+        if self._sync_endpoint():
             return True
         if not self.cli.available:
             return False
@@ -205,7 +278,7 @@ class LMStudioRuntime(ModelRuntime):
         except LmsCliError:
             return False
         for _ in range(20):
-            if self.client.is_reachable():
+            if self._sync_endpoint():
                 return True
             time.sleep(0.5)
         return False
@@ -219,11 +292,21 @@ class LMStudioRuntime(ModelRuntime):
                 cli_rows = [installed_from_cli(r) for r in self.cli.ls() if r.get("modelKey")]
             except (LmsCliError, ValueError) as exc:
                 log.warning("lms ls failed: %s", exc)
+        failure: LMStudioError | None = None
         try:
             rest_rows = [installed_from_rest(r) for r in self.client.list_models() if r.get("key")]
         except LMStudioError as exc:
-            if not cli_rows:
-                raise RuntimeUnavailable(str(exc)) from exc
+            failure = exc
+        if failure is not None:
+            # The server may have started on another port since this runtime was created.
+            if self._sync_endpoint():
+                failure = None
+                try:
+                    rest_rows = [installed_from_rest(r) for r in self.client.list_models() if r.get("key")]
+                except LMStudioError as retry_exc:
+                    failure = retry_exc
+            if failure is not None and not rest_rows and not cli_rows:
+                raise RuntimeUnavailable(str(failure)) from failure
         return merge_installed(cli_rows, rest_rows)
 
     def list_loaded(self) -> list[LoadedInstance]:

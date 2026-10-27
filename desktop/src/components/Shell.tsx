@@ -8,6 +8,7 @@ import {
   Download,
   Gauge,
   Home,
+  Image as ImageIcon,
   MessageSquare,
   ScrollText,
   Search,
@@ -43,6 +44,7 @@ const NAV: NavItem[][] = [
     { id: "benchmarks", label: t("Benchmarks"), icon: Gauge },
     { id: "arena", label: t("Arena"), icon: Trophy },
     { id: "downloads", label: t("Downloads"), icon: Download },
+    { id: "images", label: t("Images"), icon: ImageIcon },
   ],
   [
     { id: "chat", label: t("Chat"), icon: MessageSquare },
@@ -223,6 +225,7 @@ function CommandPalette() {
       { id: "sessions", label: t("Open Sessions"), hint: t("Sessions"), run: () => navigate("sessions") },
       { id: "brain", label: t("Open the project memory"), hint: t("Memory"), run: () => navigate("brain") },
       { id: "downloads", label: t("Open Downloads"), hint: t("Downloads"), run: () => navigate("downloads") },
+      { id: "images", label: t("Generate an image"), hint: t("Images"), run: () => navigate("images") },
       { id: "doctor", label: t("Run Doctor"), hint: t("Settings"), run: () => navigate("settings", { tab: "doctor" }) },
       { id: "logs", label: t("Open Logs"), hint: t("Logs"), run: () => navigate("logs") },
       { id: "settings", label: t("Settings"), hint: t("Settings"), run: () => navigate("settings") },

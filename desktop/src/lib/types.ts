@@ -134,6 +134,8 @@ export interface ModelEntry {
   family: string | null;
   architecture: string | null;
   params_b: number | null;
+  /** The size the model's name states ("27B"); exact metadata counts can differ (27.8B). */
+  nominal_params_b: number | null;
   active_params_b: number | null;
   is_moe: boolean;
   context_length: number | null;
@@ -255,6 +257,13 @@ export interface SearchResponse {
   /** True when Hugging Face could not be reached for this search. */
   hub_unreachable: boolean;
   total_candidates: number;
+  /** The exact sizes the catalog offers, with how many models state each. */
+  sizes: SizeFacet[];
+}
+
+export interface SizeFacet {
+  params_b: number;
+  models: number;
 }
 
 /** What a quantization costs in quality: a published reference measurement, not an estimate. */
@@ -716,6 +725,17 @@ export interface Settings {
   memory: { enabled: boolean; embedding_model: string };
   /** Cloud models. The API keys are never part of the settings. */
   cloud: { max_context: number };
+  /** The image studio: ComfyUI is the engine, and the gallery is the app's own copy. */
+  images: {
+    comfy_url: string;
+    comfy_dir: string;
+    timeout_seconds: number;
+    request_timeout_seconds: number;
+    gallery_dir: string;
+    free_vram_on_leave: boolean;
+    civitai_token: string;
+    hf_token: string;
+  };
   downloads: { backend: string; max_concurrent: number; verify_hash: boolean };
   scoring: Record<string, number>;
   ui: {
@@ -905,4 +925,284 @@ export interface CloudStatus {
   providers: CloudProvider[];
   models: CloudModel[];
   max_context: number;
+}
+
+// -- image studio (ComfyUI as the engine) -----------------------------------
+
+export interface ImageVram {
+  name: string | null;
+  total_gb: number;
+  free_gb: number;
+  torch_total_gb: number;
+}
+
+export interface ImageStatus {
+  url: string;
+  available: boolean;
+  vram: ImageVram | null;
+  queue: { running: number; pending: number } | null;
+  error: string | null;
+  gallery: number;
+  engine: ImageEngine;
+}
+
+export interface ImageModel {
+  key: string;
+  name: string;
+  family: string;
+  kinds: string[];
+  vram_gb: number | null;
+  licence: string;
+  source: string;
+  notes: string;
+  nsfw: string;
+  discovered: boolean;
+  components: Record<string, string>;
+  requires: string[];
+  components_detail: ImageComponent[];
+  /** The workflow this model uses when nobody chooses one. */
+  template: string;
+  /** LoRA components trained for this family, selectable on this model. */
+  lora_options: ImageComponent[];
+  /** Named configurations: a LoRA to switch on and the sampling that goes with it. */
+  presets: ImagePreset[];
+  /** Why the model cannot run on this engine; null when it can. */
+  blocked: { reason: string; missing?: string[] } | null;
+  /** Installed and not blocked. */
+  ready: boolean;
+  download_bytes: number | null;
+  sampling: Record<string, unknown>;
+  installed: boolean;
+  missing: ImageComponent[];
+  template_kinds: string[];
+  recommended: boolean;
+  /** What the model is told not to draw when the person writes nothing. */
+  negative: string;
+  /** The shape and size its author recommends. */
+  aspect: string;
+  megapixels: number | null;
+}
+
+export interface ImageTemplate {
+  key: string;
+  name: string;
+  family: string;
+  kind: "txt2img" | "edit" | "upscale";
+  description: string;
+  roles: string[];
+  lora_mode: string;
+  defaults: Record<string, unknown>;
+  needs: string[];
+}
+
+export interface ImageCheck {
+  ready: boolean;
+  engine: boolean;
+  missing_files: ImageComponent[];
+  missing_nodes: string[];
+  problems: string[];
+}
+
+export type ImageJobStatus = "queued" | "running" | "done" | "failed" | "cancelled";
+
+export interface ImageLora {
+  name: string;
+  weight: number;
+}
+
+export interface ImageJob {
+  id: string;
+  status: ImageJobStatus;
+  phase: string;
+  model_key: string;
+  model_name: string;
+  template: string;
+  template_name: string;
+  prompt: string;
+  negative: string;
+  width: number;
+  height: number;
+  seed: number;
+  loras: ImageLora[];
+  batch: number;
+  created_at: number;
+  started_at: number | null;
+  finished_at: number | null;
+  elapsed: number;
+  error: string | null;
+  hints: ImageWarning[];
+  image_id: string | null;
+  image_ids: string[];
+  prompt_id: string | null;
+}
+
+export interface GalleryImage {
+  id: string;
+  created_at: string;
+  model_key: string;
+  template: string;
+  prompt: string;
+  negative: string;
+  width: number;
+  height: number;
+  seed: number;
+  steps: number | null;
+  cfg: number | null;
+  sampler: string | null;
+  scheduler: string | null;
+  loras: ImageLora[];
+  bytes: number;
+  elapsed_seconds: number | null;
+}
+
+// -- image studio: engine, components, downloads ----------------------------
+
+export interface ImageInstall {
+  root: string;
+  python: string | null;
+  models_dir: string;
+  kind: string;
+}
+
+export interface ImageEngine {
+  installed: boolean;
+  running: boolean;
+  url: string;
+  version: string | null;
+  install: ImageInstall | null;
+  started_by_us: boolean;
+  download_url: string;
+  portable_url: string;
+  gguf_nodes_url: string;
+  log: string;
+  already_running?: boolean;
+  stopped?: boolean;
+}
+
+export type ComponentStatus = "present" | "missing" | "downloading" | "queued" | "verifying" | "failed";
+
+export interface ImageDownload {
+  component_id: string;
+  status: string;
+  received: number;
+  total: number | null;
+  percent: number | null;
+  speed: number;
+  error: string;
+}
+
+export interface ImageComponent {
+  id: string;
+  name: string;
+  role: string;
+  folder: string;
+  file: string;
+  families: string[];
+  vram_gb: number | null;
+  licence: string;
+  notes: string;
+  url: string;
+  size_bytes: number | null;
+  downloadable: boolean;
+  status: ComponentStatus;
+  path: string | null;
+  installed_size: number | null;
+  sha256: string | null;
+  error: string | null;
+  download: ImageDownload | null;
+  used_by: string[];
+  target: string;
+  /** For a LoRA: its format, trigger word and trained strengths. */
+  lora?: {
+    format?: string;
+    trigger?: string;
+    weight?: number;
+    weight_clip?: number;
+    note?: string;
+  };
+  /** A Civitai file that cannot be downloaded until the person gives their Civitai token. */
+  needs_token?: boolean;
+  /** Present, but in a folder this app did not know about: usable, not deletable from here. */
+  external?: boolean;
+}
+
+export interface ImagePreset {
+  key: string;
+  name: string;
+  loras: { component: string; weight: number; weight_clip?: number }[];
+  sampling?: Record<string, number>;
+}
+
+export interface ImageLoraCheck {
+  lora_tensors: number;
+  matched: number;
+  unmatched: string[];
+  unmatched_count: number;
+  compatible: boolean;
+  base_tensors: number;
+  samples: string[];
+  error?: string;
+}
+
+export interface ImageImportFile {
+  name: string;
+  size_bytes: number;
+  role: string;
+  family: string | null;
+  component_id: string | null;
+  component_name: string | null;
+  reason: string;
+  already_visible: boolean;
+  target: string | null;
+  conflict: string | null;
+  known: boolean;
+  lora_check: ImageLoraCheck | null;
+}
+
+export interface ImageImportModel {
+  key: string;
+  name: string;
+  found: { component_id: string; component_name: string; role: string; size_bytes: number; already_visible: boolean; conflict: string | null; path: string }[];
+  missing: string[];
+  ready: boolean;
+  blocked: { reason: string } | null;
+}
+
+export interface ImageImportScan {
+  directory: string;
+  files: ImageImportFile[];
+  models: ImageImportModel[];
+  unknown: ImageImportFile[];
+  bytes_to_copy: number;
+  components_to_import: string[];
+  conflicts: ImageImportFile[];
+  already_visible: string[];
+}
+
+export interface ImageWarning {
+  code: string;
+  values?: Record<string, number>;
+}
+
+export interface ImageEstimate {
+  /** null when the memory this PC can give, or what the model needs, is not known. */
+  fits: boolean | null;
+  needed_gb: number | null;
+  usable_gb: number | null;
+  headroom_gb: number | null;
+  max_megapixels: number | null;
+  cost_per_megapixel_gb: number;
+  basis: "estimate" | "unknown";
+  warnings: ImageWarning[];
+  suggestions: ImageWarning[];
+}
+
+export interface ImagePlan {
+  model: string;
+  components: ImageComponent[];
+  missing: ImageComponent[];
+  download_bytes: number | null;
+  problems: string[];
+  estimate: ImageEstimate;
+  lighter: { key: string; name: string; vram_gb: number | null }[];
 }

@@ -1567,3 +1567,214 @@ A difference is called real only if its interval leaves out zero and the sign te
 Quantizations ||| Quantizzazioni
 Use 3 repeats, temperature 0.5 ||| Usa 3 ripetizioni, temperatura 0,5
 {n} of the chosen models are quantizations of {model}. To tell a real difference from noise, each is asked the same questions several times: 3 repeats at a temperature above 0 give the Quantizations tab something to measure. ||| {n} dei modelli scelti sono quantizzazioni di {model}. Per distinguere una differenza reale dal rumore, a ognuno si fanno più volte le stesse domande: 3 ripetizioni a una temperatura sopra 0 danno alla scheda Quantizzazioni qualcosa da misurare.
+Sort by ||| Ordina per
+Fastest ||| Più veloci
+Minimum speed ||| Velocità minima
+Any speed ||| Qualsiasi velocità
+{n}+ tok/s ||| {n}+ tok/s
+Any quantization ||| Qualsiasi quantizzazione
+Any size ||| Qualsiasi dimensione
+Up to 4B ||| Fino a 4B
+4–8B ||| 4–8B
+8–15B ||| 8–15B
+15–30B ||| 15–30B
+30–70B ||| 30–70B
+Over 70B ||| Oltre 70B
+Clear filters ||| Azzera i filtri
+No models match these filters ||| Nessun modello corrisponde a questi filtri
+Try a lower minimum speed, another quantization or a different size. ||| Prova una velocità minima più bassa, un'altra quantizzazione o una dimensione diversa.
+{n} hidden by filters ||| {n} nascosti dai filtri
+Exact size ||| Dimensione esatta
+Size range ||| Intervallo di dimensioni
+0 gives a new picture every time ||| 0 dà una nuova immagine ogni volta
+1 megapixel ||| 1 megapixel
+1.5 megapixels ||| 1,5 megapixel
+2 megapixels ||| 2 megapixel
+Add ||| Aggiungi
+CFG ||| CFG
+Choose a model, describe the picture and press Generate. What comes back stays on this PC. ||| Scegli un modello, descrivi l'immagine e premi Genera. Quello che torna indietro resta su questo PC.
+Choose a picture ||| Scegli una foto
+ComfyUI draws on this PC. Nothing leaves it: the prompt, the picture and the model stay here. ||| ComfyUI disegna su questo PC. Niente esce: il prompt, l'immagine e il modello restano qui.
+Could not load that picture ||| Non sono riuscito a caricare quell'immagine
+Create ||| Crea
+Describe the picture ||| Descrivi l'immagine
+Drawing ||| Disegno
+Drop a picture here, click to choose one, or press Ctrl+V ||| Trascina qui una foto, clicca per sceglierne una, oppure premi Ctrl+V
+Edit a photo ||| Modifica foto
+Edit the picture ||| Modifica la foto
+Edit this one ||| Modifica questa
+Free VRAM ||| Libera la VRAM
+Gallery ||| Galleria
+Generate ||| Genera
+Generate an image ||| Genera un'immagine
+How much to repaint ||| Quanto ridipingere
+How this works ||| Come funziona
+Images ||| Immagini
+LoRAs ||| LoRA
+Low keeps the picture, high follows the text ||| Basso conserva la foto, alto segue il testo
+No LoRA. Three at a time with a total weight under 1.5 is the usual rule. ||| Nessuna LoRA. La regola abituale è tre alla volta con peso totale sotto 1,5.
+Nothing generated yet ||| Ancora nessuna immagine
+Nothing yet. ||| Ancora niente.
+Picture ready ||| Immagine pronta
+Quality ||| Qualità
+Random seed ||| Seed casuale
+Remove the picture ||| Togli la foto
+Sampler ||| Campionatore
+Sampling ||| Campionamento
+Scheduler ||| Programma
+Seed ||| Seed
+seed {n} ||| seed {n}
+Shape ||| Formato
+Steps ||| Passi
+The picture ||| L'immagine
+The picture could not be read. ||| Non sono riuscito a leggere l'immagine.
+The picture was not generated ||| L'immagine non è stata generata
+The pictures this PC drew ||| Le immagini disegnate da questo PC
+Unload the models from the graphics card, so a language model can use it ||| Scarica i modelli dalla scheda video, così può usarla un modello linguistico
+Upscale ||| Ingrandisci
+Waiting for the engine ||| Aspetto il motore
+What the picture should gain ||| Cosa deve guadagnare l'immagine
+What to avoid ||| Cosa evitare
+What to do ||| Cosa fare
+What you generate is your responsibility: only adults, and only people who agreed to be depicted. Licences differ per model and are shown with it. ||| Quello che generi è responsabilità tua: solo adulti, e solo persone che hanno acconsentito a essere raffigurate. Le licenze cambiano da modello a modello e sono mostrate accanto a ciascuno.
+{n} pictures ||| {n} immagini
+{n} waiting ||| {n} in attesa
+ComfyUI address ||| Indirizzo di ComfyUI
+Empty: the app's own data folder ||| Vuoto: la cartella dati dell'app
+Every picture generated is copied here, with the settings that made it. Empty: the app's own data folder, which you can open from the Images page. ||| Ogni immagine generata viene copiata qui, con le impostazioni che l'hanno creata. Vuoto: la cartella dati dell'app, che puoi aprire dalla pagina Immagini.
+Gallery folder ||| Cartella della galleria
+Hand the graphics card back ||| Restituisci la scheda video
+Seconds. The first picture after starting the engine loads the model into memory and takes far longer than the ones after it. ||| Secondi. La prima immagine dopo l'avvio del motore carica il modello in memoria e richiede molto più tempo delle successive.
+Time limit per picture ||| Tempo massimo per immagine
+Where the image engine listens. Will It Run starts nothing itself: start ComfyUI on this PC, or point this at the one you run. ||| Dove ascolta il motore delle immagini. Will It Run non avvia niente da solo: avvia ComfyUI su questo PC, oppure indica quello che usi.
+Unload ComfyUI's models when you leave the Images page, so a language model in LM Studio can use the whole card. The next picture then has to load them again. The Free VRAM button does the same on demand. ||| Scarica i modelli di ComfyUI quando esci dalla pagina Immagini, così un modello linguistico in LM Studio può usare tutta la scheda. La prossima immagine dovrà ricaricarli. Il pulsante Libera la VRAM fa lo stesso quando vuoi.
+0.6 megapixels ||| 0,6 megapixel
+A custom node this model needs is not installed. ||| Manca un nodo personalizzato richiesto da questo modello.
+A model is a list of parts, and an encoder or a VAE shared by two models is downloaded once. Nothing counts as installed unless the file is in ComfyUI's folder. ||| Un modello è un elenco di parti: un encoder o una VAE condivisi da due modelli si scaricano una volta sola. Niente risulta installato se il file non è nella cartella di ComfyUI.
+All parts ready ||| Tutte le parti pronte
+At the limit: only {headroom} GB to spare. ||| Al limite: solo {headroom} GB di margine.
+Checkpoint ||| Checkpoint
+Civitai token ||| Token Civitai
+Close the model loaded in LM Studio before generating. ||| Chiudi il modello caricato in LM Studio prima di generare.
+Close the model loaded in LM Studio, then try again. ||| Chiudi il modello caricato in LM Studio, poi riprova.
+ComfyUI ||| ComfyUI
+ComfyUI folder ||| Cartella di ComfyUI
+ComfyUI is not on this PC yet. ||| ComfyUI non è ancora su questo PC.
+ComfyUI is the engine. Will It Run starts it, queues a workflow to it, waits, and keeps its own copy of the picture and of the settings that made it. ||| ComfyUI è il motore. Will It Run lo avvia, gli mette in coda un workflow, aspetta, e tiene una copia propria dell'immagine e delle impostazioni che l'hanno creata.
+ComfyUI was started somewhere else, so it is not closed from here. ||| ComfyUI è stato avviato altrove, quindi non viene chiuso da qui.
+Custom node ||| Nodo personalizzato
+Diffusion model ||| Diffusion model
+Download ComfyUI ||| Scarica ComfyUI
+Download the missing parts ||| Scarica le parti mancanti
+Download {name} ||| Scarica {name}
+Engine started ||| Motore avviato
+Engine stopped ||| Motore fermato
+File removed ||| File rimosso
+Fits ||| Entra
+Generate at a lower resolution, then upscale. ||| Genera a risoluzione più bassa, poi ingrandisci.
+Generate at about {megapixels} megapixels, then upscale. ||| Genera a circa {megapixels} megapixel, poi ingrandisci.
+Graphics card ||| Scheda video
+Graphics memory in use by the engine ||| Memoria video usata dal motore
+Hugging Face token ||| Token Hugging Face
+Image engine ||| Motore immagini
+In use ||| In uso
+Install ComfyUI first: the card above explains how. ||| Installa prima ComfyUI: la scheda qui sopra spiega come.
+It does not fit: it needs {needed} GB of the {usable} GB this PC can give the card. ||| Non entra: servono {needed} GB dei {usable} GB che questo PC può dare alla scheda.
+Let ComfyUI keep part of the weights in system memory. ||| Lascia che ComfyUI tenga parte dei pesi nella memoria di sistema.
+Licence: {licence} ||| Licenza: {licence}
+Lighter in this family: {names} ||| Più leggeri in questa famiglia: {names}
+LM Studio has a model loaded, and it competes for the same memory. ||| LM Studio ha un modello caricato e compete per la stessa memoria.
+Look again ||| Cerca di nuovo
+Look for it ||| Cercalo
+Lower the resolution: this run did not fit in the card. ||| Abbassa la risoluzione: questa esecuzione non è entrata nella scheda.
+Memory figures are estimates ({basis}). ||| I valori di memoria sono stime ({basis}).
+Missing ||| Mancante
+Model page ||| Pagina del modello
+One batch, one wait: the card stays loaded. ||| Un solo batch, una sola attesa: la scheda resta carica.
+Only needed for gated repositories. The public ones download without a token. ||| Serve solo per i repository ad accesso limitato. Quelli pubblici si scaricano senza token.
+Open the model page ||| Apri la pagina del modello
+Pictures in this run ||| Immagini in questa esecuzione
+Portable ||| Portable
+Portable version ||| Versione portable
+Ready ||| Pronto
+Remove {name} ||| Rimuovi {name}
+shared by {n} models ||| condiviso da {n} modelli
+size unknown ||| dimensione sconosciuta
+Some parts have to be placed by hand ||| Alcune parti vanno messe a mano
+Start engine ||| Avvia motore
+Starting ComfyUI… ||| Avvio di ComfyUI…
+Stay near {megapixels} megapixels on this card. ||| Resta intorno a {megapixels} megapixel su questa scheda.
+Stop engine ||| Ferma motore
+Stopped. Press Start engine: the first start takes up to a minute. ||| Fermo. Premi Avvia motore: il primo avvio richiede fino a un minuto.
+Text encoder ||| Text encoder
+The download did not start ||| Il download non è partito
+The engine did not start ||| Il motore non si è avviato
+The engine did not stop ||| Il motore non si è fermato
+The engine is stopped. ||| Il motore è fermo.
+The file was not removed ||| Il file non è stato rimosso
+The folder that holds main.py. Empty: Will It Run looks in the usual places, including Comfy Desktop's installs. ||| La cartella che contiene main.py. Vuota: Will It Run cerca nei posti abituali, comprese le installazioni di Comfy Desktop.
+The memory this needs is not known yet. ||| La memoria necessaria non è ancora nota.
+The size of these files is not known until the download starts. ||| La dimensione di questi file si conosce solo quando parte il download.
+There is room: up to about {megapixels} megapixels. ||| C'è spazio: fino a circa {megapixels} megapixel.
+This model is not complete. {names} ||| Questo modello non è completo. {names}
+To place by hand ||| Da mettere a mano
+Try a lighter model, or a smaller quantization of this one. ||| Prova un modello più leggero, o una quantizzazione più piccola di questo.
+unfiltered ||| senza filtri
+Use a lighter model from the same family. ||| Usa un modello più leggero della stessa famiglia.
+Use this model ||| Usa questo modello
+Used by other models: not removed from here ||| Usato da altri modelli: non si rimuove da qui
+VAE ||| VAE
+Will It Run does not install it: ComfyUI is GPL-3.0 and is not part of this app. Install it, then press Look again. ||| Will It Run non lo installa: ComfyUI è GPL-3.0 e non fa parte di questa app. Installalo, poi premi Cerca di nuovo.
+{free} GB free right now against {needed} GB needed. ||| {free} GB liberi adesso contro {needed} GB necessari.
+{needed} GB of the {usable} GB this PC can give the card. ||| {needed} GB dei {usable} GB che questo PC può dare alla scheda.
+{n} missing ||| {n} mancanti
+{size} to download. ||| {size} da scaricare.
+Not known ||| Da verificare
+Loading the models… ||| Carico i modelli…
+Let ComfyUI keep part of the system memory as weight cache. ||| Lascia che ComfyUI usi parte della memoria di sistema come cache dei pesi.
+1 missing ||| 1 mancante
+1 picture ||| 1 immagine
+All parts found ||| Tutte le parti trovate
+Already here ||| Già presente
+Cannot run here ||| Non eseguibile qui
+Choose ||| Scegli
+Components that will be placed ||| Componenti che verranno sistemati
+How to place them ||| Come sistemarli
+Import local models ||| Importa modelli locali
+Import {n} components ||| Importa {n} componenti
+Missing: {names}. ||| Mancano: {names}.
+Models this PC can draw with ||| Modelli con cui questo PC può disegnare
+Move ||| Sposta
+Not recognised ||| Non riconosciuto
+Nothing is copied: the files are registered where they are, which only works if ComfyUI already reads that folder for each role. With a flat folder this is refused, because a text encoder would end up among the diffusion models. ||| Non si copia niente: i file vengono registrati dove sono, e funziona solo se ComfyUI legge già quella cartella per ogni ruolo. Con una cartella piatta viene rifiutato, perché un text encoder finirebbe tra i diffusion model.
+Other LoRAs in ComfyUI ||| Altre LoRA in ComfyUI
+Point at the folder where you downloaded the .safetensors files. Nothing is downloaded: the header of each file is read to work out what it is, then the files are placed where ComfyUI looks. ||| Indica la cartella dove hai scaricato i file .safetensors. Non si scarica niente: si legge l'intestazione di ogni file per capire cos'è, poi i file vengono messi dove ComfyUI li cerca.
+Reading the file headers… ||| Leggo le intestazioni dei file…
+Resolve the conflicts first. ||| Risolvi prima i conflitti.
+Scan ||| Analizza
+some already here ||| alcuni già presenti
+strength ||| forza
+The files leave the folder you chose and go to ComfyUI's. A copy is made first, so a failure leaves the original in place. ||| I file lasciano la cartella che hai scelto e vanno in quella di ComfyUI. Prima si copia, così un errore lascia l'originale al suo posto.
+The originals stay where they are. {size} of copies. ||| Gli originali restano dove sono. {size} di copie.
+To import ||| Da importare
+Use the existing location ||| Usa la posizione esistente
+What was found ||| Cosa è stato trovato
+Where are the models you downloaded? ||| Dove sono i modelli che hai scaricato?
+{matched} of {total} tensors pair with the base model. ||| {matched} tensori su {total} si accoppiano al modello base.
+{n} components found ||| {n} componenti trovati
+{n} components imported ({mode}). ||| {n} componenti importati ({mode}).
+ComfyUI format ||| formato ComfyUI
+How many times the noise is removed. More steps, more detail and more time: distilled models are trained for eight or ten. ||| Quante volte viene tolto il rumore. Più passi, più dettaglio e più tempo: i modelli distillati sono addestrati per otto o dieci.
+How strictly the words are followed. 1 leaves the model free (turbo and distilled models), 4 to 7 stick to the prompt (SDXL). ||| Quanto il modello resta attaccato alle parole. 1 lo lascia libero (modelli turbo e distillati), da 4 a 7 si attiene al prompt (SDXL).
+How the steps are spaced. simple for Krea and Qwen-Image, karras for SDXL. ||| Come distribuisce i passi. simple per Krea e Qwen-Image, karras per SDXL.
+Leave these as they are until the pictures give you a reason. ||| Lascia questi valori come sono finché le immagini non ti danno un motivo per cambiarli.
+PEFT format ||| formato PEFT
+Preset: {name} ||| Preset: {name}
+The rule that removes the noise. euler for distilled models, dpmpp_2m for SDXL. ||| La regola con cui toglie il rumore. euler per i modelli distillati, dpmpp_2m per SDXL.
+These are the files ComfyUI sees in its loras folder. The Wan ones are for video: on an image model they do nothing, or damage the picture. ||| Sono i file che ComfyUI vede nella sua cartella loras. Quelli Wan sono per il video: su un modello di immagini non fanno niente, o rovinano l'immagine.
+This model was trained for {steps} steps, CFG {cfg}, {sampler} / {scheduler}. Change them only if the picture says so. ||| Questo modello è addestrato per {steps} passi, CFG {cfg}, {sampler} / {scheduler}. Cambiali solo se l'immagine te ne dà motivo.
+Video (Wan) — has no effect on an image ||| Video (Wan) — su un'immagine non ha effetto
+
+Write it like the caption of a photo that already exists: who, what they do, where, the light. English works better. ||| Scrivila come la didascalia di una foto già scattata: chi, che cosa fa, dove, la luce. In inglese funziona meglio.
+Needs your Civitai token ||| Serve il tuo token Civitai
+Civitai gives its files only to a signed-in account: create a token on civitai.com and paste it here to download the Civitai models. Hugging Face models need none. ||| Civitai dà i suoi file solo a un account con accesso: crea un token su civitai.com e incollalo qui per scaricare i modelli Civitai. I modelli di Hugging Face non ne hanno bisogno.

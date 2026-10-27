@@ -10,7 +10,7 @@ import type { DoctorCheck, EmbedStatus, InstalledModel, Settings } from "../lib/
 import { ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "../lib/zoom";
 import { LANGUAGES, t } from "../lib/i18n";
 
-type Tab = "general" | "models" | "cloud" | "hardware" | "storage" | "runtime" | "workflows" | "scoring" | "doctor";
+type Tab = "general" | "models" | "cloud" | "images" | "hardware" | "storage" | "runtime" | "workflows" | "scoring" | "doctor";
 
 const ACCENTS = ["#4aa8e0", "#5b8def", "#35b8a6", "#8a7cf0", "#e0913a", "#d9668f"];
 
@@ -37,8 +37,7 @@ function Row({ title, hint, children }: { title: string; hint?: string; children
   );
 }
 
-function NumberSetting({ value, onCommit, min, max, step = 1, suffix }: { value: number; onCommit: (value: number) => void; min: number; max: number; step?: number; suffix?: string }) {
-  const [text, setText] = useState(String(value));
+function NumberSetting({ value, onCommit, min, max, step = 1, suffix }: { value: number; onCommit: (value: number) => void; min: number; max: number; step?: number; suffix?: string }) {  const [text, setText] = useState(String(value));
   useEffect(() => setText(String(value)), [value]);
   const commit = () => {
     const parsed = Number(text);
@@ -63,6 +62,27 @@ function NumberSetting({ value, onCommit, min, max, step = 1, suffix }: { value:
       />
       {suffix && <span className="w-10 text-xs text-ink-3">{suffix}</span>}
     </div>
+  );
+}
+
+/** A free-text setting: it is saved on Enter or when the field is left, never on every keystroke. */
+function TextSetting({ value, onCommit, placeholder, label }: { value: string; onCommit: (value: string) => void; placeholder?: string; label: string }) {
+  const [text, setText] = useState(value);
+  useEffect(() => setText(value), [value]);
+  const commit = () => {
+    const trimmed = text.trim();
+    if (trimmed !== value) onCommit(trimmed);
+  };
+  return (
+    <TextInput
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => e.key === "Enter" && commit()}
+      placeholder={placeholder}
+      aria-label={label}
+      className="w-64"
+    />
   );
 }
 
@@ -167,6 +187,7 @@ export function SettingsPage() {
             { value: "general", label: t("General") },
             { value: "models", label: t("Models") },
             { value: "cloud", label: t("Cloud models") },
+            { value: "images", label: t("Images") },
             { value: "hardware", label: t("Hardware") },
             { value: "storage", label: t("Storage") },
             { value: "runtime", label: t("Runtime") },
@@ -297,6 +318,89 @@ export function SettingsPage() {
                 <NumberSetting value={settings.cloud?.max_context ?? 200000} min={16000} max={2000000} step={1000} suffix={t("tokens")} onCommit={(max_context) => save({ cloud: { max_context } })} />
               </Row>
             </div>
+          )}
+
+          {tab === "images" && (
+            <>
+              <Row
+                title={t("ComfyUI address")}
+                hint={t("Where the image engine listens. Will It Run starts nothing itself: start ComfyUI on this PC, or point this at the one you run.")}
+              >
+                <TextSetting
+                  label={t("ComfyUI address")}
+                  value={settings.images.comfy_url}
+                  placeholder="http://127.0.0.1:8188"
+                  onCommit={(comfy_url) => save({ images: { comfy_url } })}
+                />
+              </Row>
+              <Row
+                title={t("ComfyUI folder")}
+                hint={t("The folder that holds main.py. Empty: Will It Run looks in the usual places, including Comfy Desktop's installs.")}
+              >
+                <TextSetting
+                  label={t("ComfyUI folder")}
+                  value={settings.images.comfy_dir}
+                  placeholder={t("Look for it")}
+                  onCommit={(comfy_dir) => save({ images: { comfy_dir } })}
+                />
+              </Row>
+              <Row
+                title={t("Civitai token")}
+                hint={t("Civitai gives its files only to a signed-in account: create a token on civitai.com and paste it here to download the Civitai models. Hugging Face models need none.")}
+              >
+                <TextSetting
+                  label={t("Civitai token")}
+                  value={settings.images.civitai_token}
+                  placeholder={t("Optional")}
+                  onCommit={(civitai_token) => save({ images: { civitai_token } })}
+                />
+              </Row>
+              <Row
+                title={t("Hugging Face token")}
+                hint={t("Only needed for gated repositories. The public ones download without a token.")}
+              >
+                <TextSetting
+                  label={t("Hugging Face token")}
+                  value={settings.images.hf_token}
+                  placeholder={t("Optional")}
+                  onCommit={(hf_token) => save({ images: { hf_token } })}
+                />
+              </Row>
+              <Row
+                title={t("Gallery folder")}
+                hint={t("Every picture generated is copied here, with the settings that made it. Empty: the app's own data folder, which you can open from the Images page.")}
+              >
+                <TextSetting
+                  label={t("Gallery folder")}
+                  value={settings.images.gallery_dir}
+                  placeholder={t("Empty: the app's own data folder")}
+                  onCommit={(gallery_dir) => save({ images: { gallery_dir } })}
+                />
+              </Row>
+              <Row
+                title={t("Time limit per picture")}
+                hint={t("Seconds. The first picture after starting the engine loads the model into memory and takes far longer than the ones after it.")}
+              >
+                <NumberSetting
+                  value={settings.images.timeout_seconds}
+                  min={60}
+                  max={7200}
+                  step={60}
+                  suffix="s"
+                  onCommit={(timeout_seconds) => save({ images: { timeout_seconds } })}
+                />
+              </Row>
+              <Row
+                title={t("Hand the graphics card back")}
+                hint={t("Unload ComfyUI's models when you leave the Images page, so a language model in LM Studio can use the whole card. The next picture then has to load them again. The Free VRAM button does the same on demand.")}
+              >
+                <Toggle
+                  label={t("Hand the graphics card back")}
+                  checked={settings.images.free_vram_on_leave}
+                  onChange={(free_vram_on_leave) => save({ images: { free_vram_on_leave } })}
+                />
+              </Row>
+            </>
           )}
 
           {tab === "hardware" && (

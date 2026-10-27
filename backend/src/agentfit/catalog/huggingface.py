@@ -176,6 +176,7 @@ def entry_from_hub(info: dict[str, Any]) -> ModelEntry:
         family=classify.detect_family(repo),
         architecture=architecture,
         params_b=round(params_b, 3) if params_b else None,
+        nominal_params_b=name_total,
         active_params_b=name_active,
         is_moe=is_moe,
         context_length=context,

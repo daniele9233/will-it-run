@@ -24,7 +24,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from agentfit import branding, doctor, github, i18n
-from agentfit.api import arena_routes, clone_routes, cloud_routes
+from agentfit.api import arena_routes, clone_routes, cloud_routes, image_routes
 from agentfit.app import AppServices, get_services
 from agentfit.benchmark import BenchmarkError
 from agentfit.brain import BrainError
@@ -85,6 +85,9 @@ class SearchBody(BaseModel):
     recommended_only: bool = False
     tool_use: bool = False
     vision: bool = False
+    params_exact_b: float | None = None
+    params_min_b: float | None = None
+    params_max_b: float | None = None
     limit: int = 40
     online: bool = True
 
@@ -428,6 +431,7 @@ def create_app(services: AppServices | None = None) -> FastAPI:
         filters = SearchFilters(
             alignment=body.alignment, categories=body.categories, installed_only=body.installed_only,
             recommended_only=body.recommended_only, tool_use=body.tool_use, vision=body.vision,
+            params_exact_b=body.params_exact_b, params_min_b=body.params_min_b, params_max_b=body.params_max_b,
         )
         result = svc.catalog.search(
             body.query, svc.budget(), filters, svc.installed_models(), limit=body.limit, online=body.online
@@ -1199,8 +1203,9 @@ def create_app(services: AppServices | None = None) -> FastAPI:
 
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
-    # Cloud models, the site cloner and the Arena.
+    # Cloud models, the site cloner, the Arena, and the image studio (ComfyUI as the engine).
     cloud_routes.install_routes(app, svc, guard)
     clone_routes.install_routes(app, svc, guard)
     arena_routes.install_routes(app, svc, guard)
+    image_routes.install_routes(app, svc, guard)
     return app

@@ -1,0 +1,527 @@
+{
+  "note": "One entry per file a model needs. Sizes and checksums were taken from the publisher's API on 2026-10-27; a checksum left out is fetched again at download time. 'manual' means no verified download source exists: the interface then says where the file goes instead of inventing an address. A Civitai source needs the person's own token (Settings > Images): Civitai answers 401 without one.",
+  "components": [
+    {
+      "id": "krea2-te",
+      "name": "Text encoder Krea 2 (Qwen3-VL 4B, fp8)",
+      "role": "text_encoder",
+      "folder": "text_encoders",
+      "file": "qwen3vl_4b_fp8_scaled.safetensors",
+      "size_bytes": 5242467968,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Krea-2",
+        "revision": "main",
+        "filename": "text_encoders/qwen3vl_4b_fp8_scaled.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Krea-2",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 4.9,
+      "licence": "Krea 2 Community Licence",
+      "notes": "Va caricato con CLIPLoader, type krea2. Lo stesso file serve a tutti i Krea 2."
+    },
+    {
+      "id": "krea2-vae",
+      "name": "VAE Krea 2 / Qwen-Image",
+      "role": "vae",
+      "folder": "vae",
+      "file": "qwen_image_vae.safetensors",
+      "size_bytes": 253806246,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Krea-2",
+        "revision": "main",
+        "filename": "vae/qwen_image_vae.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Krea-2",
+      "families": [
+        "krea2",
+        "qwen_image"
+      ],
+      "vram_gb": 0.3,
+      "licence": "Apache-2.0",
+      "notes": ""
+    },
+    {
+      "id": "qwen21-diffusion-turbo-int8",
+      "name": "Qwen-Image 2.1 Turbo (INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "qwen_image_2.1_turbo_int8_convrot.safetensors",
+      "size_bytes": 7256787829,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 7.3,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "Turbo: pochi passi. Con l'encoder w4a8 i tre file stanno in 16 GB."
+    },
+    {
+      "id": "qwen21-te-w4a8",
+      "name": "Text encoder Qwen3-VL 8B (w4a8)",
+      "role": "text_encoder",
+      "folder": "text_encoders",
+      "file": "qwen3vl_8b_w4a8.safetensors",
+      "size_bytes": 6312105364,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "text_encoders/qwen3vl_8b_w4a8.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 6.3,
+      "licence": "Qwen Research Licence",
+      "notes": "La variante più leggera: 6,3 GB invece di 9,4 (int8) o 17,5 (bf16)."
+    },
+    {
+      "id": "qwen21-te-int8",
+      "name": "Text encoder Qwen3-VL 8B (INT8)",
+      "role": "text_encoder",
+      "folder": "text_encoders",
+      "file": "qwen3vl_8b_int8_convrot.safetensors",
+      "size_bytes": 9350798360,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "text_encoders/qwen3vl_8b_int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 9.4,
+      "licence": "Qwen Research Licence",
+      "notes": "Più qualità del w4a8 e 3 GB in più."
+    },
+    {
+      "id": "qwen21-vae",
+      "name": "VAE Qwen-Image 2.1 (bf16)",
+      "role": "vae",
+      "folder": "vae",
+      "file": "qwen_image_2.1_vae_bf16.safetensors",
+      "size_bytes": 675509688,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "vae/qwen_image_2.1_vae_bf16.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 0.7,
+      "licence": "Apache-2.0",
+      "notes": ""
+    },
+    {
+      "id": "qwen21uc-unet",
+      "name": "Qwen-Image 2.1 UC (Q6_K, GGUF)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "qwen-image-2.1-UC-Q6_K.gguf",
+      "size_bytes": 5876556576,
+      "source": {
+        "kind": "huggingface",
+        "repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+        "revision": "main",
+        "filename": "qwen-image-2.1-UC-Q6_K.gguf"
+      },
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 5.9,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "Build non censurata, quantizzata Q6_K: 5,9 GB. Serve ComfyUI-GGUF nel ramo leejet (con il ramo di city96 dà 'Unknown model architecture')."
+    },
+    {
+      "id": "node-gguf",
+      "name": "ComfyUI-GGUF (ramo leejet)",
+      "role": "custom_node",
+      "folder": "ComfyUI-GGUF",
+      "file": "",
+      "source": {
+        "kind": "git",
+        "repo": "https://github.com/leejet/ComfyUI-GGUF.git"
+      },
+      "url": "https://github.com/leejet/ComfyUI-GGUF",
+      "families": [],
+      "licence": "Apache-2.0",
+      "notes": "Serve per i modelli .gguf (UnetLoaderGGUF). Il ramo leejet conosce l'architettura Qwen-Image 2.1; riavvia ComfyUI dopo l'installazione."
+    },
+    {
+      "id": "sdxl-lustify-v9",
+      "name": "LUSTIFY! ZENITH V9",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "lustifyNSFWCheckpoint_zenithV9.safetensors",
+      "size_bytes": 6938143490,
+      "source": {
+        "kind": "civitai",
+        "model_id": 573152,
+        "version_id": 3045803,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/573152",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.0,
+      "licence": "Civitai: uso commerciale su immagini consentito, credito non richiesto",
+      "notes": "Checkpoint SDXL fotorealistico NSFW: encoder e VAE sono dentro il file."
+    },
+    {
+      "id": "sdxl-bigasp-v25",
+      "name": "bigASP v2.5",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "bigaspV25_v25.safetensors",
+      "size_bytes": 6938040682,
+      "source": {
+        "kind": "civitai",
+        "model_id": 1789765,
+        "version_id": 2025412,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/1789765",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.0,
+      "licence": "Civitai: immagini, noleggio e vendita consentiti",
+      "notes": "Fotorealismo NSFW con ottima resa della pelle."
+    },
+    {
+      "id": "sdxl-juggernaut-ragnarok",
+      "name": "Juggernaut XL Ragnarok",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "juggernautXL_ragnarok.safetensors",
+      "size_bytes": 7105350162,
+      "source": {
+        "kind": "civitai",
+        "model_id": 133005,
+        "version_id": 1759168,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/133005",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.1,
+      "licence": "Civitai: immagini e noleggio, credito richiesto",
+      "notes": "Generalista di alta qualità, NSFW leggero."
+    },
+    {
+      "id": "sdxl-cyberrealistic-v10",
+      "name": "CyberRealistic XL v10",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "cyberrealisticXL_v100_2727591.safetensors",
+      "size_bytes": 6938041288,
+      "source": {
+        "kind": "civitai",
+        "model_id": 312530,
+        "version_id": 2840768,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/312530",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.0,
+      "licence": "Civitai: immagini, noleggio, vendita e merge consentiti",
+      "notes": "Fotorealismo con luce da studio."
+    },
+    {
+      "id": "sdxl-realvisxl-v5",
+      "name": "RealVisXL V5.0",
+      "role": "checkpoint",
+      "folder": "checkpoints",
+      "file": "RealVisXL_V5.0_fp16.safetensors",
+      "size_bytes": 6938065488,
+      "source": {
+        "kind": "huggingface",
+        "repo": "SG161222/RealVisXL_V5.0",
+        "revision": "main",
+        "filename": "RealVisXL_V5.0_fp16.safetensors"
+      },
+      "url": "https://huggingface.co/SG161222/RealVisXL_V5.0",
+      "families": [
+        "sdxl"
+      ],
+      "vram_gb": 7.0,
+      "licence": "OpenRAIL++",
+      "notes": "Fotorealismo pulito, non NSFW nativo."
+    },
+    {
+      "id": "krea2-kreanoct",
+      "name": "KreaNoct V4 INT8 (Krea 2)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "KreaNoct_V4_int8_convrot.safetensors",
+      "size_bytes": 13492706520,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Noctaluna/Krea2-Noct-Uncensored",
+        "revision": "main",
+        "filename": "KreaNoct_V4_int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/Noctaluna/Krea2-Noct-Uncensored",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 12.6,
+      "licence": "Krea 2 Community Licence (pesi di base)",
+      "notes": "Krea 2 Turbo fotorealistico senza censura: otto passi a CFG 1, nessuna LoRA di sblocco. Stessa architettura dei Krea 2: encoder e VAE sono quelli di Comfy-Org."
+    },
+    {
+      "id": "moss-diffusion-sft",
+      "name": "MOSS-Image SFT INT8",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "moss_image_sft_int8_convrot.safetensors",
+      "size_bytes": 5286816000,
+      "source": {
+        "kind": "manual"
+      },
+      "url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "families": [
+        "moss_image"
+      ],
+      "vram_gb": 5.1,
+      "licence": "MOSS-Image (vedi la model card)",
+      "notes": "DiT con text_embedder interno (prefisso layers). ComfyUI 0.38.0 non ha un loader per questa architettura."
+    },
+    {
+      "id": "moss-te-9b",
+      "name": "Text encoder MOSS (Qwen3.5 9B, INT8)",
+      "role": "text_encoder",
+      "folder": "text_encoders",
+      "file": "qwen3.5_9b_int8_convrot.safetensors",
+      "size_bytes": 9750000000,
+      "source": {
+        "kind": "manual"
+      },
+      "url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "families": [
+        "moss_image"
+      ],
+      "vram_gb": 9.1,
+      "licence": "vedi la model card",
+      "notes": "È un modello linguistico completo (model.*, lm_head, mtp): CLIPLoader non ha un tipo per MOSS."
+    },
+    {
+      "id": "moss-vae",
+      "name": "VAE MOSS (Flux 2, small)",
+      "role": "vae",
+      "folder": "vae",
+      "file": "flux2-vae_small.safetensors",
+      "size_bytes": 249000000,
+      "source": {
+        "kind": "manual"
+      },
+      "url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "families": [
+        "moss_image"
+      ],
+      "vram_gb": 0.25,
+      "licence": "Apache-2.0",
+      "notes": "VAE della famiglia Flux 2, quella che MOSS usa."
+    },
+    {
+      "id": "moss-lora-nsfw",
+      "name": "MOSS Image NSFW Uncensored LoRA (ComfyUI)",
+      "role": "lora",
+      "folder": "loras",
+      "file": "MOSS-Image-NSFW-Uncensored-LoRA-ComfyUI.safetensors",
+      "size_bytes": 74390000,
+      "source": {
+        "kind": "manual"
+      },
+      "url": "https://huggingface.co/axiomofmind/Moss-image-nsfw-uncensored-lora",
+      "families": [
+        "moss_image"
+      ],
+      "vram_gb": 0.1,
+      "licence": "vedi la model card",
+      "lora": {
+        "format": "comfy",
+        "trigger": "moss_xvstyle",
+        "weight": 0.8,
+        "weight_clip": 0.0,
+        "note": "Il file dichiara la conversione 'transformer. -> diffusion_model.': è già nel namespace che ComfyUI legge."
+      },
+      "notes": "Solo per MOSS-Image: la variante ComfyUI e quella Diffusers/PEFT non sono intercambiabili."
+    },
+    {
+      "id": "qwen21-diffusion-int8",
+      "name": "Qwen-Image 2.1 (INT8, base)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "qwen_image_2.1_int8_convrot.safetensors",
+      "size_bytes": 7256783064,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Comfy-Org/Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "diffusion_models/qwen_image_2.1_int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 6.8,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "La variante base ufficiale (non turbo, non sbloccata): 25 passi con KSampler."
+    },
+    {
+      "id": "qwen21-omni-lora",
+      "name": "Qwen-Image 2.1 Uncensored Omni LoRA v0.1",
+      "role": "lora",
+      "folder": "loras",
+      "file": "chatrlabs-omni-lora-v0.1-bf16.safetensors",
+      "size_bytes": 675000000,
+      "source": {
+        "kind": "manual"
+      },
+      "url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-LoRA-v0.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 0.6,
+      "licence": "vedi la model card",
+      "lora": {
+        "format": "peft-transformer",
+        "trigger": "",
+        "weight": 1.0,
+        "weight_clip": 1.0,
+        "note": "Tensori nel namespace 'transformer.' con coppie lora_A/lora_B: serve la conversione dei soli nomi verso 'diffusion_model.' prima che LoraLoader li carichi."
+      },
+      "notes": "Addestrata su Qwen-Image 2.1. Il file non è pronto per ComfyUI: l'import può convertirne i nomi e verificarli contro il diffusion model."
+    },
+    {
+      "id": "qwen21uc-int8",
+      "name": "Qwen-Image 2.1 UC (INT8 ConvRot)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "qwen-image-2.1-UC-int8_convrot.safetensors",
+      "size_bytes": 7256796840,
+      "source": {
+        "kind": "huggingface",
+        "repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+        "revision": "main",
+        "filename": "qwen-image-2.1-UC-int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 6.8,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "La stessa build non censurata del Q6_K, in INT8: solo nodi di base, niente ComfyUI-GGUF."
+    },
+    {
+      "id": "qwen21-noctq-v4",
+      "name": "Noct Q V4 (Qwen-Image 2.1, INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "NoctQ_V4_int8_convrot.safetensors",
+      "size_bytes": 7256784368,
+      "source": {
+        "kind": "huggingface",
+        "repo": "Noctaluna/Noct-Q-Uncensored-Qwen-Image-2.1",
+        "revision": "main",
+        "filename": "NoctQ_V4_int8_convrot.safetensors"
+      },
+      "url": "https://huggingface.co/Noctaluna/Noct-Q-Uncensored-Qwen-Image-2.1",
+      "families": [
+        "qwen_image"
+      ],
+      "vram_gb": 6.8,
+      "licence": "Qwen Research Licence: solo uso non commerciale",
+      "notes": "Qwen-Image 2.1 unito a pesi non censurati, orientato al realismo. Stessi encoder e VAE del Qwen UC."
+    },
+    {
+      "id": "krea2-biglove-kreaedit3",
+      "name": "Big Love KreaEdit3 (INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "bigLove_kreaedit3_3314179.safetensors",
+      "size_bytes": 13491942016,
+      "source": {
+        "kind": "civitai",
+        "model_id": 897413,
+        "version_id": 3415747,
+        "file_id": 3314179,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/897413",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 12.6,
+      "licence": "Civitai: immagini e noleggio consentiti",
+      "notes": "Fine-tune fotorealistico NSFW di Krea 2, solo foto (non anime), con la migliore anatomia della serie. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    },
+    {
+      "id": "krea2-realdream-v3",
+      "name": "Real Dream Krea 2 V3 (INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "realDream_krea2V3_3304483.safetensors",
+      "size_bytes": 13492688608,
+      "source": {
+        "kind": "civitai",
+        "model_id": 153568,
+        "version_id": 3396368,
+        "file_id": 3304483,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/153568",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 12.6,
+      "licence": "Civitai: immagini, noleggio e vendita consentiti",
+      "notes": "Realismo spinto, NSFW, uno dei Krea 2 più scaricati. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    },
+    {
+      "id": "krea2-moody-v9",
+      "name": "Moody Krea 2 Mix V9 (INT8)",
+      "role": "diffusion_model",
+      "folder": "diffusion_models",
+      "file": "moodyKrea2MixV9IsHere_v90BF16FP8_3324107.safetensors",
+      "size_bytes": 13789287384,
+      "source": {
+        "kind": "civitai",
+        "model_id": 2731187,
+        "version_id": 3428211,
+        "file_id": 3324107,
+        "needs_token": true
+      },
+      "url": "https://civitai.com/models/2731187",
+      "families": [
+        "krea2"
+      ],
+      "vram_gb": 12.8,
+      "licence": "Civitai: solo immagini e noleggio",
+      "notes": "Mix NSFW fotografico di Krea 2 con PornMaster V4. Civitai lo dà solo con un token: Impostazioni > Immagini."
+    }
+  ]
+}

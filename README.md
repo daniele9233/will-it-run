@@ -40,6 +40,7 @@ Gemini with your own API key, wherever a local model can go.
 | **Clone a site** | Give the address of a website and get a Next.js project. It runs [ai-site-cloner](https://github.com/Mahanaicoach/ai-site-cloner) (MIT, by Mahanaicoach) the way it runs in a coding agent in the terminal: Will It Run fetches the kit at a pinned commit, puts its project in a folder of yours or in a copy of a GitHub repository, installs its packages, and the model you choose (a model in LM Studio, or Claude, ChatGPT, DeepSeek or Gemini with your key) follows its `/clone-website` skill. It opens the site in Chrome or Edge, **asks you which pages to clone** (only the home page, two pages, three…), studies them and rebuilds them as components. A failed build goes back to the agent once, with the log. See [docs/CLONE.md](docs/CLONE.md). |
 | **Cloud models** | Claude, ChatGPT, DeepSeek and Gemini with your own API keys, encrypted with Windows for your account. A cloud model can be chosen in Clone a site, in Chat and in any slot of a workflow; nothing is loaded on the PC for it. See [docs/CLOUD.md](docs/CLOUD.md). |
 | **Project Brain** | Every folder or GitHub repository a team or a chat works in keeps a permanent memory: how it is built, what was decided, which files were changed and why, what went wrong and what fixed it. It is recorded from what the agents actually did, not from a summary a model wrote. The next session is handed only the entries its task needs, found by meaning (an embedding model in LM Studio), by words and through a knowledge graph of entries, files and imports. |
+| **Images** | ComfyUI is the engine, and the page starts it for you: if it is not on the PC the page says so and links to the official installer instead of installing it silently. A model is a list of parts — diffusion model, text encoder, VAE, required custom node — and an encoder shared by two models is downloaded once. Every part is verified against the publisher's size and checksum, and nothing counts as installed unless the file is in ComfyUI's folder. The page plans the memory before you press Generate: what it needs, what this card can give, and what to change if it does not fit. Create, edit a photo, upscale, one to four pictures at a time. The catalog is photographic only (Qwen-Image 2.1 UC, KreaNoct, Noct Q, Krea 2 and SDXL realism checkpoints; no anime models), with verified Hugging Face sources. See [docs/IMAGE_STUDIO.md](docs/IMAGE_STUDIO.md). |
 
 A beginner can do: *"I want a coding AI team" → Automatic → Install → Run.*
 An expert can inspect the exact GGUF, quantization, context, KV cache, GPU offload,
@@ -49,6 +50,9 @@ loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
 - Windows 11 x64 (Windows 10 x64 may work; it is not tested)
 - [LM Studio](https://lmstudio.ai/download) for running models. Will It Run never installs it for you.
+- [ComfyUI](https://github.com/Comfy-Org/ComfyUI) only if you want the Images page. It is GPL-3.0 and
+  is not bundled or installed by Will It Run: you install it, and Will It Run talks to it over
+  `127.0.0.1`.
 - A GPU is recommended. Without one, Will It Run plans for CPU inference with smaller models.
 
 ## Install
@@ -115,6 +119,8 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 - [Localization](docs/LOCALIZATION.md): Italian and English, how to add a string or a language
 - [LM Studio](docs/LM_STUDIO.md): exactly which commands and endpoints are used
 - [Uncensored models](docs/UNCENSORED_MODELS.md)
+- [Images](docs/IMAGE_STUDIO.md): ComfyUI as the engine, the models worth running at 16 GB, the
+  quality settings, the licences, and how to add a model family
 - [Workflows](docs/WORKFLOWS.md): the YAML DSL, templates, tools
 - [Project Brain](docs/MEMORY.md): what each project remembers, how it is searched, what was borrowed from other memory projects
 - [Clone a site](docs/CLONE.md): how it matches the terminal workflow, the question about the pages, the agent's tools, where the project goes
@@ -127,9 +133,11 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 Stated plainly, so nothing is assumed:
 
-- **Image and video generation.** LM Studio does not run diffusion models. Will It Run builds
-  the prompt-writing and critique agents and says so; a generator runtime (for example
-  ComfyUI) is an interface (`ModelRuntime`) without an implementation yet.
+- **Video generation.** Wan 2.2 runs in ComfyUI on this PC, but no video workflow is included.
+  Images are covered; moving pictures are not.
+- **Masks, inpainting a region, and face detail.** Editing is instruction-based or whole-image,
+  and `FaceDetailer` needs a custom node the app does not install. See
+  [docs/IMAGE_STUDIO.md](docs/IMAGE_STUDIO.md).
 - **Seeing the screen.** Computer-use agents can list windows, read the clipboard, take
   screenshots to disk and, with approval, type and click. They do not yet interpret
   screenshots.

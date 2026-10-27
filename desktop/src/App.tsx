@@ -13,6 +13,7 @@ import { DownloadsPage } from "./pages/Downloads";
 import { GuidePage } from "./pages/Guide";
 import { HardwarePage } from "./pages/Hardware";
 import { HomePage } from "./pages/Home";
+import { ImagesPage } from "./pages/Images";
 import { LogsPage } from "./pages/Logs";
 import { ModelsPage } from "./pages/Models";
 import { CloneSite } from "./pages/CloneSite";
@@ -103,6 +104,7 @@ export function App() {
       {page === "benchmarks" && <BenchmarksPage />}
       {page === "arena" && <ArenaPage />}
       {page === "downloads" && <DownloadsPage />}
+      {page === "images" && <ImagesPage />}
       {page === "chat" && <ChatPage />}
       {page === "clone" && <CloneSite />}
       {page === "sessions" && <SessionsPage />}

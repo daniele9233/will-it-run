@@ -12,13 +12,31 @@ Code: `backend/src/agentfit/lmstudio`.
 |---|---|
 | Home directory | `~/.lmstudio`, or the path in `~/.lmstudio-home-pointer` |
 | CLI | `<home>/bin/lms.exe`, else `lms` on `PATH` |
-| Application | `<home>/.internal/app-install-location.json`, else the default install folders |
+| Application | `<home>/.internal/app-install-location.json`, `<home>/apps/*/.internal/app-install-location.json`, else the default install folders (LM Studio or Bionic) |
 | Models directory | The `downloadsFolder` key of `<home>/settings.json` or `<home>/apps/*/settings.json`, else `<home>/models` |
-| Configured port | `<home>/.internal/http-server-config.json` |
+| Configured port | `<home>/.internal/http-server-config.json` or `<home>/apps/*/.internal/http-server-config.json` |
 | Server running | `GET /api/v1/models` answers, else `lms server status --json` |
+| Server port in use | The configured port; if the API does not answer there, the port `lms server status --json` reports and the one LM Studio is configured with |
 
 Only the `downloadsFolder` and `port` keys are read from LM Studio's settings files.
 Other keys in those files (including stored tokens) are never read.
+
+The newer app that ships as **Bionic** keeps the same files inside `apps/bionic` while
+still reading the models folder from the classic `<home>/settings.json`. A fresh install
+therefore starts with `<home>/models`; the folder chosen in LM Studio is what makes models
+elsewhere (for example `D:\Models`) visible to `lms ls` and to the REST API. Will It Run
+reports that folder as the installation's models directory and never edits LM Studio's
+settings.
+
+### Start server, and a port that moved
+
+`lms server start` is enough only if Will It Run asks the same port the server bound. A
+reinstall, or a default port already in use, can leave LM Studio on 1235 while the stored
+setting still says 1234. `status()` and `ensure_server()` therefore try the configured
+port, the port LM Studio is configured with, and the port `lms server status --json`
+reports; the first that answers becomes the endpoint for this session. The
+Settings → Runtime port stays a manual override and is never rewritten behind the user's
+back.
 
 ## `lms` CLI commands used
 
@@ -163,7 +181,9 @@ and validates the result against the schema itself.
   LM Studio. Hardware analysis and the model explorer still work.
 - Installed, server off: installed models are still listed through the CLI. Loading,
   benchmarking and running ask to start the server (`lms server start`).
-- Wrong port: the status explains which port the server is on and where to change it.
+- Wrong port: Will It Run follows the port in LM Studio's configuration (or the one the
+  running server reports) and uses it; the status explains anything it still cannot reach
+  at that port. The port in Settings → Runtime remains a manual override.
 - API authentication enabled in LM Studio: enter the token in Settings → Runtime. It is
   stored in your settings file, sent as a bearer token, never returned to the UI and
   never logged.

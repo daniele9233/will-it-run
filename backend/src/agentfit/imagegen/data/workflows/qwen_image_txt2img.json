@@ -1,0 +1,120 @@
+{
+  "key": "qwen_image_txt2img",
+  "name": "Text to image — Qwen-Image",
+  "family": "qwen_image",
+  "kind": "txt2img",
+  "default": true,
+  "description": "Qwen-Image reads a sentence and follows it closely, including text inside the picture. The same engine writes and edits, so one model covers both.",
+  "roles": [
+    "unet",
+    "clip",
+    "vae"
+  ],
+  "lora_mode": "model",
+  "lora_source": "1",
+  "needs": [
+    "TextEncodeQwenImage21"
+  ],
+  "defaults": {
+    "negative": " ",
+    "steps": 25,
+    "cfg": 2.5,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "denoise": 1.0,
+    "resolution": 1024
+  },
+  "graph": {
+    "1": {
+      "class_type": "{{unet_loader}}",
+      "inputs": {
+        "unet_name": "{{unet}}",
+        "weight_dtype": "{{weight_dtype}}"
+      }
+    },
+    "2": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "{{clip}}",
+        "type": "{{clip_type}}",
+        "device": "default"
+      }
+    },
+    "3": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "{{vae}}"
+      }
+    },
+    "4": {
+      "class_type": "TextEncodeQwenImage21",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "prompt": "{{prompt}}",
+        "negative_prompt": "{{negative}}",
+        "resolution": "{{resolution}}"
+      }
+    },
+    "5": {
+      "class_type": "EmptyLatentImage",
+      "inputs": {
+        "width": "{{width}}",
+        "height": "{{height}}",
+        "batch_size": "{{batch_size}}"
+      }
+    },
+    "6": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "4",
+          1
+        ],
+        "latent_image": [
+          "5",
+          0
+        ],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "7": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "6",
+          0
+        ],
+        "vae": [
+          "3",
+          0
+        ]
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "7",
+          0
+        ],
+        "filename_prefix": "{{filename_prefix}}"
+      }
+    }
+  }
+}

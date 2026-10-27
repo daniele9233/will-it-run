@@ -29,6 +29,7 @@ import { ApiError, api, openExternal, query } from "../lib/api";
 import { canBrowseFolders, pickFolder } from "../lib/dialog";
 import { UNKNOWN, categoryLabel, compactNumber, contextLabel, fitLabel, fitTone, gb, params, placementLabel, sizeLabel, speedRange, tps } from "../lib/format";
 import { errorMessage, useBus, useDebounced, useLoad } from "../lib/hooks";
+import { filterModels, nominalParamsB, paramBandBounds, parameterSizes, quantizationOptions, type ModelSort, type ParamBand } from "../lib/modelFilters";
 import { useApp } from "../lib/store";
 import type { DownloadPlan, FitResult, ModelCard, ModelDetails, ModelFile, ModelFileRow, SearchResponse, StorageLocation } from "../lib/types";
 import { t } from "../lib/i18n";
@@ -46,6 +47,23 @@ const FILTERS: { id: string; label: string }[] = [
   { id: "Writing", label: t("Writing") },
   { id: "Computer Use", label: t("Computer Use") },
   { id: "installed", label: t("Installed") },
+];
+
+// Tokens per second offered as a minimum: a model slower than this is hidden.
+const SPEED_OPTIONS = [0, 5, 10, 20, 30, 50] as const;
+
+// A size can span hundreds of builds in a full cache: 27B alone passes 190. Ask for more
+// cards than the usual page so choosing a size shows all of it, not just the first page.
+const SIZE_FILTER_LIMIT = 240;
+
+const PARAM_BANDS: { id: ParamBand; label: string }[] = [
+  { id: "any", label: t("Any size") },
+  { id: "le4", label: t("Up to 4B") },
+  { id: "4to8", label: t("4–8B") },
+  { id: "8to15", label: t("8–15B") },
+  { id: "15to30", label: t("15–30B") },
+  { id: "30to70", label: t("30–70B") },
+  { id: "gt70", label: t("Over 70B") },
 ];
 
 function ModelRow({ card, selected, onSelect }: { card: ModelCard; selected: boolean; onSelect: () => void }) {
@@ -73,7 +91,7 @@ function ModelRow({ card, selected, onSelect }: { card: ModelCard; selected: boo
           </div>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-ink-3">
             <span>{entry.publisher}</span>
-            <span>{params(entry.params_b)}</span>
+            <span>{params(nominalParamsB(card))}</span>
             <span className="font-mono">{card.quant}</span>
             <span>{sizeLabel(card.download_size_bytes, card.size_is_estimate)}</span>
             <span className="inline-flex items-center gap-1">
@@ -756,6 +774,11 @@ export function ModelsPage() {
   const [alignment, setAlignment] = useState<AlignmentFilter>((routeParams.alignment as AlignmentFilter) ?? "any");
   const [active, setActive] = useState<Set<string>>(new Set(routeParams.installed ? ["installed"] : routeParams.recommended ? ["recommended"] : []));
   const [selected, setSelected] = useState<string | null>(routeParams.repo ?? null);
+  const [sort, setSort] = useState<ModelSort>("recommended");
+  const [minSpeed, setMinSpeed] = useState(0);
+  const [quant, setQuant] = useState("");
+  const [paramBand, setParamBand] = useState<ParamBand>("any");
+  const [paramsExact, setParamsExact] = useState<number | null>(null);
   const debounced = useDebounced(text, 350);
 
   useEffect(() => {
@@ -766,6 +789,10 @@ export function ModelsPage() {
   }, [routeParams]);
 
   const filterKey = [...active].sort().join(",");
+  // A size filter searches the whole catalog, so "27B" shows every 27B model, not the two
+  // that happen to be in the first page. Bands travel as a range; an exact size as itself.
+  const sizeFilterActive = paramsExact !== null || paramBand !== "any";
+  const bounds = paramBandBounds(paramBand);
   const results = useLoad(
     () =>
       api.post<SearchResponse>("/api/models/search", {
@@ -775,9 +802,12 @@ export function ModelsPage() {
         installed_only: active.has("installed"),
         recommended_only: active.has("recommended"),
         tool_use: active.has("tool_use"),
-        limit: 60,
+        params_exact_b: paramsExact,
+        params_min_b: paramsExact === null ? bounds.min : null,
+        params_max_b: paramsExact === null ? bounds.max : null,
+        limit: sizeFilterActive ? SIZE_FILTER_LIMIT : 60,
       }),
-    [debounced, alignment, filterKey],
+    [debounced, alignment, filterKey, paramBand, paramsExact],
   );
   useBus("download.update", (event) => {
     if (event.data.status === "completed") results.reload();
@@ -792,6 +822,44 @@ export function ModelsPage() {
 
   const cards = useMemo(() => results.data?.cards ?? [], [results.data]);
   const selectedCard = useMemo(() => cards.find((c) => c.entry.repo === selected) ?? null, [cards, selected]);
+  const quantOptions = useMemo(() => quantizationOptions(cards), [cards]);
+  useEffect(() => {
+    if (quant && !quantOptions.includes(quant)) setQuant("");
+  }, [quant, quantOptions]);
+  const sizeOptions = useMemo(() => {
+    // The core lists every named size in the catalog; without it (an older core), fall back
+    // to the sizes of the cards on screen so the menu still works.
+    const facets = results.data?.sizes?.map((facet) => facet.params_b) ?? [];
+    return facets.length > 0 ? facets : parameterSizes(cards);
+  }, [results.data, cards]);
+  useEffect(() => {
+    if (paramsExact !== null && !sizeOptions.includes(paramsExact)) {
+      setParamsExact(null);
+      setParamBand("any");
+    }
+  }, [paramsExact, sizeOptions]);
+  const visibleCards = useMemo(
+    () => filterModels(cards, { sort, minTokensPerSecond: minSpeed, quant: quant || null, params: paramBand, paramsExact }),
+    [cards, sort, minSpeed, quant, paramBand, paramsExact],
+  );
+  const filtering = sort !== "recommended" || minSpeed > 0 || quant !== "" || paramBand !== "any" || paramsExact !== null;
+  const chooseSize = (value: string) => {
+    if (value.startsWith("exact:")) {
+      const size = Number(value.slice("exact:".length));
+      setParamsExact(Number.isFinite(size) ? size : null);
+      setParamBand("any");
+    } else {
+      setParamsExact(null);
+      setParamBand(value as ParamBand);
+    }
+  };
+  const clearFilters = () => {
+    setSort("recommended");
+    setMinSpeed(0);
+    setQuant("");
+    setParamBand("any");
+    setParamsExact(null);
+  };
 
   return (
     <div className="flex min-h-0 flex-1">
@@ -833,13 +901,94 @@ export function ModelsPage() {
               />
             </div>
           </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-3">
+            <div className="flex items-center gap-2 text-xs text-ink-3">
+              <span>{t("Sort by")}</span>
+              <Segmented
+                label={t("Sort by")}
+                value={sort}
+                onChange={setSort}
+                options={[
+                  { value: "recommended", label: t("Recommended") },
+                  { value: "fastest", label: t("Fastest") },
+                ]}
+              />
+            </div>
+            <label className="flex items-center gap-2 whitespace-nowrap text-xs text-ink-3">
+              {t("Minimum speed")}
+              <Select
+                value={minSpeed}
+                onChange={(e) => setMinSpeed(Number(e.target.value))}
+                aria-label={t("Minimum speed")}
+                className="h-7 w-[112px] text-xs"
+              >
+                {SPEED_OPTIONS.map((value) => (
+                  <option key={value} value={value}>
+                    {value === 0 ? t("Any speed") : t("{n}+ tok/s", { n: value })}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="flex items-center gap-2 whitespace-nowrap text-xs text-ink-3">
+              {t("Quantization")}
+              <Select
+                value={quant}
+                onChange={(e) => setQuant(e.target.value)}
+                aria-label={t("Quantization")}
+                className="h-7 w-[136px] text-xs"
+                disabled={quantOptions.length === 0}
+              >
+                <option value="">{t("Any quantization")}</option>
+                {quantOptions.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="flex items-center gap-2 whitespace-nowrap text-xs text-ink-3">
+              {t("Parameters")}
+              <Select
+                value={paramsExact !== null ? `exact:${paramsExact}` : paramBand}
+                onChange={(e) => chooseSize(e.target.value)}
+                aria-label={t("Parameters")}
+                className="h-7 w-[150px] text-xs"
+              >
+                <option value="any">{t("Any size")}</option>
+                {sizeOptions.length > 0 && (
+                  <optgroup label={t("Exact size")}>
+                    {sizeOptions.map((size) => (
+                      <option key={size} value={`exact:${size}`}>
+                        {params(size)}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+                <optgroup label={t("Size range")}>
+                  {PARAM_BANDS.filter((band) => band.id !== "any").map((band) => (
+                    <option key={band.id} value={band.id}>
+                      {band.label}
+                    </option>
+                  ))}
+                </optgroup>
+              </Select>
+            </label>
+            {filtering && (
+              <Button size="sm" variant="ghost" onClick={clearFilters}>
+                {t("Clear filters")}
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           {results.data && (
             <div className="flex items-center justify-between px-7 pt-3 pb-1 text-xs text-ink-3">
               <span>
-                {t("{shown} shown of {total} matching", { shown: cards.length, total: results.data.total_candidates })}
+                {t("{shown} shown of {total} matching", { shown: visibleCards.length, total: results.data.total_candidates })}
+                {filtering && cards.length !== visibleCards.length && (
+                  <span className="text-ink-3"> · {t("{n} hidden by filters", { n: cards.length - visibleCards.length })}</span>
+                )}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 {results.data.online ? (
@@ -865,15 +1014,28 @@ export function ModelsPage() {
             </div>
           )}
           {results.loading && !results.data && <div className="px-7 pt-4"><SkeletonRows rows={8} height={56} /></div>}
-          {results.data && cards.length === 0 && (
+          {results.data && visibleCards.length === 0 && !results.loading && (
             <div className="px-7">
-              <EmptyState title={t("No models match")}>
-                Try fewer words or clear a filter. Model names come from repository names, so "abliterated" and "uncensored" find different builds; the Uncensored filter searches for both.
-              </EmptyState>
+              {filtering ? (
+                <EmptyState
+                  title={t("No models match these filters")}
+                  action={
+                    <Button size="sm" onClick={clearFilters}>
+                      {t("Clear filters")}
+                    </Button>
+                  }
+                >
+                  {t("Try a lower minimum speed, another quantization or a different size.")}
+                </EmptyState>
+              ) : (
+                <EmptyState title={t("No models match")}>
+                  Try fewer words or clear a filter. Model names come from repository names, so "abliterated" and "uncensored" find different builds; the Uncensored filter searches for both.
+                </EmptyState>
+              )}
             </div>
           )}
           <ul className={cx("mt-1 border-t border-line", results.loading && "opacity-60 transition-opacity duration-150")}>
-            {cards.map((card) => (
+            {visibleCards.map((card) => (
               <ModelRow key={`${card.entry.repo}|${card.installed_key ?? ""}`} card={card} selected={card.entry.repo === selected} onSelect={() => setSelected(card.entry.repo)} />
             ))}
           </ul>

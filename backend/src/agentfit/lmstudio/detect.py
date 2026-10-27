@@ -41,17 +41,36 @@ def find_cli(home: Path) -> str | None:
     return shutil.which("lms")
 
 
+def _app_location_files(home: Path) -> list[Path]:
+    """Where LM Studio records the installed program.
+
+    The classic app writes ``<home>/.internal/app-install-location.json``; the newer
+    Bionic app keeps the same file inside its per-app folder
+    (``<home>/apps/<app>/.internal/app-install-location.json``).
+    """
+    files = [home / ".internal" / "app-install-location.json"]
+    apps = home / "apps"
+    if apps.is_dir():
+        files += sorted(apps.glob("*/.internal/app-install-location.json"))
+    return files
+
+
 def find_app(home: Path) -> str | None:
-    recorded = _read_json(home / ".internal" / "app-install-location.json").get("path")
-    if recorded and Path(recorded).exists():
-        return recorded
-    local = os.environ.get("LOCALAPPDATA")
+    for location in _app_location_files(home):
+        recorded = _read_json(location).get("path")
+        if recorded and Path(recorded).exists():
+            return recorded
     candidates = []
+    local = os.environ.get("LOCALAPPDATA")
     if local:
-        candidates.append(Path(local) / "Programs" / "LM Studio" / "LM Studio.exe")
+        for folder in ("LM Studio", "Bionic"):
+            for exe in ("LM Studio.exe", "Bionic.exe"):
+                candidates.append(Path(local) / "Programs" / folder / exe)
     program_files = os.environ.get("PROGRAMFILES")
     if program_files:
-        candidates.append(Path(program_files) / "LM Studio" / "LM Studio.exe")
+        for folder in ("LM Studio", "Bionic"):
+            for exe in ("LM Studio.exe", "Bionic.exe"):
+                candidates.append(Path(program_files) / folder / exe)
     for path in candidates:
         if path.exists():
             return str(path)
@@ -77,8 +96,20 @@ def find_models_dir(home: Path) -> str | None:
 
 
 def configured_port(home: Path) -> int | None:
-    port = _read_json(home / ".internal" / "http-server-config.json").get("port")
-    return int(port) if isinstance(port, int) else None
+    """The port LM Studio's server is configured to use.
+
+    The classic app keeps it in ``<home>/.internal/http-server-config.json``; the newer
+    Bionic app keeps the same file under ``<home>/apps/<app>/.internal``.
+    """
+    files = [home / ".internal" / "http-server-config.json"]
+    apps = home / "apps"
+    if apps.is_dir():
+        files += sorted(apps.glob("*/.internal/http-server-config.json"))
+    for path in files:
+        port = _read_json(path).get("port")
+        if isinstance(port, int) and 0 < port < 65536:
+            return port
+    return None
 
 
 def detect_install() -> LMStudioInstall:

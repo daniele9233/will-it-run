@@ -10,6 +10,7 @@ import pytest
 from pydantic import ValidationError
 
 from agentfit.config import RuntimeSettings, Settings
+from agentfit.lmstudio import detect
 from agentfit.lmstudio.cli import LmsCli, LmsCliError, parse_estimate, parse_runtime_ls, strip_ansi
 from agentfit.lmstudio.client import LMStudioClient, LMStudioError, LMStudioOffline, ModelNotFound
 from agentfit.lmstudio.models import LMStudioInstall
@@ -48,10 +49,11 @@ CLI_LS = [
 
 class FakeCli(LmsCli):
     def __init__(
-        self, *, ls: list[dict[str, Any]] | None = None, fail: bool = False, running: bool = True, load_error: str | None = None
+        self, *, ls: list[dict[str, Any]] | None = None, fail: bool = False, running: bool = True, port: int = 1234,
+        load_error: str | None = None,
     ) -> None:
         super().__init__("lms.exe")
-        self._ls, self._fail, self._running = ls or [], fail, running
+        self._ls, self._fail, self._running, self._port = ls or [], fail, running, port
         # What ``lms load`` says when it is asked for MTP and refuses (a model without a head, or an LM Studio without the flags).
         self._load_error = load_error
         self.commands: list[list[str]] = []
@@ -60,6 +62,9 @@ class FakeCli(LmsCli):
         self.commands.append(args)
         if self._fail:
             return 1, "", "Error: something went wrong"
+        if args[:2] == ["server", "start"]:
+            self._running = True
+            return 0, "", ""
         if args[:1] == ["load"] and self._load_error and "--speculative-draft-mtp" in args:
             return 1, "", self._load_error
         if args[:2] == ["ls", "--json"]:
@@ -67,7 +72,7 @@ class FakeCli(LmsCli):
         if args[:2] == ["ps", "--json"]:
             return 0, "[]", ""
         if args[:3] == ["server", "status", "--json"]:
-            return 0, json.dumps({"running": self._running, "port": 1234}), ""
+            return 0, json.dumps({"running": self._running, "port": self._port}), ""
         if args[:2] == ["version", "--json"]:
             return 0, json.dumps({"version": "abc123"}), ""
         return 0, "", ""
@@ -151,6 +156,66 @@ def test_port_mismatch_is_explained():
     runtime.settings.runtime.lmstudio_port = 9999
     status = runtime.status()
     assert status.server_running and any("port 1234" in n for n in status.notes)
+
+
+def test_a_server_on_another_port_is_found_without_editing_the_settings():
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.port != 1235:
+            raise httpx.ConnectError("connection refused", request=request)
+        return httpx.Response(200, json=REST_MODELS)
+
+    client = LMStudioClient("http://127.0.0.1:1234", client=httpx.Client(transport=httpx.MockTransport(handler)))
+    install = LMStudioInstall(installed=True, home="C:/lm", cli_path="lms.exe", models_dir="D:/Models", server_port=1235)
+    runtime = LMStudioRuntime(Settings(), client=client, cli=FakeCli(ls=CLI_LS, port=1235), install=install)
+    status = runtime.status()
+    assert status.api_reachable and status.server_port == 1235
+    assert runtime.client.base_url == "http://127.0.0.1:1235"
+    assert not any("could not reach" in note for note in status.notes)
+
+
+def test_start_server_follows_the_port_the_cli_reports():
+    listening = {"on": False}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if not listening["on"] or request.url.port != 1235:
+            raise httpx.ConnectError("connection refused", request=request)
+        return httpx.Response(200, json=REST_MODELS)
+
+    cli = FakeCli(ls=CLI_LS, running=False, port=1235)
+    original = cli.run
+
+    def run(args: list[str], timeout: float = 60.0) -> tuple[int, str, str]:
+        result = original(args, timeout)
+        if args[:2] == ["server", "start"]:
+            listening["on"] = True
+        return result
+
+    cli.run = run  # type: ignore[method-assign]
+    client = LMStudioClient("http://127.0.0.1:1234", client=httpx.Client(transport=httpx.MockTransport(handler)))
+    install = LMStudioInstall(installed=True, home="C:/lm", cli_path="lms.exe", models_dir="D:/Models", server_port=1235)
+    runtime = LMStudioRuntime(Settings(), client=client, cli=cli, install=install)
+    assert runtime.ensure_server()
+    assert ["server", "start"] in cli.commands and runtime.client.base_url == "http://127.0.0.1:1235"
+
+
+def test_the_bionic_layout_is_detected(tmp_path, monkeypatch):
+    home = tmp_path / ".lmstudio"
+    models = tmp_path / "Models"
+    models.mkdir()
+    app = tmp_path / "Bionic" / "Bionic.exe"
+    app.parent.mkdir()
+    app.write_bytes(b"")
+    (home / "bin").mkdir(parents=True)
+    (home / "bin" / "lms.exe").write_bytes(b"")
+    (home / "settings.json").write_text(json.dumps({"downloadsFolder": str(models)}), encoding="utf-8")
+    internal = home / "apps" / "bionic" / ".internal"
+    internal.mkdir(parents=True)
+    (internal / "http-server-config.json").write_text(json.dumps({"port": 1235}), encoding="utf-8")
+    (internal / "app-install-location.json").write_text(json.dumps({"path": str(app)}), encoding="utf-8")
+    monkeypatch.setattr(detect, "lmstudio_home", lambda: home)
+    install = detect.detect_install()
+    assert install.installed and install.app_path == str(app)
+    assert install.server_port == 1235 and install.models_dir == str(models)
 
 
 # -- load / unload ------------------------------------------------------------

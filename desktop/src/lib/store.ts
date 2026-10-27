@@ -14,6 +14,7 @@ export type PageId =
   | "benchmarks"
   | "arena"
   | "downloads"
+  | "images"
   | "chat"
   | "clone"
   | "sessions"

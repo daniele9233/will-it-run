@@ -77,12 +77,12 @@ class ModelRuntime(ABC):
 UNSUPPORTED_MODALITY_MESSAGE = {
     "image": (
         "Image generation models (Stable Diffusion, FLUX and similar) do not run in LM Studio. "
-        "Will It Run can build the prompt-writing and critique agents now; the image generator "
-        "itself needs a separate runtime such as ComfyUI, which is not included in this version."
+        "Will It Run builds the prompt-writing and critique agents; connect ComfyUI on the Images "
+        "page and the same prompt is drawn there."
     ),
     "video": (
         "Video generation models do not run in LM Studio. Will It Run can build the prompt and "
-        "review agents now; generation needs a separate runtime such as ComfyUI, which is not "
-        "included in this version."
+        "review agents now; generation needs a separate runtime such as ComfyUI, and no video "
+        "workflow is included in this version."
     ),
 }

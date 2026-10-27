@@ -64,6 +64,7 @@ def entry_from_seed(raw: dict[str, Any]) -> ModelEntry:
         family=classify.detect_family(base_name),
         architecture=raw.get("architecture"),
         params_b=round(params_b, 3) if params_b else None,
+        nominal_params_b=name_total,
         active_params_b=round(active_b, 3) if active_b else None,
         is_moe=bool(raw.get("is_moe")),
         num_experts=raw.get("num_experts"),

@@ -1,0 +1,156 @@
+{
+  "key": "qwen_image_edit",
+  "name": "Edit a photo — Qwen-Image",
+  "family": "qwen_image",
+  "kind": "edit",
+  "description": "Changes what the sentence asks for and keeps the rest: clothes, background, pose, a detail. Up to four reference pictures can be given, addressed in the prompt as <image2>, <image3>, <image4>.",
+  "roles": [
+    "unet",
+    "clip",
+    "vae"
+  ],
+  "lora_mode": "model",
+  "lora_source": "1",
+  "needs": [
+    "TextEncodeQwenImage21",
+    "LoadImage"
+  ],
+  "defaults": {
+    "negative": " ",
+    "steps": 24,
+    "cfg": 2.5,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "denoise": 1.0,
+    "resolution": 1024
+  },
+  "graph": {
+    "1": {
+      "class_type": "{{unet_loader}}",
+      "inputs": {
+        "unet_name": "{{unet}}",
+        "weight_dtype": "{{weight_dtype}}"
+      }
+    },
+    "2": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "{{clip}}",
+        "type": "{{clip_type}}",
+        "device": "default"
+      }
+    },
+    "3": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "{{vae}}"
+      }
+    },
+    "10": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "{{image}}"
+      }
+    },
+    "11": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "{{image2}}"
+      }
+    },
+    "12": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "{{image3}}"
+      }
+    },
+    "13": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "{{image4}}"
+      }
+    },
+    "4": {
+      "class_type": "TextEncodeQwenImage21",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "prompt": "{{prompt}}",
+        "negative_prompt": "{{negative}}",
+        "vae": [
+          "3",
+          0
+        ],
+        "resolution": "{{resolution}}",
+        "images.image_1": [
+          "10",
+          0
+        ],
+        "images.image_2": [
+          "11",
+          0
+        ],
+        "images.image_3": [
+          "12",
+          0
+        ],
+        "images.image_4": [
+          "13",
+          0
+        ]
+      }
+    },
+    "6": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "4",
+          1
+        ],
+        "latent_image": [
+          "4",
+          2
+        ],
+        "seed": "{{seed}}",
+        "steps": "{{steps}}",
+        "cfg": "{{cfg}}",
+        "sampler_name": "{{sampler}}",
+        "scheduler": "{{scheduler}}",
+        "denoise": "{{denoise}}"
+      }
+    },
+    "7": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "6",
+          0
+        ],
+        "vae": [
+          "3",
+          0
+        ]
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "7",
+          0
+        ],
+        "filename_prefix": "{{filename_prefix}}"
+      }
+    }
+  }
+}

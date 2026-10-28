@@ -10,7 +10,7 @@ import pytest
 
 from agentfit.events import EventBus
 from agentfit.teams import templates as T
-from agentfit.workflows import conditions, schemas, tools
+from agentfit.workflows import checks, conditions, schemas, tools
 from agentfit.workflows.compiler import (
     build_messages,
     checked_calls,
@@ -815,6 +815,18 @@ def test_a_test_report_says_what_the_suite_said_not_what_the_agent_concluded(har
     assert "exit code 0" in report["evidence"] and "1 passed" in report["evidence"] and "answered passed=false" in report["evidence"]
     # Nothing of the run's machinery is left in the folder the agents work in.
     assert sorted(p.name for p in (tmp_path / "ws").iterdir()) == ["test_page.py"]
+
+
+def test_the_evidence_quotes_the_suites_last_line_and_not_a_warning_written_after_it():
+    """CI: a new pytest-asyncio warns on stderr when a project has no configuration, and the tool puts stderr last; the evidence
+    quoted the warning instead of "1 passed"."""
+    warning = "warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))"
+    assert checks.suite_closing_line(f"exit code 0 (0.2s)\n.\n1 passed in 0.01s\n[stderr]\n{warning}") == "1 passed in 0.01s"
+    assert checks.suite_closing_line("exit code 1 (0.2s)\n====== 2 failed, 1 passed in 0.3s ======\n[stderr]\nx") == "2 failed, 1 passed in 0.3s"
+    # When the suite wrote nothing the process's own words are the evidence, and without even those, the header.
+    assert checks.suite_closing_line("exit code 1 (0.1s)\n[stderr]\nModuleNotFoundError: No module named 'pytest'") == "ModuleNotFoundError: No module named 'pytest'"
+    assert checks.suite_closing_line("exit code 5 (0.1s)\nno tests ran in 0.01s\n[pytest found no tests.]") == "[pytest found no tests.]"
+    assert checks.suite_closing_line("exit code 0 (0.1s)") == "exit code 0 (0.1s)" and checks.suite_closing_line("") == ""
 
 
 def test_a_failing_suite_cannot_be_reported_as_passed(harness):

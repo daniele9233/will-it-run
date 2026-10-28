@@ -41,6 +41,22 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
 
 
+def suite_closing_line(output: str) -> str:
+    """The last line of what a test run wrote, for the report's evidence: the suite's summary ("1 passed in 0.2s").
+
+    The ``run_tests`` tool puts the process's stderr after its stdout, so the last line of the whole output can be a plugin's
+    warning (pytest-asyncio's, on a project with no configuration) and not what the suite said. The suite's own lines come first;
+    stderr and the header serve only when it wrote nothing.
+    """
+    stdout, _, stderr = output.partition("\n[stderr]\n")
+    head, _, rest = stdout.partition("\n")
+    for text in (rest if head.startswith("exit code") else stdout, stderr, output):
+        line = next((line.strip(" =") for line in reversed(text.splitlines()) if line.strip(" =")), "")
+        if line:
+            return line
+    return ""
+
+
 def bind_test_verdict(output: dict[str, Any], exit_code: int, closing_line: str) -> dict[str, Any]:
     """Make a test report's ``passed`` say what the last run of the suite said.
 

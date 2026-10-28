@@ -47,6 +47,6 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_teams.py` | 37 | Team builder, model sharing and the resource optimizer. | catalog, core, hardware, lmstudio, teams, workflows |
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
-| `test_workflows.py` | 76 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
+| `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
 Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`

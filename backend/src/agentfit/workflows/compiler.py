@@ -937,8 +937,7 @@ def _run_tool_call(ctx: RunContext, agent: AgentDef, progress: AgentProgress, ca
     if name == "run_tests":
         # Kept for the verdict: a test report says what the suite said, whatever the agent concludes.
         code = _EXIT_CODE.match(output)
-        closing = next((line.strip(" =") for line in reversed(output.splitlines()) if line.strip(" =")), "")
-        progress.test_run = (int(code.group(1)) if code else -1, closing[:160])
+        progress.test_run = (int(code.group(1)) if code else -1, checks.suite_closing_line(output)[:160])
     ctx.emit(
         "tool.call",
         {**event, "status": status, "output": output, "duration": round(time.perf_counter() - started, 2)},

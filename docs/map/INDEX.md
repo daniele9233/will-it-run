@@ -4,7 +4,7 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-174 Python files (42,048 lines) · 879 public symbols · 137 HTTP routes · 23 tables · 42 test files (1025 tests) · 68 UI files (20,480 lines).
+174 Python files (42,063 lines) · 880 public symbols · 137 HTTP routes · 23 tables · 42 test files (1026 tests) · 68 UI files (20,480 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
@@ -24,7 +24,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `lmstudio` | CLI wrapper, REST client, runtime | 6 | 1,364 | core, fit, hardware | `lmstudio.md` |
 | `locales` | Translation catalogs, keyed by the English text. | 2 | 741 |  | `locales.md` |
 | `teams` | AI team builder: specializations, roles, model assignment and resource planning. | 5 | 2,538 | catalog, cloud, core, fit, hardware, lmstudio, workflows | `teams.md` |
-| `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,592 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
+| `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,607 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
 
 ## Other cards
 

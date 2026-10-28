@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "agentfit"
-version = "0.3.0"
+version = "0.3.1"
 description = "Windows local AI model manager, hardware analyzer and LangGraph AI-team builder"
 requires-python = ">=3.11"
 license = { text = "MIT" }

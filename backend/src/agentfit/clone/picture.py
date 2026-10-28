@@ -14,8 +14,9 @@ each phase is made small enough for it, with the numbers kept by code:
 * **measure**: the page is built, shown at the picture's size and compared with the picture, region by region.
 * **refine**: the weakest regions are written again from the crop, the clone's own crop and the score. The new code stays only if the
   next measure is better; if not, the old code comes back.
-* **motion**: GSAP, read from its own skills, adds the intro, the mouse and the hover. It stays only if the page, at rest, still matches
-  the picture: the fidelity of the last frame is the rule of the brief.
+* **motion**: the model chooses the numbers of a fixed GSAP component (the intro, the mouse, the hover), given the few sentences of the
+  design and GSAP skills that bear on that choice. It stays only if the page, at rest, still matches the picture: the fidelity of the
+  last frame is the rule of the brief.
 * **reviewer**: an agent that writes the report for the person from the numbers.
 """
 
@@ -31,7 +32,7 @@ from typing import Any
 
 from agentfit.clone import pipeline, replica
 from agentfit.clone.pipeline import _fail, _step
-from agentfit.clone.skills import SkillStore, prompt_catalog
+from agentfit.clone.skills import SkillStore
 from agentfit.logging_setup import get_logger
 from agentfit.workflows import checks, schemas
 from agentfit.workflows.checks import CheckContext, CheckSpec
@@ -67,6 +68,17 @@ MOTION_TOLERANCE = 0.03
 
 # Set by the app: the skills on this PC.
 skill_store: SkillStore | None = None
+
+# What a step is given from the skills: (skill, phrases that pick its sentences, characters at most). Each pack is pinned to one commit, so
+# a phrase finds the same sentence on every PC. The skills teach a model to write GSAP and to design a page from a free brief; here the
+# code of the motion is a fixed template and the look of the page is a picture, so a step gets only the sentences that bear on its one
+# choice. Composition and refinement get none on purpose: the design skill tells a model to take aesthetic risks, and what they write is a copy.
+GUIDANCE: dict[str, tuple[tuple[str, tuple[str, ...], int], ...]] = {
+    "motion": (
+        ("frontend-design", ("non-user-triggered motion",), 600),
+        ("gsap-core", ("strength of the curve",), 400),
+    ),
+}
 
 RESEARCH = "docs/research/picture"
 REFERENCE_DIR = "docs/reference"
@@ -128,6 +140,24 @@ def answer_of(response: dict[str, Any]) -> str:
 def ask(ctx: CheckContext, messages: list[dict[str, Any]], *, tokens: int = 3500, context: int = 12288) -> str:
     """One call to the workflow's model: the same as the exact copy's (``pipeline.ask_model``)."""
     return pipeline.ask_model(ctx, messages, tokens=tokens, context=context)
+
+
+def guidance(ctx: CheckContext, step: str) -> tuple[str, list[str]]:
+    """The text for a step's prompt from the skills copied into this project, and the skills it came from. Empty when the step has none
+    to read, the skills are not on this PC, or the person left them out."""
+    store = skill_store
+    copied = set((ctx.outputs.get("prepare") or {}).get("skills") or [])
+    notes: list[str] = []
+    sources: list[str] = []
+    for name, phrases, limit in GUIDANCE.get(step, ()):
+        text = store.excerpt(name, phrases, limit) if store is not None and name in copied else ""
+        if text:
+            notes.append(f"From the {name} skill:\n{text}")
+            sources.append(name)
+    if not notes:
+        return "", []
+    return ("Guidance from the skills of this project. It says how to choose, never whether: what the brief asks for is done, and the brief and "
+            "the picture win wherever they disagree.\n\n" + "\n\n".join(notes)), sources
 
 
 # -- the composition -------------------------------------------------------------------------------------------------
@@ -891,9 +921,11 @@ def _motion(check: CheckDef, ctx: CheckContext) -> dict[str, Any]:
         return {"passed": True, "verdict": "SKIPPED", "summary": "The brief asks for no motion."}
     composition = read_json(research(workspace) / "composition.json")
     regions = "\n".join(f"- region {r['id']}: {r['kind']}, z {r['z']}, {r['note']}" for r in composition["regions"])
-    _step(ctx, "motion", "running", "the model chooses the motion")
+    notes, guided_by = guidance(ctx, "motion")
+    _step(ctx, "motion", "running", "the model chooses the motion" + (f", given sentences of {', '.join(guided_by)}" if guided_by else ""))
+    system = MOTION_SYSTEM + (f"\n\n{notes}" if notes else "")
     try:
-        answer = ask(ctx, [{"role": "system", "content": MOTION_SYSTEM}, {"role": "user", "content": f"The brief: {brief.strip()[:900]}\n\nThe regions:\n{regions}"}],
+        answer = ask(ctx, [{"role": "system", "content": system}, {"role": "user", "content": f"The brief: {brief.strip()[:900]}\n\nThe regions:\n{regions}"}],
                      tokens=2500, context=8192)
     except RunCancelled:
         raise
@@ -924,6 +956,7 @@ def _motion(check: CheckDef, ctx: CheckContext) -> dict[str, Any]:
     why = "the build failed" if not ok else "it moved the page at rest" if not kept else ""
     _step(ctx, "motion", "done" if kept else "failed", "kept" if kept else why)
     return {"passed": True, "verdict": "ADDED" if kept else "REVERTED", "kept": kept, "config": config, "accuracy_before": before, "accuracy_after": now,
+            "guided_by": guided_by,
             "summary": (f"GSAP motion added: a {intro['style']} intro of {intro['duration']} s, parallax {config['parallax']['amount']} px, hover lift {config['hover']['lift']} px. "
                         f"The page at rest still matches ({pipeline._percent(now)} against {pipeline._percent(before)})." if kept
                         else f"The motion was chosen but not kept: {why}.")}
@@ -984,10 +1017,6 @@ def register() -> None:
     for name, (run, label, description) in table.items():
         checks.CHECKS[f"picture_{name}"] = CheckSpec(kind=f"picture_{name}", label=label, description=description, run=run,
                                                      defaults={"brief": "", "reference": "", "title": "", "language": "en", "skills": None}, listed=False)
-
-
-def skills_prompt(store: SkillStore | None) -> str:
-    return prompt_catalog(store.catalog()) if store is not None else ""
 
 
 register()

@@ -214,8 +214,8 @@ class Skills:
         (workspace / ".skills" / "gsap-core" / "SKILL.md").write_text("# gsap", encoding="utf-8")
         return [self.skill]
 
-    def body(self, name: str, limit: int = 6000) -> str:
-        return f"The guide of {name}."
+    def excerpt(self, name: str, phrases: tuple[str, ...], limit: int = 800) -> str:
+        return f"A sentence of {name} about {phrases[0]}."
 
 
 def prepared(workspace: Path) -> dict[str, Any]:
@@ -454,6 +454,45 @@ def test_motion_that_moves_the_page_at_rest_is_taken_out_again(tmp_path, engine,
     out = picture._motion(check_of("motion", brief="intro e parallax"), motion_ctx(tmp_path, "x", MOTION))
     assert out["verdict"] == "REVERTED" and not (tmp_path / "src/components/Motion.tsx").exists() and "<Motion" not in (tmp_path / "src/app/page.tsx").read_text(encoding="utf-8")
     assert builds == [1, 1] and "it moved the page at rest" in out["summary"]
+
+
+def guided_motion(tmp_path: Path, monkeypatch: Any, copied: list[str]) -> tuple[dict[str, Any], list[Any]]:
+    """The motion step with a store that holds the design and GSAP skills, and a project that has ``copied`` of them; what the model was sent."""
+    monkeypatch.setattr(picture, "_build", lambda c, install: (True, []))
+    monkeypatch.setattr(picture, "_measure_once", lambda c, label, settle_ms=800: report(0.89, {1: 1.0}))
+    monkeypatch.setattr(picture, "skill_store", Skills(tmp_path))
+    sent: list[Any] = []
+    ctx = compose_ctx(tmp_path, lambda slot, messages, **o: sent.append(messages) or answer(MOTION))
+    ctx.outputs["measure"] = {"accuracy": 0.9}
+    ctx.outputs["prepare"]["skills"] = copied
+    return picture._motion(check_of("motion", brief="con animazioni e parallax"), ctx), sent
+
+
+def test_the_motion_is_chosen_with_the_sentences_of_the_skills_copied_into_the_project(tmp_path, engine, monkeypatch):
+    out, sent = guided_motion(tmp_path, monkeypatch, ["frontend-design", "gsap-core", "threejs-web"])
+    system = sent[0][0]["content"]
+    assert out["verdict"] == "ADDED" and out["guided_by"] == ["frontend-design", "gsap-core"]
+    assert system.startswith(picture.MOTION_SYSTEM) and "the brief and the picture win wherever they disagree" in system
+    assert "From the frontend-design skill:\nA sentence of frontend-design about non-user-triggered motion." in system
+    assert "From the gsap-core skill:\nA sentence of gsap-core about strength of the curve." in system and "threejs" not in system
+
+
+def test_a_skill_the_person_left_out_of_the_project_gives_the_motion_nothing(tmp_path, engine, monkeypatch):
+    out, sent = guided_motion(tmp_path, monkeypatch, ["gsap-core"])
+    assert out["guided_by"] == ["gsap-core"] and "frontend-design" not in sent[0][0]["content"]
+    out, sent = guided_motion(tmp_path / "b", monkeypatch, [])
+    assert out["verdict"] == "ADDED" and out["guided_by"] == [] and sent[0][0]["content"] == picture.MOTION_SYSTEM
+
+
+def test_the_composition_and_its_rewrites_are_given_no_guidance_from_the_skills(tmp_path, engine, monkeypatch):
+    monkeypatch.setattr(picture, "_build", lambda ctx, install: (True, []))
+    monkeypatch.setattr(picture, "skill_store", Skills(tmp_path))
+    asked: list[Any] = []
+    ctx = compose_ctx(tmp_path, lambda slot, messages, **o: asked.append(messages) or answer(GOOD))
+    ctx.outputs["prepare"]["skills"] = ["frontend-design", "gsap-core"]
+    picture._compose(check_of("compose", brief="un sito"), ctx)
+    assert asked and all("Guidance from the skills" not in m["content"] for messages in asked for m in messages if isinstance(m["content"], str))
+    assert picture.guidance(ctx, "compose") == ("", []) and picture.guidance(ctx, "refine") == ("", [])
 
 
 def test_motion_is_skipped_when_the_brief_does_not_ask_for_it_or_the_answer_has_no_numbers(tmp_path, engine, monkeypatch):

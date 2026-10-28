@@ -2,14 +2,14 @@
 
 A skill is what a person installs for a coding agent in the terminal: GSAP's own instructions for animating, a design
 brief that keeps a page from looking templated, Vercel's rules for React and for interfaces, Three.js scenes, driving a browser
-to test a page. They are the same files here, in the layout a coding agent expects, so a model of this app reads them the
-way the author wrote them.
+to test a page. They are the same files here, in the layout a coding agent expects, so what a step quotes from them is what
+the author wrote.
 
 Nothing of them is shipped with this program. Each pack is fetched on the PC with Git at one exact commit (Git checks the
 content against the commit's hash, so a repository that changed can never reach a run) and kept, with the licence of its
 author, under the app's data folder as ``<owner>__<repo>@<commit>``. A run copies the skills it wants into its own project
-(``.skills/<name>/``), where the model reads them with the file tools it already has: only the one-line descriptions go in its
-prompt, the rest is read when needed, because a small model's context is the scarcest thing it has.
+(``.skills/<name>/``), for whoever continues the work there. The model of a step is not given a whole skill, which would fill
+a small model's context: it is given the few sentences of one that bear on the choice the step asks of it (``excerpt``).
 """
 
 from __future__ import annotations
@@ -258,19 +258,52 @@ class SkillStore:
             copied.append(skill)
         return copied
 
-    def body(self, name: str, limit: int = 6000) -> str:
-        """The text of a skill without its header, cut to ``limit`` characters: what goes in front of a model."""
+    def excerpt(self, name: str, phrases: tuple[str, ...], limit: int = 800) -> str:
+        """The sentences of an installed skill that contain one of ``phrases``, one to a line and never more than ``limit`` characters:
+        what a step puts in front of a small model. Empty when the skill is not on this PC or has none of them."""
         skill = self.find(name)
         if skill is None:
             return ""
-        text = strip_frontmatter((skill.folder / "SKILL.md").read_text(encoding="utf-8-sig", errors="replace")).strip()
-        return text if len(text) <= limit else text[:limit].rsplit("\n", 1)[0] + "\n[...]"
+        return pick((skill.folder / "SKILL.md").read_text(encoding="utf-8-sig", errors="replace"), phrases, limit)
 
 
-def prompt_catalog(skills: list[Skill]) -> str:
-    """The skills a model may read, one line each, for its prompt. Empty when there are none."""
-    if not skills:
-        return ""
-    lines = "\n".join(f"- {SKILLS_FOLDER}/{s.name}/SKILL.md: {s.description[:160]}" for s in skills)
-    return ("## Skills\nThese guides are in the project. Read one with `read_file` before the work it is about, not all of them: "
-            f"your memory is small.\n{lines}")
+def units(text: str) -> list[str]:
+    """The paragraphs and bullets of a skill's text, each on one line. Its header, headings, tables and code are left out."""
+    out: list[str] = []
+    current: list[str] = []
+
+    def flush() -> None:
+        if current:
+            out.append(" ".join(current))
+            current.clear()
+
+    fenced = False
+    for line in strip_frontmatter(text).splitlines():
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            flush()
+            fenced = not fenced
+        elif fenced or not stripped or stripped.startswith(("#", "|")):
+            flush()
+        else:
+            if re.match(r"([-*]|\d+\.)\s", stripped):
+                flush()
+            current.append(stripped)
+    flush()
+    return out
+
+
+def pick(text: str, phrases: tuple[str, ...], limit: int) -> str:
+    """The units of ``text`` that contain one of ``phrases`` (from the start of a word, so ``ease`` finds ``eases`` and not ``release``), in
+    their order and as long as they fit: a unit is whole or left out, and the first that does not fit ends the excerpt."""
+    wanted = re.compile(r"\b(?:" + "|".join(re.escape(p) for p in phrases) + ")", flags=re.IGNORECASE) if phrases else None
+    lines: list[str] = []
+    size = 0
+    for unit in units(text):
+        if wanted is None or not wanted.search(unit):
+            continue
+        if size + len(unit) + 1 > limit:
+            break
+        lines.append(unit)
+        size += len(unit) + 1
+    return "\n".join(lines)

@@ -89,7 +89,7 @@ their respective owners. Will It Run is not affiliated with or endorsed by any o
 
 The skills of a coding agent are fetched from GitHub on the user's PC, at one pinned commit each, with Git
 (`backend/src/agentfit/clone/skills.py`), and kept with the licence of their authors under the app's data folder.
-Will It Run does not ship their files; a run copies the ones it uses into the project it builds, for the model to read.
+Will It Run does not ship their files; a run copies the ones it uses into the project it builds, and a step of the run is given a few sentences of them (quoted in its prompt, from the pinned commit).
 
 - **greensock/gsap-skills**, commit `aed9cfd32777`: MIT, GreenSock.
 - **anthropics/skills** (`frontend-design`), commit `dbd4588f9e10`: Apache-2.0, Anthropic.

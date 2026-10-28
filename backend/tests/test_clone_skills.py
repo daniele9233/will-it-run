@@ -18,7 +18,7 @@ from agentfit.clone.skills import PACK_BY_ID, PACKS, SkillPack, SkillsError, Ski
 HEADER = '---\nname: {name}\ndescription: >-\n  {description}\n  and a second line.\n---\n\n# {name}\n\n{body}\n'
 
 
-def git_that_serves(pack: SkillPack, calls: list[list[str]], *, commit: str | None = None, leave_out: tuple[str, ...] = ()):
+def git_that_serves(pack: SkillPack, calls: list[list[str]], *, commit: str | None = None, leave_out: tuple[str, ...] = (), body: str = "Use it well. " * 400):
     """A Git that checks out ``pack`` as the repository holds it: its skills, a licence and a README nobody needs."""
 
     def run(args: list[str], cwd: Path | None, timeout: float) -> subprocess.CompletedProcess[str]:
@@ -30,7 +30,7 @@ def git_that_serves(pack: SkillPack, calls: list[list[str]], *, commit: str | No
                     continue
                 folder = cwd / pack.root / name
                 (folder / "references").mkdir(parents=True)
-                (folder / "SKILL.md").write_text(HEADER.format(name=name, description=f"How to {name}", body="Use it well. " * 400), encoding="utf-8")
+                (folder / "SKILL.md").write_text(HEADER.format(name=name, description=f"How to {name}", body=body), encoding="utf-8")
                 (folder / "references" / "more.md").write_text("more", encoding="utf-8")
             (cwd / pack.root / "other-skill").mkdir(parents=True)
             (cwd / pack.root / "other-skill" / "SKILL.md").write_text("---\nname: other-skill\n---\n", encoding="utf-8")
@@ -99,8 +99,6 @@ def test_the_catalog_reads_each_skills_name_and_one_line_description(tmp_path):
     (item,) = store.catalog()
     assert item.name == "frontend-design" and item.description == "How to frontend-design and a second line." and item.pack == "frontend-design"
     assert store.find("frontend-design") is not None and store.find("nope") is None
-    line = skills.prompt_catalog([item])
-    assert ".skills/frontend-design/SKILL.md: How to frontend-design" in line and "read_file" in line and skills.prompt_catalog([]) == ""
 
 
 def test_skills_are_copied_into_the_project_for_the_model_to_read(tmp_path):
@@ -113,12 +111,60 @@ def test_skills_are_copied_into_the_project_for_the_model_to_read(tmp_path):
     assert len(store.copy_into(project)) == 2
 
 
-def test_the_text_of_a_skill_comes_without_its_header_and_cut_to_the_room_there_is(tmp_path):
-    store = SkillStore(tmp_path, git=git_that_serves(PACK_BY_ID["frontend-design"], []))
+GUIDE = """---
+name: guide
+description: A guide.
+---
+
+# Guide
+
+Apply it when you release a page. It talks about eases, and a release is not one.
+
+## Easing
+
+- **duration**: seconds (default 0.5).
+- **ease**: a string. Prefer built-in: `"power1.out"`, and
+  `"power3.out"` for an entrance.
+- **repeat**: a number.
+
+```javascript
+ease: "power1.out"   // the ease of a code block is not guidance
+```
+
+| ease | strength |
+|------|----------|
+| power1 | gradual |
+
+Motion is used sparingly. One orchestrated moment lands better than scattered effects.
+
+Another paragraph about something else.
+"""
+
+
+def test_the_sentences_of_a_skill_about_a_choice_come_one_to_a_line_without_headings_tables_or_code():
+    text = skills.pick(GUIDE, ("ease", "non-existent"), 2000)
+    # A bullet is a unit with its continuation lines; "release" is not "ease"; the code and the table are not guidance.
+    assert text.splitlines() == ['Apply it when you release a page. It talks about eases, and a release is not one.',
+                                 '- **ease**: a string. Prefer built-in: `"power1.out"`, and `"power3.out"` for an entrance.']
+    assert skills.pick(GUIDE, ("motion",), 2000) == "Motion is used sparingly. One orchestrated moment lands better than scattered effects."
+    assert skills.pick(GUIDE, (), 2000) == "" and skills.pick(GUIDE, ("zebra",), 2000) == ""
+    assert "name: guide" not in skills.pick(GUIDE, ("guide",), 2000)
+
+
+def test_an_excerpt_is_whole_units_that_fit_the_room_there_is(tmp_path):
+    first, second = "- **duration**: seconds (default 0.5).", "- **ease**: a string. Prefer built-in: `\"power1.out\"`, and `\"power3.out\"` for an entrance."
+    both = skills.pick(GUIDE, ("duration", "built-in"), 2000)
+    assert both.splitlines() == [first, second]
+    # The first unit that does not fit ends the excerpt, and nothing is cut in the middle.
+    assert skills.pick(GUIDE, ("duration", "built-in"), len(first) + 2) == first
+    assert skills.pick(GUIDE, ("duration",), 5) == ""
+
+
+def test_a_stored_skill_gives_its_excerpt_and_a_missing_one_gives_nothing(tmp_path):
+    store = SkillStore(tmp_path, git=git_that_serves(PACK_BY_ID["frontend-design"], [], body="Use it well.\n\nThen stop.\n"))
     store.ensure(PACK_BY_ID["frontend-design"])
-    text = store.body("frontend-design", limit=300)
-    assert text.startswith("# frontend-design") and "description:" not in text and text.endswith("[...]") and len(text) < 340
-    assert store.body("missing") == ""
+    assert store.excerpt("frontend-design", ("well", "stop"), 100) == "Use it well.\nThen stop."
+    assert store.excerpt("frontend-design", ("zebra",), 100) == "" and store.excerpt("missing", ("well",), 100) == ""
 
 
 def test_status_says_which_packs_are_on_this_pc(tmp_path):

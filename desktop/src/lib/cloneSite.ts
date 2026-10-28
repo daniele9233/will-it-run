@@ -150,7 +150,7 @@ const pictureText = (): Record<string, { label: string; what: string }> => ({
   compose: { label: t("Compose"), what: t("the model writes one component for each region from its crop") },
   measure: { label: t("Measure"), what: t("shows the page at the picture's size and compares it, region by region") },
   refine: { label: t("Refine"), what: t("the weakest regions are written again; the old code comes back if it is not better") },
-  motion: { label: t("Motion"), what: t("GSAP, from its skills: kept only if the page at rest still matches") },
+  motion: { label: t("Motion"), what: t("GSAP, with numbers the model chooses: kept only if the page at rest still matches") },
   reviewer: { label: t("Reviewer"), what: t("an agent reports on the result, from the numbers") },
 });
 

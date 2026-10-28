@@ -48,14 +48,14 @@ function SkillsCard() {
   return (
     <div className="clone-card grid content-start gap-2 p-4" aria-label={t("Skills")}>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="clone-label">{t("Skills the model can read")}</span>
+        <span className="clone-label">{t("Agent skills")}</span>
         {data && !data.ready && !running && (
           <Button size="sm" variant="primary" loading={busy} onClick={install}>{t("Install the skills")}</Button>
         )}
         {running && <span className="flex items-center gap-1.5 text-2xs text-warn"><Loader2 size={12} className="animate-spin" aria-hidden />{t("Fetching from GitHub")}</span>}
       </div>
       <p className="text-xs leading-relaxed text-ink-2">
-        {t("The skills of a coding agent, fetched from GitHub at one exact version each and copied into the project, where the model reads the ones it needs. {n} installed.", { n: count })}
+        {t("The skills of a coding agent, fetched from GitHub at one exact version each. A run keeps a copy in the project, and the step that chooses the motion is given the sentences of them that bear on that choice. {n} installed.", { n: count })}
       </p>
       {data && (
         <ul className="grid gap-1 sm:grid-cols-2">

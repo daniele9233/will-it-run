@@ -1856,13 +1856,13 @@ shows the page at the picture's size and compares it, region by region ||| mostr
 Refine ||| Rifinisci
 the weakest regions are written again; the old code comes back if it is not better ||| le regioni più deboli vengono riscritte; il vecchio codice torna se non è migliore
 Motion ||| Movimento
-GSAP, from its skills: kept only if the page at rest still matches ||| GSAP, dalle sue skill: resta solo se la pagina ferma coincide ancora
+GSAP, with numbers the model chooses: kept only if the page at rest still matches ||| GSAP, con i numeri scelti dal modello: resta solo se la pagina ferma coincide ancora
 Reviewer ||| Revisore
 an agent reports on the result, from the numbers ||| un agente riferisce sul risultato, dai numeri
 From a picture ||| Da un'immagine
 A site written from a reference picture, with local models ||| Un sito scritto da un'immagine di riferimento, con modelli locali
 every region measured against the picture ||| ogni regione misurata contro l'immagine
-A model that sees reads the picture and writes its composition; then it writes one component for each region, looking at that region. Code places the regions, builds the page, shows it at the picture's size and compares it with the picture; a rewrite stays only if the measure says it is better. GSAP motion, written from the GSAP skills, stays only if the page at rest still matches the picture. ||| Un modello che vede legge l'immagine e ne scrive la composizione; poi scrive un componente per ogni regione, guardando quella regione. Il codice posiziona le regioni, compila la pagina, la mostra alla dimensione dell'immagine e la confronta con l'immagine; una riscrittura resta solo se la misura dice che è migliore. Il movimento GSAP, scritto dalle skill di GSAP, resta solo se la pagina ferma coincide ancora con l'immagine.
+A model that sees reads the picture and writes its composition; then it writes one component for each region, looking at that region. Code places the regions, builds the page, shows it at the picture's size and compares it with the picture; a rewrite stays only if the measure says it is better. GSAP motion, with the numbers the model chooses, stays only if the page at rest still matches the picture. ||| Un modello che vede legge l'immagine e ne scrive la composizione; poi scrive un componente per ogni regione, guardando quella regione. Il codice posiziona le regioni, compila la pagina, la mostra alla dimensione dell'immagine e la confronta con l'immagine; una riscrittura resta solo se la misura dice che è migliore. Il movimento GSAP, con i numeri scelti dal modello, resta solo se la pagina ferma coincide ancora con l'immagine.
 The picture is read again and the site is written again from it, then measured. ||| L'immagine viene riletta e il sito viene riscritto da essa, poi misurato.
 What each step found ||| Che cosa ha trovato ogni passo
 Report ||| Rapporto
@@ -1871,10 +1871,10 @@ weak region → rewrite → measure again ||| regione debole → riscrittura →
 Over the regions the model wrote: {built}. {share} of the picture is its own crops (photographs, and regions the model could not write), not built. ||| Sulle regioni scritte dal modello: {built}. {share} dell'immagine sono i suoi stessi ritagli (fotografie e regioni che il modello non ha saputo scrivere), non costruiti.
 The skills could not be installed ||| Non è stato possibile installare le skill
 Skills ||| Skill
-Skills the model can read ||| Skill che il modello può leggere
+Agent skills ||| Skill degli agenti
 Install the skills ||| Installa le skill
 Fetching from GitHub ||| Scarico da GitHub
-The skills of a coding agent, fetched from GitHub at one exact version each and copied into the project, where the model reads the ones it needs. {n} installed. ||| Le skill di un agente di programmazione, scaricate da GitHub a una versione esatta ciascuna e copiate nel progetto, dove il modello legge quelle che gli servono. {n} installate.
+The skills of a coding agent, fetched from GitHub at one exact version each. A run keeps a copy in the project, and the step that chooses the motion is given the sentences of them that bear on that choice. {n} installed. ||| Le skill di un agente di programmazione, scaricate da GitHub a una versione esatta ciascuna. Ogni esecuzione ne tiene una copia nel progetto, e al passo che sceglie il movimento vengono date le frasi che riguardano quella scelta. {n} installate.
 That file is not a picture ||| Quel file non è un'immagine
 Choose a PNG, JPEG, WebP or GIF file. ||| Scegli un file PNG, JPEG, WebP o GIF.
 The site could not start ||| Il sito non è partito

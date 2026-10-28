@@ -4,7 +4,7 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-174 Python files (41,986 lines) · 878 public symbols · 137 HTTP routes · 23 tables · 42 test files (1020 tests) · 68 UI files (20,480 lines).
+174 Python files (42,048 lines) · 879 public symbols · 137 HTTP routes · 23 tables · 42 test files (1025 tests) · 68 UI files (20,480 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
@@ -15,7 +15,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `benchmark` | Local measurement | 1 | 237 | core, hardware, lmstudio | `benchmark.md` |
 | `brain` | The Project Brain: the permanent memory of each project. | 13 | 3,050 | core | `brain.md` |
 | `catalog` | Discovery, search, classification, scoring | 8 | 1,655 | core, fit, hardware, lmstudio | `catalog.md` |
-| `clone` | Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by the model the person chooses). | 15 | 4,917 | core, workflows | `clone.md` |
+| `clone` | Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by the model the person chooses). | 15 | 4,979 | core, workflows | `clone.md` |
 | `cloud` | Cloud models (Claude, ChatGPT, DeepSeek, Gemini) next to the local ones. | 5 | 1,115 | core | `cloud.md` |
 | `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 32 | 3,762 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
 | `fit` | Quantization tables, memory, speed, fit categories | 6 | 1,005 | core, hardware | `fit.md` |

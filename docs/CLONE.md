@@ -153,9 +153,11 @@ keeps the numbers (`picture.py`, `picture.mjs`):
    crops, so that a page made of photographs cannot pass for a built one.
 5. **refine** (the model): the weakest regions (under 85%, three at most, two rounds) are written again from the crop, the clone's own
    crop and the score. The new code stays only if the next measure is better; if not, the old code comes back.
-6. **motion** (the model chooses numbers; a fixed component animates): the model reads the brief and answers with a few numbers (the style
-   and length of the intro, how far the mouse parallax goes, the depth of the hover shadow), clamped to what the component allows. The
-   component is a GSAP one written from the GSAP skills (`gsap-react`: one `gsap.context`, reverted when the component goes;
+6. **motion** (the model chooses numbers; a fixed component animates): the model reads the brief, and two sentences of the skills copied
+   into the project (the design skill's on using motion sparingly, the GSAP skill's on how steep each ease is: `GUIDANCE` in
+   `picture.py`, "it says how to choose, never whether"), and answers with a few numbers (the style and length of the intro, how far
+   the mouse parallax goes, the depth of the hover shadow), clamped to what the component allows. The step's result says which skills
+   it was given (`guided_by`). The component is a GSAP one written from the GSAP skills (`gsap-react`: one `gsap.context`, reverted when the component goes;
    `gsap-performance`: transforms and opacity only), animates the *content* of each region so that its box keeps its place and
    rotation, clears everything it set when it ends, waits for the intro before answering the pointer, and does nothing for a visitor who
    asks for reduced motion. The page is measured when the intro is over and it stays only if it still matches the picture, within 3
@@ -187,11 +189,16 @@ The skills of a coding agent, fetched from GitHub on this PC at an exact commit 
 | threejs | cesartevisual/threejs-skills `84f9bcb4bea1` | MIT | threejs-web, -scene, -materials, -lighting, -assets, -animation, -interaction, -r3f, -html, -performance, -testing |
 | playwright | microsoft/playwright-cli `b1a5903c5b63` | Apache-2.0 | playwright-cli |
 
-`GET /api/clone/skills` lists them and `POST /api/clone/skills/install` fetches them in the background. A run copies the skills it
-wants into its project (`.skills/<name>/`), where the model reads them with `read_file`; only a one-line description of each goes in
-its prompt, because a small model's context is the scarcest thing it has. The Playwright CLI itself is not installed (no global npm
-package): the app drives the browser with its own scripts, and the skill is there to be read. (`npm install -g cli@latest`, in the
-script these skills came from, installs an unrelated package named `cli`; the Playwright one is `@playwright/cli`.)
+`GET /api/clone/skills` lists them and `POST /api/clone/skills/install` fetches them in the background; a build from a picture
+fetches them by itself when none is on the PC (Git is needed), and they are fetched once: later runs only copy. A run copies the skills
+it wants into its project (`.skills/<name>/`), for whoever continues the work there. The model of a step is **not** given a skill:
+that would fill the context of a small model, and the skills are written for a coding agent that writes GSAP and designs a page from
+a free brief, while here the motion is a fixed template and the look is a picture. A step is given the few sentences of a skill that
+bear on its one choice (`SkillStore.excerpt`, found by a phrase, which is stable because the commit is pinned). Today that is the
+motion step only; composition and refinement get none, because the design skill tells a model to take aesthetic risks and what they
+write is a copy. The exact copy uses no skill. The Playwright CLI itself is not installed (no global npm package): the app drives the
+browser with its own scripts. (`npm install -g cli@latest`, in the script these skills came from, installs an unrelated package named
+`cli`; the Playwright one is `@playwright/cli`.)
 
 ## Where the project goes
 

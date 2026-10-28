@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "url": "https://www.footer.design/",
+  "host": "www.footer.design",
+  "captured_at": "2026-10-28T18:44:31.463Z",
+  "viewport": [
+    1440,
+    900
+  ],
+  "framework": "webflow",
+  "libs": [
+    {
+      "name": "jQuery",
+      "evidence": [
+        "window.jQuery"
+      ]
+    }
+  ],
+  "tokens": {
+    "palette": [
+      {
+        "hex": "#f8f8f8",
+        "share": 0.4794,
+        "role": "background",
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#202020",
+        "share": 0.3207,
+        "role": "text",
+        "also": [],
+        "contrast": 15.34
+      },
+      {
+        "hex": "#707070",
+        "share": 0.1993,
+        "role": "muted",
+        "also": [],
+        "contrast": 4.66
+      },
+      {
+        "hex": "#f0f0f0",
+        "share": 0.0006,
+        "role": "line",
+        "also": [],
+        "contrast": 1.07
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Inter",
+        "share": 1.0,
+        "weights": [
+          500,
+          600,
+          400
+        ]
+      },
+      {
+        "family": "webflow-icons",
+        "share": 0.0,
+        "weights": []
+      }
+    ],
+    "type_scale": [
+      14.0,
+      18.0,
+      32.0
+    ],
+    "spacing": [
+      8.0,
+      10.0,
+      12.0,
+      13.0,
+      16.0,
+      20.0,
+      24.0,
+      40.0
+    ],
+    "radii": [
+      4.0,
+      999.0
+    ],
+    "shadows": null,
+    "container_px": 1600,
+    "breakpoints": [
+      320,
+      479,
+      767,
+      768,
+      991,
+      992,
+      1279,
+      1280
+    ]
+  },
+  "sections": [
+    {
+      "index": 1,
+      "tag": "header",
+      "role": "header",
+      "height_px": 73,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 0,
+      "video": 0,
+      "canvas": 0,
+      "svg": 1,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 2,
+      "tag": "section",
+      "role": "hero",
+      "height_px": 752,
+      "heading_px": 32.0,
+      "heading_vw": 2.22,
+      "img": 2,
+      "video": 0,
+      "canvas": 0,
+      "svg": 1,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 3,
+      "tag": "section",
+      "role": "gallery",
+      "height_px": 3052,
+      "heading_px": 14.0,
+      "heading_vw": 0.97,
+      "img": 48,
+      "video": 0,
+      "canvas": 0,
+      "svg": 25,
+      "columns": 3,
+      "cards": 23,
+      "card_height_px": 336,
+      "gap_px": 40
+    },
+    {
+      "index": 4,
+      "tag": "footer",
+      "role": "footer",
+      "height_px": 68,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 0,
+      "video": 0,
+      "canvas": 0,
+      "svg": 0,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 5,
+      "tag": "aside",
+      "role": "content",
+      "height_px": 423,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 1,
+      "video": 0,
+      "canvas": 0,
+      "svg": 0,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    }
+  ],
+  "motion": {
+    "transitions": [
+      {
+        "duration_ms": 150,
+        "easing": "ease",
+        "count": 39
+      }
+    ],
+    "keyframes": [
+      "spin"
+    ],
+    "sticky": 2,
+    "fixed": 2,
+    "scroll_snap": false,
+    "scroll_timeline": false,
+    "view_transitions": false,
+    "smooth_scroll": "none",
+    "backdrop": 4,
+    "blur": 0,
+    "mask": 0,
+    "clip_path": 1,
+    "blend": 0,
+    "videos": {
+      "count": 0,
+      "loop": 0,
+      "muted": 0,
+      "autoplay": 0,
+      "preload_none": 0,
+      "playing_without_autoplay": 0
+    },
+    "canvases": [],
+    "lottie": 0
+  },
+  "patterns": {
+    "chip_filters": true,
+    "dialog": false,
+    "carousel": false,
+    "masonry": false,
+    "sticky_header": true,
+    "newsletter_form": false
+  },
+  "probes": {
+    "scroll": {
+      "sampled": 43,
+      "parallax_like": 0,
+      "pinned": 8
+    },
+    "hover": {
+      "sampled": 6,
+      "changed": 0,
+      "plays_video": 0,
+      "props": []
+    }
+  },
+  "limits": [
+    {
+      "code": "stylesheet_unreadable",
+      "count": 1
+    }
+  ]
+}

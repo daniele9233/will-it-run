@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" class="lenis lenis-smooth"><head><meta charset="utf-8"><title>DNA fixture</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#101010;color:#f0f0f0}
+header{position:sticky;top:0;height:64px;backdrop-filter:blur(8px);background:rgba(16,16,16,.6);z-index:5}
+.hero{position:relative;height:900px;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero h1{position:relative;font-size:96px;margin:0;padding:200px 40px}
+.v{height:600px}
+.chips{display:flex;gap:8px;padding:20px 40px}
+.chips button{height:36px;padding:0 16px;border-radius:18px;border:1px solid #888;background:none;color:#fff}
+.cards{list-style:none;margin:0;padding:20px 40px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.cards .card{height:220px;transition:transform .3s ease}
+.cards .card:hover{transform:scale(1.05)}
+.cards span{color:oklch(0.7 0 0)}
+.cards img{width:100%;height:160px;display:block;background:#333}
+.marquee{animation:marquee-x 10s linear infinite;white-space:nowrap}
+@keyframes marquee-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+footer{height:200px;background:#222}
+.mas{display:flex;gap:20px;padding:20px 40px}
+.mas .col{flex:1}
+.mas article{height:200px;margin-bottom:16px;background:#2a2a2a}
+.menu{display:flex;gap:12px;padding:8px 40px}.menu a{display:block;height:32px;width:80px;color:#fff}
+.snap-x{scroll-snap-type:x proximity}
+</style></head><body>
+<header><nav>Menu</nav></header>
+<main>
+<div class="menu"><a href="#a">Work</a><a href="#b">About</a><a href="#c">Journal</a><a href="#d">Contact</a></div>
+<section class="hero"><canvas id="gl"></canvas><h1>Studio</h1></section>
+<section class="v"><video muted loop playsinline width="320" height="180" preload="none"></video><div class="marquee">Keep moving Keep moving Keep moving</div></section>
+<section class="gal"><div class="chips"><button>All</button><button>Brand</button><button>Web</button><button>Motion</button></div>
+<ul class="cards">
+<li class="card"><a href="#c0"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 0</span></a></li>
+<li class="card"><a href="#c1"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 1</span></a></li>
+<li class="card"><a href="#c2"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 2</span></a></li>
+<li class="card"><a href="#c3"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 3</span></a></li>
+<li class="card"><a href="#c4"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 4</span></a></li>
+<li class="card"><a href="#c5"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 5</span></a></li>
+<li class="card"><a href="#c6"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 6</span></a></li>
+<li class="card"><a href="#c7"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 7</span></a></li>
+<li class="card"><a href="#c8"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 8</span></a></li>
+<li class="card"><a href="#c9"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><span>Card 9</span></a></li>
+</ul></section>
+<section class="mas"><div class="col"><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article></div><div class="col"><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article></div><div class="col"><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article><article class="a"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:100%;height:100%"></article></div></section>
+</main>
+<footer>Footer</footer>
+<next-route-announcer></next-route-announcer>
+<script src="vendor.js"></script>
+<script>
+var gl = document.getElementById("gl");
+var ctx = gl.getContext("webgl2") || gl.getContext("webgl");
+</script>
+</body></html>

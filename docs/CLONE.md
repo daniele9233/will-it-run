@@ -1,11 +1,12 @@
 # Clone a site
 
-An address in, a Next.js project on this PC out. There are three ways to get one, and the first is the one to use:
+An address in, a Next.js project on this PC out. There are three ways to get one, and the first is the one to use; a fourth mode, **Study**, builds nothing and measures a site instead:
 
 | Way | What makes the page | Needs a model | Use it for |
 |---|---|---|---|
 | **Exact copy** (default) | Chrome's own rendering of the page, frozen; code builds and measures the project | No for the copy; yes for the names and the fixes | A site you own (a migration, lost source code), or to learn how a site is built |
 | **From a picture** | A model that sees writes the page region by region from a reference picture; code places, builds and measures it | A model that sees | A design that exists only as an image, with motion added by GSAP |
+| **Study** | Code only: Chrome opens the site, a script measures it (Site DNA), Python reads the numbers and composes a master prompt | No | A prompt for your own coding agent (Claude Code, Codex, a local one) to rebuild the look and motion of a reference, with measured values and the reason for every choice |
 | **Agent rebuilds it (kit)** | A model follows the skill of [ai-site-cloner](https://github.com/Mahanaicoach/ai-site-cloner) | A strong one: a cloud model, or a local one with a large context | The first version of this page, kept for the models it works with |
 
 Check a site's terms first: its text, logos and brand belong to its owner. This is not legal advice.
@@ -176,6 +177,61 @@ Its tools (`browser_*`, `download_asset`, `look`, `run_command` with a fixed lis
 `ask_user`, and the file tools) and its guards (passes of 150 rounds, the reading tools taken away after 20 rounds without a change
 in the project) are in `studio.py`, `tools.py` and `prompts.py`. Use a model with at least 32k tokens of context, or a cloud model.
 
+## Master prompts
+
+A library of prompts for a coding agent that builds or restyles a website: one Markdown file for each prompt in
+`backend/src/agentfit/clone/prompt_library/`, each about one thing (a gallery with filter chips, a card that plays a video on hover,
+smooth scroll with Lenis and GSAP, how to study a reference, a look-and-fix loop). The text of a prompt is English because it is sent to a
+model; its title and summary carry their Italian in the file (`title_it`, `summary_it`). The rules every prompt shares (the gates, the asset
+policy, the hard lines, the checks, what to deliver) are written once in `shared.md`. The prompts are original: nothing is copied from sceneai.art
+or from the examples and media of MotionSites.
+
+**Shipped today: five pilot prompts**, B01 (gallery with chip filters), B02 (card hover video), C01 (smooth scroll, Lenis and GSAP), F01 (study a
+reference grammar) and F03 (look and fix loop). The plan is fifty; **the other 45 are planned, not shipped**, and nothing in the program says
+otherwise. Each file is checked when the library loads (`clone/library.py`): every problem is reported at once, a file with a byte order
+mark or CRLF line endings loads and hashes the same, a recipe is at most 6,000 characters and `shared.md` at most 3,000. A prompt records the
+libraries it names with the version that was looked up, and the skills it cites (`taste-skill`, `motionsites-web-builder`, `impeccable`,
+`playwright-cli`). `proofs.json` records the prompts that were tried with a real builder; it is empty now, so every card says "Not tested yet".
+A prompt is not claimed to work until a builder has used it and a measure says so.
+
+The **Master prompts** tab lists the library (`GET /api/clone/prompts`, `GET /api/clone/prompts/{id}`) and copies one prompt on its own, with every
+placeholder written `UNKNOWN`. From a study the tab composes one prompt (below). `/api/clone/prompts*` is registered before `/api/clone/{study_id}`.
+
+### The composer
+
+`clone/compose.py` is code, not a model. A table of rules says what the Site DNA must show to recommend a recipe (today three rules: B02 when the
+page has a gallery of looping muted videos, B01 when it has chip filters, C01 when it uses Lenis); F01 and F03 are always in. `compose` writes the
+opening, one `## Site DNA` block, the chosen recipes and the shared rules, and returns the reason for each recipe, the ones it dropped and the token
+count. At most six are recommended; the prompt is at most 12,000 estimated tokens (characters divided by four); when it is over, recipes are dropped
+from the end of the order and named, and if the two that are always in still do not fit, the answer says `over_budget`. The measured values are
+stated **once**, in the Site DNA block: a placeholder in a recipe becomes "see Site DNA, palette". A value that was not measured reads `UNKNOWN`;
+the composer never invents one. `POST /api/clone/{id}/compose` composes (the recommendation, or exactly the prompts in `picked`; an unknown id is
+a 400), and `POST /api/clone/{id}/prompts/save` writes `docs/prompts/<host>-master.md` (never over an existing file: `-2`, `-3`) and copies the
+skills the prompts cite into the project (`.skills/` and `.claude/skills/`). Measured on four sites: 4,003 to 6,676 tokens.
+
+## Site DNA
+
+Choose **Study** and give an address. A model-less run (`clone-site-study`, `clone/dna.py`, started by `studio.start_study`) does two things.
+`clone/dna.mjs` opens the page like a visitor with the app's own browser engine, scrolls it once, measures it, reads the page's scripts to spot
+libraries, probes scroll and hover, and writes `dna-raw.json` and a thumbnail; it only counts, it interprets nothing and it never reads the page's
+words. `dna.py` then reads the numbers as the **Site DNA** (`GET /api/clone/{id}/dna`): the palette with roles, the fonts, the type scale, spacing,
+radii, shadows and container, the sections and their roles, the videos and canvases, the motion (transitions, keyframes, sticky and fixed elements,
+smooth scroll, scroll snap, view transitions), the patterns (chip filters, dialog, carousel, masonry, sticky header, newsletter form) and the
+libraries found, each with its evidence. The libraries come from `dna_signatures.json`, plain regular expressions over the scripts the page loaded;
+a word that only appears inside a bundle does not make a library (LESSONS.md). A value that could not be measured is `null`, and a `limits` list
+says why (a script that could not be read, a page with no sections, a probe that was skipped, a slow visit). A page that is a canvas or an iframe
+gets no sections and says so, and a site that answers 403 or a captcha ends the run with what the site said, not an empty DNA. The DNA also says
+what it does not cover: layout, text and the feel of the motion.
+
+Stage budgets are in `dna.mjs`: the scroll pass stops at 25 s, reading scripts at 60 s, a probe at 10 s, and a run is cut at 300 s; what a stage
+did not finish is reported as a limit. Real runs (2026-10-28, this PC, an isolated data folder): recent.design, footer.design, inspora.design and
+sceneai.art took about 31, 14, 29 and 16 seconds. The interface (DNA card, composed prompt, reasons, Save) was run on recent.design (about 5,300
+tokens; Save wrote the prompt and the Playwright skill into a project). **Not run:** a site that fails during the study in the interface, the messages
+for a dropped recipe or a prompt over budget, the Install skills button, saving into a chosen clone, the English interface, and a builder that
+follows a composed prompt (Task 22 of the plan, not done at the time of writing). CI's backend job has no `desktop/node_modules`, so the test that
+parses the library with TypeScript is skipped there; it runs in `scripts/check.py` on a PC with the dependencies, and the pinned hash of the library
+still guards the files in CI.
+
 ## Skills
 
 The skills of a coding agent, fetched from GitHub on this PC at an exact commit and kept, with their authors' licences, in
@@ -188,6 +244,18 @@ The skills of a coding agent, fetched from GitHub on this PC at an exact commit 
 | vercel | vercel-labs/agent-skills `6ec269328bc4` | MIT | react-best-practices, web-design-guidelines |
 | threejs | cesartevisual/threejs-skills `84f9bcb4bea1` | MIT | threejs-web, -scene, -materials, -lighting, -assets, -animation, -interaction, -r3f, -html, -performance, -testing |
 | playwright | microsoft/playwright-cli `b1a5903c5b63` | Apache-2.0 | playwright-cli |
+| taste (design) | Leonxlnx/taste-skill `12af471f627f` | MIT | taste-skill |
+| motionsites (design) | Motionsites-AI/claude-skill `faa30d512e39` | MIT; its examples and media are MotionSites' and are not kept | motionsites-web-builder |
+| impeccable (design) | pbakaus/impeccable `3e3a9179e01a` | Apache-2.0; reference/ios.md and android.md are ehmo/platform-design-skills (MIT) | impeccable |
+
+The first five are the **picture** packs (`purpose="picture"`): what a build from a picture fetches and copies without being told which. The three
+**design** packs (`purpose="design"`) are the skills the master prompts cite. They are asked for by id; `install_into` copies them into a project's
+`.skills/` and `.claude/skills/`, where your own coding agent finds them, and returns what it wrote, what it skipped and what failed. A folder of your
+own with the same name in `.claude/skills/` is never touched: the ones this program writes carry a marker file, `.willitrun-skill`. A design pack keeps
+text and data only. Git takes the whole commit and the copy drops what is excluded, so "not kept" is the exact word: impeccable downloads 4,423 files
+(86 MB) to keep 0.46 MB, MotionSites 2.58 MB for 0.6 MB, taste 3.09 MB for 2.0 MB. The texts of these skills still mention `scripts/`, `examples/` and
+`media/` (impeccable runs `scripts/impeccable context`; MotionSites opens `examples/INDEX.md` and runs `scripts/shoot.py`): those are not copied, and
+the master prompts never tell a builder to run or open them.
 
 `GET /api/clone/skills` lists them and `POST /api/clone/skills/install` fetches them in the background; a build from a picture
 fetches them by itself when none is on the PC (Git is needed), and they are fetched once: later runs only copy. A run copies the skills

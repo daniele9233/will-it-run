@@ -442,7 +442,7 @@ def _prepare(check: CheckDef, ctx: CheckContext) -> dict[str, Any]:
     if store is not None:
         wanted = checks.param(check, "skills")
         try:
-            if not store.catalog():
+            if not store.catalog("picture"):  # a design pack on this PC is not what a picture build reads
                 _step(ctx, "skills", "running", "fetching the skill packs")
                 store.install(emit=lambda line: _step(ctx, "skills", "running", line))
             skills = [s.name for s in store.copy_into(workspace, list(wanted) if wanted else None)]

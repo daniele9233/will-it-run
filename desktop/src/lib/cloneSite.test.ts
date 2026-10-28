@@ -11,6 +11,7 @@ import {
   nodeStates,
   outputOf,
   percent,
+  picturePacks,
   prepSteps,
   questions,
   replicaOf,
@@ -209,5 +210,13 @@ describe("what a step found", () => {
     expect(percent(1)).toBe("100.0%");
     expect(percent(null)).toBe("Unknown");
     expect(percent(undefined)).toBe("Unknown");
+  });
+});
+
+describe("picturePacks", () => {
+  it("lists only the five picture packs, never the design packs", () => {
+    const pack = (id: string, purpose: "picture" | "design") => ({ id, repo: "", commit: "", license: "", summary: "", purpose, ready: true, skills: [] });
+    const packs = [pack("gsap", "picture"), pack("taste", "design"), pack("three", "picture"), pack("impeccable", "design")];
+    expect(picturePacks(packs).map((p) => p.id)).toEqual(["gsap", "three"]);
   });
 });

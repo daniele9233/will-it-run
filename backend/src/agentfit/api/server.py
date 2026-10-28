@@ -24,7 +24,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from agentfit import branding, doctor, github, i18n
-from agentfit.api import arena_routes, clone_routes, cloud_routes, image_routes
+from agentfit.api import arena_routes, clone_routes, cloud_routes, image_routes, prompt_routes
 from agentfit.app import AppServices, get_services
 from agentfit.benchmark import BenchmarkError
 from agentfit.brain import BrainError
@@ -1205,6 +1205,8 @@ def create_app(services: AppServices | None = None) -> FastAPI:
 
     # Cloud models, the site cloner, the Arena, and the image studio (ComfyUI as the engine).
     cloud_routes.install_routes(app, svc, guard)
+    # The master prompts go before the clone routes: /api/clone/prompts must not be taken by /api/clone/{study_id}.
+    prompt_routes.install_routes(app, svc, guard)
     clone_routes.install_routes(app, svc, guard)
     arena_routes.install_routes(app, svc, guard)
     image_routes.install_routes(app, svc, guard)

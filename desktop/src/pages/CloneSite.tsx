@@ -24,7 +24,7 @@ import { Markdown } from "../components/Markdown";
 import { CloudModelsLink, ModelOptions } from "../components/ModelOptions";
 import { PlacePicker, type Place } from "../components/PlacePicker";
 import { Button, IconButton, Note, ProgressBar, Select, Tabs, cx } from "../components/ui";
-import { api, getBackend, openExternal, query } from "../lib/api";
+import { ApiError, api, getBackend, openExternal, query } from "../lib/api";
 import {
   TERMINAL,
   activity,
@@ -53,6 +53,7 @@ import {
   type KitInfo,
   type NodeState,
 } from "../lib/cloneSite";
+import { dnaFetchProblem, type DnaView } from "../lib/dna";
 import { errorMessage, useBus, useInterval, useLoad } from "../lib/hooks";
 import { getLang, t } from "../lib/i18n";
 import { useModelChoices } from "../lib/models";
@@ -60,6 +61,8 @@ import { repoName, sourcePayload, sourceProblem, type RunSource } from "../lib/r
 import { useApp } from "../lib/store";
 import type { InstalledModel, PendingApproval } from "../lib/types";
 import { useAnswerStream } from "./Chat";
+import { DnaCard } from "./clone/DnaCard";
+import { MasterPrompts } from "./clone/MasterPrompts";
 import { PictureStart } from "./clone/PictureStart";
 import { ReplicaResult } from "./clone/ReplicaResult";
 import { ApprovalCard, LiveBlock } from "./Sessions";
@@ -67,6 +70,7 @@ import { ApprovalCard, LiveBlock } from "./Sessions";
 const MODEL_KEY = "agentfit.clone.model";
 const VISION_KEY = "agentfit.clone.vision";
 const MODE_KEY = "agentfit.clone.mode";
+const TAB_KEY = "agentfit.clone.tab";
 const NO_VISION = "none";
 
 function remembered(key: string, fallback = ""): string {
@@ -496,6 +500,8 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
   const [busy, setBusy] = useState<"again" | "preview" | null>(null);
   const [again, setAgain] = useState(false);
   const [extra, setExtra] = useState("");
+  const [dna, setDna] = useState<DnaView | null>(null);
+  const [dnaProblem, setDnaProblem] = useState<string | null>(null);
   const file = useFileUrl(cloneId);
 
   const refresh = () => {
@@ -516,6 +522,26 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
     if (type.startsWith("node.") || type.startsWith("clone.") || type.startsWith("run.") || type === "tool.call") refresh();
   });
   const mode: CloneMode = study?.mode ?? "agent";
+  const studied = mode === "study";
+  // A finished study has its Site DNA on disk; until then the route answers 404 and there is nothing to show.
+  const studyDone = studied && run?.status === "completed";
+  useEffect(() => {
+    if (!studyDone) {
+      setDna(null);
+      setDnaProblem(null);
+      return;
+    }
+    api
+      .get<DnaView>(`/api/clone/${cloneId}/dna`)
+      .then((data) => {
+        setDna(data);
+        setDnaProblem(null);
+      })
+      .catch((err: unknown) => {
+        setDna(null);
+        setDnaProblem(dnaFetchProblem(err, err instanceof ApiError ? err.status : undefined));
+      });
+  }, [cloneId, studyDone, run?.id]);
   // An exact copy and a site from a picture are both measured against something: they share the result and not the agent's counters.
   const exact = mode !== "agent";
   const replica = mode === "replica";
@@ -607,7 +633,7 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
           ) : (
             <>
               {study.project && <Button size="sm" variant="primary" icon={<Globe size={13} />} loading={busy === "preview"} onClick={openClone}>{t("Open the clone")}</Button>}
-              {run && <Button size="sm" icon={<RotateCcw size={13} />} onClick={() => setAgain((v) => !v)}>{t("Improve it")}</Button>}
+              {run && !studied && <Button size="sm" icon={<RotateCcw size={13} />} onClick={() => setAgain((v) => !v)}>{t("Improve it")}</Button>}
             </>
           )}
           {run && <Button size="sm" icon={<Network size={13} />} onClick={() => navigate("sessions", { run: run.id })}>{t("Live graph")}</Button>}
@@ -620,7 +646,7 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
         </div>
       </div>
 
-      {again && !working && (
+      {again && !working && !studied && (
         <div className="clone-card grid gap-2 p-3">
           <span className="clone-label">{t("What should change?")}</span>
           <span className="text-xs text-ink-2">
@@ -651,6 +677,21 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
 
       <Pipeline run={run} mode={mode} />
 
+      {studied && (
+        <div className="grid gap-4">
+          {working && <p className="text-xs text-ink-3">{t("The page is being measured. This takes a minute or two.")}</p>}
+          {run && !working && run.status !== "completed" && <Note tone="bad">{failedSummary(run) || run.error || t("The study did not finish.")}</Note>}
+          {dnaProblem && <Note tone="warn">{t("There is no Site DNA to show. {reason}", { reason: dnaProblem })}</Note>}
+          {dna && <DnaCard dna={dna} />}
+          {dna && (
+            <div>
+              <Button size="sm" variant="primary" onClick={() => navigate("clone", { tab: "prompts", from: cloneId })}>{t("Master prompts from this site")}</Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!studied && (
       <div className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
         <div className="grid content-start gap-4">
           <section className="clone-card grid content-start gap-2 p-4" aria-label={t("Preparation")}>
@@ -797,6 +838,7 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
           </div>
         </section>
       </div>
+      )}
     </div>
   );
 }
@@ -806,10 +848,15 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
 /** Clone a site: an address in, a project on this PC out. */
 export function CloneSite() {
   const routeStudy = useApp((s) => s.params.study) ?? null;
+  // "Master prompts from this site" arrives as { tab: "prompts", from: <study id> }.
+  const routeTab = useApp((s) => s.params.tab) ?? null;
+  const routeFrom = useApp((s) => s.params.from) ?? null;
   const navigate = useApp((s) => s.navigate);
   const toast = useApp((s) => s.toast);
   const list = useLoad(() => api.get<{ clones: CloneInfo[]; setup: CloneSetup }>("/api/clone"));
   const [busy, setBusy] = useState(false);
+  const [pageTab, setPageTab] = useState<"clone" | "prompts">(() => (remembered(TAB_KEY) === "prompts" ? "prompts" : "clone"));
+  const showPrompts = !routeStudy && (routeTab === "prompts" || pageTab === "prompts");
   useInterval(list.reload, 5000);
   useBus("clone.install", (event) => {
     const job = event.data as unknown as InstallJob;
@@ -844,10 +891,29 @@ export function CloneSite() {
       </header>
       <div className="mx-6 border-t border-line" />
 
-      <div className="grid gap-5 px-6 pt-5 pb-8">
-        {setup && !setup.ready && <SetupCard setup={setup} onInstall={install} onCancel={cancel} busy={busy} />}
+      {!routeStudy && (
+        <div className="px-6 pt-4">
+          <Tabs
+            value={showPrompts ? "prompts" : "clone"}
+            tabs={[
+              { value: "clone", label: t("Clone") },
+              { value: "prompts", label: t("Master prompts") },
+            ]}
+            onChange={(next) => {
+              setPageTab(next);
+              remember(TAB_KEY, next);
+              // A tab chosen by hand replaces the one the route asked for.
+              if (routeTab) navigate("clone");
+            }}
+          />
+        </div>
+      )}
 
-        {routeStudy ? (
+      <div className="grid gap-5 px-6 pt-5 pb-8">
+        {showPrompts && <MasterPrompts initialStudy={routeFrom} />}
+        {!showPrompts && setup && !setup.ready && <SetupCard setup={setup} onInstall={install} onCancel={cancel} busy={busy} />}
+
+        {showPrompts ? null : routeStudy ? (
           <CloneView
             key={routeStudy}
             cloneId={routeStudy}
@@ -892,7 +958,10 @@ function CloneCard({ clone, onOpen }: { clone: CloneInfo; onOpen: () => void }) 
         {thumb ? <img src={thumb} alt="" loading="lazy" className="h-full w-full object-cover object-top" /> : <span className="grid h-full place-items-center text-ink-3"><Globe size={22} aria-hidden /></span>}
       </span>
       <span className="grid gap-0.5 p-2.5">
-        <span className="truncate text-[13px] font-semibold text-ink">{clone.title}</span>
+        <span className="flex items-center gap-1.5">
+          <span className="truncate text-[13px] font-semibold text-ink">{clone.title}</span>
+          {clone.mode === "study" && <span className="clone-chip shrink-0">{t("Study")}</span>}
+        </span>
         <span className="flex items-center gap-1.5 font-mono text-2xs">
           <span className={cx("h-1.5 w-1.5 rounded-full", clone.active ? "pulse-dot bg-warn" : clone.status === "completed" ? "bg-ok" : clone.status === "none" ? "bg-line-strong" : "bg-bad")} />
           <span className={clone.active ? "text-warn" : clone.status === "completed" ? "text-ok" : "text-ink-3"}>

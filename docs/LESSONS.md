@@ -98,3 +98,21 @@ The ledger reads the file edits a session made through Edit and Write. A fix app
 ## A test that failed only in CI: an unpinned plugin changed what a subprocess prints
 *Found 2026-10-28, in the CI run of v0.3.1.* `test_a_test_report_says_what_the_suite_said_not_what_the_agent_concluded` passed here and failed on GitHub. CI installs the newest pytest-asyncio (1.4.1 that day, 1.4.0 here), which warns on stderr when a project sets no `asyncio_default_fixture_loop_scope`. The `run_tests` tool puts stderr after stdout, and the evidence of a test report quoted the last line of the whole output, the warning, instead of the suite's "1 passed". Running the test with `PYTHONWARNINGS=default` in `backend/` reproduces it here (the warning stays hidden otherwise; why CI shows it by default was not found). The evidence now comes from the suite's own lines (`checks.suite_closing_line`) and `pyproject.toml` sets the option. When a test fails only in CI, compare the versions of its "Install" step with `importlib.metadata` here before reading the test.
 
+
+## A word found in a bundle is not a library
+*Found 2026-10-28, reading the scripts of live sites (`clone/dna_signatures.json`).* The first signature for Rapier matched the text `rapier` and fired on `browserapierrors`; a bare word such as `paper`, `gsap` or `bodymovin` appears in minified code, in an id and in a string. A signature is a plain regular expression that needs a shape only the library has (a global it defines, a unique call, an import path), and each hit carries the label of the script that matched. A Webflow signature for Lottie (`Webflow.require("lottie")`) fired on the runtime's hook and not on any Lottie on the page: it bent the DNA to the hand measurement, so it was removed. The scroll-snap regex also matched `scroll-snap-type: none`, which is the opposite of snap. Check a signature against a page that does not use the library, not only against one that does.
+
+## Adding a pack to `PACKS` changes what every picture build fetches and copies
+*Found 2026-10-28, adding the design packs.* `install()` and `copy_into()` work on "the packs" when no id is given. Three more packs, 86 MB of download among them, would have been fetched by every build from a picture. The packs have a `purpose` and the old calls take only `picture`; the design ones are asked for by id. Before adding to a list that code walks, find what walks it.
+
+## A name that already exists in a package is found by listing the folder before the plan is written
+*Found 2026-10-28, planning the master prompts.* `clone/prompts.py` already held the prompt of the kit agent, and the plan had named its new module the same. The library is `clone/library.py`. `ls` the package first.
+
+## A path past 260 characters fails on Windows, and the copy of a skill reaches it
+*Found 2026-10-28 (`clone/skills.py`).* A skill folder copied to `<project>\.claude\skills\<name>\reference\...` can pass 260 characters in a deep project. The copy of that skill fails with an OSError; what was written of it is removed, the others go on, and the failure comes back in `failed`. Only simulated in a test, not reproduced on a real long path.
+
+## The editor tool turns a typed unicode escape into the character
+*Found 2026-10-28, writing the library loader.* A backslash-u escape for the byte order mark, typed in a source file through the editor tools, was written as the literal character, so the file stopped saying what it meant. Write `chr(0xFEFF)` in source and name the constant (`BYTE_ORDER_MARK`). The same hazard exists for any invisible character.
+
+## A signature in the stage that reads scripts needs a time budget of its own
+*Found 2026-10-28, `dna.mjs`.* A page with hundreds of scripts, or a hover probe that never settles, held the whole run until the 300 s kill and wrote nothing. Each stage has its own budget (scroll 25 s, scripts 60 s, a probe 10 s) and what it did not finish is a `limits` entry, not silence. A probe that failed is `null` plus `hover_probe_skipped`, never `{sampled: 0}`, which would read as "nothing changes on hover".

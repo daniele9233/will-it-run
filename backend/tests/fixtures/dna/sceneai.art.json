@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "url": "https://sceneai.art/",
+  "host": "sceneai.art",
+  "captured_at": "2026-10-28T18:44:29.986Z",
+  "viewport": [
+    1440,
+    900
+  ],
+  "framework": "next",
+  "libs": [],
+  "tokens": {
+    "palette": [
+      {
+        "hex": "#f8f8f8",
+        "share": 0.2844,
+        "role": "text",
+        "also": [],
+        "contrast": 17.92
+      },
+      {
+        "hex": "#101010",
+        "share": 0.2729,
+        "role": "background",
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#202020",
+        "share": 0.1574,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#a8a8a8",
+        "share": 0.1289,
+        "role": "muted",
+        "also": [],
+        "contrast": 8.0
+      },
+      {
+        "hex": "#303030",
+        "share": 0.0684,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#e8e8e8",
+        "share": 0.0515,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#909090",
+        "share": 0.0333,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#383838",
+        "share": 0.0,
+        "role": "line",
+        "also": [],
+        "contrast": 1.62
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Geist",
+        "share": 1.0,
+        "weights": [
+          400,
+          500,
+          600
+        ]
+      }
+    ],
+    "type_scale": [
+      11.0,
+      12.0,
+      14.0,
+      15.0,
+      16.0,
+      18.0,
+      32.0,
+      36.0
+    ],
+    "spacing": [
+      2.0,
+      4.0,
+      7.0,
+      8.0,
+      10.0,
+      12.0,
+      14.0,
+      16.0
+    ],
+    "radii": [
+      2.0,
+      12.0,
+      24.0,
+      28.0,
+      99.0,
+      200.0,
+      300.0,
+      999.0
+    ],
+    "shadows": null,
+    "container_px": 1408,
+    "breakpoints": [
+      600
+    ]
+  },
+  "sections": [
+    {
+      "index": 1,
+      "tag": "div",
+      "role": "gallery",
+      "height_px": 4720,
+      "heading_px": 48.0,
+      "heading_vw": 3.33,
+      "img": 1,
+      "video": 46,
+      "canvas": 0,
+      "svg": 182,
+      "columns": 4,
+      "cards": 36,
+      "card_height_px": 284,
+      "gap_px": 14
+    },
+    {
+      "index": 2,
+      "tag": "footer",
+      "role": "footer",
+      "height_px": 260,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 1,
+      "video": 0,
+      "canvas": 0,
+      "svg": 4,
+      "columns": 3,
+      "cards": 3,
+      "card_height_px": 180,
+      "gap_px": 80
+    }
+  ],
+  "motion": {
+    "transitions": [
+      {
+        "duration_ms": 150,
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "count": 208
+      },
+      {
+        "duration_ms": 500,
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "count": 46
+      }
+    ],
+    "keyframes": [
+      "shimmer",
+      "spin",
+      "pulse",
+      "enter",
+      "exit",
+      "swipe-out-left",
+      "swipe-out-right",
+      "swipe-out-up",
+      "swipe-out-down",
+      "sonner-fade-in",
+      "sonner-fade-out",
+      "sonner-spin"
+    ],
+    "sticky": 0,
+    "fixed": 1,
+    "scroll_snap": false,
+    "scroll_timeline": false,
+    "view_transitions": true,
+    "smooth_scroll": "lenis",
+    "backdrop": 2,
+    "blur": 0,
+    "mask": 0,
+    "clip_path": 0,
+    "blend": 0,
+    "videos": {
+      "count": 46,
+      "loop": 46,
+      "muted": 46,
+      "autoplay": 0,
+      "preload_none": 46,
+      "playing_without_autoplay": 4
+    },
+    "canvases": [],
+    "lottie": 0
+  },
+  "patterns": {
+    "chip_filters": true,
+    "dialog": true,
+    "carousel": false,
+    "masonry": false,
+    "sticky_header": false,
+    "newsletter_form": true
+  },
+  "probes": {
+    "scroll": {
+      "sampled": 58,
+      "parallax_like": 0,
+      "pinned": 5
+    },
+    "hover": {
+      "sampled": 0,
+      "changed": 0,
+      "plays_video": 0,
+      "props": []
+    }
+  },
+  "limits": []
+}

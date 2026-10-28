@@ -1,0 +1,184 @@
+{
+  "signatures": [
+    {
+      "id": "gsap",
+      "any": [
+        "gsap\\.registerPlugin\\(\\s*[A-Za-z]",
+        "gsap\\.(to|from|fromTo|timeline|set)\\(",
+        "ScrollTrigger\\.(create|batch|refresh|matchMedia)\\(",
+        "from\\s*[\"']gsap",
+        "gsap@\\d",
+        "gsap\\.min\\.js",
+        "gsap-core"
+      ]
+    },
+    {
+      "id": "lenis",
+      "any": [
+        "new Lenis\\(",
+        "lenis\\.raf\\(",
+        "from\\s*[\"']lenis",
+        "@studio-freight/lenis",
+        "lenis@\\d",
+        "lenis\\.min\\.js"
+      ]
+    },
+    {
+      "id": "locomotive",
+      "any": [
+        "new LocomotiveScroll\\(",
+        "locomotive-scroll"
+      ]
+    },
+    {
+      "id": "three",
+      "any": [
+        "new THREE\\.[A-Z]",
+        "three\\.module(\\.min)?\\.js",
+        "three\\.min\\.js",
+        "from\\s*[\"']three[\"']"
+      ]
+    },
+    {
+      "id": "three",
+      "all": [
+        "WebGLRenderer",
+        "BufferGeometry"
+      ]
+    },
+    {
+      "id": "ogl",
+      "any": [
+        "ogl@\\d",
+        "/ogl/src",
+        "from\\s*[\"']ogl[\"']"
+      ]
+    },
+    {
+      "id": "ogl",
+      "all": [
+        "new Renderer\\(",
+        "new Program\\(",
+        "new Geometry\\("
+      ]
+    },
+    {
+      "id": "pixi",
+      "any": [
+        "new PIXI\\.[A-Z]",
+        "PIXI\\.Application",
+        "pixi(\\.min)?\\.js",
+        "from\\s*[\"']pixi\\.js[\"']",
+        "@pixi/"
+      ]
+    },
+    {
+      "id": "p5",
+      "any": [
+        "new p5\\(",
+        "p5\\.min\\.js",
+        "p5\\.prototype\\.",
+        "from\\s*[\"']p5[\"']"
+      ]
+    },
+    {
+      "id": "paper",
+      "any": [
+        "paper\\.setup\\(",
+        "paper-(full|core)",
+        "new paper\\.(Path|Point|Project)",
+        "from\\s*[\"']paper[\"']"
+      ]
+    },
+    {
+      "id": "matter",
+      "any": [
+        "Matter\\.Engine\\.create\\(",
+        "matter-js",
+        "matter\\.min\\.js"
+      ]
+    },
+    {
+      "id": "rapier",
+      "any": [
+        "@dimforge/rapier",
+        "rapier3d",
+        "rapier2d",
+        "RAPIER\\.init\\("
+      ]
+    },
+    {
+      "id": "tsparticles",
+      "any": [
+        "tsParticles\\.(load|init)\\(",
+        "@tsparticles/",
+        "tsparticles(\\.bundle)?(\\.min)?\\.js"
+      ]
+    },
+    {
+      "id": "lottie",
+      "any": [
+        "lottie\\.loadAnimation\\(",
+        "lottie-web",
+        "lottie(\\.min)?\\.js",        "@lottiefiles/",
+        "dotlottie",
+        "bodymovin"
+      ]
+    },
+    {
+      "id": "swiper",
+      "any": [
+        "new Swiper\\(",
+        "swiper-bundle",
+        "swiper(\\.min)?\\.js",
+        "from\\s*[\"']swiper"
+      ]
+    },
+    {
+      "id": "framer-motion",
+      "any": [
+        "framer-motion",
+        "from\\s*[\"']motion/react[\"']",
+        "__framer__",
+        "data-framer-appear-id"
+      ]
+    },
+    {
+      "id": "view-transitions",
+      "any": [
+        "startViewTransition\\(",
+        "view-transition-name"
+      ]
+    },
+    {
+      "id": "glsl",
+      "any": [
+        "gl_FragColor",
+        "gl_Position",
+        "precision\\s+(highp|mediump|lowp)\\s+float",
+        "#version\\s+300\\s+es"
+      ]
+    },
+    {
+      "id": "webgpu",
+      "any": [
+        "navigator\\.gpu\\.requestAdapter",
+        "getPreferredCanvasFormat\\("
+      ]
+    }
+  ],
+  "globals": {
+    "gsap": "gsap",
+    "Lenis": "lenis",
+    "THREE": "three",
+    "PIXI": "pixi",
+    "p5": "p5",
+    "paper": "paper",
+    "Matter": "matter",
+    "tsParticles": "tsparticles",
+    "lottie": "lottie",
+    "Swiper": "swiper",
+    "LocomotiveScroll": "locomotive",
+    "jQuery": "jquery"
+  }
+}

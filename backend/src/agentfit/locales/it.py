@@ -264,6 +264,9 @@ MESSAGES: dict[str, str] = {
     "Capture": "Cattura",
     "Opens the page in Chrome, lets it settle, removes banners and pop-ups, takes the reference screenshots and freezes the rendered page with its styles, pictures and fonts.":
         "Apre la pagina in Chrome, la lascia assestare, toglie banner e popup, fa gli screenshot di riferimento e congela la pagina disegnata con i suoi stili, le immagini e i font.",
+    "Study": "Studio",
+    "Opens the page in Chrome, measures its styles, scripts, structure, scroll and hover, and writes the Site DNA and a style guide.":
+        "Apre la pagina in Chrome, ne misura stili, script, struttura, scroll e hover, e scrive il DNA del sito e una guida di stile.",
     "Project": "Progetto",
     "Turns the capture into a Next.js project, one component for each section (a model may name them), installs and builds it.":
         "Trasforma la cattura in un progetto Next.js, un componente per ogni sezione (un modello può dar loro i nomi), lo installa e lo compila.",
@@ -290,6 +293,11 @@ MESSAGES: dict[str, str] = {
     "Refusal": "Rifiuto",
     "Ends the run without an answer, with a named verdict. A workflow routes here when no trusted path produced something that could be verified: refusing is the outcome, not a failure to be worked around.":
         "Chiude l'esecuzione senza risposta, con un verdetto esplicito. Un workflow arriva qui quando nessun percorso affidabile ha prodotto qualcosa di verificabile: rifiutare è l'esito, non un errore da aggirare.",
+    # -- master prompts: the library of Clone a site ---------------------------------
+    "This master prompt does not exist.": "Questo prompt master non esiste.",
+    "This study does not exist.": "Questo studio non esiste.",
+    "The study has not finished yet: there is no Site DNA to show.": "Lo studio non è ancora finito: non c'è ancora un DNA del sito da mostrare.",
+    "Write the address of a website.": "Scrivi l'indirizzo di un sito.",
     # -- image studio: the engine, the components, the downloads ---------------------
     "ComfyUI is not installed on this PC. Install it, then ask Will It Run to look again.":
         "ComfyUI non è installato su questo PC. Installalo, poi chiedi a Will It Run di cercarlo di nuovo.",
@@ -375,6 +383,19 @@ MESSAGES: dict[str, str] = {
     '{target} already exists and is a different file. Confirm replacing it first.': '{target} esiste già ed è un file diverso. Conferma prima di sostituirlo.',
     "{name} is in a folder ComfyUI knows but this app does not, so it is not deleted from here.":
         "{name} è in una cartella che ComfyUI conosce ma questa app no, quindi non viene cancellato da qui.",
+    "{n} videos on the page, most of them muted and looping": "{n} video nella pagina, la maggior parte muti e in loop",
+    "a row of filter chips above a grid": "una fila di chip di filtro sopra una griglia",
+    "Lenis smooth scroll was found on the page": "Nella pagina è stato trovato lo scroll fluido Lenis",
+    "every master prompt starts from a style guide and ends with a look-and-fix loop":
+        "ogni master prompt parte da una guida di stile e finisce con un ciclo di guarda e correggi",
+    "you picked it": "l'hai scelto tu",
+    "These master prompts do not exist: {ids}": "Questi master prompt non esistono: {ids}",
+    "Copied by Will It Run from {repo} ({licence}), commit {commit}. Delete this file and the folder is yours: it is not replaced again.":
+        "Copiato da Will It Run da {repo} ({licence}), commit {commit}. Cancella questo file e la cartella diventa tua: non verrà più sostituita.",
+    "Credit: {credit}": "Crediti: {credit}",
+    "the name in the header of the skill is not a folder name": "il nome nell'intestazione della skill non è un nome di cartella",
+    "Write the prompt text to save.": "Scrivi il testo del prompt da salvare.",
+    "The project to save into does not exist.": "Il progetto in cui salvare non esiste.",
 }
 
 # What the Arena's core says (why an answer was judged as it was, its messages and its reports). A key above keeps its translation.

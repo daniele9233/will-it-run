@@ -1,0 +1,50 @@
+{
+  "F01": {
+    "builder": "Claude Code subagent (Next.js 16, [PLACEHOLDER] assets)",
+    "date": "2026-10-28",
+    "build_ok": true,
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "dna_match": 0.7074,
+    "notes": "Tested once inside one composed prompt with F01, B02, B01 and F03: the style guide, spec and assumptions were written and the build passed. The builder kept the measured background and text colours and darkened the muted text to #606060 (5.9:1) because the measured #808080 is 3.7:1 on the background; it used the system font stack, so the measured Departure Mono and Inter were not matched (fonts 0.0). Built once from the recent.design reference, with placeholder assets. dna_match 0.7074 overall (palette 0.8297, fonts 0.0, libs not measurable, motion 1.0, sections 1.0) measures the served page's code, not whether it looks like the reference."
+  },
+  "B02": {
+    "builder": "Claude Code subagent (Next.js 16, [PLACEHOLDER] assets)",
+    "date": "2026-10-28",
+    "build_ok": true,
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "dna_match": 0.7074,
+    "notes": "Tested once inside one composed prompt with F01, B02, B01 and F03: with locally generated placeholder clips, in the served production page at 1440 hover plays a card only after a rest (paused and at 0 s after 60 ms, playing at 1.4 s after 1.6 s), moving to a second card stops the first and resets it to 0, and leaving stops and resets the second. The 20 cards with a clip come first in the default order and the 4 clip-less cards last; the study saw 20 videos, all muted, looping and preload none. A clip that fails to load, a real touch device, keyboard focus and a hidden tab were not exercised by this measurement. Built once from the recent.design reference, with placeholder assets. dna_match 0.7074 overall (palette 0.8297, fonts 0.0, libs not measurable, motion 1.0, sections 1.0) measures the served page's code, not whether it looks like the reference."
+  },
+  "B01": {
+    "builder": "Claude Code subagent (Next.js 16, [PLACEHOLDER] assets)",
+    "date": "2026-10-28",
+    "build_ok": true,
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "dna_match": 0.7074,
+    "notes": "Tested once inside one composed prompt with F01, B02, B01 and F03: chip filter, sort, URL state (?category=) and the empty state with a Show all link worked in a production build, as the builder reported. Loading and error states were skipped (local data), and keyboard use was not exercised. Built once from the recent.design reference, with placeholder assets. dna_match 0.7074 overall (palette 0.8297, fonts 0.0, libs not measurable, motion 1.0, sections 1.0) measures the served page's code, not whether it looks like the reference."
+  },
+  "F03": {
+    "builder": "Claude Code subagent (Next.js 16, [PLACEHOLDER] assets)",
+    "date": "2026-10-28",
+    "build_ok": true,
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "dna_match": 0.7074,
+    "notes": "Tested once inside one composed prompt with F01, B02, B01 and F03: one look-and-fix round ran, with stills at 390, 768 and 1440 and no horizontal overflow (measured again here). Rounds 2 and 3 and any comparison with a reference capture were not done. The gallery has 24 cards, 1230 px page height at 1440 against 99 cards in the reference. Built once from the recent.design reference, with placeholder assets. dna_match 0.7074 overall (palette 0.8297, fonts 0.0, libs not measurable, motion 1.0, sections 1.0) measures the served page's code, not whether it looks like the reference."
+  }
+}

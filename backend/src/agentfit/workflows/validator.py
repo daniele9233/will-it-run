@@ -91,8 +91,8 @@ def validate(definition: WorkflowDef, *, require_models: bool = False) -> Valida
     for dup in sorted(duplicates):
         error(f"Duplicate node id '{dup}'.", dup)
     nodes = set(ids)
-    if not definition.agents:
-        error("A workflow needs at least one agent.")
+    if not definition.agents and not definition.checks:
+        error("A workflow needs at least one agent or check.")
 
     for agent in definition.agents:
         if agent.model not in definition.models:

@@ -17,6 +17,7 @@ from agentfit.clone.install import CloneSetupError
 from agentfit.clone.skills import PACK_BY_ID
 from agentfit.clone.studio import CloneError
 from agentfit.cloud import is_cloud, parse_key
+from agentfit.i18n import tr
 from agentfit.workflows import sources
 from agentfit.workflows.runner import RunError
 
@@ -43,6 +44,10 @@ class CloneBody(BaseModel):
 
 class AnswerBody(BaseModel):
     answer: str
+
+
+class StudyBody(BaseModel):
+    url: str
 
 
 class SkillsBody(BaseModel):
@@ -127,7 +132,7 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
 
     @app.get("/api/clone/skills", dependencies=guard)
     def skills_status() -> dict[str, Any]:
-        """The agent skills: which packs are on this PC (GSAP, frontend design, Vercel, Three.js, Playwright), at which commit and licence."""
+        """The agent skills: which packs are on this PC (the five for building a site from a picture, and the three design packs the master prompts cite), at which commit and licence."""
         return svc.skills.status()
 
     @app.post("/api/clone/skills/install", dependencies=guard)
@@ -138,8 +143,8 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             raise HTTPException(status_code=400, detail=f"Unknown skill pack: {', '.join(unknown)}.")
         return {"job": svc.skills.install_in_background(body.packs or None)}
 
-    def clone_start(study_id: str | None, body: CloneBody) -> dict[str, Any]:
-        check_model(body.model_key)
+    def require_engine() -> None:
+        """409 unless the browser engine, Node.js and Chrome or Edge are all there: what every run that opens a page needs."""
         if svc.browser_install.installed_version() is None:
             raise HTTPException(status_code=409, detail="The browser engine is not installed yet: press Prepare.")
         node = svc.browser_install.node()
@@ -147,6 +152,10 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             raise HTTPException(status_code=409, detail=node["detail"] or "Node.js is needed.")
         if find_browser() is None:
             raise HTTPException(status_code=409, detail="Neither Chrome nor Edge was found on this PC: install one of them.")
+
+    def clone_start(study_id: str | None, body: CloneBody) -> dict[str, Any]:
+        check_model(body.model_key)
+        require_engine()
         sees = model_sees(body.model_key)
         vision_key = ""
         if not sees and body.vision_key:
@@ -165,6 +174,18 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
                 workspace=place.workspace, protect_existing=place.protect_existing, source=place.source, approval=body.approval,
                 extra=body.extra, study_id=study_id, mode=body.mode,
             )
+        except (CloneError, RunError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return {"study": entry["id"], "run": record.id}
+
+    @app.post("/api/clone/study", dependencies=guard)
+    def clone_study(body: StudyBody) -> dict[str, Any]:
+        """Study a site: no model. The page is opened and measured, and its Site DNA is written (``GET /api/clone/{id}/dna``)."""
+        if not body.url.strip():
+            raise HTTPException(status_code=400, detail=tr("Write the address of a website."))
+        require_engine()
+        try:
+            entry, record = svc.clone.start_study(body.url)
         except (CloneError, RunError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"study": entry["id"], "run": record.id}

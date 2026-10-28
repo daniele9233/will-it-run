@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { CloudModelsLink, ModelOptions } from "../../components/ModelOptions";
 import { Button, IconButton, Note, Select, cx } from "../../components/ui";
 import { api, openExternal } from "../../lib/api";
-import type { CloneSetup, SkillsStatus } from "../../lib/cloneSite";
+import { picturePacks, type CloneSetup, type SkillsStatus } from "../../lib/cloneSite";
 import { errorMessage, useInterval, useLoad } from "../../lib/hooks";
 import { getLang, t } from "../../lib/i18n";
 import { useModelChoices } from "../../lib/models";
@@ -44,7 +44,9 @@ function SkillsCard() {
       .finally(() => setBusy(false));
   };
   const data = status.data;
-  const count = data?.packs.reduce((n, p) => n + (p.ready ? p.skills.length : 0), 0) ?? 0;
+  // The design packs belong to the master prompts, not to a site built from a picture.
+  const packs = picturePacks(data?.packs ?? []);
+  const count = packs.reduce((n, p) => n + (p.ready ? p.skills.length : 0), 0);
   return (
     <div className="clone-card grid content-start gap-2 p-4" aria-label={t("Skills")}>
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -59,7 +61,7 @@ function SkillsCard() {
       </p>
       {data && (
         <ul className="grid gap-1 sm:grid-cols-2">
-          {data.packs.map((p) => (
+          {packs.map((p) => (
             <li key={p.id} className="grid grid-cols-[14px_1fr] items-start gap-x-2 text-xs" title={p.summary}>
               <span className="pt-[1px]">{p.ready ? <CheckCircle2 size={13} className="text-ok" aria-hidden /> : <span className="mx-[3px] inline-block h-[7px] w-[7px] rounded-full border border-line-strong" aria-hidden />}</span>
               <span className="min-w-0">

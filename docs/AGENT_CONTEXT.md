@@ -2,7 +2,7 @@
 
 How a model that is asked to change Will It Run learns, in a fresh session, what the software is, how it works and where to touch, without reading every line and without inventing. Everything here is free, local and runs by itself; nothing needs an account, a key or a server.
 
-The project is large (about 40,000 lines of Python, 20,000 of TypeScript, 133 routes, 23 tables). A model's window is not. The answer is not one big document: it is a short set of rules, a map made from the code, a graph to look symbols up in, and a memory that records what happened, each one cheap to read and none written by a model.
+The project is large (about 40,000 lines of Python, 20,000 of TypeScript, 143 routes, 23 tables). A model's window is not. The answer is not one big document: it is a short set of rules, a map made from the code, a graph to look symbols up in, and a memory that records what happened, each one cheap to read and none written by a model.
 
 ## The parts
 

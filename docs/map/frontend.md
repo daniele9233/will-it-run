@@ -21,9 +21,14 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Benchmarks.tsx` | 191 | BenchmarksPage | `/api/benchmarks`, `/api/models/installed` | benchmark.progress |
 | `pages/Brain.tsx` | 529 | BrainPage | `/api/brain`, `/api/brain/memories/{}`, `/api/brain/projects/{}`, `/api/brain/projects/{}/memories`, `/api/brain/projects/{}/reindex` |  |
 | `pages/Chat.tsx` | 454 | Turn, useAnswerStream, SessionQuestions, ChatPage | `/api/chats`, `/api/chats/{}`, `/api/chats/{}/messages`, `/api/runs/{}/approvals/{}`, `/api/runs/{}/cancel`, `/api/runs/{}/questions` +1 |  |
-| `pages/clone/PictureStart.tsx` | 200 | PictureStart | `/api/clone/picture`, `/api/clone/skills`, `/api/clone/skills/install` |  |
+| `pages/clone/ComposePanel.tsx` | 98 | ComposePanel | `/api/clone/{}/compose` |  |
+| `pages/clone/DnaCard.tsx` | 68 | DnaCard |  |  |
+| `pages/clone/FromSite.tsx` | 104 | FromSite | `/api/clone`, `/api/clone/study`, `/api/clone/{}`, `/api/clone/{}/dna` |  |
+| `pages/clone/MasterPrompts.tsx` | 99 | MasterPrompts | `/api/clone/prompts`, `/api/clone/prompts/{}` |  |
+| `pages/clone/PictureStart.tsx` | 202 | PictureStart | `/api/clone/picture`, `/api/clone/skills`, `/api/clone/skills/install` |  |
 | `pages/clone/ReplicaResult.tsx` | 131 | ReplicaResult |  |  |
-| `pages/CloneSite.tsx` | 907 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/{}`, `/api/clone/{}/answer`, `/api/clone/{}/file` +5 | clone.install |
+| `pages/clone/SaveBar.tsx` | 97 | SaveBar | `/api/clone/skills`, `/api/clone/skills/install`, `/api/clone/{}/prompts/save` |  |
+| `pages/CloneSite.tsx` | 976 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/{}`, `/api/clone/{}/answer`, `/api/clone/{}/dna` +6 | clone.install |
 | `pages/Downloads.tsx` | 285 | DownloadsPage | `/api/downloads`, `/api/downloads/{}`, `/api/downloads/{}/{}`, `/api/models/installed` | download. |
 | `pages/Guide.tsx` | 207 | GuidePage | `/api/quantization` |  |
 | `pages/Hardware.tsx` | 207 | HardwarePage | `/api/storage` |  |
@@ -68,14 +73,16 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/arena.ts` | 840 | Status, Preset, RunStatus, CategoryInfo, ToolInfo, Overview, LocalChoice +76 |  |  |
 | `lib/arenaExport.ts` | 70 | ExportFormat, EXPORT_FORMATS, slug, extensionOf, fileName, saveReport | `/api/arena/runs/{}/export` |  |
 | `lib/brainGraph.ts` | 157 | Point, KINDS, KIND, isMemoryKind, nodeTone, viaLabel, LABEL_WIDTH +3 |  |  |
-| `lib/cloneSite.ts` | 418 | KitInfo, CloneSetup, CloneMode, SkillPackInfo, SkillsStatus, InstallJob, CloneInfo +34 |  |  |
+| `lib/cloneSite.ts` | 434 | KitInfo, CloneSetup, CloneMode, SkillPackInfo, SkillsStatus, picturePacks, InstallJob +36 |  |  |
 | `lib/dialog.ts` | 32 | canBrowseFolders, pickFolder, pickAnyFolder, pickSavePath |  |  |
+| `lib/dna.ts` | 138 | DnaView, paletteSwatches, libsLabel, limitLines, motionFacts, dnaFetchProblem |  |  |
 | `lib/format.ts` | 245 | UNKNOWN, gbFromBytes, gbFromMb, gb, sizeLabel, compactNumber, params +20 |  |  |
 | `lib/hooks.ts` | 86 | Loadable, useLoad, useBus, useInterval, useDebounced, errorMessage |  |  |
 | `lib/i18n.ts` | 75 | Lang, LangSetting, LANGUAGES, systemLang, resolveLang, getLang, storeLang +3 |  |  |
 | `lib/imageSave.ts` | 46 | pictureFileName, savePicture | `/api/images/gallery/{}/file`, `/api/images/gallery/{}/save` |  |
 | `lib/imageView.ts` | 62 | View, Size, MIN_ZOOM, MAX_ZOOM, STEP, FIT, clampZoom +5 |  |  |
 | `lib/liveRun.ts` | 152 | START, END, NodeState, NodeLive, GraphLive, edgeKey, sourcesOf +2 |  |  |
+| `lib/masterPrompts.ts` | 111 | PromptGroup, PromptProof, PromptSummary, PromptDetail, GROUPS, filterPrompts, proofLabel +8 |  |  |
 | `lib/modelFilters.ts` | 129 | ModelSort, ParamBand, ModelFilters, DEFAULT_MODEL_FILTERS, nominalParamsB, quantizationOptions, parameterSizes +3 |  |  |
 | `lib/models.ts` | 36 | isCloudKey, cloudAsInstalled, providerGap, useModelChoices | `/api/cloud`, `/api/models/installed` |  |
 | `lib/runSource.ts` | 174 | RunSource, isGithubUrl, repoName, sourceProblem, sourcePayload, sourceFromEvent, loadSource +18 |  |  |

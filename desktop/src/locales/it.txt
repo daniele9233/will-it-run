@@ -1888,3 +1888,93 @@ Model that sees ||| Modello che vede
 No model that sees yet ||| Ancora nessun modello che vede
 The model looks at the picture, writes its composition, then one component for each region; the page is measured against the picture and the weak regions are written again. A smaller model is faster and has more room; a larger one writes better code. ||| Il modello guarda l'immagine, ne scrive la composizione, poi un componente per ogni regione; la pagina viene misurata contro l'immagine e le regioni deboli vengono riscritte. Un modello più piccolo è più veloce e ha più spazio; uno più grande scrive codice migliore.
 Build the site ||| Costruisci il sito
+Pages ||| Pagine
+Galleries ||| Gallerie
+Surfaces ||| Superfici
+3D ||| 3D
+Process ||| Processo
+After the copy ||| Dopo la copia
+Master prompts ||| Prompt maestri
+Not tested yet ||| Non ancora provato
+Tested with {builder} on {date} ||| Provato con {builder} il {date}
+Prompt copied ||| Prompt copiato
+The prompt could not be copied ||| Non è stato possibile copiare il prompt
+The clipboard refused it. Select the text and copy it by hand. ||| Gli appunti hanno rifiutato il testo. Selezionalo e copialo a mano.
+Prompt ||| Prompt
+Original prompts you copy into a coding agent to build one part of a site. Each says which skills it needs and whether it was tested. ||| Prompt originali da copiare in un agente di programmazione per costruire una parte di un sito. Ognuno dice di quali skill ha bisogno e se è stato provato.
+Search the prompts ||| Cerca nei prompt
+The prompts could not be loaded. {reason} ||| Non è stato possibile caricare i prompt. {reason}
+No prompt matches ||| Nessun prompt corrisponde
+Try another word or another group. ||| Prova un'altra parola o un altro gruppo.
+DNA ||| DNA
+opens the page like a visitor and measures its colours, fonts, libraries, sections and motion ||| apre la pagina come un visitatore e misura colori, font, librerie, sezioni e movimento
+Study ||| Studio
+Site DNA ||| DNA del sito
+Palette ||| Palette
+Fonts ||| Font
+Libraries ||| Librerie
+Sections ||| Sezioni
+None found ||| Nessuna trovata
+some ||| alcuni
+{n} script(s) could not be read, so libraries only they use may be missing ||| {n} script non si sono potuti leggere, quindi le librerie usate solo da loro potrebbero mancare
+The page has no readable sections (it may be a canvas, an iframe or a single block) ||| La pagina non ha sezioni leggibili (può essere un canvas, un iframe o un blocco unico)
+The scroll behaviour was not tested ||| Il comportamento dello scroll non è stato provato
+The hover behaviour was not tested ||| Il comportamento dell'hover non è stato provato
+{n} stylesheet(s) could not be read, so some styles are missing ||| {n} fogli di stile non si sono potuti leggere, quindi mancano alcuni stili
+The page was slow to settle, so late content may be missing ||| La pagina ha impiegato a stabilizzarsi, quindi il contenuto tardivo potrebbe mancare
+Limit: {code} ||| Limite: {code}
+Smooth scroll with Lenis ||| Scroll fluido con Lenis
+Native smooth scroll ||| Scroll fluido nativo
+No smooth scroll ||| Nessuno scroll fluido
+{n} sticky element(s) ||| {n} elementi sticky
+{n} fixed element(s) ||| {n} elementi fissi
+Scroll snap ||| Scroll snap
+No scroll snap ||| Nessuno scroll snap
+Scroll-driven animations ||| Animazioni guidate dallo scroll
+No scroll-driven animations ||| Nessuna animazione guidata dallo scroll
+View transitions ||| View transitions
+No view transitions ||| Nessuna view transition
+{n} backdrop filter(s) ||| {n} filtri di sfondo
+{n} blur(s) ||| {n} sfocature
+{n} mask(s) ||| {n} maschere
+{n} clip path(s) ||| {n} clip path
+{n} blend mode(s) ||| {n} modalità di fusione
+{n} keyframe animation(s) ||| {n} animazioni keyframe
+{n} video(s), {autoplay} autoplaying ||| {n} video, {autoplay} in riproduzione automatica
+{n} canvas(es) ||| {n} canvas
+{n} Lottie animation(s) ||| {n} animazioni Lottie
+Scroll test: {parallax} parallax-like, {pinned} pinned of {n} sampled ||| Prova dello scroll: {parallax} tipo parallasse, {pinned} fissati su {n} campioni
+Hover test: {changed} of {n} sampled changed ||| Prova dell'hover: {changed} su {n} campioni sono cambiati
+The page is being measured. This takes a minute or two. ||| La pagina è in misura. Ci vuole un minuto o due.
+The study did not finish. ||| Lo studio non è finito.
+Master prompts from this site ||| Prompt maestri da questo sito
+~{n} tokens ||| ~{n} token
+From a site ||| Da un sito
+Give an address: the page is opened and measured, no model is used, and the prompts that fit it are put together with what was measured. ||| Indica un indirizzo: la pagina viene aperta e misurata, nessun modello è usato, e i prompt che le si adattano vengono composti con ciò che è stato misurato.
+Address of the site ||| Indirizzo del sito
+The site could not be studied ||| Non è stato possibile studiare il sito
+Studied sites ||| Siti studiati
+Studying... ||| Studio in corso...
+No site studied yet ||| Nessun sito studiato
+Study an address to see its colours, fonts and motion, and the prompts that fit. ||| Studia un indirizzo per vederne colori, caratteri e movimento, e i prompt adatti.
+Studying {host}: the page is being opened and measured. ||| Studio di {host}: la pagina viene aperta e misurata.
+There is no Site DNA to show. {reason} ||| Non c'è nessun DNA del sito da mostrare. {reason}
+Prompts that fit this site ||| Prompt adatti a questo sito
+No rule matched this site: only the always-on prompts are included ||| Nessuna regola corrisponde a questo sito: sono inclusi solo i prompt sempre attivi
+Add another prompt ||| Aggiungi un altro prompt
+Left out to fit the size limit: {ids} ||| Esclusi per stare nel limite di dimensione: {ids}
+Still over the size limit even with the optional prompts left out: split the work in two. ||| Ancora oltre il limite di dimensione anche senza i prompt facoltativi: dividi il lavoro in due.
+Composed prompt ||| Prompt composto
+The prompt could not be saved ||| Non è stato possibile salvare il prompt
+The skills are being fetched ||| Le skill vengono scaricate
+Save again when they are on this PC. ||| Salva di nuovo quando saranno su questo PC.
+The skills could not be fetched ||| Non è stato possibile scaricare le skill
+Save into ||| Salva in
+The latest clone of this site, else the study folder ||| L'ultimo clone di questo sito, altrimenti la cartella dello studio
+Save into the project ||| Salva nel progetto
+Saved {file} in {folder} ||| Salvato {file} in {folder}
+Skills copied: {names} ||| Skill copiate: {names}
+Skills left as they were because you already have your own: {names} ||| Skill lasciate com'erano perché ne hai già di tue: {names}
+Skills that could not be copied: {names} ||| Skill che non è stato possibile copiare: {names}
+Skills not on this PC: {names} ||| Skill non presenti su questo PC: {names}
+The study of {host} did not finish. {reason} ||| Lo studio di {host} non è finito. {reason}

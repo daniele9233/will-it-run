@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-137 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+143 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -25,7 +25,7 @@
 | POST | `/api/arena/runs/{run_id}/resume` | `arena_resume` |  |
 | POST | `/api/arena/runs/{run_id}/stop` | `arena_stop` |  |
 
-## `api/clone_routes.py` (13)
+## `api/clone_routes.py` (14)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
@@ -34,8 +34,9 @@
 | POST | `/api/clone/install` | `clone_install` |  |
 | POST | `/api/clone/install/cancel` | `clone_install_cancel` |  |
 | POST | `/api/clone/picture` | `clone_picture` | Build a site from a picture: a model that sees writes it region by region, and the page is measured against the picture. |
-| GET | `/api/clone/skills` | `skills_status` | The agent skills: which packs are on this PC (GSAP, frontend design, Vercel, Three.js, Playwright), at which commit and… |
+| GET | `/api/clone/skills` | `skills_status` | The agent skills: which packs are on this PC (the five for building a site from a picture, and the three design packs t… |
 | POST | `/api/clone/skills/install` | `skills_install` | Fetch the skill packs at their pinned commits, in the background; ``GET /api/clone/skills`` follows the job. |
+| POST | `/api/clone/study` | `clone_study` | Study a site: no model. |
 | DELETE | `/api/clone/{study_id}` | `clone_delete` |  |
 | GET | `/api/clone/{study_id}` | `clone_get` |  |
 | POST | `/api/clone/{study_id}/answer` | `clone_answer` | The person's answer to the question the agent is asking (which pages to clone, for one). |
@@ -86,6 +87,16 @@
 | GET | `/api/images/templates` | `images_templates` |  |
 | GET | `/api/images/templates/{key}` | `images_template` |  |
 | POST | `/api/images/upload` | `images_upload` |  |
+
+## `api/prompt_routes.py` (5)
+
+| Method | Path | Handler | What it does |
+|---|---|---|---|
+| GET | `/api/clone/prompts` | `prompts_list` | Every prompt of the library, in the language of the interface: what a card shows, and the proof that it was tried (``No… |
+| GET | `/api/clone/prompts/{prompt_id}` | `prompt_get` | One prompt: what a card shows, and its text on its own with every placeholder unknown (the text is English whatever the… |
+| POST | `/api/clone/{study_id}/compose` | `study_compose` | One prompt composed from the study's Site DNA: the recommendation, or exactly the prompts in ``picked`` (plus the alway… |
+| GET | `/api/clone/{study_id}/dna` | `study_dna` | The Site DNA a study measured. |
+| POST | `/api/clone/{study_id}/prompts/save` | `study_prompt_save` | Save a composed prompt into the project (``docs/prompts/<host>-master.md``) and copy the skills the used prompts cite i… |
 
 ## `api/server.py` (74)
 

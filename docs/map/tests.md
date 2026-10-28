@@ -24,9 +24,16 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_brain.py` | 53 | The Project Brain: storage, search by meaning, words and graph, the project map, what a run records and what it is given. | api, brain, core, lmstudio, workflows |
 | `test_catalog.py` | 35 |  | catalog, core, fit, hardware, lmstudio |
 | `test_clone.py` | 60 | The site cloner: the kit, the agent's tools, the workflow, the question to the person and the studies. | brain, clone, cloud, core, workflows |
-| `test_clone_picture.py` | 34 | A site from a picture: what a model's answer is made into, how the steps keep or undo what it wrote, and the run's start. | clone, core, workflows |
+| `test_clone_compose.py` | 28 | The composer: which recipes a Site DNA calls for and why, the prompt it writes, the budget, and the route. | api, clone, core |
+| `test_clone_dna.py` | 35 | Site DNA: a raw probe read as facts, a style guide and a comparison. | clone, core, workflows |
+| `test_clone_dna_script.py` | 7 | The DNA collector: its pure helpers under Node, and the whole script against a local page (opt-in, a real browser). | clone |
+| `test_clone_dna_sites.py` | 8 | The DNA of four real reference sites, measured on 2026-10-28, against the hand measurements of the design (section 5.2). | clone |
+| `test_clone_library.py` | 45 | The library of master prompts: Markdown files that are checked when they are loaded. | clone, core |
+| `test_clone_library_api.py` | 18 | The text of a master prompt on its own, and the routes that list the library and read one prompt. | api, clone, core |
+| `test_clone_picture.py` | 35 | A site from a picture: what a model's answer is made into, how the steps keep or undo what it wrote, and the run's start. | clone, core, workflows |
 | `test_clone_replica.py` | 38 | The exact copy of a site: HTML to JSX, the project written from a capture, and the three steps of its pipeline. | clone, core, workflows |
-| `test_clone_skills.py` | 12 | The skill store: packs of SKILL.md folders, fetched at a pinned commit and copied into a project for a model to read. | clone, core |
+| `test_clone_skills.py` | 30 | The skill store: packs of SKILL.md folders, fetched at a pinned commit and copied into a project for a model to read. | clone, core |
+| `test_clone_study.py` | 8 | A study of a site as a clone entry: how it is listed, run again, read, deleted, and the two routes that start it and give its DNA. | api, clone, core, workflows |
 | `test_cloud.py` | 17 | Cloud models: naming, keys, the two wire formats, the gateway, and the API. Nothing leaves this machine. | cloud, core, workflows |
 | `test_context_map.py` | 5 | The generated map (docs/map/) and the code it describes: it lists the routes the app really serves, it is the same every time, and it is small enough… | api, core |
 | `test_core.py` | 22 | Database, settings, logging redaction, paths, events and benchmark storage. | benchmark, core, lmstudio |
@@ -49,4 +56,4 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
 | `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
-Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`
+Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`

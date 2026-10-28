@@ -34,25 +34,36 @@ export interface CloneSetup {
 
 /**
  * How a clone is made: an exact copy of the rendered page, measured against the original; an agent that rebuilds it with the kit's skill;
- * or a site written by a model that sees from a reference picture.
+ * or a site written by a model that sees from a reference picture; a "study" builds nothing: it measures a site's DNA.
  */
-export type CloneMode = "replica" | "agent" | "picture";
+export type CloneMode = "replica" | "agent" | "picture" | "study";
 
-/** One pack of agent skills (GSAP, frontend design, Vercel, Three.js, Playwright) and whether it is on this PC. */
+/**
+ * One pack of agent skills and whether it is on this PC. The "picture" packs (GSAP, frontend design, Vercel, Three.js, Playwright) are what a site
+ * built from a picture reads; the "design" packs (taste, MotionSites, impeccable) are the skills the master prompts cite.
+ */
 export interface SkillPackInfo {
   id: string;
   repo: string;
   commit: string;
   license: string;
   summary: string;
+  purpose: "picture" | "design";
   ready: boolean;
   skills: { name: string; description: string; pack: string }[];
 }
 
+/** `ready` covers the picture packs only; `design_ready` the design packs. */
 export interface SkillsStatus {
   packs: SkillPackInfo[];
   ready: boolean;
+  design_ready: boolean;
   job: { state: "running" | "done" | "failed"; lines: string[]; error: string | null } | null;
+}
+
+/** The packs a site built from a picture reads: the design packs belong to the master prompts and stay out of that list. */
+export function picturePacks(packs: SkillPackInfo[]): SkillPackInfo[] {
+  return packs.filter((p) => p.purpose === "picture");
 }
 
 export interface InstallJob {
@@ -141,7 +152,11 @@ export const PICTURE_STAGES: Stage[] = [
   { id: "reviewer" },
 ];
 
-export const stagesOf = (mode: CloneMode | undefined): Stage[] => (mode === "replica" ? REPLICA_STAGES : mode === "picture" ? PICTURE_STAGES : STAGES);
+/** A study: one step that is code, no model. */
+export const STUDY_STAGES: Stage[] = [{ id: "dna", check: true }];
+
+export const stagesOf = (mode: CloneMode | undefined): Stage[] =>
+  mode === "replica" ? REPLICA_STAGES : mode === "picture" ? PICTURE_STAGES : mode === "study" ? STUDY_STAGES : STAGES;
 
 /** The words of the nodes of a site made from a picture: some ids are the ones of the other ways, with another meaning. */
 const pictureText = (): Record<string, { label: string; what: string }> => ({
@@ -163,6 +178,7 @@ export const stageText = (mode?: CloneMode): Record<string, { label: string; wha
   project: { label: t("Project"), what: t("writes the Next.js project, one component for each section, and builds it") },
   measure: { label: t("Measure"), what: t("compares the clone with the original, pixel by pixel and section by section") },
   polisher: { label: t("Polisher"), what: t("a model fixes the weak sections with style rules: only if the measure finds some") },
+  dna: { label: t("DNA"), what: t("opens the page like a visitor and measures its colours, fonts, libraries, sections and motion") },
   // Last, so that a site made from a picture reads its own words for the ids it shares with the other ways.
   ...(mode === "picture" ? pictureText() : {}),
 });

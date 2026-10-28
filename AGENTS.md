@@ -27,7 +27,7 @@ A Windows 11 desktop app (Tauri shell, React UI, Python core) that tells a perso
 | Images (ComfyUI) | `imagegen/` | `docs/IMAGE_STUDIO.md` |
 | Project Brain (memory) | `brain/` | `docs/MEMORY.md` |
 | Clone a site, cloud models | `clone/`, `cloud/` | `docs/CLONE.md`, `docs/CLOUD.md` |
-| HTTP API (133 routes) | `api/` | `docs/map/api.md` |
+| HTTP API (143 routes) | `api/` | `docs/map/api.md` |
 | UI | `desktop/src/pages`, `components`, `lib` | `docs/DESIGN.md`, `docs/LOCALIZATION.md` |
 
 `AppServices` (`app.py`) wires the engines; the HTTP API and the CLI both go through it. "Does it already exist?" is answered by the map and the graph: Arena, Brain, Images, Clone, Teams, Workflows, Cloud, the model gateway, downloads and hardware are all built. Reuse them.

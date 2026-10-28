@@ -16,7 +16,7 @@ import pytest
 from agentfit import paths
 from agentfit.clone import picture, pipeline, studio
 from agentfit.clone.install import BrowserInstall
-from agentfit.clone.skills import Skill
+from agentfit.clone.skills import PACKS, Skill, SkillStore
 from agentfit.events import EventBus
 from agentfit.workflows import checks
 from agentfit.workflows.checks import CheckContext
@@ -25,6 +25,7 @@ from agentfit.workflows.validator import validate
 from fakes import FakeRuntime
 from test_clone import fake_store
 from test_clone_replica import FakeEngine
+from test_clone_skills import PICTURE_PACKS, git_that_serves_every_pack
 
 PNG = bytes.fromhex("89504e470d0a1a0a0000000d4948445200000001000000010806000000" "1f15c4890000000d49444154789c6360f8cfc000000301010018dd8db00000000049454e44ae426082")
 
@@ -206,7 +207,7 @@ class Skills:
     def __init__(self, root: Path) -> None:
         self.skill = Skill("gsap-core", "GSAP core", "gsap", root)
 
-    def catalog(self) -> list[Skill]:
+    def catalog(self, purpose: str | None = None) -> list[Skill]:
         return [self.skill]
 
     def copy_into(self, workspace: Path, names: list[str] | None = None) -> list[Skill]:
@@ -233,6 +234,24 @@ def test_prepare_measures_the_picture_writes_the_project_copies_the_skills_and_i
     out = picture._prepare(check_of("prepare", reference="docs/reference/reference.png", title="Site", language="it"), make_ctx(tmp_path))
     assert out["passed"] is True and out["width"] == 1000 and out["skills"] == ["gsap-core"] and out["bands"] == 2
     assert (tmp_path / "package.json").is_file() and (tmp_path / ".skills/gsap-core/SKILL.md").is_file() and ran == [["install", "--no-fund", "--no-audit", "--loglevel=error"]]
+
+
+def test_a_picture_build_fetches_the_picture_packs_even_when_only_design_packs_are_installed(tmp_path, engine, monkeypatch):
+    workspace = tmp_path / "project"
+    prepared(workspace)
+    fetched: list[str] = []
+    store = SkillStore(tmp_path / "store", git=git_that_serves_every_pack(fetched))
+    store.install(["impeccable"])  # a design pack is on this PC and no picture pack is
+    assert store.catalog() and store.catalog("picture") == []
+    fetched.clear()
+    monkeypatch.setattr(picture, "_script", fake_script())
+    monkeypatch.setattr(picture, "skill_store", store)
+    monkeypatch.setattr(pipeline, "_npm", lambda ctx, install, args, step, timeout: (0, [], False))
+    out = picture._prepare(check_of("prepare", reference="docs/reference/reference.png", title="Site", language="it"), make_ctx(workspace))
+    # "From a picture" is what it always was: the five picture packs are fetched and their skills copied, and not one of the design pack's.
+    assert out["passed"] is True and fetched == PICTURE_PACKS
+    assert set(out["skills"]) == {name for pack in PACKS if pack.purpose == "picture" for name in pack.skills}
+    assert (workspace / ".skills/gsap-core/SKILL.md").is_file() and not (workspace / ".skills/impeccable").exists()
 
 
 def test_prepare_refuses_what_is_not_a_picture(tmp_path, engine):

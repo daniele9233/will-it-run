@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "url": "https://www.inspora.design/?category=Web",
+  "host": "www.inspora.design",
+  "captured_at": "2026-10-28T18:44:38.437Z",
+  "viewport": [
+    1440,
+    900
+  ],
+  "framework": "next",
+  "libs": [
+    {
+      "name": "GSAP",
+      "evidence": [
+        "2lwolr-lgzsb3.js"
+      ]
+    }
+  ],
+  "tokens": {
+    "palette": [
+      {
+        "hex": "#f8f8f8",
+        "share": 0.4174,
+        "role": "background",
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#787878",
+        "share": 0.2273,
+        "role": "muted",
+        "also": [],
+        "contrast": 4.16
+      },
+      {
+        "hex": "#f0f0f0",
+        "share": 0.1368,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#202020",
+        "share": 0.1322,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#101010",
+        "share": 0.0864,
+        "role": "text",
+        "also": [],
+        "contrast": 17.92
+      },
+      {
+        "hex": "#e0e0e0",
+        "share": 0.0,
+        "role": "line",
+        "also": [],
+        "contrast": 1.24
+      }
+    ],
+    "fonts": [
+      {
+        "family": "inter",
+        "share": 1.0,
+        "weights": [
+          400,
+          500
+        ]
+      }
+    ],
+    "type_scale": [
+      11.0,
+      13.0,
+      14.0,
+      16.0
+    ],
+    "spacing": [
+      6.0,
+      8.0,
+      11.0,
+      12.0,
+      20.0,
+      22.0,
+      24.0,
+      112.0
+    ],
+    "radii": [
+      999.0
+    ],
+    "shadows": null,
+    "container_px": 1705,
+    "breakpoints": [
+      460,
+      760,
+      1120,
+      1200,
+      1440,
+      1700,
+      1800
+    ]
+  },
+  "sections": [
+    {
+      "index": 1,
+      "tag": "header",
+      "role": "header",
+      "height_px": 80,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 0,
+      "video": 0,
+      "canvas": 0,
+      "svg": 2,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 2,
+      "tag": "section",
+      "role": "gallery",
+      "height_px": 3077,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 51,
+      "video": 45,
+      "canvas": 0,
+      "svg": 0,
+      "columns": 4,
+      "cards": 48,
+      "card_height_px": 227,
+      "gap_px": 12
+    }
+  ],
+  "motion": {
+    "transitions": [
+      {
+        "duration_ms": 150,
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "count": 12
+      },
+      {
+        "duration_ms": 200,
+        "easing": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "count": 1
+      },
+      {
+        "duration_ms": 150,
+        "easing": "cubic-bezier(0, 0, 0.2, 1)",
+        "count": 1
+      }
+    ],
+    "keyframes": [
+      "status-pulse",
+      "ping",
+      "pulse"
+    ],
+    "sticky": 1,
+    "fixed": 0,
+    "scroll_snap": true,
+    "scroll_timeline": false,
+    "view_transitions": true,
+    "smooth_scroll": "none",
+    "backdrop": 1,
+    "blur": 0,
+    "mask": 0,
+    "clip_path": 2,
+    "blend": 0,
+    "videos": {
+      "count": 45,
+      "loop": 45,
+      "muted": 45,
+      "autoplay": 1,
+      "preload_none": 44,
+      "playing_without_autoplay": 9
+    },
+    "canvases": [],
+    "lottie": 0
+  },
+  "patterns": {
+    "chip_filters": true,
+    "dialog": false,
+    "carousel": false,
+    "masonry": false,
+    "sticky_header": true,
+    "newsletter_form": true
+  },
+  "probes": {
+    "scroll": {
+      "sampled": 38,
+      "parallax_like": 3,
+      "pinned": 3
+    },
+    "hover": {
+      "sampled": 6,
+      "changed": 0,
+      "plays_video": 0,
+      "props": []
+    }
+  },
+  "limits": []
+}

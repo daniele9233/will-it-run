@@ -28,7 +28,15 @@ from typing import Any
 from urllib.parse import urlparse
 
 from agentfit import paths
-from agentfit.clone import asking, picture, pipeline, proc, prompts, tools
+from agentfit.clone import (
+    asking,
+    dna,
+    picture,
+    pipeline,
+    proc,
+    prompts,
+    tools,
+)
 from agentfit.clone.devserver import DevServer, DevServerError
 from agentfit.clone.install import BrowserInstall
 from agentfit.clone.kits import (
@@ -444,6 +452,9 @@ class CloneStudio:
             found = [str(p.relative_to(root)).replace("\\", "/") for p in sorted((root / picture.REFERENCE_DIR).glob("reference.*"))]
             found += [str(p.relative_to(root)).replace("\\", "/") for pattern in ("clone-*.jpg", "diff-*.png") for p in sorted(report.glob(pattern))]
             return found[:limit]
+        if entry.get("mode") == "study":
+            thumb = dna.dna_dir(root, str(entry.get("host") or "")) / "thumb.jpg"
+            return [str(thumb.relative_to(root)).replace("\\", "/")] if thumb.is_file() else []
         if entry.get("mode") == "replica":
             for base in sorted((root / "docs" / "research").glob("*/capture")) + sorted((root / "docs" / "research").glob("*/report")):
                 for pattern in ("thumb.jpg", "original-*.jpg", "clone-*.jpg", "diff-*.png"):
@@ -486,6 +497,8 @@ class CloneStudio:
                 raise CloneError("This clone is still working: stop it first.")
             if entry.get("mode") == "picture":
                 return self.start_picture(None, model_key=model_key, sees=sees, vision_key=vision_key, language=language, approval=approval, study_id=study_id)
+            if entry.get("mode") == "study":
+                return self.start_study(str(entry["url"]), study_id=study_id)
             url = entry["url"]
             target = self.workspace(entry)
             mode = str(entry.get("mode") or "agent")
@@ -577,6 +590,43 @@ class CloneStudio:
         self.db.kv_set(self.namespace, study_id, entry)
         log_event(log, "site from a picture started", study=study_id, run=record.id)
         return entry, record
+
+    def start_study(self, url: str, *, study_id: str | None = None) -> tuple[dict[str, Any], RunRecord]:
+        """Study a site (``dna.py``): no model, no project. The run measures the page and writes its Site DNA; ``study_id`` runs the same study again."""
+        again = bool(study_id)
+        if study_id:
+            entry = self._entry(study_id)
+            if any(r.status not in TERMINAL for r in self._runs(study_id)):
+                raise CloneError("This clone is still working: stop it first.")
+            url = str(entry["url"])
+            target = self.workspace(entry)
+        else:
+            url = normalize_url(url)
+            study_id = uuid.uuid4().hex[:12]
+            target = self.home(study_id)
+            entry = {"id": study_id, "url": url, "title": site_title(url), "slug": host_slug(url), "host": host_of(url), "created_at": utcnow()}
+        target.mkdir(parents=True, exist_ok=True)
+        target = proc.resolve_true_case(target)
+        record = self.runs.start(dna.definition(url=url), "Study this website: " + url, title=str(entry["title"]), project=self.project(study_id),
+                                 workspace=str(target), protect_existing=False, source={"kind": "none"}, approval="ask")
+        if again:
+            # The run started, so the earlier answer goes: ``dna()`` is None until this run writes its own. A run that could not start leaves it.
+            for stale in ("dna.json", "thumb.jpg", "dna-raw.json"):
+                (dna.dna_dir(target, str(entry["host"])) / stale).unlink(missing_ok=True)
+        self.db.kv_set("run_definition", record.id, dna.definition(url=url).model_dump(mode="json", by_alias=True))
+        entry = {**entry, "workspace": str(target), "updated_at": utcnow(), "mode": "study", "source": {"kind": "none"}}
+        self.db.kv_set(self.namespace, study_id, entry)
+        log_event(log, "site study started", study=study_id, run=record.id)
+        return entry, record
+
+    def dna(self, study_id: str) -> dna.SiteDNA | None:
+        """The Site DNA a study wrote; ``None`` before its run finished (or when the file cannot be read)."""
+        entry = self._entry(study_id)
+        path = dna.dna_dir(self.workspace(entry), str(entry.get("host") or "")) / "dna.json"
+        try:
+            return dna.SiteDNA.model_validate_json(path.read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            return None
 
     # -- reading ---------------------------------------------------------------
     def get(self, study_id: str) -> dict[str, Any]:

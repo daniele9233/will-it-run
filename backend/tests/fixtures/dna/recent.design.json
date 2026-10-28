@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "url": "https://recent.design/websites",
+  "host": "recent.design",
+  "captured_at": "2026-10-28T18:44:38.189Z",
+  "viewport": [
+    1440,
+    900
+  ],
+  "framework": null,
+  "libs": [],
+  "tokens": {
+    "palette": [
+      {
+        "hex": "#808080",
+        "share": 0.3766,
+        "role": "muted",
+        "also": [],
+        "contrast": 3.72
+      },
+      {
+        "hex": "#f8f8f8",
+        "share": 0.3692,
+        "role": "background",
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#f0f0f0",
+        "share": 0.1398,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#080808",
+        "share": 0.0924,
+        "role": "text",
+        "also": [],
+        "contrast": 18.86
+      },
+      {
+        "hex": "#b8b8b8",
+        "share": 0.0192,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#f800a0",
+        "share": 0.0027,
+        "role": null,
+        "also": [],
+        "contrast": null
+      },
+      {
+        "hex": "#e0e0e0",
+        "share": 0.0,
+        "role": "line",
+        "also": [],
+        "contrast": 1.24
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Inter",
+        "share": 1.0,
+        "weights": [
+          400,
+          500
+        ]
+      },
+      {
+        "family": "Departure Mono",
+        "share": 0.0,
+        "weights": []
+      }
+    ],
+    "type_scale": [
+      12.0,
+      13.0,
+      16.0
+    ],
+    "spacing": [
+      2.0,
+      4.0,
+      8.0,
+      10.0,
+      12.0,
+      14.0,
+      16.0,
+      32.0
+    ],
+    "radii": [
+      8.0,
+      999.0
+    ],
+    "shadows": [
+      "oklch(1 0 0 / 0.16) 0px 0px 0px 1px inset",
+      "oklch(0 0 0 / 0.08) 0px 0px 0px 0.5px, oklch(0 0 0 / 0.2) 0px 1px 1px -1px, oklch(0 0 0 / 0.08) 0px 1px 2px 0px"
+    ],
+    "container_px": 1680,
+    "breakpoints": []
+  },
+  "sections": [
+    {
+      "index": 1,
+      "tag": "header",
+      "role": "header",
+      "height_px": 28,
+      "heading_px": 16.0,
+      "heading_vw": 1.11,
+      "img": 3,
+      "video": 0,
+      "canvas": 0,
+      "svg": 1,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 2,
+      "tag": "div",
+      "role": "filters",
+      "height_px": 60,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 0,
+      "video": 0,
+      "canvas": 0,
+      "svg": 1,
+      "columns": null,
+      "cards": null,
+      "card_height_px": null,
+      "gap_px": null
+    },
+    {
+      "index": 3,
+      "tag": "div",
+      "role": "gallery",
+      "height_px": 4605,
+      "heading_px": null,
+      "heading_vw": null,
+      "img": 99,
+      "video": 85,
+      "canvas": 0,
+      "svg": 184,
+      "columns": 4,
+      "cards": 99,
+      "card_height_px": 173,
+      "gap_px": 12
+    }
+  ],
+  "motion": {
+    "transitions": [
+      {
+        "duration_ms": 180,
+        "easing": "cubic-bezier(0.2, 0, 0, 1)",
+        "count": 284
+      },
+      {
+        "duration_ms": 120,
+        "easing": "cubic-bezier(0.2, 0, 0, 1)",
+        "count": 234
+      }
+    ],
+    "keyframes": [
+      "fade-in",
+      "input-caret-blink",
+      "x13pe6c5-B",
+      "xjsmpz5-B",
+      "xun325d-B",
+      "xw2c1lr-B",
+      "x18re5ia-B",
+      "xf8s9d4-B",
+      "x1fy8ia8-B",
+      "rough-notation-dash"
+    ],
+    "sticky": 1,
+    "fixed": 2,
+    "scroll_snap": false,
+    "scroll_timeline": false,
+    "view_transitions": true,
+    "smooth_scroll": "none",
+    "backdrop": 184,
+    "blur": 1,
+    "mask": 96,
+    "clip_path": 0,
+    "blend": 0,
+    "videos": {
+      "count": 85,
+      "loop": 85,
+      "muted": 85,
+      "autoplay": 0,
+      "preload_none": 37,
+      "playing_without_autoplay": 11
+    },
+    "canvases": [],
+    "lottie": 0
+  },
+  "patterns": {
+    "chip_filters": true,
+    "dialog": false,
+    "carousel": false,
+    "masonry": false,
+    "sticky_header": false,
+    "newsletter_form": false
+  },
+  "probes": {
+    "scroll": {
+      "sampled": 54,
+      "parallax_like": 0,
+      "pinned": 5
+    },
+    "hover": {
+      "sampled": 6,
+      "changed": 1,
+      "plays_video": 0,
+      "props": [
+        "background-color"
+      ]
+    }
+  },
+  "limits": []
+}

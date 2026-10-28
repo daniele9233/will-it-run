@@ -96,3 +96,6 @@ Will It Run does not ship their files; a run copies the ones it uses into the pr
 - **vercel-labs/agent-skills** (`react-best-practices`, `web-design-guidelines`), commit `6ec269328bc4`: MIT, Vercel.
 - **cesartevisual/threejs-skills**, commit `84f9bcb4bea1`: MIT.
 - **microsoft/playwright-cli** (`playwright-cli`), commit `b1a5903c5b63`: Apache-2.0, Microsoft.
+- **Leonxlnx/taste-skill** (`taste-skill`), commit `12af471f627f`: MIT, Leonxlnx. Its `scripts/` and `assets/` are not kept.
+- **Motionsites-AI/claude-skill** (`motionsites-web-builder`), commit `faa30d512e39`: MIT, Copyright (c) 2026 MotionSites. Its `examples/` and `media/` are © MotionSites (https://motionsites.ai) and are not kept, nor are its `scripts/`.
+- **pbakaus/impeccable** (`impeccable`), commit `3e3a9179e01a`: Apache-2.0, pbakaus. Its `scripts/` are not kept. Its `reference/ios.md` and `reference/android.md` come from ehmo/platform-design-skills (MIT).

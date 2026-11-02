@@ -13,6 +13,17 @@ from agentfit.three_d_coder import (
 )
 
 
+@pytest.fixture(autouse=True)
+def bundled_runtime(tmp_path, monkeypatch):
+    """Preview contracts use a tiny local runtime, never the ignored build output."""
+    import agentfit.three_d_coder as coder
+
+    data = tmp_path / "data"
+    data.mkdir()
+    (data / "three_runtime.js").write_text("const THREE = {};", encoding="utf-8")
+    monkeypatch.setattr(coder, "__file__", str(tmp_path / "three_d_coder.py"))
+
+
 def test_inventory_does_not_load_or_prompt(tmp_path):
     model = SimpleNamespace(model_key="qwen3.5-4b-3d-coder", display_name="Qwen3.5 4B 3D Coder", vision=True)
     def forbidden(*args):

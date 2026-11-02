@@ -109,3 +109,205 @@ The three design packs (taste-skill, MotionSites, impeccable) keep text and data
 ## A skill folder is ours only if it carries our marker, and its name is the folder's, not the header's
 *2026-10-28. Detail: `clone/skills.py`, `install_into`.*
 `.claude/skills/<name>` may hold the person's own skill. The folders this program writes carry a marker file (`.willitrun-skill`), written first and removed last; a folder without it is never overwritten or deleted. The name a skill answers to is its folder's (taste-skill's header says `design-taste-frontend`, its folder `taste-skill`), so the copy is placed by folder name and a header that is not a safe folder name is refused. `install_into` does not raise on one bad skill: it returns `written`, `skipped`, and `failed` (the key and the reason), and the others go on.
+
+
+## 2026-10-30 — Video studio shares the Images engine
+
+Videos lives directly below Images, with its own Wan 2.2 I2V workflow and MP4 gallery.
+It reuses the ComfyUI process, client, authenticated image upload and event bus; it never starts
+another runtime or substitutes the user's Q6_K experts with the existing Q4 models. A separate
+launch-only paths file registers D:\Models for diffusion models, leaving ComfyUI's own YAML intact.
+On this PC, two same-volume hard links in ComfyUI's diffusion_models also expose the originals to
+the already-running engine, without copying 24 GB or interrupting it.
+
+Requests preserve the seed and all sampling settings. HighNoise hands its unfinished latent to
+LowNoise with noise disabled. Tiled VAE decoding limits decode memory. The gallery stores an MP4
+and an atomically published JSON recipe per video under app data, avoiding an unnecessary database
+schema change. Cancellation deletes only its own queued prompt and interrupts only when that prompt
+is running. No timing or hardware-fit guarantee is inferred from file size.
+
+
+## 2026-10-30 — First/last-frame video has four explicit local profiles
+
+Keep the original Wan 2.2 I2V A14B Q6_K pair and add Fun-InP 5B Q6_K, Fun-InP A14B Q4_K_M,
+and Wan 2.1 FLF2V 14B Q4_K_M. The selected quants leave the drive's 30 GiB reserve intact and
+avoid assuming both 14B experts can remain in 16 GB VRAM. No profile substitutes another file.
+The model name, sampling settings and both input image names are preserved in each recipe.
+
+The catalog describes roles, conditioning and defaults rather than copying one graph to every
+family: Fun 5B uses its own Wan 2.2 VAE and one sampler; both A14B profiles use two experts;
+Wan 2.1 FLF2V uses a single model plus CLIP Vision H for each endpoint. Only Wan 2.1 requires
+the ending picture; the others retain a single-picture mode. Tiled decoding is shared.
+Source commits, sizes and SHA-256 are pinned in video_assets.json. Dependencies remain in
+role-specific directories, avoiding a flat-folder mapping to every ComfyUI model role.
+
+
+## 2026-10-30 — Separate native Wan generation from verified hero export
+
+The owner requires the same 1920x1080 / 30 distinct fps / 6-15 seconds from all four
+video profiles. Generate the whole selected interval at each model's native rate;
+keep native resolution adjustable for memory, then use the already-installed local
+FFmpeg for motion-compensated interpolation and Lanczos resizing. No extra model,
+cloud, account or neural-upscaling claim is necessary. Describe upscaled output in
+the UI and preserve native versus final specifications in separate recipe fields.
+Decode and measure the result before atomic gallery publication. Reject repeated
+adjacent frames rather than claiming frame-rate metadata proves distinct motion.
+Legacy raw recipes retain their meaning; the new UI always requests hero export.
+
+
+## 2026-10-31 — Save video prompt pairs independently of generated videos
+
+A reusable effect needs its positive and negative texts kept together. Store named pairs
+in a dedicated videos/prompts directory under app data, with atomic JSON publication,
+independent of gallery recipes and without a new database migration. Gallery deletion
+must not remove saved pairs. Reuse fills the two text fields only, preserving current
+photos and sampling choices rather than reusing stale uploaded filenames or implying a
+prompt alone reproduces an identical video. Both texts stay selectable in the desktop
+shell, whose global CSS otherwise disables selection; reuse the existing clipboard helper.
+
+
+## 2026-10-31 — Diagnose published video separately from native generation quality
+
+The local QA harness in scripts/video_qa uses the existing authenticated studio APIs,
+sequential jobs and ignored scratch outputs. It records requested native settings and
+measured Full HD output separately: interpolation and scaling do not establish native
+1080p quality. Endpoint SSIM, temporal screening and optical-flow track survival are
+measurements with explicit heuristic thresholds; they never certify rigid 3D geometry
+or fabricate a Gaussian reconstruction. Models requiring two images remain unsupported
+in a true single-image case. Qwen BF16 refers to the diffusor; its installed encoder
+remains INT8. A repeated First/Last case supplies the requested fourth stress scenario.
+
+
+## 2026-10-31 — Preserve entire video references and enforce 720p FLF resolution
+
+Video inputs use core ComfyUI resize-and-pad before conditioning; portrait generation
+follows source orientation and Full HD export adds borders rather than cropping.
+The 720p-only FLF profile cannot silently run a tiny latent for a Full HD request.
+Legacy raw recipes remain valid, while new Full HD requests enforce the native
+minimum. Decode with the official VAEDecode path instead of forcing very short
+temporal tiles. These are pipeline correctness fixes, not a promise of AI-generated
+rigid 3D motion or a change to the explicitly selected model quantization.
+
+
+## 2026-10-31 — Expose short native transitions as explicit slow motion
+
+Keep export duration separate from native motion length. A visible Slow motion
+control supplies optional motion_frames; do not silently claim 33 frames at 16 fps
+were generated as eight seconds. Store native interval, requested export duration
+and timing mode. Existing API requests without motion_frames keep continuous
+generation. The live 720p FLF comparison used the official 33-frame recipe, with a
+verified eight-second/240-frame export, and separated the object throughout the shot
+instead of postponing almost all separation to the end of a long native clip.
+
+
+## 2026-10-31 — TRELLIS lives in its own WSL2 runtime
+
+The 3D page uses Microsoft TRELLIS-image-large through an isolated Python 3.10,
+PyTorch 2.4 / CUDA 12.1 environment in a user-selected existing WSL distribution.
+The core and ComfyUI never import its native CUDA extensions. Setup is explicit,
+free and local; the official TRELLIS revision is pinned in trellis_setup.sh.
+Images travel as bounded PNG payloads over stdin; the worker returns a GLB which
+is validated before the core saves its recipe and exposes it in the gallery.
+Video references supply one frame, not an animated reconstruction. Model weights,
+DINOv2 and background removal assets may download on first use. The upstream
+minimum is an NVIDIA GPU with 16 GB VRAM; this is not a guarantee that other loaded
+models leave sufficient free memory. Tests use fake subprocess results.
+
+
+## 2026-10-31 — Explicit 3D photo-to-export flow and high detail
+
+The 3D page exposes Upload photo, Generate 3D model and Export GLB as three visible
+steps. High detail requests 24 sampler steps, a 2048-pixel texture and 30 percent
+triangle removal; Standard keeps the original 12-step, 1024-pixel, 95-percent-removal
+preview recipe. Legacy API requests default to Standard. Store quality in each
+recipe and release the generator weights before textured-mesh export to leave GPU
+space for larger outputs. The real high-detail samurai run on the 16 GB RTX 4080
+SUPER produced 132,344 triangles and 81,376 exported vertices in a 6,477,680-byte
+GLB in 78.5 seconds with weights cached. This improves the local output and does
+not establish equivalence with the separate proprietary Tripo Studio engine.
+
+## 2026-11-01 — Replace TRELLIS v1 with TRELLIS.2 at explicit 1536³
+
+The owner requested removing the old engine and installing TRELLIS.2 at 1536³.
+Keep the gallery and authenticated upload/export API, replace the isolated runtime
+with `willitrun-trellis2` and use only the 1536 cascade/4K PBR export profile.
+CPU offloading changes model placement, not the requested spatial resolution.
+Upstream can silently reduce resolution when its token limit is reached; permit
+the full 1536 sparse grid and verify voxel size before accepting output instead.
+On the owner's 16 GB GPU, show the official 24 GB requirement and report failure
+honestly if insufficient memory prevents generation.
+Pin all inference assets with size and SHA-256. Use public timm DINOv3 ViT-L/16
+weights and local U2Net preprocessing to avoid requiring accounts for gated
+auxiliary models. Do not delete pre-existing generated models during migration.
+
+## 2026-11-01 — Explicit memory profiles and separate Web assets
+
+The new action-pose samurai fails at 1536³ on 16 GB but succeeds at 1024³.
+Default to explicit 1024³ while retaining the experimental 1536³ option; never
+silently reduce a selected resolution. Keep original GLB bytes and build Web
+copies separately with a 25–30k triangle budget, real high-to-low Normal/PBR
+bake and Draco/WebP. Deletions are recoverable in a local trash directory.
+Share one 3D task slot across generation, Web bake and Qwen code generation.
+Qwen is a procedural scene coder: do not present it as image reconstruction.
+Render its generated HTML in an opaque sandbox on a separate narrow server,
+without application credentials or network access; bundle Three.js offline.
+The user expressly excluded running the actual Qwen model during integration.
+
+## 2026-11-01 — Confronto Web and explicit quality maxima
+
+The owner chose the comparison layout and prioritizes detail over generation cost.
+Give the viewer the full page width, collapse generation controls and display the
+original beside its true Web copy. Use one renderer with scissored views, a shared
+camera, identical lighting and the original bounds; independent auto-framing can
+hide geometric differences. Resizing and expanded mode preserve the current view.
+Provide drag, slider and Escape/focus behavior for resizing/expanded viewing.
+Default UI controls to explicit supported maxima without changing API defaults or
+claiming that a high seed/step count proves quality. Preserve the original export.
+Research the author's coder constraints and adapt prompts to the existing offline
+global THREE runtime; never run the owner's Qwen model to test these prompts.
+# Studio and recoverable local scene generation
+
+The 3D page uses a single Studio viewport with original/Web selection instead of
+side-by-side comparison. Both exports remain available. Qwen continuation and
+recovery share the existing 3D job slot and model gateway; recovered scenes get a
+new identifier with a parent link. Preview errors are sent from the opaque iframe
+using a narrowly checked source window; its network restrictions remain intact.
+
+## 2026-11-02 — Keep the 3D gallery beside the Studio at desktop zoom
+
+Use left gallery/export controls, center viewport and right generation controls,
+starting three columns at lg rather than xl. The installed WebView's interface
+zoom reduced its CSS viewport enough to stack settings at xl despite a 1440 px
+physical window. Preserve adjustable height, with a 400 px initial value. Render
+visible model thumbnails sequentially, cache their images and release temporary
+WebGL contexts. Keep original GLB and separate Web export behavior unchanged.
+
+## 2026-11-02 — Repair Qwen errors into new copies
+
+Document termination alone is insufficient. Use local Node's parser when available,
+never execution, before accepting newly generated inline JavaScript. Feed syntax
+errors into bounded full rewrites; expose preview runtime errors as Repair scene.
+Preserve original scenes and parent links. Scene deletion is explicit and scoped
+to owned files, leaving external exports intact. The shared task slot, MTP-off
+policy and opaque offline preview remain the boundaries for generated code.
+
+## 2026-11-02 — Model research is separate from installed capabilities
+
+The owner canceled Hunyuan3D 2.1 integration. No Hunyuan3D engine or alternative
+Three.js coder was added, downloaded or enabled. Atelier, OBSIDIAN, larger Qwen
+models and alternative video generators were research candidates, not measured
+improvements or shipped features. The existing 4B coder remains integrated.
+Do not turn recommendations into inventory.
+
+## 2026-11-02 — Consolidate local studios and Dynamic mirror in 0.4.0
+
+Release the accumulated local work together: TRELLIS.2 and Web exports, the Qwen
+scene coder and Studio layout, four Wan video profiles with saved prompts and
+explicit finishing/slow motion, and Dynamic mirror's browser recording/replay and
+measured reports. Preserve separate original/Web assets, model-specific workflows
+and honest quality/coverage limits. Video QA tools operate on synthetic fixtures
+or explicitly requested local runs; their media and reports remain ignored.
+The detailed product changes are in RELEASE_NOTES_0.4.0.md, 3D_STUDIO.md,
+VIDEO_STUDIO.md and CLONE.md. Browser recordings under .playwright-cli are private
+development outputs and are excluded alongside .shots. The owner authorized
+committing all source changes, publishing master and creating the new version tag.

@@ -1,0 +1,62 @@
+[
+  {
+    "repo": "QuantStack/Wan2.2-Fun-A14B-InP-GGUF",
+    "revision": "6a24c79dc08b02363a67239c7091fffb365efd0d",
+    "remote_path": "HighNoise/Wan2.2-Fun-A14B-InP_HighNoise-Q4_K_M.gguf",
+    "role": "diffusion_model",
+    "filename": "Wan2.2-Fun-A14B-InP_HighNoise-Q4_K_M.gguf",
+    "size": 9661569664,
+    "sha256": "a7f1a6a377d37d9453efcae7de03f720067bf3e25f52081818d0526cd60d9d46",
+    "url": "https://huggingface.co/QuantStack/Wan2.2-Fun-A14B-InP-GGUF/resolve/6a24c79dc08b02363a67239c7091fffb365efd0d/HighNoise/Wan2.2-Fun-A14B-InP_HighNoise-Q4_K_M.gguf"
+  },
+  {
+    "repo": "QuantStack/Wan2.2-Fun-A14B-InP-GGUF",
+    "revision": "6a24c79dc08b02363a67239c7091fffb365efd0d",
+    "remote_path": "LowNoise/Wan2.2-Fun-A14B-InP_LowNoise-Q4_K_M.gguf",
+    "role": "diffusion_model",
+    "filename": "Wan2.2-Fun-A14B-InP_LowNoise-Q4_K_M.gguf",
+    "size": 9661569664,
+    "sha256": "5354d1e4655647064ac86c6fcdecd032254c2c59a87ccda63ce1cf20834aebd1",
+    "url": "https://huggingface.co/QuantStack/Wan2.2-Fun-A14B-InP-GGUF/resolve/6a24c79dc08b02363a67239c7091fffb365efd0d/LowNoise/Wan2.2-Fun-A14B-InP_LowNoise-Q4_K_M.gguf"
+  },
+  {
+    "repo": "QuantStack/Wan2.2-Fun-5B-InP-GGUF",
+    "revision": "50f33351b1a8fe43eaf883869fd07156e6fe90ff",
+    "remote_path": "Wan2.2-Fun-5B-InP-Q6_K.gguf",
+    "role": "diffusion_model",
+    "filename": "Wan2.2-Fun-5B-InP-Q6_K.gguf",
+    "size": 4219050720,
+    "sha256": "03cf3ef84cce915586194402210eefb83a150e1b92de54b2425e3bf528fd9e98",
+    "url": "https://huggingface.co/QuantStack/Wan2.2-Fun-5B-InP-GGUF/resolve/50f33351b1a8fe43eaf883869fd07156e6fe90ff/Wan2.2-Fun-5B-InP-Q6_K.gguf"
+  },
+  {
+    "repo": "QuantStack/Wan2.2-Fun-5B-InP-GGUF",
+    "revision": "50f33351b1a8fe43eaf883869fd07156e6fe90ff",
+    "remote_path": "vae/Wan2.2_VAE.safetensors",
+    "role": "vae",
+    "filename": "Wan2.2_VAE.safetensors",
+    "size": 1409400960,
+    "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156",
+    "url": "https://huggingface.co/QuantStack/Wan2.2-Fun-5B-InP-GGUF/resolve/50f33351b1a8fe43eaf883869fd07156e6fe90ff/vae/Wan2.2_VAE.safetensors"
+  },
+  {
+    "repo": "city96/Wan2.1-FLF2V-14B-720P-gguf",
+    "revision": "0fef557a0a13cbe66000526d2161436e693de93a",
+    "remote_path": "wan2.1-flf2v-14b-720p-Q4_K_M.gguf",
+    "role": "diffusion_model",
+    "filename": "wan2.1-flf2v-14b-720p-Q4_K_M.gguf",
+    "size": 11343816128,
+    "sha256": "7652d7d8b0795009ff21ed83d806af762aae8a8faa8640dd07b3a67e4dfab445",
+    "url": "https://huggingface.co/city96/Wan2.1-FLF2V-14B-720P-gguf/resolve/0fef557a0a13cbe66000526d2161436e693de93a/wan2.1-flf2v-14b-720p-Q4_K_M.gguf"
+  },
+  {
+    "repo": "Comfy-Org/Wan_2.1_ComfyUI_repackaged",
+    "revision": "123acf1cc74bccbb9bfff8ac1ee72edc08c2341d",
+    "remote_path": "split_files/clip_vision/clip_vision_h.safetensors",
+    "role": "clip_vision",
+    "filename": "clip_vision_h.safetensors",
+    "size": 1264219396,
+    "sha256": "64a7ef761bfccbadbaa3da77366aac4185a6c58fa5de5f589b42a65bcc21f161",
+    "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/123acf1cc74bccbb9bfff8ac1ee72edc08c2341d/split_files/clip_vision/clip_vision_h.safetensors"
+  }
+]

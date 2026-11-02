@@ -31,6 +31,7 @@ from agentfit import paths
 from agentfit.clone import (
     asking,
     dna,
+    mirror,
     picture,
     pipeline,
     proc,
@@ -49,6 +50,7 @@ from agentfit.clone.kits import (
     is_cloner_project,
     is_empty,
 )
+from agentfit.clone.mirror_server import MirrorServer
 from agentfit.db import Database, utcnow
 from agentfit.logging_setup import get_logger, log_event
 from agentfit.workflows import checks, schemas
@@ -405,6 +407,7 @@ class CloneStudio:
         self.store = store
         self.install = install
         self._previews: dict[str, DevServer] = {}
+        self._mirrors: dict[str, MirrorServer] = {}
         self._lock = threading.Lock()
 
     def home(self, study_id: str) -> Path:
@@ -455,6 +458,9 @@ class CloneStudio:
         if entry.get("mode") == "study":
             thumb = dna.dna_dir(root, str(entry.get("host") or "")) / "thumb.jpg"
             return [str(thumb.relative_to(root)).replace("\\", "/")] if thumb.is_file() else []
+        if entry.get("mode") == "mirror":
+            thumb = mirror.mirror_dir(root) / "thumb.jpg"
+            return [str(thumb.relative_to(root)).replace("\\", "/")] if thumb.is_file() else []
         if entry.get("mode") == "replica":
             for base in sorted((root / "docs" / "research").glob("*/capture")) + sorted((root / "docs" / "research").glob("*/report")):
                 for pattern in ("thumb.jpg", "original-*.jpg", "clone-*.jpg", "diff-*.png"):
@@ -499,6 +505,8 @@ class CloneStudio:
                 return self.start_picture(None, model_key=model_key, sees=sees, vision_key=vision_key, language=language, approval=approval, study_id=study_id)
             if entry.get("mode") == "study":
                 return self.start_study(str(entry["url"]), study_id=study_id)
+            if entry.get("mode") == "mirror":
+                return self.start_mirror(str(entry["url"]), study_id=study_id)
             url = entry["url"]
             target = self.workspace(entry)
             mode = str(entry.get("mode") or "agent")
@@ -628,6 +636,71 @@ class CloneStudio:
         except (OSError, ValueError):
             return None
 
+    def start_mirror(self, url: str, *, study_id: str | None = None) -> tuple[dict[str, Any], RunRecord]:
+        """Record a live page and measure its replay (``mirror.py``): no model, no project. ``study_id`` records the same site again."""
+        again = bool(study_id)
+        if study_id:
+            entry = self._entry(study_id)
+            if any(r.status not in TERMINAL for r in self._runs(study_id)):
+                raise CloneError("This clone is still working: stop it first.")
+            url = str(entry["url"])
+            target = self.workspace(entry)
+        else:
+            url = normalize_url(url)
+            study_id = uuid.uuid4().hex[:12]
+            target = self.home(study_id)
+            entry = {"id": study_id, "url": url, "title": site_title(url), "slug": host_slug(url), "host": host_of(url), "created_at": utcnow()}
+        target.mkdir(parents=True, exist_ok=True)
+        target = proc.resolve_true_case(target)
+        definition_ = mirror.definition(url=url)
+        record = self.runs.start(definition_, "Mirror this website: " + url, title=str(entry["title"]), project=self.project(study_id),
+                                 workspace=str(target), protect_existing=False, source={"kind": "none"}, approval="ask")
+        if again:
+            # The run started, so the earlier answer goes (and the server that served it). The recording itself is cleared by the record step,
+            # which is already writing into the folder: deleting it here could remove part of the new one. A run that could not start leaves all.
+            self._stop_mirror(study_id)
+            for stale in ("report.json", "thumb.jpg"):
+                (mirror.mirror_dir(target) / stale).unlink(missing_ok=True)
+        self.db.kv_set("run_definition", record.id, definition_.model_dump(mode="json", by_alias=True))
+        entry = {**entry, "workspace": str(target), "updated_at": utcnow(), "mode": "mirror", "source": {"kind": "none"}}
+        self.db.kv_set(self.namespace, study_id, entry)
+        log_event(log, "site mirror started", study=study_id, run=record.id)
+        return entry, record
+
+    def mirror(self, study_id: str) -> mirror.MirrorReport | None:
+        """The report a mirror run wrote; ``None`` before it finished (or when the file cannot be read)."""
+        entry = self._entry(study_id)
+        path = mirror.mirror_dir(self.workspace(entry)) / "report.json"
+        try:
+            return mirror.MirrorReport.model_validate_json(path.read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            return None
+
+    def mirror_preview(self, study_id: str) -> str:
+        """The recording served on http://127.0.0.1:<port>/ (one server per mirror), for as long as the app runs."""
+        entry = self._entry(study_id)
+        root = mirror.mirror_dir(self.workspace(entry))
+        if not (root / "index.json").is_file():
+            raise CloneError("There is no recording to show yet.")
+        with self._lock:
+            server = self._mirrors.get(study_id)
+            if server is None:
+                server = self._mirrors[study_id] = MirrorServer(root)
+        try:
+            return server.start()
+        except (OSError, ValueError) as exc:
+            raise CloneError(f"The recording could not be served: {exc}") from exc
+
+    def _stop_mirror(self, study_id: str) -> None:
+        with self._lock:
+            server = self._mirrors.pop(study_id, None)
+        if server is not None:
+            server.stop()
+
+    def stop_mirrors(self) -> None:
+        for study_id in list(self._mirrors):
+            self._stop_mirror(study_id)
+
     # -- reading ---------------------------------------------------------------
     def get(self, study_id: str) -> dict[str, Any]:
         entry = self._entry(study_id)
@@ -709,6 +782,7 @@ class CloneStudio:
             server = self._previews.pop(study_id, None)
         if server is not None:
             server.stop()
+        self._stop_mirror(study_id)
         for record in runs:
             self.runs.delete(record.id)
             self.db.kv_delete("run_definition", record.id)

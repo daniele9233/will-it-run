@@ -495,7 +495,7 @@ from a shipped template.
 - **Install ComfyUI.** It finds it, starts it, stops it, and links to the official installer.
 - **Install custom nodes on its own initiative.** A model that needs one is refused until you
   press the button; the node is cloned with `git` and ComfyUI has to be restarted.
-- **Video.** Wan 2.2 is on this PC and in ComfyUI's paths, but no video template exists here.
+- **Video.** The separate Videos page uses the same local engine with the two Wan 2.2 I2V A14B Q6_K experts; see [VIDEO_STUDIO.md](VIDEO_STUDIO.md).
 - **Masks and inpainting a region.** Editing is instruction-based (`qwen_image_edit`) or
   whole-image (`sdxl_img2img`). A mask brush and `VAEEncodeForInpaint` are the next step, and
   the better tool once you know which region you want changed.

@@ -6,15 +6,23 @@ Image generation and editing through ComfyUI.
 
 - Depends on: `core`, `hardware`
 - Used by: `api`, `core`
-- Tests that import it: `test_imagegen.py`, `test_importer.py`
+- Tests that import it: `test_imagegen.py`, `test_importer.py`, `test_trellis.py`, `test_video.py`, `test_video_finish.py`, `test_video_prompts.py`
 
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
 | `imagegen/catalog.py` | 198 | Which image models this PC can generate with, and which components each one needs. | **CatalogError**, **ModelProfile**, profiles(), by_key(), flavour_of(), from_checkpoint() | test_imagegen.py |
 | `imagegen/comfy.py` | 257 | A small client for ComfyUI's HTTP API. | **ComfyError**, **ComfyUnavailable**, **ComfyClient**, produced_images(), status_message() | test_imagegen.py |
 | `imagegen/components.py` | 932 | The parts a model is made of, what is already on disk, and how to fetch what is missing. | **ComponentError**, **DiskFull**, **ComponentDef**, **Resolved**, **Resolver**, **Download**, **ComponentStore**, definitions(), definition() +2 more | test_imagegen.py, test_importer.py |
-| `imagegen/engine.py` | 293 | Finding, starting and stopping the ComfyUI on this PC. | **EngineError**, **Install**, **ComfyEngine**, find_install() | test_imagegen.py, test_importer.py |
+| `imagegen/engine.py` | 305 | Finding, starting and stopping the ComfyUI on this PC. | **EngineError**, **Install**, **ComfyEngine**, find_install() | test_imagegen.py, test_importer.py |
 | `imagegen/importer.py` | 554 | The model files already on this PC: finding them, recognising them, putting them in place. | **ImportError_**, **Recognised**, read_header(), classify(), match_component(), guess_family(), scan(), apply(), lora_format() +2 more | test_importer.py |
 | `imagegen/plan.py` | 172 | Will this model fit on this card, and what to change when it does not. | cost_per_megapixel(), estimate(), is_out_of_memory(), out_of_memory_hints() | test_imagegen.py |
 | `imagegen/service.py` | 629 | The image studio: queue a ComfyUI workflow, watch it, keep the result. | **StudioError**, **GenerationRequest**, **ImageStudio** | test_imagegen.py |
 | `imagegen/templates.py` | 229 | Workflow templates: a ComfyUI graph with holes, loaded from JSON. | **TemplateError**, **Template**, templates(), by_key(), for_family(), bind(), apply_loras() | test_imagegen.py |
+| `imagegen/trellis.py` | 404 | Local image-to-3D jobs, isolated from the core and ComfyUI in WSL2. | **TrellisRequest**, **WebExportRequest**, **TrellisStudio**, validate_glb() | test_trellis.py |
+| `imagegen/trellis_blender.py` | 185 | Blender background script: decimation, high-to-low PBR/normal bake, Draco/WebP. | progress(), main() |  |
+| `imagegen/trellis_web_worker.py` | 81 | Isolated Blender web export runner; executed in WSL, never in the core. | progress(), prepare(), main() |  |
+| `imagegen/trellis_worker.py` | 266 | Executed by the isolated TRELLIS.2 runtime, never imported by the core. | progress(), configure_pipeline(), asset_path(), prepare(), prepare_asset(), main() | test_trellis.py |
+| `imagegen/video.py` | 303 | Local Wan 2.2 I2V studio, sharing the Images engine and keeping MP4s in app data. | **VideoRequest**, **VideoStudio**, workflow() | test_video.py, test_video_finish.py |
+| `imagegen/video_catalog.py` | 73 | Explicit local video profiles; the selected quantizations never change silently. | **VideoProfile**, profile(), assets(), local_path() | test_video.py, test_video_finish.py |
+| `imagegen/video_finish.py` | 101 | Local hero-video finishing: motion interpolation, Lanczos scaling and verified MP4s. | **VideoCancelled**, tools(), finish() | test_video.py, test_video_finish.py |
+| `imagegen/video_prompts.py` | 74 | Named positive/negative video prompt pairs, stored independently of gallery videos. | **VideoPromptInput**, **SavedVideoPrompt**, **VideoPromptStore** | test_video_prompts.py |

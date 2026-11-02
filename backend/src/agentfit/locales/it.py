@@ -5,6 +5,7 @@ Placeholders, including their format specs (``{gb:.1f}``), must match the key ex
 """
 
 MESSAGES: dict[str, str] = {
+    "This 720p video model needs at least 1280 x 720 pixels. Choose a higher generation resolution.": "Questo modello video 720p richiede almeno 1280 x 720 pixel. Scegli una risoluzione di generazione maggiore.",
     # -- confidence levels and fit verdicts (translated through a variable) ----------
     "HIGH": "ALTA",
     "MEDIUM": "MEDIA",
@@ -267,6 +268,12 @@ MESSAGES: dict[str, str] = {
     "Study": "Studio",
     "Opens the page in Chrome, measures its styles, scripts, structure, scroll and hover, and writes the Site DNA and a style guide.":
         "Apre la pagina in Chrome, ne misura stili, script, struttura, scroll e hover, e scrive il DNA del sito e una guida di stile.",
+    "Record": "Registrazione",
+    "Opens the page in Chrome, scrolls it, and stores every answer the page receives, then points the stored text at this PC.":
+        "Apre la pagina in Chrome, la scorre e conserva ogni risposta che la pagina riceve, poi fa puntare il testo conservato a questo PC.",
+    "Verify": "Verifica",
+    "Opens the live page and the replay at two widths, follows what moves while scrolling, compares screenshots and lists what the replay lacked. It gives numbers, not a verdict.":
+        "Apre la pagina dal vivo e la riproduzione a due larghezze, segue ciò che si muove mentre scorre, confronta gli screenshot ed elenca ciò che alla riproduzione mancava. Da numeri, non un verdetto.",
     "Project": "Progetto",
     "Turns the capture into a Next.js project, one component for each section (a model may name them), installs and builds it.":
         "Trasforma la cattura in un progetto Next.js, un componente per ogni sezione (un modello può dar loro i nomi), lo installa e lo compila.",
@@ -295,6 +302,9 @@ MESSAGES: dict[str, str] = {
         "Chiude l'esecuzione senza risposta, con un verdetto esplicito. Un workflow arriva qui quando nessun percorso affidabile ha prodotto qualcosa di verificabile: rifiutare è l'esito, non un errore da aggirare.",
     # -- master prompts: the library of Clone a site ---------------------------------
     "This master prompt does not exist.": "Questo prompt master non esiste.",
+    "This mirror does not exist.": "Questa copia viva non esiste.",
+    "The mirror has not finished yet: there is no report to show.": "La copia viva non è ancora finita: non c'è ancora un rapporto da mostrare.",
+    "There is no recording to show yet.": "Non c'è ancora una registrazione da mostrare.",
     "This study does not exist.": "Questo studio non esiste.",
     "The study has not finished yet: there is no Site DNA to show.": "Lo studio non è ancora finito: non c'è ancora un DNA del sito da mostrare.",
     "Write the address of a website.": "Scrivi l'indirizzo di un sito.",
@@ -403,3 +413,54 @@ from agentfit.locales.it_arena import MESSAGES as _ARENA  # noqa: E402
 
 for _key, _value in _ARENA.items():
     MESSAGES.setdefault(_key, _value)
+
+# Local video studio
+MESSAGES.update({
+    'Video sizes must be multiples of 16; frames must be 4n+1.': 'Le dimensioni video devono essere multiple di 16; i fotogrammi devono essere 4n+1.',
+    'Choose an uploaded picture and describe the movement.': 'Scegli una foto caricata e descrivi il movimento.',
+    'The video engine is not ready. Check the components and start the engine.': 'Il motore video non è pronto. Verifica i componenti e avvia il motore.',
+    'A video is already being generated.': 'È già in corso la generazione di un video.',
+    'Video generation timed out after two hours.': 'La generazione video ha superato il limite di due ore.',
+    'The engine finished without producing an MP4 video.': 'Il motore ha terminato senza produrre un video MP4.',
+})
+
+# Multiple video families and end-frame conditioning
+MESSAGES.update({
+    'Unknown video model: {key}.': 'Modello video sconosciuto: {key}.',
+    'This video model needs dimensions divisible by {multiple}.': 'Questo modello video richiede dimensioni divisibili per {multiple}.',
+    'This video model needs both a starting and an ending picture.': 'Questo modello video richiede sia una foto iniziale sia una foto finale.',
+})
+
+# Full HD hero-video finishing
+MESSAGES.update({
+    "Video finishing timed out after two hours.": "La preparazione del video ha superato il limite di due ore.",
+    "Local video finishing failed: {error}": "Preparazione locale del video non riuscita: {error}",
+    "Full HD video needs local FFmpeg and FFprobe.": "Il video Full HD richiede FFmpeg e FFprobe locali.",
+    "The exported video does not match the requested Full HD format.": "Il video esportato non corrisponde al formato Full HD richiesto.",
+    "The video contains repeated frames. Try a prompt with more visible movement.": "Il video contiene fotogrammi ripetuti. Prova un prompt con un movimento più visibile.",
+})
+
+MESSAGES["Choose an MP4 filename."] = "Scegli un nome file con estensione MP4."
+
+# Saved video prompt pairs
+MESSAGES.update({
+    "Enter a name and a video prompt.": "Inserisci un nome e un prompt video.",
+    "Could not save video prompts: {error}": "Impossibile salvare i prompt video: {error}",
+    "Saved video prompt not found.": "Prompt video salvato non trovato.",
+    "Could not delete video prompts: {error}": "Impossibile eliminare i prompt video: {error}",
+})
+
+# TRELLIS 3D
+MESSAGES.update({
+    "The scene is too large to complete in the available context.": "La scena è troppo grande per essere completata nel contesto disponibile.",
+    "The scene is incomplete. The code was saved for recovery; generation was not marked completed.": "La scena è incompleta. Il codice è stato salvato per il recupero; la generazione non è stata segnata come completata.",
+    "This scene is incomplete. Choose Complete scene to recover it.": "Questa scena è incompleta. Scegli Completa scena per recuperarla.",
+})
+MESSAGES["3D model not found."] = "Modello 3D non trovato."
+MESSAGES.update({'TRELLIS.2 did not produce a valid GLB model.': 'TRELLIS.2 non ha prodotto un modello GLB valido.', 'A 3D task is already running.': 'Un\'attività 3D è già in corso.', 'Choose an installed WSL2 Linux distribution.': 'Scegli una distribuzione Linux WSL2 installata.', 'TRELLIS.2 setup failed. See the local setup log.': 'Installazione di TRELLIS.2 non riuscita. Consulta il registro locale di installazione.', 'Choose a PNG image smaller than 20 MB.': 'Scegli un\'immagine PNG inferiore a 20 MB.', 'Install the local TRELLIS.2 runtime first.': 'Installa prima l\'ambiente locale di TRELLIS.2.', 'Upload a reference image first.': 'Carica prima un\'immagine di riferimento.', 'Local 3D generation failed: {error}': 'Generazione 3D locale non riuscita: {error}', 'Choose a GLB filename in an existing folder.': 'Scegli un nome file GLB in una cartella esistente.'})
+
+MESSAGES.update({'GPU memory ran out while generating this model. Try 1024³ or close other GPU applications. The reference image is still available.': 'Memoria GPU esaurita durante la generazione. Prova 1024³ o chiudi altre applicazioni che usano la GPU. L\u0027immagine di riferimento è ancora disponibile.', 'This model is already in the gallery.': 'Questo modello è già nella galleria.', 'Web export failed. The original model is unchanged. See the local export log.': 'Esportazione Web non riuscita. Il modello originale è invariato. Consulta il registro locale di esportazione.', 'Web export did not produce a Normal Map.': 'L\u0027esportazione Web non ha prodotto una Normal Map.', 'Choose the installed Qwen 3D Coder model.': 'Scegli il modello Qwen 3D Coder installato.', 'Describe the 3D scene first.': 'Descrivi prima la scena 3D.', 'The coder did not return an HTML scene.': 'Il modello non ha restituito una scena HTML.', 'The local Three.js runtime is missing. Reinstall the updated app.': 'Manca l\u0027ambiente Three.js locale. Reinstalla l\u0027app aggiornata.', 'Choose an HTML filename in an existing folder.': 'Scegli un nome file HTML in una cartella esistente.'})
+
+MESSAGES.update({'The 3D Coder needs the local LM Studio CLI to disable MTP explicitly.': 'Il 3D Coder richiede la CLI locale di LM Studio per disattivare esplicitamente MTP.', 'LM Studio did not report the loaded 3D Coder model.': 'LM Studio non ha segnalato il caricamento del modello 3D Coder.'})
+
+MESSAGES["Web export could not meet the triangle budget."] = "L\u0027esportazione Web non ha rispettato il limite di triangoli."

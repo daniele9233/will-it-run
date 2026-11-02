@@ -24,7 +24,15 @@ from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from agentfit import branding, doctor, github, i18n
-from agentfit.api import arena_routes, clone_routes, cloud_routes, image_routes, prompt_routes
+from agentfit.api import (
+    arena_routes,
+    clone_routes,
+    cloud_routes,
+    image_routes,
+    prompt_routes,
+    trellis_routes,
+    video_routes,
+)
 from agentfit.app import AppServices, get_services
 from agentfit.benchmark import BenchmarkError
 from agentfit.brain import BrainError
@@ -1210,4 +1218,6 @@ def create_app(services: AppServices | None = None) -> FastAPI:
     clone_routes.install_routes(app, svc, guard)
     arena_routes.install_routes(app, svc, guard)
     image_routes.install_routes(app, svc, guard)
+    video_routes.install_routes(app, svc, guard)
+    trellis_routes.install_routes(app, guard, svc.trellis, svc.three_d_coder)
     return app

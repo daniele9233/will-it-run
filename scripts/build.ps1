@@ -73,10 +73,15 @@ if (-not $SkipTests) {
     Invoke-Step "TypeScript checks" { Push-Location $desktop; try { npm run typecheck; if ($LASTEXITCODE -eq 0) { npm run lint }; if ($LASTEXITCODE -eq 0) { npm run test } } finally { Pop-Location } }
 }
 
+Invoke-Step "Bundle offline Three.js for the 3D Coder" { node (Join-Path $desktop "scripts/build-three-runtime.mjs") }
+
 Invoke-Step "Freeze the core (PyInstaller)" {
     & $python -m PyInstaller --noconfirm --clean --onedir --console --name willitrun-core `
         --distpath (Join-Path $backend "dist") --workpath (Join-Path $backend "build") --specpath (Join-Path $backend "build") `
         --collect-data agentfit `
+        --add-data "$(Join-Path $backend 'src\agentfit\imagegen\trellis_worker.py');agentfit/imagegen" `
+        --add-data "$(Join-Path $backend 'src\agentfit\imagegen\trellis_web_worker.py');agentfit/imagegen" `
+        --add-data "$(Join-Path $backend 'src\agentfit\imagegen\trellis_blender.py');agentfit/imagegen" `
         --collect-submodules uvicorn --collect-submodules langgraph --collect-submodules langchain_core `
         --collect-submodules anthropic --collect-submodules httpx2 `
         --copy-metadata langgraph --copy-metadata langchain-core --copy-metadata anthropic `

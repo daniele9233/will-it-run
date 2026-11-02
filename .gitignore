@@ -22,9 +22,12 @@ desktop/src-tauri/resources/willitrun-core/
 
 # Build output
 /dist/
+backend/src/agentfit/data/three_runtime.js
 
 # Development screenshots of the app (they can show generated pictures)
 .shots/
+.playwright-cli/
+/tmp-3d-check/
 
 # CodeGraph index of the project (local to each machine, rebuilt by the git hook)
 .codegraph/

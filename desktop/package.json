@@ -10,7 +10,9 @@
         "typecheck": "tsc --noEmit",
         "lint": "eslint src",
         "test": "vitest run",
-        "tauri": "tauri"
+        "tauri": "tauri",
+        "predev": "node scripts/build-three-runtime.mjs",
+        "prebuild": "node scripts/build-three-runtime.mjs"
     },
     "dependencies": {
         "@tauri-apps/api": "^2.12.1",
@@ -21,6 +23,7 @@
         "lucide-react": "^1.52.0",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
+        "three": "^0.187.0",
         "zustand": "^5.0.15"
     },
     "devDependencies": {
@@ -29,6 +32,7 @@
         "@tauri-apps/cli": "^2.12.1",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
+        "@types/three": "^0.187.0",
         "@vitejs/plugin-react": "^6.1.2",
         "eslint": "^10.12.0",
         "eslint-plugin-react-hooks": "^7.1.1",

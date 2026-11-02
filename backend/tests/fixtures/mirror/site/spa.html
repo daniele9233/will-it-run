@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>SPA fixture</title></head>
+<body style="margin:0"><main style="height:2000px"><h1>SPA fixture</h1></main>
+<script>
+// A single-page app: the location changes after load (a fragment, then a pushState path); no response has these addresses.
+window.addEventListener("load", () => { location.hash = "#intro"; history.pushState({}, "", "/spa/route"); });
+</script></body></html>

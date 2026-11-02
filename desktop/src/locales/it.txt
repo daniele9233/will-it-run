@@ -1978,3 +1978,260 @@ Skills left as they were because you already have your own: {names} ||| Skill la
 Skills that could not be copied: {names} ||| Skill che non è stato possibile copiare: {names}
 Skills not on this PC: {names} ||| Skill non presenti su questo PC: {names}
 The study of {host} did not finish. {reason} ||| Lo studio di {host} non è finito. {reason}
+Record ||| Registra
+opens the page like a visitor, scrolls it, and keeps every answer the network gave ||| apre la pagina come un visitatore, la scorre e conserva ogni risposta data dalla rete
+Verify ||| Verifica
+plays the recording back on this PC and measures it against the live page ||| riproduce la registrazione su questo PC e la misura rispetto alla pagina reale
+Dynamic mirror ||| Specchio dinamico
+The page recorded as a browser loads it, played back on this PC ||| La pagina registrata come la carica un browser, riprodotta su questo PC
+no model needed ||| nessun modello necessario
+Records the page as a browser loads it and plays it back on this PC, with its motion; no model needed ||| Registra la pagina come la carica un browser e la riproduce su questo PC, con il suo movimento; nessun modello necessario
+Site DNA match: {value} ||| Somiglianza del Site DNA: {value}
+Overall: {value} ||| Complessivo: {value}
+Motion features ||| Funzioni di movimento
+Page facts: {value} ||| Dati della pagina: {value}
+At {width}px: {value} ||| A {width}px: {value}
+At {width}px: {n} of {total} measured facts are equal ||| A {width}px: {n} di {total} dati misurati sono uguali
+Motion: {value} ||| Movimento: {value}
+Moving elements on the live page: {n} ||| Elementi in movimento nella pagina reale: {n}
+Moving elements on the mirror: {n} ||| Elementi in movimento nello specchio: {n}
+Moving the same way: {value} ||| In movimento allo stesso modo: {value}
+The page was driven with the mouse wheel (it does not scroll vertically) ||| La pagina è stata mossa con la rotellina del mouse (non scorre in verticale)
+The page was driven by scrolling ||| La pagina è stata mossa scorrendola
+Pixels: {value} ||| Pixel: {value}
+At {at}%: {value} ||| A {at}%: {value}
+At {at}%: {value} of pixels close ||| A {at}%: {value} di pixel vicini
+Hover ||| Passaggio del mouse
+Click ||| Clic
+Other pages ||| Altre pagine
+Sound ||| Suono
+Touch ||| Tocco
+Login ||| Accesso
+What loads only after a long wait ||| Ciò che si carica solo dopo una lunga attesa
+Requests: {value} ||| Richieste: {value}
+Requests the recording did not hold (404): {n} ||| Richieste che la registrazione non aveva (404): {n}
+The mirror still reached these hosts: {hosts} ||| Lo specchio ha raggiunto ancora questi host: {hosts}
+The first load at {width}px was blank and was loaded again ||| Il primo caricamento a {width}px era vuoto ed è stato ripetuto
+Not covered: {what} ||| Non coperto: {what}
+The mirror could not be opened ||| Lo specchio non si è potuto aprire
+The mirror could not start ||| Lo specchio non è partito
+The page is being recorded and then played back. This takes a few minutes. ||| La pagina viene registrata e poi riprodotta. Servono alcuni minuti.
+There is no report to show. {reason} ||| Non c'è un rapporto da mostrare. {reason}
+A site's text, logos, pictures, videos and code belong to its owner. The recording stays on this PC; do not publish it. ||| Testi, loghi, immagini, video e codice di un sito appartengono al suo proprietario. La registrazione resta su questo PC: non pubblicarla.
+Open the mirror ||| Apri lo specchio
+Site DNA match ||| Somiglianza del Site DNA
+Screenshots along the page ||| Schermate lungo la pagina
+Gaps and what is not covered ||| Lacune e ciò che non è coperto
+Record the site ||| Registra il sito
+Mirror ||| Specchio
+
+Animate a picture locally with Wan 2.2. Everything stays on this PC. ||| Anima una foto in locale con Wan 2.2. Tutto rimane su questo PC.
+Could not load the video. ||| Impossibile caricare il video.
+Describe the movement ||| Descrivi il movimento
+Duration ||| Durata
+Generate video ||| Genera video
+Generating video… ||| Generazione video…
+HighNoise and LowNoise work together. Start with a short 512 × 512 clip; larger videos require more memory and time. ||| HighNoise e LowNoise lavorano insieme. Inizia con un breve video a 512 × 512; video più grandi richiedono più memoria e tempo.
+Image to video ||| Da immagine a video
+Loading… ||| Loading…
+Missing engine nodes ||| Nodi del motore mancanti
+Negative prompt ||| Prompt negativo
+Not available to the engine ||| Non disponibile per il motore
+Resolution ||| Risoluzione
+Restart engine ||| Riavvia motore
+Restart engine to detect the local file ||| Riavvia il motore per rilevare il file locale
+Reuse settings ||| Riutilizza impostazioni
+Save video ||| Salva video
+Seed (-1 = random) ||| Seed (-1 = casuale)
+Start the shared Images and Videos engine here. ||| Avvia qui il motore condiviso da Immagini e Video.
+Starting picture ||| Foto iniziale
+The engine was started outside Will It Run. Stop it there before restarting here. ||| Il motore è stato avviato fuori da Will It Run. Arrestalo da lì prima di riavviarlo qui.
+The picture is larger than 40 MB. ||| The picture is larger than 40 MB.
+Video gallery ||| Galleria video
+Videos ||| Video
+Your videos will appear here. ||| I tuoi video appariranno qui.
+frames ||| fotogrammi
+
+Video model ||| Modello video
+Choose a local model and upload the starting picture. Add an ending picture to guide the final frame. ||| Scegli un modello locale e carica la foto iniziale. Aggiungi una foto finale per guidare l’ultimo fotogramma.
+Start and end frames ||| Fotogramma iniziale e finale
+Ending picture ||| Foto finale
+Remove ending picture ||| Rimuovi foto finale
+This model needs both pictures. ||| Questo modello richiede entrambe le foto.
+Frame rate ||| Fotogrammi al secondo
+Required ||| Obbligatoria
+
+Generate videos locally from a starting picture and an optional ending picture. ||| Genera video in locale da una foto iniziale e, se vuoi, una foto finale.
+Incomplete model file ||| File del modello incompleto
+
+Generation resolution ||| Risoluzione di generazione
+Generated at {fps} FPS · {frames} frames, then motion interpolation to 30 FPS. ||| Generazione a {fps} FPS · {frames} fotogrammi, poi interpolazione del movimento a 30 FPS.
+Interpolating motion and preparing Full HD… ||| Interpolazione del movimento e preparazione Full HD…
+Checking resolution, frame rate and distinct frames… ||| Verifica di risoluzione, FPS e fotogrammi distinti…
+Final MP4 for a desktop hero. Motion interpolation adds new frames; Lanczos scaling produces Full HD. This is upscaled output. ||| MP4 finale per una hero desktop. L’interpolazione del movimento aggiunge nuovi fotogrammi; il ridimensionamento Lanczos porta al Full HD. La risoluzione finale è ottenuta tramite ingrandimento.
+Local FFmpeg and FFprobe are needed to finish Full HD videos. ||| Servono FFmpeg e FFprobe locali per preparare i video Full HD.
+Higher generation resolutions and longer clips need more memory and time. The final file is always 1920 × 1080 at 30 FPS. ||| Risoluzioni di generazione maggiori e video più lunghi richiedono più memoria e tempo. Il file finale è sempre 1920 × 1080 a 30 FPS.
+
+Choose starting picture ||| Scegli foto iniziale
+Change starting picture ||| Cambia foto iniziale
+Choose ending picture ||| Scegli foto finale
+Change ending picture ||| Cambia foto finale
+PNG, JPG or WebP · up to 40 MB ||| PNG, JPG o WebP · fino a 40 MB
+Video saved to {path} ||| Video salvato in {path}
+
+Copy {label} ||| Copia {label}
+Text selected. Press Ctrl+C to copy. ||| Testo selezionato. Premi Ctrl+C per copiarlo.
+No negative prompt saved. ||| Nessun prompt negativo salvato.
+Save prompts ||| Salva prompt
+Name for these prompts ||| Nome per questi prompt
+For example: graphics card disassembly ||| Per esempio: smontaggio scheda video
+The prompt and negative prompt are saved together on this PC. ||| Il prompt e il prompt negativo vengono salvati insieme su questo PC.
+Save to prompt library ||| Salva nella raccolta
+Prompts saved. ||| Prompt salvati.
+Saved video prompts ||| Prompt video salvati
+Keep your effects ready to use. Loading a saved pair fills both prompt fields. ||| Conserva i tuoi effetti pronti all’uso. Caricando una coppia salvata vengono compilati entrambi i campi dei prompt.
+Search saved prompts ||| Cerca nei prompt salvati
+Your saved prompt pairs will appear here. ||| Le coppie di prompt salvate appariranno qui.
+No saved prompts match this search. ||| Nessun prompt salvato corrisponde alla ricerca.
+Use these prompts ||| Usa questi prompt
+Delete saved prompts ||| Elimina prompt salvati
+Show both prompts ||| Mostra entrambi i prompt
+The entire picture is preserved. Portrait pictures use a portrait generation size and black side borders in the Full HD video. ||| L’immagine viene mantenuta intera. Le immagini verticali vengono generate in verticale e hanno bande nere laterali nel video Full HD.
+This model needs native 720p generation for detail and stable motion. Small preview resolutions are not suitable. ||| Questo modello richiede la generazione nativa a 720p per dettaglio e movimento stabile. Le piccole risoluzioni di anteprima non sono adatte.
+Slow motion ||| Movimento rallentato
+A shorter movement is slowed to {seconds} seconds before Full HD export. This can improve first/last-frame transitions. ||| Un movimento più breve viene rallentato fino a {seconds} secondi prima dell’esportazione Full HD. Può migliorare le transizioni tra foto iniziale e finale.
+
+# TRELLIS 3D
+Generated 3D model ||| Modello 3D generato
+The model contains external resources. ||| Il modello contiene risorse esterne.
+Drag to rotate. Scroll to zoom. ||| Trascina per ruotare. Scorri per ingrandire.
+Reset view ||| Ripristina vista
+Could not load the 3D model. ||| Impossibile caricare il modello 3D.
+Could not read the reference. ||| Impossibile leggere il riferimento.
+Turn a reference image into a textured 3D model with Microsoft TRELLIS. ||| Trasforma un’immagine di riferimento in un modello 3D con texture usando Microsoft TRELLIS.
+TRELLIS is ready locally. ||| TRELLIS è pronto in locale.
+TRELLIS requires WSL2, an NVIDIA GPU with 16 GB VRAM and a separate local runtime. ||| TRELLIS richiede WSL2, una GPU NVIDIA con 16 GB di VRAM e un ambiente locale separato.
+Setup downloads the official code and dependencies. Model weights download on first generation. No account or API key is required. ||| L’installazione scarica il codice ufficiale e le dipendenze. I pesi del modello vengono scaricati alla prima generazione. Non servono account o chiavi API.
+Linux distribution ||| Distribuzione Linux
+Choose a distribution ||| Scegli una distribuzione
+Install TRELLIS locally ||| Installa TRELLIS in locale
+Installing TRELLIS… ||| Installazione di TRELLIS…
+Generating 3D model… ||| Generazione del modello 3D…
+Reference image or video ||| Immagine o video di riferimento
+For videos, a frame near the start becomes the reference. The result is a static 3D model. ||| Per i video viene usato un fotogramma iniziale come riferimento. Il risultato è un modello 3D statico.
+3D reference ||| Riferimento 3D
+Generate 3D model ||| Genera modello 3D
+3D gallery ||| Galleria 3D
+Generated models will appear here. ||| I modelli generati appariranno qui.
+Save GLB ||| Salva GLB
+Rotate left ||| Ruota a sinistra
+Rotate right ||| Ruota a destra
+
+The model texture could not be loaded. ||| Impossibile caricare la texture del modello.
+Export GLB ||| Esporta GLB
+1. Upload a photo ||| 1. Carica una foto
+Upload photo ||| Carica foto
+2. Generate the model ||| 2. Genera il modello
+3D quality ||| Qualità 3D
+High detail ||| Alto dettaglio
+Preserves more geometry and exports 2K textures. Generation and export take longer. ||| Conserva più dettagli della geometria ed esporta texture 2K. Generazione ed esportazione richiedono più tempo.
+Smaller mesh and 1K textures for a faster preview. ||| Mesh più leggera e texture 1K per un’anteprima più veloce.
+3. Preview and export ||| 3. Anteprima ed esportazione
+GLB exports include geometry and textures. ||| I file GLB esportati includono geometria e texture.
+
+# TRELLIS.2
+Turn a reference image into a textured 3D model with Microsoft TRELLIS.2. ||| Trasforma una foto in un modello 3D con texture usando Microsoft TRELLIS.2.
+TRELLIS.2 is ready locally. ||| TRELLIS.2 è pronto in locale.
+TRELLIS.2 requires WSL2 and officially 24 GB VRAM. On 16 GB, 1536³ generation is experimental. ||| TRELLIS.2 richiede WSL2 e ufficialmente 24 GB di VRAM. Con 16 GB, la generazione a 1536³ è sperimentale.
+Install TRELLIS.2 locally ||| Installa TRELLIS.2 in locale
+Installing TRELLIS.2… ||| Installazione di TRELLIS.2…
+Setup downloads the official code and dependencies. Model weights are downloaded and verified during setup. No account or API key is required. ||| L’installazione scarica codice e dipendenze ufficiali e verifica i pesi dei modelli. Non servono account o chiavi API.
+TRELLIS.2 · 1536³ · 4K PBR textures ||| TRELLIS.2 · 1536³ · Texture PBR 4K
+Uses CPU offloading to save GPU memory. The resolution is never reduced automatically; insufficient memory produces an error. ||| Usa anche la RAM per risparmiare memoria della GPU. La risoluzione non viene ridotta automaticamente: se la memoria non basta viene mostrato un errore.
+
+# 3D exports and coder
+3D task completed ||| Attività 3D completata
+3D task failed ||| Attività 3D non riuscita
+Create a Three.js scene from a description. This coder generates HTML and JavaScript; use TRELLIS.2 above to reconstruct a photo as a GLB. ||| Crea una scena Three.js da una descrizione. Questo modello genera HTML e JavaScript; per ricostruire una foto come GLB usa TRELLIS.2 qui sopra.
+Runs locally through LM Studio with MTP disabled. The model starts only when you press Generate scene. ||| Funziona in locale tramite LM Studio con MTP disattivato. Il modello si avvia solo premendo Genera scena.
+Qwen 3D Coder was not found in LM Studio. Refresh the installed model list. ||| Qwen 3D Coder non trovato in LM Studio. Aggiorna l’elenco dei modelli installati.
+Describe your 3D scene ||| Descrivi la tua scena 3D
+Generate scene ||| Genera scena
+Refresh models ||| Aggiorna modelli
+Preview scene ||| Anteprima scena
+Export HTML ||| Esporta HTML
+Generated Three.js scene ||| Scena Three.js generata
+Starting… ||| Avvio…
+Loading models… ||| Caricamento modelli…
+Removing background… ||| Rimozione sfondo…
+Reading reference… ||| Analisi riferimento…
+Generating structure… ||| Generazione struttura…
+Generating shape… ||| Generazione forma…
+Refining geometry… ||| Definizione geometria…
+Generating materials… ||| Generazione materiali…
+Decoding geometry… ||| Decodifica geometria…
+Decoding textures… ||| Decodifica texture…
+Exporting original… ||| Esportazione originale…
+Validating model… ||| Verifica modello…
+Preparing web exporter… ||| Preparazione esportatore Web…
+Reading original… ||| Lettura originale…
+Simplifying mesh… ||| Alleggerimento mesh…
+Baking Normal Map… ||| Bake della Normal Map…
+Baking color… ||| Bake del colore…
+Baking roughness… ||| Bake della rugosità…
+Baking metallic… ||| Bake del metallo…
+Preparing PBR textures… ||| Preparazione texture PBR…
+Compressing Web GLB… ||| Compressione GLB Web…
+Validating Web GLB… ||| Verifica GLB Web…
+Loading 3D Coder… ||| Caricamento 3D Coder…
+Writing Three.js scene… ||| Creazione scena Three.js…
+Saving scene… ||| Salvataggio scena…
+Working… ||| Elaborazione…
+Original detailed ||| Originale dettagliato
+Export for Web ||| Esporta per Web
+3D task progress ||| Avanzamento attività 3D
+Progress follows generation stages and sampling steps. Final decoding and export may take longer; 100% means the file is ready. ||| L’avanzamento segue le fasi di generazione e i passi di campionamento. Decodifica ed esportazione possono richiedere più tempo; il 100% indica che il file è pronto.
+1024³ · recommended for 16 GB ||| 1024³ · consigliato per 16 GB
+1536³ · experimental on 16 GB ||| 1536³ · sperimentale con 16 GB
+Original textures ||| Texture originali
+Web preview ||| Anteprima Web
+Select a generated model to preview it. ||| Seleziona un modello generato per visualizzarlo.
+Original detailed keeps the generated model. Export for Web creates a separate GLB with a simplified mesh, baked Normal Map and compressed PBR textures. ||| Originale dettagliato conserva il modello generato. Esporta per Web crea un GLB separato con mesh alleggerita, Normal Map e texture PBR compresse.
+Web triangles ||| Triangoli Web
+Web textures ||| Texture Web
+Preview removed. You can undo this deletion. ||| Anteprima rimossa. Puoi annullare questa eliminazione.
+Undo deletion ||| Annulla eliminazione
+Rebuild Web copy ||| Rigenera copia Web
+Save Web GLB ||| Salva GLB Web
+Delete preview ||| Elimina anteprima
+triangles ||| triangoli
+Web comparison ||| Confronto Web
+Web copy ||| Copia Web
+Not generated yet ||| Non ancora generata
+Create a Web copy to compare it with the original. ||| Crea una copia Web per confrontarla con l'originale.
+Drag either view to rotate both. Scroll to zoom. ||| Trascina una vista per ruotarle entrambe. Scorri per lo zoom.
+Same camera and lighting in both views. ||| Stessa inquadratura e illuminazione nelle due viste.
+Reduce preview ||| Riduci anteprima
+Expand preview ||| Espandi anteprima
+Drag to resize the preview ||| Trascina per ridimensionare l'anteprima
+Preview height ||| Altezza anteprima
+Photo and generation settings ||| Foto e impostazioni di generazione
+50 steps is the maximum available, not a guarantee of better quality. A seed changes the variation, not the quality level. ||| 50 passi è il massimo disponibile, non una garanzia di qualità migliore. Il seed cambia la variante, non il livello di qualità.
+For maximum fidelity, save Original detailed. Web triangle and texture settings apply when you create or rebuild the Web copy. ||| Per la massima fedeltà salva Originale dettagliato. Triangoli e texture Web si applicano quando crei o rigeneri la copia Web.
+Compare original and Web ||| Confronta originale e Web
+Studio ||| Studio
+Preview version ||| Versione anteprima
+Model preview ||| Anteprima modello
+View Web copy ||| Visualizza copia Web
+Completing Three.js scene… ||| Completamento scena Three.js…
+The scene could not be displayed. ||| Impossibile visualizzare la scena.
+Incomplete code ||| Codice incompleto
+Complete scene ||| Completa scena
+Recovered copy ||| Copia recuperata
+Scene studio ||| Studio scena
+Scene preview height ||| Altezza anteprima scena
+Scene preview error ||| Errore anteprima scena
+
+Delete scene ||| Elimina scena
+Repair scene ||| Ripara scena
+Select a scene to preview it. ||| Seleziona una scena per visualizzarla.

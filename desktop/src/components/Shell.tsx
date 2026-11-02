@@ -2,6 +2,7 @@ import {
   Activity,
   BookOpen,
   Boxes,
+  Box,
   Brain,
   Copy,
   Cpu,
@@ -14,6 +15,7 @@ import {
   Search,
   Settings as SettingsIcon,
   Trophy,
+  Video,
   Users,
   Workflow,
   X,
@@ -22,7 +24,7 @@ import type { ComponentType, ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { gbFromMb } from "../lib/format";
-import { useInterval } from "../lib/hooks";
+import { useBus, useInterval } from "../lib/hooks";
 import { type PageId, useApp } from "../lib/store";
 import { ZOOM_STEP } from "../lib/zoom";
 import { Kbd, Meter, StatusDot, cx } from "./ui";
@@ -45,6 +47,8 @@ const NAV: NavItem[][] = [
     { id: "arena", label: t("Arena"), icon: Trophy },
     { id: "downloads", label: t("Downloads"), icon: Download },
     { id: "images", label: t("Images"), icon: ImageIcon },
+    { id: "videos", label: t("Videos"), icon: Video },
+    { id: "3d", label: t("3D"), icon: Box },
   ],
   [
     { id: "chat", label: t("Chat"), icon: MessageSquare },
@@ -350,6 +354,12 @@ function Toasts() {
 }
 
 export function Shell({ children }: { children: ReactNode }) {
+  useBus("3d.job", (event) => {
+    const job = event.data;
+    useApp.getState().toast({ tone: job.status === "completed" ? "ok" : "bad",
+      title: job.status === "completed" ? t("3D task completed") : t("3D task failed"),
+      body: typeof job.error === "string" ? job.error : undefined });
+  });
   const setPalette = useApp((s) => s.setPalette);
   const paletteOpen = useApp((s) => s.paletteOpen);
   useEffect(() => {

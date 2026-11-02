@@ -234,6 +234,18 @@ class ComfyEngine:
             "--preview-method",
             "none",
         ]
+        # A separate launch config leaves the owner's ComfyUI configuration untouched.
+        video_models = Path(r"D:\Models")
+        if video_models.is_dir():
+            import yaml
+
+            extra = paths.ensure(paths.cache_dir()) / "video-model-paths.yaml"
+            mappings = {"base_path": str(video_models), "diffusion_models": "."}
+            for role in ("vae", "clip_vision", "text_encoders"):
+                if (video_models / "video" / role).is_dir():
+                    mappings[role] = f"video/{role}/"
+            extra.write_text(yaml.safe_dump({"willitrun_video": mappings}), encoding="utf-8")
+            command.extend(["--extra-model-paths-config", str(extra)])
         creation = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
         try:
             self._process = subprocess.Popen(

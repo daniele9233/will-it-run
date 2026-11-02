@@ -34,11 +34,13 @@ from agentfit.hardware.windows import model_spill_mib
 from agentfit.imagegen import ImageStudio
 from agentfit.imagegen.components import ComponentStore
 from agentfit.imagegen.engine import ComfyEngine
+from agentfit.imagegen.trellis import TrellisStudio
 from agentfit.lmstudio import LMStudioRuntime
 from agentfit.lmstudio.models import InstalledModel, LMStudioInstall
 from agentfit.logging_setup import configure_logging, get_logger, log_event
 from agentfit.runtime import RuntimeUnavailable
 from agentfit.teams.builder import TeamBuilder
+from agentfit.three_d_coder import ThreeDCodeRuntime, ThreeDCodeStudio
 from agentfit.workflows.dsl import ModelSlot
 from agentfit.workflows.model_manager import GatewayOptions, ModelManager, nvidia_vram_probe
 from agentfit.workflows.runner import RunManager
@@ -73,6 +75,8 @@ class AppServices:
         self._clone_sessions: SessionRegistry | None = None
         self._clone: clone_studio.CloneStudio | None = None
         self._images: ImageStudio | None = None
+        self._trellis: TrellisStudio | None = None
+        self._three_d_coder: ThreeDCodeStudio | None = None
         self.cloud = CloudService(self.db, max_context=lambda: self.settings.cloud.max_context)
         self.catalog = CatalogService(self.db, self.settings)
         self.workflows = WorkflowStore(self.db)
@@ -148,6 +152,35 @@ class AppServices:
         return models
 
     # -- engines ------------------------------------------------------------
+    @property
+    def trellis(self) -> TrellisStudio:
+        with self._lock:
+            if self._trellis is None:
+                self._trellis = TrellisStudio(on_event=lambda job: self.bus.publish("3d.job", job))
+            return self._trellis
+
+    @property
+    def three_d_coder(self) -> ThreeDCodeStudio:
+        with self._lock:
+            if self._three_d_coder is None:
+                self._three_d_coder = ThreeDCodeStudio(self.installed_models, self._three_d_gateway, self.trellis.start_task)
+            return self._three_d_coder
+
+    def _three_d_gateway(self, model_key: str) -> ModelManager:
+        settings = self.settings.model_copy(deep=True)
+        settings.runtime.speculative_mtp = False
+        runtime = ThreeDCodeRuntime(settings)
+        if not runtime.ensure_server():
+            raise RuntimeUnavailable("LM Studio server could not start.")
+        # A Qwen instance opened elsewhere may have MTP enabled. Reload just this
+        # model when Generate scene is explicitly requested; leave others alone.
+        for instance in runtime.list_loaded():
+            if instance.model_key == model_key:
+                runtime.unload(instance.instance_id)
+        return ModelManager(runtime, {"scene": ModelSlot(label="3D Coder", model_key=model_key, auto_tune=True)},
+                            lambda *_: None, vram_probe=nvidia_vram_probe, profiles=self.runs.profiles,
+                            options=self.gateway_options(), spill_probe=model_spill_mib)
+
     @property
     def downloads(self) -> DownloadManager:
         with self._lock:

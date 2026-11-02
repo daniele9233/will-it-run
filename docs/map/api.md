@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-143 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+174 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -25,7 +25,7 @@
 | POST | `/api/arena/runs/{run_id}/resume` | `arena_resume` |  |
 | POST | `/api/arena/runs/{run_id}/stop` | `arena_stop` |  |
 
-## `api/clone_routes.py` (14)
+## `api/clone_routes.py` (18)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
@@ -33,6 +33,7 @@
 | POST | `/api/clone` | `clone_create` |  |
 | POST | `/api/clone/install` | `clone_install` |  |
 | POST | `/api/clone/install/cancel` | `clone_install_cancel` |  |
+| POST | `/api/clone/mirror` | `clone_mirror` | Record a live page and measure its replay: no model. |
 | POST | `/api/clone/picture` | `clone_picture` | Build a site from a picture: a model that sees writes it region by region, and the page is measured against the picture. |
 | GET | `/api/clone/skills` | `skills_status` | The agent skills: which packs are on this PC (the five for building a site from a picture, and the three design packs t… |
 | POST | `/api/clone/skills/install` | `skills_install` | Fetch the skill packs at their pinned commits, in the background; ``GET /api/clone/skills`` follows the job. |
@@ -41,6 +42,9 @@
 | GET | `/api/clone/{study_id}` | `clone_get` |  |
 | POST | `/api/clone/{study_id}/answer` | `clone_answer` | The person's answer to the question the agent is asking (which pages to clone, for one). |
 | GET | `/api/clone/{study_id}/file` | `clone_file` |  |
+| GET | `/api/clone/{study_id}/mirror` | `clone_mirror_report` | The report of a mirror: numbers, not a verdict. |
+| POST | `/api/clone/{study_id}/mirror/open` | `clone_mirror_open` | Serve the recording on 127.0.0.1 so it opens in the browser. |
+| POST | `/api/clone/{study_id}/mirror/run` | `clone_mirror_again` | Record the same site again, from its entry: no body and no model. |
 | POST | `/api/clone/{study_id}/preview` | `clone_preview` | Serve the project on 127.0.0.1 so the clone opens in the browser like a real site. |
 | POST | `/api/clone/{study_id}/runs` | `clone_again` |  |
 
@@ -176,3 +180,40 @@
 | DELETE | `/api/workflows/{workflow_id:path}` | `workflows_delete` |  |
 | GET | `/api/workflows/{workflow_id:path}` | `workflows_get` |  |
 | GET | `/api/workflows/{workflow_id:path}/yaml` | `workflows_yaml` |  |
+
+## `api/trellis_routes.py` (17)
+
+| Method | Path | Handler | What it does |
+|---|---|---|---|
+| POST | `/api/3d/coder/generate` | `coder_generate` |  |
+| GET | `/api/3d/coder/models` | `coder_models` |  |
+| GET | `/api/3d/coder/scenes` | `coder_scenes` |  |
+| DELETE | `/api/3d/coder/{scene_id}` | `coder_delete` |  |
+| POST | `/api/3d/coder/{scene_id}/preview` | `coder_preview` |  |
+| POST | `/api/3d/coder/{scene_id}/repair` | `coder_repair` |  |
+| POST | `/api/3d/coder/{scene_id}/save` | `coder_save` |  |
+| GET | `/api/3d/gallery` | `trellis_gallery` |  |
+| DELETE | `/api/3d/gallery/{model_id}` | `trellis_delete` |  |
+| GET | `/api/3d/gallery/{model_id}/file` | `trellis_file` |  |
+| POST | `/api/3d/gallery/{model_id}/restore` | `trellis_restore` |  |
+| POST | `/api/3d/gallery/{model_id}/save` | `trellis_save` |  |
+| POST | `/api/3d/gallery/{model_id}/web` | `trellis_web` |  |
+| POST | `/api/3d/generate` | `trellis_generate` |  |
+| POST | `/api/3d/install` | `trellis_install` |  |
+| GET | `/api/3d/status` | `trellis_status` |  |
+| POST | `/api/3d/upload` | `trellis_upload` |  |
+
+## `api/video_routes.py` (10)
+
+| Method | Path | Handler | What it does |
+|---|---|---|---|
+| GET | `/api/videos/gallery` | `videos_gallery` |  |
+| DELETE | `/api/videos/gallery/{video_id}` | `videos_delete` |  |
+| GET | `/api/videos/gallery/{video_id}/file` | `videos_file` |  |
+| POST | `/api/videos/gallery/{video_id}/save` | `videos_save` | Copy the MP4 to the destination chosen in the desktop Save dialog. |
+| POST | `/api/videos/generate` | `videos_generate` |  |
+| POST | `/api/videos/jobs/{job_id}/cancel` | `videos_cancel` |  |
+| GET | `/api/videos/prompts` | `videos_prompts` |  |
+| POST | `/api/videos/prompts` | `videos_prompt_save` |  |
+| DELETE | `/api/videos/prompts/{prompt_id}` | `videos_prompt_delete` |  |
+| GET | `/api/videos/status` | `videos_status` |  |

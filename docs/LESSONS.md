@@ -116,3 +116,208 @@ The ledger reads the file edits a session made through Edit and Write. A fix app
 
 ## A signature in the stage that reads scripts needs a time budget of its own
 *Found 2026-10-28, `dna.mjs`.* A page with hundreds of scripts, or a hover probe that never settles, held the whole run until the 300 s kill and wrote nothing. Each stage has its own budget (scroll 25 s, scripts 60 s, a probe 10 s) and what it did not finish is a `limits` entry, not silence. A probe that failed is `null` plus `hover_probe_skipped`, never `{sampled: 0}`, which would read as "nothing changes on hover".
+
+
+## A ComfyUI image input is a tensor link, not an uploaded filename
+*Found 2026-10-30, verifying Wan first/last-frame video.* The upload API returns a filename,
+but start_image/end_image on the conditioning node expect IMAGE tensors. Each filename must
+pass through its own LoadImage node. Passing an uploaded name directly raises `'str' object
+has no attribute 'movedim'`. A second filename on the request is not sufficient to implement
+first/last-frame generation; check that both graph links reach actual LoadImage outputs.
+
+
+## Two endpoint photos can have the same basename
+*Found 2026-10-30, video uploads.* ComfyUI uploads use overwrite=true. A starting image and an
+ending image from different folders can both be named image.png; reusing their basename makes
+both workflow inputs point at the last upload. Video uploads get a fresh UUID plus a bounded
+filename suffix, and removing the end picture clears the file input so the same file can be
+selected again. Test with two different images carrying the same filename.
+
+
+## 2026-10-30 — Interpolation needs endpoint lookahead and decoded verification
+
+FFmpeg's minterpolate buffers future frames. Merely requesting 30 fps can shorten
+an export or tempt padding the result with duplicated frames. Map the source's
+first/last frames to the target's first/last timestamps, supply two guard frames
+for lookahead, cap the emitted frame count, and measure the decoded MP4. A synthetic
+moving source verified both 6 seconds / 180 distinct frames and 15 seconds / 450
+distinct frames at actual 1920x1080 and 30 fps. Do not call this native Full HD or
+infer distinct images from container metadata alone.
+
+
+## 2026-10-30 — A long page must own scrolling inside the desktop shell
+
+Shell's main pane uses overflow-hidden. Videos initially had an intrinsic-height
+grid without its own scroll container, so the duration and Generate controls could
+be clipped below the window; a wheel action had no effect. Give the page min-h-0,
+flex-1 and overflow-y-auto, and check the real installed app at the owner's zoom.
+A browser canvas large enough to show the whole form does not expose this problem.
+
+
+## 2026-10-31 — Video saving needs the same native path as image saving
+
+The Videos page had repeated the blob-download-link approach already documented as broken
+in imageSave.ts for the desktop WebView. Reuse pickSavePath and an authenticated backend
+copy route, and verify the resulting file on disk. A working browser download is insufficient.
+Native file inputs also lose their obvious button appearance under the app's CSS reset;
+use explicitly styled buttons and icons to open hidden inputs, with filenames and previews.
+
+
+## 2026-10-31 — Browser frame counts are not generated frame counts
+
+An eight-second 30 fps published clip contains 240 frames. Exporting 300 WebP samples
+for scroll inspection necessarily repeats samples; diagnose repetitions in the original
+decoded MP4 before resampling. Preloading 300 decoded Full HD pictures also costs
+roughly 2.5 GB of pixel memory: cache compressed blobs and bound the decoded cache.
+
+
+## 2026-10-31 — High-resolution BF16 image edits exceed the default image deadline
+
+The live 2048-resolution Qwen 2.1 BF16 edit measured about 17 seconds per step.
+Fifty steps plus model loading can exceed the default 900-second image timeout.
+ImageStudio captures its deadline once in _wait: changing settings mid-job does not
+extend that deadline. Set the longer timeout in the isolated QA backend before
+submitting the edit; record any cancelled attempt and preserve the completed origin.
+Do not change the owner settings or reduce sampling silently to make a test pass.
+
+
+## 2026-10-31 — A valid Full HD file can still fail visual acceptance
+
+Two UI-driven video tests produced exactly 240 distinct Full HD frames in eight seconds,
+yet failed: portrait center-cropping removed the subject's head/feet, and a 720p FLF
+model run at 512x288 deformed geometry with colored light shapes. Native ComfyUI output
+confirmed the latter artifacts preceded FFmpeg. Inspect native and finished samples;
+format, hashes and mean-luma screening alone do not certify quality. Preserve input
+aspect ratio before Wan conditioning as well as during final scaling. Use the model's
+intended native resolution and the official decoding path before blaming quantization
+or changing guidance values.
+
+
+## 2026-10-31 — CUDA headers in an isolated TRELLIS Conda environment
+
+The NVIDIA CUDA 12.1 packages put cuda_runtime.h under
+`targets/x86_64-linux/include`, while PyTorch's extension builder only added the
+environment's top-level include directory. nvdiffrast therefore failed with
+`fatal error: cuda_runtime.h: No such file or directory` despite nvcc being installed.
+Set CPATH to that target include directory and LIBRARY_PATH to the runtime libraries
+and CUDA driver stubs, both at install time and for worker-time compilation.
+Keep NumPy below 2 for the chosen Kaolin/PyTorch combination; recent plyfile versions
+require NumPy 2, so pin plyfile below 1.1.3 before installing utils3d.
+
+
+## 2026-10-31 — Send the TRELLIS bootstrap through WSL stdin
+
+A multiline Python program passed as an argument through `wsl -- bash -c` returned
+without executing the worker on this Windows machine. Use `wsl --exec bash -s` and
+send the fixed bootstrap over stdin. Encode the worker source as base64; pass the
+reference and parameters as a JSON heredoc with a fixed delimiter. This avoids
+rewriting Python source through the Windows/default-shell quoting layers. Probe
+runtime files through stdin as well, and include the raw worker source explicitly
+in PyInstaller data: collect-data skips Python source files.
+
+
+## 2026-10-31 — Test GLB textures under the packaged WebView policy
+
+The browser preview loaded a textured GLB correctly, but the installed WebView
+showed a white silhouette. Native WebView2 diagnostics reproduced a connect-src
+violation for a blob URL: GLTFLoader creates a local blob for an embedded image
+and ImageBitmapLoader fetches it. Allow blob: in connect-src and img-src while
+keeping external resource URLs rejected by the viewer. GLTFLoader can swallow
+texture errors and return an untextured mesh, so use LoadingManager.onError to
+show a failure and avoid displaying that fallback as a completed preview. Verify
+the actual installed app, not only a browser development server.
+
+## 2026-11-01 — TRELLIS.2 full resolution and compatible public conditioning
+
+The official 1536 cascade may silently lower its resolution when its default
+49,152-token limit is reached. Setting the pipeline name alone does not prove a
+1536³ result. The worker allows the full 96³ latent grid and checks the mesh's
+actual voxel size before accepting it; memory failure must stay visible.
+
+The stock pipeline points at gated DINOv3 and BRIA auxiliary models. Public timm
+DINOv3 ViT-L/16 weights load strictly and produce the expected 1029/4101-token
+features at image sizes 512/1024. For matching conditioning, disable timm's learned
+final norm and use upstream's unweighted functional layer norm. Local U2Net
+preprocessing avoids loading the gated background remover.
+
+Installing utils3d separately can upgrade plyfile and NumPy despite a previous
+numpy<2 install. Keep plyfile<1.1.3 in the base dependency request too; verified
+runtime versions are NumPy 1.26.4 and plyfile 1.1.2. NVIDIA package downloads can
+be slow from one host; identical files from official indexes remain verifiable
+by SHA-256, and resuming verified byte ranges sped up this one-time setup.
+
+## 2026-11-01 — TRELLIS memory and reliable high-to-low baking
+
+CPU offloading alone does not bound decoder activation memory. LayerNorm32
+casts the whole tensor to FP32; chunked normalization matches full normalization
+on the GPU but does not guarantee a full 1536³ decoder fits. Test the actual
+reference and report explicit resolution; samurai04 required 1024³ on 16 GB.
+
+A glTF imported mesh duplicates vertices at seams. Direct decimation and inherited
+UVs can leave tiny islands and almost empty baked maps, while welding alone can
+leave non-manifold geometry that stops collapse above the requested budget.
+A separate voxel-remeshed low mesh, fresh render UVs and selected-to-active
+normal/PBR baking produced a valid 28k result. Verify actual GLB index counts,
+embedded maps and rendered appearance; file size alone is insufficient.
+
+Disabling a runtime preference does not clear MTP from an externally loaded
+Qwen instance or saved preset. The dedicated coder reloads just its own model
+on explicit generation and requires the verified --no-speculative-draft-mtp
+CLI flag. The integration tests use fakes, never the owner's real model.
+# Qwen scene output can end mid-statement
+
+An HTML title, canvas and controls do not prove the generated JavaScript is complete.
+The owner's Cloud Sanctuary stopped at `box(0.78` when output was exhausted, while
+the app incorrectly reported success. Check document/script termination, budget
+for thinking and code, continue interrupted output with a bounded retry count and
+surface preview runtime failures. Preserve the source when recovering a scene.
+
+## 2026-11-01 — Keep test temporary files outside generated web projects
+
+Do not point TEMP/TMP at a generated site's `.cache` directory. Node inherits an
+ancestor `package.json` with `type: module`, breaking CommonJS test fixtures, and
+document evidence readers intentionally skip hidden/cache directories. This caused
+nine unrelated suite failures while testing the Qwen hero. Use a short dedicated
+normal directory outside web projects on a drive with at least the app's 10 GB
+free-space reserve. The system temporary folder on a nearly full C: drive caused
+different failures: Windows path-length limits in nested skill fixtures and disk
+reserve checks in mocked image/model downloads.
+
+A completed Qwen generation also needs geometry validation: the winter pagoda
+returned `finish_reason: stop` but had empty roof buffers, incorrect instance data
+and missing window dimensions. Preserve the original output, validate positions
+and indices, inspect the rendered model, and record manual repairs separately.
+
+
+## 2026-11-02 — Closed HTML can still contain broken JavaScript
+
+The saved Qwen scene for “crea un anime 3d” closed every HTML tag but declared
+`const localX` twice in the same block. Node `--check` and the browser both
+reported the duplicate declaration; no scene code could run. Generation now
+checks inline JavaScript with local Node when available, without executing it,
+and feeds syntax errors back into a complete rewrite. Browser runtime errors
+can request a repaired copy while preserving the original. A redundant Three.js
+CDN script is removed from standalone previews/exports because the local core
+is already embedded; the restrictive content policy remains in force.
+
+## 2026-11-02 — Full checks need a suitable temporary drive and Git boundary
+
+Mocked image downloads and TRELLIS preparation failed because C: was below the
+10 GB free-space reserve. Moving TEMP/TMP into .shots fixed space but broke
+document evidence tests, which skip hidden directories. A normal temporary folder
+inside this checkout then made a non-repository test discover its parent repository.
+Use a visible dedicated temporary directory on a drive with enough space. If it
+is inside a checkout, set GIT_CEILING_DIRECTORIES to that temporary root for the
+test process. Do not weaken disk checks or evidence filtering. The complete suite
+passed with these process-local settings.
+
+## 2026-11-02 — Verify installed layout and the NSIS bundle marker
+
+A browser check at 1440 px missed the installed app's interface zoom. Settings
+still stacked until the three-column breakpoint was lowered. Verify the actual
+installed WebView at the owner's settings.
+
+Tauri's installed executable can differ from target/release by its bundle marker:
+the verified build differed only at NSS versus UNK. Do not mistake that expected
+patch for an old installation or accept arbitrary hash mismatches. Compare actual
+differences and the separately frozen core, then launch the installed app.

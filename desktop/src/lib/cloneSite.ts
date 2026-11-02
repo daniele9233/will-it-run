@@ -36,7 +36,7 @@ export interface CloneSetup {
  * How a clone is made: an exact copy of the rendered page, measured against the original; an agent that rebuilds it with the kit's skill;
  * or a site written by a model that sees from a reference picture; a "study" builds nothing: it measures a site's DNA.
  */
-export type CloneMode = "replica" | "agent" | "picture" | "study";
+export type CloneMode = "replica" | "agent" | "picture" | "study" | "mirror";
 
 /**
  * One pack of agent skills and whether it is on this PC. The "picture" packs (GSAP, frontend design, Vercel, Three.js, Playwright) are what a site
@@ -155,8 +155,11 @@ export const PICTURE_STAGES: Stage[] = [
 /** A study: one step that is code, no model. */
 export const STUDY_STAGES: Stage[] = [{ id: "dna", check: true }];
 
+/** A mirror: record the page's network answers, then replay them and measure the replay. Code only, no model. */
+export const MIRROR_STAGES: Stage[] = [{ id: "record", check: true }, { id: "verify", check: true }];
+
 export const stagesOf = (mode: CloneMode | undefined): Stage[] =>
-  mode === "replica" ? REPLICA_STAGES : mode === "picture" ? PICTURE_STAGES : mode === "study" ? STUDY_STAGES : STAGES;
+  mode === "replica" ? REPLICA_STAGES : mode === "picture" ? PICTURE_STAGES : mode === "study" ? STUDY_STAGES : mode === "mirror" ? MIRROR_STAGES : STAGES;
 
 /** The words of the nodes of a site made from a picture: some ids are the ones of the other ways, with another meaning. */
 const pictureText = (): Record<string, { label: string; what: string }> => ({
@@ -179,6 +182,8 @@ export const stageText = (mode?: CloneMode): Record<string, { label: string; wha
   measure: { label: t("Measure"), what: t("compares the clone with the original, pixel by pixel and section by section") },
   polisher: { label: t("Polisher"), what: t("a model fixes the weak sections with style rules: only if the measure finds some") },
   dna: { label: t("DNA"), what: t("opens the page like a visitor and measures its colours, fonts, libraries, sections and motion") },
+  record: { label: t("Record"), what: t("opens the page like a visitor, scrolls it, and keeps every answer the network gave") },
+  verify: { label: t("Verify"), what: t("plays the recording back on this PC and measures it against the live page") },
   // Last, so that a site made from a picture reads its own words for the ids it shares with the other ways.
   ...(mode === "picture" ? pictureText() : {}),
 });

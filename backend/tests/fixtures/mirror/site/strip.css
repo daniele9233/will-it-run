@@ -1,0 +1,3 @@
+@font-face { font-family: "Fixture"; src: url("font.woff2") format("woff2"); }
+body { margin: 0; font-family: "Fixture", sans-serif; }
+.tall { height: 1200px; }

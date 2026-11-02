@@ -15,6 +15,8 @@ export type PageId =
   | "arena"
   | "downloads"
   | "images"
+  | "videos"
+  | "3d"
   | "chat"
   | "clone"
   | "sessions"

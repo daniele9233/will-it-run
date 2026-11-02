@@ -284,3 +284,25 @@ A folder or repository of yours is never deleted with the clone.
 The browser engine is installed up front: Playwright's core library (`playwright-core`, pinned), in
 `%LOCALAPPDATA%\Will It Run\Data\tools\clone-browser`, by `npm install --prefix`. It drives the Chrome or Edge you already have, so
 nothing big is downloaded. It needs Node.js 22 or newer and npm; the agent also needs Git, to fetch the kit.
+
+## Dynamic mirror
+
+Dynamic mirror is an additional local recording/replay workflow. It records a page's
+responses while the real browser loads and exercises scroll/wheel behavior, then
+serves the recorded assets on loopback. It preserves the recorded site's runtime;
+it does not claim to reconstruct editable source or produce a Next.js application.
+The workflow uses code checks rather than a language model.
+
+The result includes comparison evidence for structure, pixels, movement, requests
+and repeat loads, with explicit coverage gaps. Unmeasured report values remain
+unknown rather than being replaced with favorable defaults. The UI exposes the
+recording, local preview and measured report. The replay server never fetches a
+missing asset from the network and resolves requests through the recorded index,
+not arbitrary filesystem paths. Recording outputs remain in the clone workspace.
+
+Implementation: clone/mirror.py, mirror.mjs, mirror_probe.mjs and mirror_server.py;
+UI: pages/clone/MirrorView.tsx. Synthetic fixtures cover recording contracts,
+replay, routes, script behavior and comparison logic. A local recording is for
+studying or working with a site you have rights to use, not permission to publish
+someone else's assets. The original 2026-10-29 design and implementation plan are
+retained under docs/superpowers as historical specifications.

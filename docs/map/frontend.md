@@ -25,10 +25,11 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/clone/DnaCard.tsx` | 68 | DnaCard |  |  |
 | `pages/clone/FromSite.tsx` | 104 | FromSite | `/api/clone`, `/api/clone/study`, `/api/clone/{}`, `/api/clone/{}/dna` |  |
 | `pages/clone/MasterPrompts.tsx` | 99 | MasterPrompts | `/api/clone/prompts`, `/api/clone/prompts/{}` |  |
+| `pages/clone/MirrorView.tsx` | 101 | MirrorView | `/api/clone/{}/mirror`, `/api/clone/{}/mirror/open`, `/api/clone/{}/mirror/run` |  |
 | `pages/clone/PictureStart.tsx` | 202 | PictureStart | `/api/clone/picture`, `/api/clone/skills`, `/api/clone/skills/install` |  |
 | `pages/clone/ReplicaResult.tsx` | 131 | ReplicaResult |  |  |
 | `pages/clone/SaveBar.tsx` | 97 | SaveBar | `/api/clone/skills`, `/api/clone/skills/install`, `/api/clone/{}/prompts/save` |  |
-| `pages/CloneSite.tsx` | 976 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/{}`, `/api/clone/{}/answer`, `/api/clone/{}/dna` +6 | clone.install |
+| `pages/CloneSite.tsx` | 1029 | CloneSite | `/api/clone`, `/api/clone/install`, `/api/clone/install/cancel`, `/api/clone/mirror`, `/api/clone/{}`, `/api/clone/{}/answer` +7 | clone.install |
 | `pages/Downloads.tsx` | 285 | DownloadsPage | `/api/downloads`, `/api/downloads/{}`, `/api/downloads/{}/{}`, `/api/models/installed` | download. |
 | `pages/Guide.tsx` | 207 | GuidePage | `/api/quantization` |  |
 | `pages/Hardware.tsx` | 207 | HardwarePage | `/api/storage` |  |
@@ -39,6 +40,8 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Sessions.tsx` | 1422 | ToolCard, LiveText, LiveBlock, RecalledLine, SavedLine, SwitchLine, ApprovalCard +1 | `/api/models/installed`, `/api/runs`, `/api/runs/{}`, `/api/runs/{}/approvals/{}`, `/api/runs/{}/ask`, `/api/runs/{}/cancel` +4 |  |
 | `pages/Settings.tsx` | 589 | SettingsPage | `/api/brain`, `/api/doctor`, `/api/lmstudio/server/start`, `/api/models/installed` |  |
 | `pages/Teams.tsx` | 697 | TeamsPage | `/api/downloads`, `/api/runs`, `/api/specializations`, `/api/teams`, `/api/teams/plan`, `/api/teams/{}` |  |
+| `pages/ThreeD.tsx` | 187 | ThreeDPage | `/api/3d/gallery`, `/api/3d/gallery/{}`, `/api/3d/gallery/{}/file`, `/api/3d/gallery/{}/restore`, `/api/3d/gallery/{}/save`, `/api/3d/gallery/{}/web` +4 |  |
+| `pages/Videos.tsx` | 223 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/gallery`, `/api/videos/gallery/{}` +5 |  |
 | `pages/Wizard.tsx` | 174 | Wizard | `/api/scan` | scan.step |
 | `pages/Workflows.tsx` | 1277 | WorkflowsPage | `/api/models/context-advice`, `/api/runs`, `/api/tools`, `/api/workflows`, `/api/workflows/validate`, `/api/workflows/{}` +1 |  |
 
@@ -60,10 +63,15 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `components/LiveGraph.tsx` | 257 | LiveGraph |  |  |
 | `components/Markdown.tsx` | 70 | Markdown |  |  |
 | `components/ModelOptions.tsx` | 59 | ModelOptions, CloudModelsLink |  |  |
+| `components/ModelPreview.tsx` | 179 | ModelPreview |  |  |
+| `components/ModelStudio.tsx` | 69 | ModelStudio |  |  |
+| `components/ModelThumbnail.tsx` | 42 | ModelThumbnail |  |  |
 | `components/PlacePicker.tsx` | 127 | Place, PlacePicker |  |  |
 | `components/RunComposer.tsx` | 370 | RunComposer | `/api/brain/lookup` |  |
-| `components/Shell.tsx` | 398 | Mark, Shell |  |  |
+| `components/Shell.tsx` | 408 | Mark, Shell |  | 3d.job |
+| `components/ThreeDCode.tsx` | 105 | ThreeDCode | `/api/3d/coder/generate`, `/api/3d/coder/models`, `/api/3d/coder/scenes`, `/api/3d/coder/{}`, `/api/3d/coder/{}/preview`, `/api/3d/coder/{}/repair` +1 |  |
 | `components/ui.tsx` | 439 | cx, toneVar, Button, IconButton, Badge, FitBadge, StatusDot +25 |  |  |
+| `components/VideoPrompts.tsx` | 87 | VideoPromptPair, SavedVideoPrompt, VideoPromptTexts, SaveVideoPrompts, SavedVideoPrompts | `/api/videos/prompts`, `/api/videos/prompts/{}` |  |
 
 ## `lib/`
 
@@ -73,7 +81,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/arena.ts` | 840 | Status, Preset, RunStatus, CategoryInfo, ToolInfo, Overview, LocalChoice +76 |  |  |
 | `lib/arenaExport.ts` | 70 | ExportFormat, EXPORT_FORMATS, slug, extensionOf, fileName, saveReport | `/api/arena/runs/{}/export` |  |
 | `lib/brainGraph.ts` | 157 | Point, KINDS, KIND, isMemoryKind, nodeTone, viaLabel, LABEL_WIDTH +3 |  |  |
-| `lib/cloneSite.ts` | 434 | KitInfo, CloneSetup, CloneMode, SkillPackInfo, SkillsStatus, picturePacks, InstallJob +36 |  |  |
+| `lib/cloneSite.ts` | 439 | KitInfo, CloneSetup, CloneMode, SkillPackInfo, SkillsStatus, picturePacks, InstallJob +37 |  |  |
 | `lib/dialog.ts` | 32 | canBrowseFolders, pickFolder, pickAnyFolder, pickSavePath |  |  |
 | `lib/dna.ts` | 138 | DnaView, paletteSwatches, libsLabel, limitLines, motionFacts, dnaFetchProblem |  |  |
 | `lib/format.ts` | 245 | UNKNOWN, gbFromBytes, gbFromMb, gb, sizeLabel, compactNumber, params +20 |  |  |
@@ -83,11 +91,13 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/imageView.ts` | 62 | View, Size, MIN_ZOOM, MAX_ZOOM, STEP, FIT, clampZoom +5 |  |  |
 | `lib/liveRun.ts` | 152 | START, END, NodeState, NodeLive, GraphLive, edgeKey, sourcesOf +2 |  |  |
 | `lib/masterPrompts.ts` | 111 | PromptGroup, PromptProof, PromptSummary, PromptDetail, GROUPS, filterPrompts, proofLabel +8 |  |  |
+| `lib/mirror.ts` | 112 | MirrorReport, matchLines, motionLines, pixelLines, gapLines, mirrorFailure |  |  |
 | `lib/modelFilters.ts` | 129 | ModelSort, ParamBand, ModelFilters, DEFAULT_MODEL_FILTERS, nominalParamsB, quantizationOptions, parameterSizes +3 |  |  |
 | `lib/models.ts` | 36 | isCloudKey, cloudAsInstalled, providerGap, useModelChoices | `/api/cloud`, `/api/models/installed` |  |
 | `lib/runSource.ts` | 174 | RunSource, isGithubUrl, repoName, sourceProblem, sourcePayload, sourceFromEvent, loadSource +18 |  |  |
-| `lib/store.ts` | 158 | PageId, Toast, useApp, applyAppearance, relativeLuminance | `/api/hardware`, `/api/live`, `/api/lmstudio`, `/api/settings` |  |
+| `lib/store.ts` | 160 | PageId, Toast, useApp, applyAppearance, relativeLuminance | `/api/hardware`, `/api/live`, `/api/lmstudio`, `/api/settings` |  |
 | `lib/types.ts` | 1212 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +88 |  |  |
+| `lib/videoSave.ts` | 30 | saveVideo | `/api/videos/gallery/{}/file`, `/api/videos/gallery/{}/save` |  |
 | `lib/workflow.ts` | 86 | emptySlot, modelLabel, agentModelKey, distinctModels, agentsWithoutModel, assignModel |  |  |
 | `lib/zoom.ts` | 28 | ZOOM_MIN, ZOOM_MAX, ZOOM_STEP, clampZoom, applyZoom |  |  |
 

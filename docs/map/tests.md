@@ -30,6 +30,11 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_clone_dna_sites.py` | 8 | The DNA of four real reference sites, measured on 2026-10-28, against the hand measurements of the design (section 5.2). | clone |
 | `test_clone_library.py` | 45 | The library of master prompts: Markdown files that are checked when they are loaded. | clone, core |
 | `test_clone_library_api.py` | 18 | The text of a master prompt on its own, and the routes that list the library and read one prompt. | api, clone, core |
+| `test_clone_mirror.py` | 14 | Dynamic mirror: models, limits, the URL rewrite and the file lookup. | clone, core, workflows |
+| `test_clone_mirror_api.py` | 13 | A mirror as a clone entry: how it is listed, run again, read, deleted, and the three routes that start it, give its report and open its recording. | api, clone, core, workflows |
+| `test_clone_mirror_script.py` | 9 | The mirror recorder (``mirror.mjs``) against a local fixture site in a real browser (opt-in with ``WIR_LIVE_BROWSER``). | clone, core |
+| `test_clone_mirror_server.py` | 8 | The mirror replay server, on a hand-written recorded folder. | clone |
+| `test_clone_mirror_verify.py` | 11 | Dynamic mirror, the verification: motion, pixels and the report. | clone, core, workflows |
 | `test_clone_picture.py` | 35 | A site from a picture: what a model's answer is made into, how the steps keep or undo what it wrote, and the run's start. | clone, core, workflows |
 | `test_clone_replica.py` | 38 | The exact copy of a site: HTML to JSX, the project written from a capture, and the three steps of its pipeline. | clone, core, workflows |
 | `test_clone_skills.py` | 30 | The skill store: packs of SKILL.md folders, fetched at a pinned commit and copied into a project for a model to read. | clone, core |
@@ -52,8 +57,13 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_project_memory.py` | 18 | The memory of a project for coding agents: what a session leaves behind, the documents it reads, and the MCP server in front of it. | brain, core |
 | `test_streaming.py` | 9 | The schema a model is held to, and the text it generates as it is generated. | core, lmstudio, workflows |
 | `test_teams.py` | 37 | Team builder, model sharing and the resource optimizer. | catalog, core, hardware, lmstudio, teams, workflows |
+| `test_three_d_coder.py` | 10 | Integration contracts with a fake gateway; the downloaded Qwen model is never run. | api, core, lmstudio |
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
+| `test_trellis.py` | 13 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
+| `test_video.py` | 15 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
+| `test_video_finish.py` | 7 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
+| `test_video_prompts.py` | 4 | Prompt pairs persist as text, without starting a model or touching owner data. | imagegen |
 | `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
-Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/workflow.test.ts`
+Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/mirror.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/videoSave.test.ts`, `lib/workflow.test.ts`

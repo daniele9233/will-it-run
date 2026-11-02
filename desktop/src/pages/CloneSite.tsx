@@ -63,6 +63,7 @@ import type { InstalledModel, PendingApproval } from "../lib/types";
 import { useAnswerStream } from "./Chat";
 import { DnaCard } from "./clone/DnaCard";
 import { MasterPrompts } from "./clone/MasterPrompts";
+import { MirrorView } from "./clone/MirrorView";
 import { PictureStart } from "./clone/PictureStart";
 import { ReplicaResult } from "./clone/ReplicaResult";
 import { ApprovalCard, LiveBlock } from "./Sessions";
@@ -164,6 +165,7 @@ function SetupCard({ setup, onInstall, onCancel, busy }: { setup: CloneSetup; on
 function MethodCard({ mode, onMode, kit }: { mode: CloneMode; onMode: (mode: CloneMode) => void; kit: KitInfo | null }) {
   const replica = mode === "replica";
   const picture = mode === "picture";
+  const mirror = mode === "mirror";
   const stages = stagesOf(mode);
   return (
     <div className="clone-card grid content-start gap-2 p-4">
@@ -172,6 +174,7 @@ function MethodCard({ mode, onMode, kit }: { mode: CloneMode; onMode: (mode: Clo
         tabs={[
           { value: "replica" as CloneMode, label: t("Exact copy") },
           { value: "picture" as CloneMode, label: t("From a picture") },
+          { value: "mirror" as CloneMode, label: t("Dynamic mirror") },
           { value: "agent" as CloneMode, label: t("Agent rebuilds it (kit)") },
         ]}
         onChange={onMode}
@@ -182,10 +185,10 @@ function MethodCard({ mode, onMode, kit }: { mode: CloneMode; onMode: (mode: Clo
         </span>
         <span className="grid min-w-0">
           <span className="truncate text-[15px] font-semibold text-ink">
-            {replica ? t("The page as a browser renders it, as a Next.js project") : picture ? t("A site written from a reference picture, with local models") : t("A Next.js project, cloned the way the kit does it")}
+            {replica ? t("The page as a browser renders it, as a Next.js project") : picture ? t("A site written from a reference picture, with local models") : mirror ? t("The page recorded as a browser loads it, played back on this PC") : t("A Next.js project, cloned the way the kit does it")}
           </span>
           <span className="truncate font-mono text-2xs text-ink-3">
-            {replica ? t("measured against the original, no model needed for the copy") : picture ? t("every region measured against the picture") : kit ? `${kit.name} · ${kit.author}` : "ai-site-cloner · Mahanaicoach"}
+            {replica ? t("measured against the original, no model needed for the copy") : picture ? t("every region measured against the picture") : mirror ? t("no model needed") : kit ? `${kit.name} · ${kit.author}` : "ai-site-cloner · Mahanaicoach"}
           </span>
         </span>
       </span>
@@ -194,7 +197,9 @@ function MethodCard({ mode, onMode, kit }: { mode: CloneMode; onMode: (mode: Clo
           ? t("Chrome opens the site like a visitor, removes cookie banners and pop-ups, and freezes what it rendered: the markup, every style rule, the pictures and the fonts. That becomes a Next.js project with a component for each section, which is then built, shown in the same browser at desktop and phone width and compared with the original, pixel by pixel. The model you choose names the components and, only if the measure finds a weak section, looks at it and fixes it with style rules.")
           : picture
             ? t("A model that sees reads the picture and writes its composition; then it writes one component for each region, looking at that region. Code places the regions, builds the page, shows it at the picture's size and compares it with the picture; a rewrite stays only if the measure says it is better. GSAP motion, with the numbers the model chooses, stays only if the page at rest still matches the picture.")
-            : t("The kit's project is put in the folder, its packages are installed, and the model runs its /clone-website skill, exactly as in a coding agent in the terminal: it opens the site, finds the pages and asks you which ones to clone (only the home page, two pages, three…), then studies and rebuilds them as Next.js components. A small local model often runs out of room for this: use the exact copy, or a cloud model.")}
+            : mirror
+              ? t("Records the page as a browser loads it and plays it back on this PC, with its motion; no model needed")
+              : t("The kit's project is put in the folder, its packages are installed, and the model runs its /clone-website skill, exactly as in a coding agent in the terminal: it opens the site, finds the pages and asks you which ones to clone (only the home page, two pages, three…), then studies and rebuilds them as Next.js components. A small local model often runs out of room for this: use the exact copy, or a cloud model.")}
       </p>
       <span className="flex flex-wrap items-center gap-1 pt-1">
         {stages.map((stage, i) => (
@@ -224,7 +229,7 @@ function StartPanel({ setup, onStarted }: { setup: CloneSetup | null; onStarted:
   const { all, providers, installed, cloud } = useModelChoices();
   const [mode, setMode] = useState<CloneMode>(() => {
     const saved = remembered(MODE_KEY, "replica");
-    return saved === "agent" || saved === "picture" ? saved : "replica";
+    return saved === "agent" || saved === "picture" || saved === "mirror" ? saved : "replica";
   });
   const replica = mode !== "agent";
   // The agent that follows the kit's skill also needs Git, to fetch the kit.
@@ -260,6 +265,48 @@ function StartPanel({ setup, onStarted }: { setup: CloneSetup | null; onStarted:
     setMode(next);
     remember(MODE_KEY, next);
   };
+
+  const startMirror = () => {
+    if (!clean || busy) return;
+    setBusy(true);
+    api
+      .post<{ study: string; run: string }>("/api/clone/mirror", { url: clean })
+      .then((data) => onStarted(data.study))
+      .catch((err: unknown) => toast({ tone: "bad", title: t("The mirror could not start"), body: errorMessage(err) }))
+      .finally(() => setBusy(false));
+  };
+
+  // A mirror needs an address and no model.
+  if (mode === "mirror") {
+    return (
+      <div className="mx-auto grid w-full max-w-[880px] gap-4">
+        <div className="grid gap-2">
+          <label htmlFor="mirror-url" className="clone-label">{t("The address of the website")}</label>
+          <div className={cx("flex items-center gap-2.5 rounded-xl border bg-panel px-4 py-3 transition-colors duration-150 focus-within:border-accent", url && !clean ? "border-warn" : "border-line-strong")}>
+            <Globe size={18} className="shrink-0 text-ink-3" aria-hidden />
+            <input
+              id="mirror-url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && setup?.ready && startMirror()}
+              placeholder="https://www.example.com"
+              spellCheck={false}
+              className="min-w-0 flex-1 bg-transparent font-mono text-[15px] text-ink outline-none placeholder:text-ink-3"
+            />
+          </div>
+          {url && !clean && <span className="text-2xs text-warn">{t("That is not the address of a website.")}</span>}
+        </div>
+        <MethodCard mode={mode} onMode={changeMode} kit={setup?.kit ?? null} />
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="primary" icon={<Copy size={14} />} loading={busy} disabled={!clean || !setup?.ready} onClick={startMirror}>
+            {t("Record the site")}
+          </Button>
+          {!setup?.ready && <span className="text-2xs text-ink-3">{t("Finish the preparation above first.")}</span>}
+        </div>
+        <p className="text-2xs leading-relaxed text-ink-3">{t("A site's text, logos, pictures, videos and code belong to its owner. The recording stays on this PC; do not publish it.")}</p>
+      </div>
+    );
+  }
 
   // A site from a picture has no address: it starts from a file.
   if (mode === "picture") {
@@ -546,6 +593,7 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
   const exact = mode !== "agent";
   const replica = mode === "replica";
   const pictured = mode === "picture";
+  const mirrored = mode === "mirror";
   const states = nodeStates(run, mode);
   const workingNode = Object.entries(states).find(([, s]) => s.state === "working")?.[0] ?? null;
   const steps = prepSteps(run);
@@ -633,7 +681,7 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
           ) : (
             <>
               {study.project && <Button size="sm" variant="primary" icon={<Globe size={13} />} loading={busy === "preview"} onClick={openClone}>{t("Open the clone")}</Button>}
-              {run && !studied && <Button size="sm" icon={<RotateCcw size={13} />} onClick={() => setAgain((v) => !v)}>{t("Improve it")}</Button>}
+              {run && !studied && !mirrored && <Button size="sm" icon={<RotateCcw size={13} />} onClick={() => setAgain((v) => !v)}>{t("Improve it")}</Button>}
             </>
           )}
           {run && <Button size="sm" icon={<Network size={13} />} onClick={() => navigate("sessions", { run: run.id })}>{t("Live graph")}</Button>}
@@ -691,7 +739,11 @@ function CloneView({ cloneId, onBack, onDeleted }: { cloneId: string; onBack: ()
         </div>
       )}
 
-      {!studied && (
+      {mirrored && (
+        <MirrorView cloneId={cloneId} run={run} working={working !== null} thumbnail={file(study.shots[0])} onAgain={refresh} />
+      )}
+
+      {!studied && !mirrored && (
       <div className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
         <div className="grid content-start gap-4">
           <section className="clone-card grid content-start gap-2 p-4" aria-label={t("Preparation")}>
@@ -961,6 +1013,7 @@ function CloneCard({ clone, onOpen }: { clone: CloneInfo; onOpen: () => void }) 
         <span className="flex items-center gap-1.5">
           <span className="truncate text-[13px] font-semibold text-ink">{clone.title}</span>
           {clone.mode === "study" && <span className="clone-chip shrink-0">{t("Study")}</span>}
+          {clone.mode === "mirror" && <span className="clone-chip shrink-0">{t("Mirror")}</span>}
         </span>
         <span className="flex items-center gap-1.5 font-mono text-2xs">
           <span className={cx("h-1.5 w-1.5 rounded-full", clone.active ? "pulse-dot bg-warn" : clone.status === "completed" ? "bg-ok" : clone.status === "none" ? "bg-line-strong" : "bg-bad")} />

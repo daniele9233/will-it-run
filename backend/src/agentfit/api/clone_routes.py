@@ -190,6 +190,57 @@ def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"study": entry["id"], "run": record.id}
 
+    @app.post("/api/clone/mirror", dependencies=guard)
+    def clone_mirror(body: StudyBody) -> dict[str, Any]:
+        """Record a live page and measure its replay: no model. The report is ``GET /api/clone/{id}/mirror``."""
+        if not body.url.strip():
+            raise HTTPException(status_code=400, detail=tr("Write the address of a website."))
+        require_engine()
+        try:
+            entry, record = svc.clone.start_mirror(body.url)
+        except (CloneError, RunError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return {"study": entry["id"], "run": record.id}
+
+    @app.post("/api/clone/{study_id}/mirror/run", dependencies=guard)
+    def clone_mirror_again(study_id: str) -> dict[str, Any]:
+        """Record the same site again, from its entry: no body and no model."""
+        try:
+            entry = svc.clone.get(study_id)
+        except CloneError as exc:
+            raise HTTPException(status_code=404, detail=tr("This mirror does not exist.")) from exc
+        if entry.get("mode") != "mirror":
+            raise HTTPException(status_code=404, detail=tr("This mirror does not exist."))
+        require_engine()
+        try:
+            entry, record = svc.clone.start_mirror(str(entry["url"]), study_id=study_id)
+        except (CloneError, RunError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return {"study": entry["id"], "run": record.id}
+
+    @app.get("/api/clone/{study_id}/mirror", dependencies=guard)
+    def clone_mirror_report(study_id: str) -> dict[str, Any]:
+        """The report of a mirror: numbers, not a verdict. 404 when the clone does not exist or its run has not written it."""
+        try:
+            found = svc.clone.mirror(study_id)
+        except CloneError as exc:
+            raise HTTPException(status_code=404, detail=tr("This mirror does not exist.")) from exc
+        if found is None:
+            raise HTTPException(status_code=404, detail=tr("The mirror has not finished yet: there is no report to show."))
+        return found.model_dump(mode="json")
+
+    @app.post("/api/clone/{study_id}/mirror/open", dependencies=guard)
+    def clone_mirror_open(study_id: str) -> dict[str, Any]:
+        """Serve the recording on 127.0.0.1 so it opens in the browser. 409 when nothing was recorded yet."""
+        try:
+            svc.clone.get(study_id)
+        except CloneError as exc:
+            raise HTTPException(status_code=404, detail=tr("This mirror does not exist.")) from exc
+        try:
+            return {"url": svc.clone.mirror_preview(study_id)}
+        except CloneError as exc:
+            raise HTTPException(status_code=409, detail=tr(str(exc))) from exc
+
     @app.post("/api/clone/picture", dependencies=guard)
     def clone_picture(body: PictureBody) -> dict[str, Any]:
         """Build a site from a picture: a model that sees writes it region by region, and the page is measured against the picture."""

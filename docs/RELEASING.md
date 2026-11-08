@@ -20,6 +20,18 @@ local Windows environment cannot run NSIS. The local command below remains
 available; an existing release's assets are replaced only by a successful build
 of that same tag.
 
+If an existing release is missing its installer after a transient download or
+packaging failure, retry its tag from the current workflow on master. For example:
+
+```powershell
+gh workflow run release.yml --ref master -f tag=v0.4.1
+```
+
+This packages the existing tag's source. Once the run succeeds, download both
+assets, compare the installer's SHA-256 with the attached checksum and GitHub's
+asset digest, and check its product version. This recovered the 0.4.1 installer
+after the NSIS download returned HTTP 503; the published tag stayed unchanged.
+
 ### Local release command
 
 Commit the work first (the script refuses to start on a dirty tree, so the release commit holds only the version), then:

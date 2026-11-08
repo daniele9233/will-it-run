@@ -55,7 +55,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `MODEL_SCORING.md` | Model fit and scoring | Code: `backend/src/agentfit/fit` (fit) and `backend/src/agentfit/catalog/scoring.py` (score). |
 | `QWEN_3D_QUALITY.md` | Qwen 3D quality trial — 2026-11-01 | The owner requested a new, more detailed Japanese garden in the same stylized direction as Cloud Sanctuary, with research into the author's repositor… |
 | `RELEASE_NOTES_0.4.0.md` | RELEASE_NOTES_0.4.0 | Hardware fit and visual quality depend on the model and settings. |
-| `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | Model files, generated pictures, 3D assets and private application data are not included in the installer or public repository. |
+| `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | This release retires Voice and Qwen 3D Coder and adds observed video progress. |
 | `RELEASING.md` | Releasing | Every new version of Will It Run is published as a [GitHub release](https://github.com/daniele9233/will-it-run/releases) with the installer and its S… |
 | `SCREENS.md` | Screenshots | Immagini di ogni schermata dell'app, a 1600×1000 (la finestra è 1440×900, quindi il layout è quello reale o più largo). |
 | `SECURITY.md` | Security | Will It Run runs local models that can call tools on your computer. |

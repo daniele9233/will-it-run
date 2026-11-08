@@ -464,7 +464,7 @@ Voice model cleanup is limited to the dedicated VoxCPM2 and dots.tts SOAR model
 directories after checking their resolved paths. Do not treat code removal as
 proof that files on the owner's drive were deleted; record the actual result.
 
-Verification on 2026-11-08: GitHub CI passed 2,635 backend tests (25 skipped),
+Initial verification on 2026-11-08: GitHub CI passed 2,635 backend tests (25 skipped),
 158 frontend tests, lint, import contracts, translations and generated maps.
 The 0.4.1 source is published on master and tagged v0.4.1. A local update package
 with 310 files passes its SHA-256 manifest check. The existing installed app was
@@ -473,3 +473,24 @@ Voice model directories still contain 10,125,641,076 bytes. Cleanup is unfinishe
 shell writes outside the workspace are restricted and the native Explorer
 connection could not inspect its minimized window. Do not report those files
 deleted or the installed application updated on the basis of this release.
+
+Follow-up on 2026-11-08: the local checkout was compared with published master;
+its source changes were identical, with only generated maps out of date. A local
+Git stash preserves that snapshot; the checkout was fast-forwarded to the
+published commits. After inspecting the installed-model markers and rejecting
+redirected folders, only `D:\Models\Voice\voxcpm2` and
+`D:\Models\Voice\dots-soar` were deleted, then their empty Voice parent.
+Verified removal: 24 files, 10,125,641,076 bytes; all three
+paths are now absent. This completes the previously unfinished model cleanup.
+
+The retry of the existing v0.4.1 tag completed on GitHub:
+<https://github.com/daniele9233/will-it-run/actions/runs/42473799795>.
+The release now contains `WillItRun-0.4.1-Setup-x64.exe` (33,765,498 bytes) and its
+SHA-256 file. Downloaded both assets and verified the installer against both the
+checksum file and GitHub's asset digest:
+`6b71112f2da1b7b82a7649d403eb6301ac3cc203020e64077b16df3f3e025bd6`.
+The complete local `python -X utf8 scripts/check.py --all` also passed. The verified
+release was installed over the idle 0.4.0 application: installer exit code 0,
+desktop ProductVersion 0.4.1, frozen-core `version` reporting Will It Run 0.4.1.
+Both the installed desktop and its core remained running after launch. The Voice
+model directory remains absent. No new real GPU generation was run.

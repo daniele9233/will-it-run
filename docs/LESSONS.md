@@ -484,3 +484,16 @@ GitHub rejects `runner.temp` in a job-level `env` expression before it creates
 any jobs. YAML parsing alone does not validate allowed Actions contexts. Use
 `github.workspace` at job level and keep manual dispatch with an explicit existing
 release tag so packaging can be retried without moving a published tag.
+
+## 2026-11-08 - Check the remote release before repeating a local publication
+
+The local checkout still showed the 0.4.1 changes as uncommitted even though
+GitHub master and the v0.4.1 tag already contained the same source. Compare the
+staged source with fetched master before creating another release; generated
+maps alone may differ because new modules were not staged when they were built.
+Keep a local backup snapshot before fast-forwarding the checkout.
+
+A public release with no assets is not a completed installer publication. In
+this case the clean Windows build compiled the core and desktop but NSIS's
+download returned HTTP 503. Retry packaging the existing tag and verify the
+uploaded installer and checksum independently of source CI and local cleanup.

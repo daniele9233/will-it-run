@@ -463,3 +463,13 @@ unknown. Only the saved MP4 and recipe permit 100 percent. Release as 0.4.1.
 Voice model cleanup is limited to the dedicated VoxCPM2 and dots.tts SOAR model
 directories after checking their resolved paths. Do not treat code removal as
 proof that files on the owner's drive were deleted; record the actual result.
+
+Verification on 2026-11-08: GitHub CI passed 2,635 backend tests (25 skipped),
+158 frontend tests, lint, import contracts, translations and generated maps.
+The 0.4.1 source is published on master and tagged v0.4.1. A local update package
+with 310 files passes its SHA-256 manifest check. The existing installed app was
+still 0.4.0 when inspected; replacement has not been verified. The dedicated
+Voice model directories still contain 10,125,641,076 bytes. Cleanup is unfinished:
+shell writes outside the workspace are restricted and the native Explorer
+connection could not inspect its minimized window. Do not report those files
+deleted or the installed application updated on the basis of this release.

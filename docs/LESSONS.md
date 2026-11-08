@@ -470,3 +470,12 @@ The pending video-progress replacement left one extra closing parenthesis in
 the Cancel button handler. TypeScript rejected the whole page, so reviewing the
 progress component alone was insufficient. Check the final page with typecheck
 and regenerate translations for the new phase labels before the desktop build.
+
+## 2026-11-08 - Keep packaging failures distinct from compiled executables
+
+The 0.4.1 core and desktop executable compiled successfully in the restricted
+Windows session. NSIS first could not be downloaded through the sandbox's DNS;
+using an existing tools cache then failed to launch makensis with Windows error
+623 (invalid system DLL relocation). Neither result is a completed installer.
+The release workflow builds on a clean Windows runner, checks the tagged source
+and uploads the installer and checksum only after successful packaging.

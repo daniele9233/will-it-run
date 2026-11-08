@@ -6,6 +6,22 @@ with the installer and its SHA-256 checksum. Anyone can download the latest one 
 
 ## One command
 
+### Installer builds on GitHub
+
+Publishing a release also starts `.github/workflows/release.yml` on a clean
+Windows runner. It checks that the tag matches the application version, runs
+`python -X utf8 scripts/check.py --all`, builds the core and installer, then
+attaches the versioned installer and SHA-256 file to that release. No personal
+access token is needed. The installer is available only after this workflow
+succeeds; a published tag alone is not proof that packaging completed.
+
+This also supports publishing validated source through GitHub when a restricted
+local Windows environment cannot run NSIS. The local command below remains
+available; an existing release's assets are replaced only by a successful build
+of that same tag.
+
+### Local release command
+
 Commit the work first (the script refuses to start on a dirty tree, so the release commit holds only the version), then:
 
 ```powershell

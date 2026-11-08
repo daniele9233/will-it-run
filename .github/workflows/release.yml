@@ -3,6 +3,12 @@ name: Release installer
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to package
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -15,12 +21,12 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASE_TAG: ${{ github.event.release.tag_name }}
-      AGENTFIT_HOME: ${{ runner.temp }}/willitrun-release-data
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      AGENTFIT_HOME: ${{ github.workspace }}/.release-data
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
           persist-credentials: false
 
       - uses: actions/setup-python@v5

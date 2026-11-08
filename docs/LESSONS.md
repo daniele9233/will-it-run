@@ -479,3 +479,8 @@ using an existing tools cache then failed to launch makensis with Windows error
 623 (invalid system DLL relocation). Neither result is a completed installer.
 The release workflow builds on a clean Windows runner, checks the tagged source
 and uploads the installer and checksum only after successful packaging.
+
+GitHub rejects `runner.temp` in a job-level `env` expression before it creates
+any jobs. YAML parsing alone does not validate allowed Actions contexts. Use
+`github.workspace` at job level and keep manual dispatch with an explicit existing
+release tag so packaging can be retried without moving a published tag.

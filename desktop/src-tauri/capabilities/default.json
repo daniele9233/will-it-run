@@ -43,9 +43,6 @@
         },
         {
           "url": "https://aistudio.google.com/*"
-        },
-        {
-          "url": "https://flow.google.com/*"
         }
       ]
     }

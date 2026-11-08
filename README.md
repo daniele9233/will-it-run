@@ -46,7 +46,7 @@ A beginner can do: *"I want a coding AI team" → Automatic → Install → Run.
 An expert can inspect the exact GGUF, quantization, context, KV cache, GPU offload,
 loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
-## 3D and video studios (0.4.1)
+## 3D and video studios (0.4.2)
 
 The 3D studio keeps TRELLIS.2, Hi3D, the comparison lab, the model gallery and
 separate original/Web GLB exports. Qwen 3D Coder and the Voice section have been
@@ -56,10 +56,23 @@ The Videos page generates locally through ComfyUI with Wan profiles and first/la
 reference frames. Its progress bar shows sampling steps, the current phase and
 elapsed time, including decoding, saving and optional Full HD finishing. Remaining
 time is unknown until measured; 100% means the video and its recipe were saved.
-Google Flow remains an optional browser handoff using the owner's existing account.
+The local video catalog keeps Wan 2.2 I2V A14B Q6_K and Wan 2.1 FLF2V 14B 720P
+Q4_K_M, with explicit single-frame and first/last-frame labels. MiniMax H3
+Ref2VA-VSA adds reference-image video and audio through a pinned ComfyUI node,
+verified model downloads and its own four-step workflow. Google Flow and the two
+Fun-InP profiles have been removed. See the video guide for hardware requirements.
+
+The same page also restores existing videos with **RelayVSR 2x (LightX2V) and
+4x**. Choose a gallery video or local file, native scale or a 1080p/4K preset,
+and keep the source frame order, measured average frame rate and audio. Downloads
+are verified; processing shares the video task slot and has real progress,
+cancellation, a separate results gallery and measured whole-job throughput.
+Anamorphic display geometry is preserved, and 4K processing uses bounded frame
+windows when required by available RAM. Local verification on the RTX 4080 SUPER
+16 GB succeeded; measured performance is documented in the video guide.
 
 See [3D studio](docs/3D_STUDIO.md), [Video studio](docs/VIDEO_STUDIO.md) and
-[0.4.1 release notes](docs/RELEASE_NOTES_0.4.1.md).
+[0.4.2 release notes](docs/RELEASE_NOTES_0.4.2.md).
 
 ## Requirements
 

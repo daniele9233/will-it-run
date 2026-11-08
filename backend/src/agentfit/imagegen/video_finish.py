@@ -54,7 +54,7 @@ def _run(args: list[str], cancelled: Callable[[], bool], directory: Path) -> str
 
 
 def finish(source: Path, destination: Path, *, seconds: int, source_frames: int,
-           cancelled: Callable[[], bool], stage: Callable[[str], None]) -> dict[str, Any]:
+           cancelled: Callable[[], bool], stage: Callable[[str], None], audio_fps: int | None = None) -> dict[str, Any]:
     executables = tools()
     if not all(executables.values()):
         raise ValueError(tr("Full HD video needs local FFmpeg and FFprobe."))
@@ -68,8 +68,11 @@ def finish(source: Path, destination: Path, *, seconds: int, source_frames: int,
         f"pad={WIDTH}:{HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=black,setsar=1,format=yuv420p"
     )
     stage("finishing")
+    audio = ["-map", "0:a:0", "-af",
+             f"atempo={source_frames / (audio_fps * seconds):.10f},apad=whole_dur={seconds},atrim=duration={seconds}",
+             "-c:a", "aac", "-b:a", "192k"] if audio_fps else ["-an"]
     _run([str(executables["ffmpeg"]), "-hide_banner", "-loglevel", "error", "-nostdin", "-y",
-          "-i", str(source), "-map", "0:v:0", "-an", "-vf", filters, "-frames:v", str(count),
+          "-i", str(source), "-map", "0:v:0", *audio, "-vf", filters, "-frames:v", str(count),
           "-fps_mode", "passthrough", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
           "-movflags", "+faststart", str(destination)], cancelled, source.parent)
     stage("verifying")
@@ -89,6 +92,13 @@ def finish(source: Path, destination: Path, *, seconds: int, source_frames: int,
     repeats = sum(a == b for a, b in pairwise(frames))
     if len(frames) != count or repeats:
         raise ValueError(tr("The video contains repeated frames. Try a prompt with more visible movement."))
+    if audio_fps:
+        audio_info = json.loads(_run([str(executables["ffprobe"]), "-v", "error", "-select_streams", "a:0",
+                                     "-show_entries", "stream=codec_name,duration", "-of", "json", str(destination)],
+                                    cancelled, source.parent))
+        tracks = audio_info.get("streams", [])
+        if not tracks or abs(float(tracks[0].get("duration", 0)) - seconds) > 0.1:
+            raise ValueError(tr("The exported video is missing its generated audio or has the wrong audio duration."))
     return {"width": WIDTH, "height": HEIGHT, "fps": FPS, "frames": count, "seconds": seconds,
             "distinct_frames": len(set(frames)), "adjacent_repeats": repeats,
-            "interpolation": "motion-compensated", "resize": "lanczos", "codec": stream["codec_name"]}
+            "interpolation": "motion-compensated", "resize": "lanczos", "codec": stream["codec_name"], "audio": bool(audio_fps)}

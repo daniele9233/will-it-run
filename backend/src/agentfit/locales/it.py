@@ -481,3 +481,34 @@ MESSAGES.update({
 MESSAGES.update({
     "Import a self-contained GLB with embedded textures and buffers.": "Importa un GLB autonomo con texture e buffer incorporati.",
 })
+
+# Local MiniMax H3 Ref2VA-VSA video integration.
+MESSAGES.update({
+    "Ref2VA-VSA uses one reference image, no ending frame, negative prompt or slow motion.": "Ref2VA-VSA usa una sola immagine di riferimento, senza fotogramma finale, prompt negativo o rallentamento.",
+    "Ref2VA-VSA uses the 4-step Turbo recipe, CFG 1 and 24 FPS.": "Ref2VA-VSA usa la ricetta Turbo a 4 passi, CFG 1 e 24 FPS.",
+    "This video model needs at least {seconds} seconds.": "Questo modello video richiede almeno {seconds} secondi.",
+    "Video frames must follow {stride}n+{offset} for this model.": "I fotogrammi devono seguire {stride}n+{offset} per questo modello.",
+    "Ref2VA-VSA needs CUDA BF16 and the comfy-kitchen sol_attn CUDA backend.": "Ref2VA-VSA richiede CUDA BF16 e il backend CUDA sol_attn di comfy-kitchen.",
+    "Not enough disk space for Ref2VA-VSA and the safety reserve.": "Spazio su disco insufficiente per Ref2VA-VSA e la riserva di sicurezza.",
+    "The exported video is missing its generated audio or has the wrong audio duration.": "Il video esportato non contiene l'audio generato oppure la durata dell'audio non è corretta.",
+})
+
+# RelayVSR restoration of existing videos.
+MESSAGES.update({
+    "The local video runtime prerequisites are missing.": "Mancano i prerequisiti dell'ambiente video locale.",
+    "Not enough disk space for the video models and the safety reserve.": "Spazio su disco insufficiente per i modelli video e la riserva di sicurezza.",
+    "Choose the RelayVSR 2x or 4x model.": "Scegli il modello RelayVSR 2x o 4x.",
+    "RelayVSR needs native ComfyUI support, CUDA BF16 and comfy-kitchen window_attention.": "RelayVSR richiede il supporto nativo di ComfyUI, CUDA BF16 e window_attention di comfy-kitchen.",
+    "Choose one gallery video or one local video file.": "Scegli un solo video dalla galleria oppure un solo file video locale.",
+    "The video dimensions, frame count or frame rate could not be measured.": "Impossibile misurare dimensioni, numero di fotogrammi o frequenza del video.",
+    "Native upscaling exceeds 4K. Choose the 1080p or 4K output preset.": "L'ingrandimento nativo supera il 4K. Scegli il formato di uscita 1080p o 4K.",
+    "Choose an existing local MP4, MOV, MKV, WebM or AVI video.": "Scegli un video locale esistente in formato MP4, MOV, MKV, WebM o AVI.",
+    "RelayVSR is not ready. Check its models, native nodes and local FFmpeg.": "RelayVSR non è pronto. Verifica i modelli, i nodi nativi e FFmpeg locale.",
+    "Choose a video interval containing at least two frames.": "Scegli un intervallo video con almeno due fotogrammi.",
+    "Not enough available RAM for this output. Choose 1080p or close other applications.": "RAM disponibile insufficiente per questa uscita. Scegli 1080p o chiudi altre applicazioni.",
+    "Not enough disk space for video processing and the safety reserve.": "Spazio su disco insufficiente per elaborare il video e mantenere la riserva di sicurezza.",
+    "RelayVSR returned an unexpected resolution or frame count.": "RelayVSR ha restituito una risoluzione o un numero di fotogrammi inatteso.",
+    "The upscaled video failed its resolution, frame rate, frame count or audio checks.": "Il video ingrandito non ha superato i controlli di risoluzione, frequenza, fotogrammi o audio.",
+    "The source video changed during upscaling. The result was not published.": "Il video originale è cambiato durante l'ingrandimento. Il risultato non è stato pubblicato.",
+    "Upscaled video not found.": "Video ingrandito non trovato.",
+})

@@ -24,6 +24,13 @@ describe("saving an MP4 in the desktop app", () => {
     expect(mocks.post).not.toHaveBeenCalled();
   });
 
+  it("saves an upscaled copy through its own authenticated endpoint", async () => {
+    mocks.pick.mockResolvedValue("D:\\Videos\\upscaled.mp4");
+    mocks.post.mockResolvedValue({ path: "D:\\Videos\\upscaled.mp4" });
+    await saveVideo("upscale-id", "/api/videos/upscale/gallery");
+    expect(mocks.post).toHaveBeenCalledWith("/api/videos/upscale/gallery/upscale-id/save", { path: "D:\\Videos\\upscaled.mp4" });
+  });
+
   it("reports a failed dialog instead of falling back to the broken blob link", async () => {
     mocks.pick.mockRejectedValue(new Error("dialog unavailable"));
     await expect(saveVideo("clip-id")).rejects.toThrow("dialog unavailable");

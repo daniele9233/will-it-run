@@ -9,6 +9,7 @@ export interface VideoJob {
   total: number | null;
   elapsed: number;
   error: string | null;
+  unit?: "frames";
 }
 
 export function VideoJobProgress({ job }: { job: VideoJob }) {
@@ -19,12 +20,14 @@ export function VideoJobProgress({ job }: { job: VideoJob }) {
     encoding: t("Encoding video."), saving: t("Saving video."),
     finishing: t("Interpolating motion and preparing Full HD."),
     verifying: t("Checking resolution, frame rate and distinct frames."),
+    inspecting: t("Inspecting the source video."), preparing: t("Preparing video frames."),
+    upscaling: t("Upscaling with RelayVSR."),
   };
   const label = active ? phases[job.stage] || t("Generating video.")
     : job.status === "done" ? t("Completed") : job.status === "cancelled" ? t("Cancelled") : t("Failed");
   return <div role="status" className="grid gap-2 text-sm">
     <p>{label} · {job.percent != null && <>{job.percent}% · </>}{Math.round(job.elapsed)}s
-      {active && job.step != null && !!job.total && <span> · {t("Step")} {job.step}/{job.total}</span>}
+      {active && job.step != null && !!job.total && <span> · {job.unit === "frames" ? t("Frame") : t("Step")} {job.step}/{job.total}</span>}
     </p>
     <progress aria-label={t("Video task progress")} max={100} value={job.percent ?? undefined} className="h-2 w-full accent-accent" />
     {active && <p className="text-xs text-ink-3">{job.percent == null

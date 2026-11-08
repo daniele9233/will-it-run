@@ -2414,3 +2414,59 @@ Decoding video frames. ||| Decodifica dei fotogrammi video.
 Encoding video. ||| Codifica del video.
 Saving video. ||| Salvataggio del video.
 Waiting for engine progress. Elapsed time is shown; remaining time is unknown. ||| In attesa dell'avanzamento del motore. È mostrato il tempo trascorso; il tempo rimanente non è noto.
+First / last frame · both required ||| Primo / ultimo fotogramma · entrambi obbligatori
+Single reference image ||| Una sola immagine di riferimento
+Single frame · optional last frame ||| Un solo fotogramma · ultimo fotogramma facoltativo
+Designed for a transition between a first and a last frame. Upload both images; native 720p generation is required. ||| Pensato per una transizione tra il primo e l'ultimo fotogramma. Carica entrambe le immagini; è richiesta la generazione nativa a 720p.
+Uses one image as a visual reference for the subject. It does not lock the first or last frame. Generates video and audio with the 4-step Turbo recipe. ||| Usa una sola immagine come riferimento visivo per il soggetto. Non vincola il primo o l'ultimo fotogramma. Genera video e audio con la ricetta Turbo a 4 passi.
+Animate one starting frame. An ending image is optional guidance; choose Wan 2.1 FLF2V for a dedicated first/last-frame workflow. ||| Anima un fotogramma iniziale. L'immagine finale è una guida facoltativa; scegli Wan 2.1 FLF2V per un flusso dedicato al primo e ultimo fotogramma.
+This saved video used a removed model. Choose an available model before generating again. ||| Questo video salvato usava un modello rimosso. Scegli un modello disponibile prima di generare nuovamente.
+Generate locally from a single image, first/last frames or a visual reference. ||| Genera in locale da una sola immagine, dal primo e ultimo fotogramma o da un riferimento visivo.
+Ref2VA-VSA setup ||| Preparazione di Ref2VA-VSA
+The upstream recipe recommends 24 GB VRAM. Smaller GPUs are experimental; setup checks CUDA BF16 and sol_attn support. ||| La ricetta del progetto raccomanda 24 GB di VRAM. Le GPU più piccole sono sperimentali; la preparazione verifica il supporto CUDA BF16 e sol_attn.
+Detected VRAM: {gb} GB ||| VRAM rilevata: {gb} GB
+Verified model files ||| File dei modelli verificati
+Set up Ref2VA-VSA locally ||| Prepara Ref2VA-VSA in locale
+Downloading and verifying Ref2VA-VSA ||| Download e verifica di Ref2VA-VSA
+Ref2VA-VSA setup progress ||| Avanzamento della preparazione di Ref2VA-VSA
+Cancel setup ||| Annulla preparazione
+Setup is verified. Start or restart the shared engine to load the node and model folders. ||| Preparazione verificata. Avvia o riavvia il motore condiviso per caricare il nodo e le cartelle dei modelli.
+Reference image ||| Immagine di riferimento
+Change reference image ||| Cambia immagine di riferimento
+Choose reference image ||| Scegli immagine di riferimento
+This recipe uses only the positive prompt, 4 steps and CFG 1. Generated audio is preserved in the MP4. ||| Questa ricetta usa solo il prompt positivo, 4 passi e CFG 1. L'audio generato viene mantenuto nell'MP4.
+VSA sparsity ||| Sparsità VSA
+Default 0.75 follows the upstream example. Reference and text tokens remain dense. ||| Il valore predefinito 0,75 segue l'esempio del progetto. I token di riferimento e testo rimangono densi.
+Inspecting the source video. ||| Analisi del video originale.
+Preparing video frames. ||| Preparazione dei fotogrammi video.
+Upscaling with RelayVSR. ||| Ingrandimento con RelayVSR.
+Frame ||| Fotogramma
+Choose a video to upscale ||| Scegli un video da ingrandire
+Video upscaling · RelayVSR 2x / 4x ||| Ingrandimento video · RelayVSR 2x / 4x
+Restore detail in an existing video. Source frames, frame rate and audio are preserved; the original stays unchanged. ||| Ripristina i dettagli di un video esistente. Fotogrammi, frequenza e audio vengono mantenuti; l'originale resta invariato.
+Model drive: {free} GB free · {needed} GB still to download ||| Disco dei modelli: {free} GB liberi · {needed} GB ancora da scaricare
+Both RelayVSR models and their matching Flash decoders total 10.58 GB. Downloads are verified and can resume. ||| I due modelli RelayVSR e i rispettivi decoder Flash occupano in totale 10,58 GB. I download vengono verificati e possono riprendere.
+Install RelayVSR locally ||| Installa RelayVSR in locale
+Downloading and verifying models ||| Download e verifica dei modelli
+RelayVSR download progress ||| Avanzamento download RelayVSR
+Video to upscale ||| Video da ingrandire
+Local video file ||| File video locale
+Video file path ||| Percorso del file video
+Upscaling model ||| Modello di ingrandimento
+Output size ||| Dimensione di uscita
+Native model scale ||| Ingrandimento nativo del modello
+Start time (seconds) ||| Inizio (secondi)
+Duration (0 = whole video) ||| Durata (0 = video intero)
+2x doubles width and height; 4x quadruples them. Native outputs larger than 4K require an explicit output preset. ||| 2x raddoppia larghezza e altezza; 4x le quadruplica. Per un'uscita nativa superiore al 4K occorre scegliere un formato di uscita.
+The selected output preset prepares a lower-resolution input for the model, preserving the full image with padding when needed. ||| Il formato di uscita scelto prepara un ingresso a risoluzione inferiore per il modello, mantenendo l'immagine intera con eventuali bande.
+Detail strength ||| Intensità dei dettagli
+Upscale video ||| Ingrandisci video
+Throughput is measured for each finished job. Real-time performance depends on resolution, clip length and GPU. ||| La velocità viene misurata per ogni elaborazione completata. Le prestazioni in tempo reale dipendono da risoluzione, durata e GPU.
+Upscaled videos ||| Video ingranditi
+Measured whole-job throughput: {fps} FPS ||| Velocità misurata sull'intera elaborazione: {fps} FPS
+Original audio preserved ||| Audio originale mantenuto
+No source audio ||| Originale senza audio
+Upscaled copies appear here. Original videos stay in their gallery. ||| Le copie ingrandite appaiono qui. I video originali restano nella loro galleria.
+Restore detail in an existing video. Frame order, average frame rate and audio are retained. The source display aspect ratio is respected. ||| Ripristina i dettagli di un video esistente. Ordine dei fotogrammi, frequenza media e audio vengono mantenuti. Il formato visivo originale viene rispettato.
+Non-square source pixels were handled to preserve the displayed aspect ratio. ||| I pixel non quadrati dell'originale sono stati gestiti per mantenere il formato visivo corretto.
+Irregular source timestamps were normalized to the measured average frame rate. ||| I tempi irregolari dell'originale sono stati normalizzati alla frequenza media misurata.

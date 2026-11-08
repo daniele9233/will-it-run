@@ -497,3 +497,48 @@ A public release with no assets is not a completed installer publication. In
 this case the clean Windows build compiled the core and desktop but NSIS's
 download returned HTTP 503. Retry packaging the existing tag and verify the
 uploaded installer and checksum independently of source CI and local cleanup.
+
+## 2026-11-08 - A reference-video extension is a separate model contract
+
+Ref2VA-VSA patches MiniMax H3; it cannot be attached to the existing Wan GGUF
+graphs. Its frames follow 17n+5 at 24 fps rather than Wan's 4n+1. BasicGuider
+uses the positive conditioning only, and the sampler returns joint video/audio
+latents. Bind the actual upstream graph, recognize SamplerCustomAdvanced in
+progress, and preserve and verify audio rather than silently discarding it during
+the common Full HD finishing pass. Do not expose controls that the graph ignores.
+
+The extension README linked Comfy-Org/MiniMax_H3_repackaged, which returned 401.
+Search the publisher's actual model listing before assuming a token is required:
+Comfy-Org/MiniMax-H3 contains the exact named files without an account. Pin the
+verified revision and digest, and verify each download URL and byte length.
+
+Deleting the D:\Models Fun-InP files alone would have retained the same weights
+through ComfyUI's NTFS hard links. Inspect `fsutil hardlink list` before cleanup;
+remove only links to the explicitly retired models and their exclusive VAE.
+
+## 2026-11-08 - Test the actual video's geometry, timing and decoded-frame memory
+
+The owner's test.mp4 is coded 720x576 with SAR 64:45 and DAR 16:9, not a square-pixel
+5:4 video. Scaling by coded dimensions then forcing SAR 1 squeezes the picture.
+Measure SAR and use display geometry for square-pixel presets; retain source SAR
+for native-scale output. Missing aspect metadata remains unknown in the recipe.
+
+Its average rate is 11700/487 with irregular timestamps. Preserve measured average
+FPS and frame order, explicitly report normalization, and regenerate continuous
+timestamps when concatenating encoded windows. Millisecond container rounding can
+otherwise accumulate gaps and change the final rational average rate.
+
+RelayVSR's coarse model uses a 15-frame keyframe cadence. The Flash decoder need
+not output the preceding context again: trim the matching latent keyframes and
+LQ image batch before decoding. Otherwise a 61-frame context window allocates
+61 full-resolution outputs although only 15 new frames are needed, wasting both
+RAM and work at 4K. Keep input-context and decoded-output memory budgets separate.
+
+A fast fake exposed division by zero when elapsed time was rounded to two decimals
+before calculating processing FPS. Calculate throughput from the raw measured
+interval; round only displayed/stored presentation values, and keep an unknown
+rate unknown if no positive interval was observed.
+
+External test source IDs may disappear when their owner deletes gallery entries.
+Use the explicitly supplied file or an owned QA fixture, and verify source identity
+and unchanged bytes. Keep videos, comparison frames and reports in ignored storage.

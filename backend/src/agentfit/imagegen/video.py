@@ -14,11 +14,12 @@ from pydantic import BaseModel, Field, model_validator
 
 from agentfit import paths
 from agentfit.i18n import tr
+from agentfit.imagegen import ref2va, video_finish
 from agentfit.imagegen import video_catalog as catalog
-from agentfit.imagegen import video_finish
 from agentfit.imagegen.comfy import status_message
 from agentfit.imagegen.video_catalog import ENCODER, HIGH, LOW, VAE  # noqa: F401
 from agentfit.imagegen.video_progress import ProgressStream, VideoProgress
+from agentfit.imagegen.video_setup import Ref2VASetup
 
 
 class VideoRequest(BaseModel):
@@ -27,15 +28,16 @@ class VideoRequest(BaseModel):
     image: str = Field(min_length=1, max_length=500)
     prompt: str = Field(min_length=1, max_length=10000)
     negative: str = Field(default="", max_length=10000)
-    width: int = Field(default=832, ge=256, le=1280)
-    height: int = Field(default=480, ge=256, le=1280)
-    frames: int = Field(default=33, ge=5, le=361)
-    duration_seconds: int | None = Field(default=None, ge=6, le=15)
+    width: int = Field(default=832, ge=256, le=1344)
+    height: int = Field(default=480, ge=256, le=1344)
+    frames: int = Field(default=33, ge=5, le=362)
+    duration_seconds: int | None = Field(default=None, ge=5, le=15)
     motion_frames: int | None = Field(default=None, ge=5, le=361)
     fps: int = Field(default=16, ge=8, le=30)
     steps: int = Field(default=20, ge=4, le=60)
     cfg: float = Field(default=3.5, ge=1, le=10)
     seed: int = Field(default=-1, ge=-1, le=2147483647)
+    vsa_sparsity: float = Field(default=0.75, ge=0.0, le=0.98)
 
     @model_validator(mode="after")
     def valid(self) -> VideoRequest:
@@ -43,16 +45,29 @@ class VideoRequest(BaseModel):
         for name in ("fps", "steps", "cfg"):
             if name not in self.model_fields_set:
                 setattr(self, name, getattr(selected, name))
+        if selected.input_mode == "reference":
+            for name in ("width", "height"):
+                if name not in self.model_fields_set:
+                    setattr(self, name, getattr(selected, name))
+            if "frames" not in self.model_fields_set:
+                self.frames = 124
+            if self.end_image or self.negative.strip() or self.motion_frames is not None:
+                raise ValueError(tr("Ref2VA-VSA uses one reference image, no ending frame, negative prompt or slow motion."))
+            if self.steps != 4 or self.cfg != 1 or self.fps != 24:
+                raise ValueError(tr("Ref2VA-VSA uses the 4-step Turbo recipe, CFG 1 and 24 FPS."))
         if self.duration_seconds is not None:
+            if self.duration_seconds < selected.min_seconds:
+                raise ValueError(tr("This video model needs at least {seconds} seconds.").format(seconds=selected.min_seconds))
             self.fps = selected.fps
-            self.frames = self.motion_frames or self.duration_seconds * selected.fps + 1
+            self.frames = self.motion_frames or selected.frames_for(self.duration_seconds)
             if selected.required_end:
                 if "width" not in self.model_fields_set and "height" not in self.model_fields_set:
                     self.width, self.height = 1280, 720
                 if self.width * self.height < 1280 * 720:
                     raise ValueError(tr("This 720p video model needs at least 1280 x 720 pixels. Choose a higher generation resolution."))
-        if self.width % 16 or self.height % 16 or (self.frames - 1) % 4:
-            raise ValueError(tr("Video sizes must be multiples of 16; frames must be 4n+1."))
+        if (self.frames - selected.frame_offset) % selected.frame_stride or (selected.family != "ref2va" and self.frames > 361):
+            raise ValueError(tr("Video frames must follow {stride}n+{offset} for this model.").format(
+                stride=selected.frame_stride, offset=selected.frame_offset))
         if self.width % selected.size_multiple or self.height % selected.size_multiple:
             raise ValueError(tr("This video model needs dimensions divisible by {multiple}.").format(multiple=selected.size_multiple))
         if selected.required_end and not self.end_image:
@@ -68,13 +83,13 @@ class VideoRequest(BaseModel):
 def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, Any]:
     """Bind the official family-specific first/last-frame recipes to local GGUF loaders."""
     selected = catalog.profile(r.model_key)
+    if selected.family == "ref2va":
+        return ref2va.workflow(r, files, job_id)
 
     def node(kind: str, **inputs: Any) -> dict[str, Any]:
         return {"class_type": kind, "inputs": inputs}
 
-    conditioning = "WanImageToVideo" if selected.family == "wan22-i2v" and not r.end_image else (
-        "WanFunInpaintToVideo" if selected.family.startswith("wan22-fun") else "WanFirstLastFrameToVideo"
-    )
+    conditioning = "WanImageToVideo" if selected.family == "wan22-i2v" and not r.end_image else "WanFirstLastFrameToVideo"
     shift = 5.0 if conditioning == "WanImageToVideo" else 8.0
     graph = {
         "1": node("UnetLoaderGGUF", unet_name=files["high"]),
@@ -122,6 +137,7 @@ class VideoStudio:
         self.images = images
         self.directory = directory or paths.local_dir() / "videos"
         self.models_dir = models_dir or Path(r"D:\Models")
+        self.ref2va = Ref2VASetup(getattr(images, "engine", None), self.models_dir)
         self.lock = threading.RLock()
         self.jobs: dict[str, dict[str, Any]] = {}
 
@@ -133,6 +149,7 @@ class VideoStudio:
         objects = client.object_info() if available else {}
         models = []
         expected_sizes = {a["filename"]: a["size"] for a in catalog.assets()}
+        ref_setup = self.ref2va.status()
         for selected in catalog.PROFILES:
             files = {}
             rows = []
@@ -146,7 +163,8 @@ class VideoStudio:
                     files[role] = found
                 rows.append({"role": role, "name": name, "visible": found is not None and valid_size,
                              "source_present": present, "size_valid": valid_size})
-            dummy = VideoRequest(model_key=selected.key, image="check.png", end_image="end.png", prompt="check")
+            dummy = VideoRequest(model_key=selected.key, image="check.png",
+                                 end_image="" if selected.input_mode == "reference" else "end.png", prompt="check")
             graph = workflow(dummy, {role: name for role, name, _ in selected.requirements()}, "check")
             classes = {n["class_type"] for n in graph.values()}
             # The original single-picture mode has a different conditioning node.
@@ -154,17 +172,20 @@ class VideoStudio:
                 classes.add("WanImageToVideo")
             missing = sorted(classes - objects.keys()) if available else []
             models.append({"key": selected.key, "name": selected.name,
-                           "ready": available and len(files) == len(selected.requirements()) and not missing,
+                           "ready": available and len(files) == len(selected.requirements()) and not missing
+                           and (selected.family != "ref2va" or (ref_setup["weights_ready"] and ref_setup["source_ready"]
+                                                               and ref_setup["environment"]["ready"])),
                            "components": rows, "files": files, "missing_nodes": missing,
-                           "required_end": selected.required_end, "size_multiple": selected.size_multiple,
+                           "required_end": selected.required_end, "input_mode": selected.input_mode,
+                           "size_multiple": selected.size_multiple, "frame_stride": selected.frame_stride,
+                           "frame_offset": selected.frame_offset, "min_seconds": selected.min_seconds,
                            "defaults": {"fps": selected.fps, "steps": selected.steps, "cfg": selected.cfg,
-                                        "width": 1280 if selected.required_end else 832,
-                                        "height": 720 if selected.required_end else 480}})
+                                        "width": selected.width, "height": selected.height}})
         with self.lock:
             jobs = [dict(j) for j in reversed(list(self.jobs.values()))]
         default = models[0]
         finishing = video_finish.tools()
-        return {**default, "available": available, "models": models, "jobs": jobs,
+        return {**default, "available": available, "models": models, "jobs": jobs, "ref2va": ref_setup,
                 "finishing": {"ready": all(finishing.values()), "tools": finishing,
                               "width": 1920, "height": 1080, "fps": 30, "min_seconds": 6, "max_seconds": 15}}
 
@@ -259,12 +280,15 @@ class VideoStudio:
                 final = None
                 if request.duration_seconds is not None:
                     output = Path(scratch) / "final.mp4"
+                    audio = {"audio_fps": request.fps} if request.model_key == ref2va.KEY else {}
                     final = video_finish.finish(source, output, seconds=request.duration_seconds,
-                                                source_frames=request.frames, cancelled=cancelled, stage=stage)
+                                                source_frames=request.frames, cancelled=cancelled, stage=stage, **audio)
                 metadata = {"id": job["id"], "request": request.model_dump(), "created_at": job["created_at"],
                             "elapsed": round(time.monotonic() - started, 1), "model": job["model_name"],
                             "output": final,
-                            "timing": {"native_motion_seconds": (request.frames - 1) / request.fps,
+                            "runtime": {"source_commit": ref2va.COMMIT, "sparsity": request.vsa_sparsity}
+                            if request.model_key == ref2va.KEY else None,
+                            "timing": {"native_motion_seconds": (request.frames if request.model_key == ref2va.KEY else request.frames - 1) / request.fps,
                                        "export_seconds": request.duration_seconds,
                                        "mode": "slow-motion" if request.motion_frames else "continuous"}}
                 pending = Path(scratch) / "recipe.json"

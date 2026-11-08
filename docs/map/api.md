@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-181 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+186 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -210,15 +210,10 @@
 | GET | `/api/3d/status` | `trellis_status` |  |
 | POST | `/api/3d/upload` | `trellis_upload` |  |
 
-## `api/video_routes.py` (15)
+## `api/video_routes.py` (20)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
-| GET | `/api/videos/flow` | `flow_status` |  |
-| POST | `/api/videos/flow` | `flow_prepare` |  |
-| POST | `/api/videos/flow/{session_id}/import` | `flow_import` |  |
-| POST | `/api/videos/flow/{session_id}/save` | `flow_save` |  |
-| GET | `/api/videos/flow/{session_id}/sequence` | `flow_sequence` |  |
 | GET | `/api/videos/gallery` | `videos_gallery` |  |
 | DELETE | `/api/videos/gallery/{video_id}` | `videos_delete` |  |
 | GET | `/api/videos/gallery/{video_id}/file` | `videos_file` |  |
@@ -228,4 +223,14 @@
 | GET | `/api/videos/prompts` | `videos_prompts` |  |
 | POST | `/api/videos/prompts` | `videos_prompt_save` |  |
 | DELETE | `/api/videos/prompts/{prompt_id}` | `videos_prompt_delete` |  |
+| POST | `/api/videos/ref2va/setup` | `ref2va_setup` |  |
+| POST | `/api/videos/ref2va/setup/cancel` | `ref2va_setup_cancel` |  |
 | GET | `/api/videos/status` | `videos_status` |  |
+| POST | `/api/videos/upscale` | `upscale_generate` |  |
+| GET | `/api/videos/upscale/gallery` | `upscale_gallery` |  |
+| DELETE | `/api/videos/upscale/gallery/{video_id}` | `upscale_delete` |  |
+| GET | `/api/videos/upscale/gallery/{video_id}/file` | `upscale_file` |  |
+| POST | `/api/videos/upscale/gallery/{video_id}/save` | `upscale_save` |  |
+| POST | `/api/videos/upscale/setup` | `upscale_setup` |  |
+| POST | `/api/videos/upscale/setup/cancel` | `upscale_setup_cancel` |  |
+| GET | `/api/videos/upscale/status` | `upscale_status` |  |

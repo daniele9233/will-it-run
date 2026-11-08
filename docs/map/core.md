@@ -6,13 +6,13 @@ Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, 
 
 - Depends on: `api`, `arena`, `benchmark`, `brain`, `catalog`, `clone`, `cloud`, `fit`, `hardware`, `imagegen`, `lmstudio`, `locales`, `teams`, `workflows`
 - Used by: `api`, `arena`, `benchmark`, `brain`, `catalog`, `clone`, `cloud`, `fit`, `hardware`, `imagegen`, `lmstudio`, `teams`, `workflows`
-- Tests that import it: `test_api.py`, `test_arena_api.py`, `test_arena_assets.py`, `test_arena_bank.py`, `test_arena_basics.py`, `test_arena_exec.py`, `test_arena_iac.py`, `test_arena_quants.py`, `test_arena_runner.py`, `test_arena_scoring.py`, `test_arena_sql.py`, `test_autotune_and_sources.py`, `test_brain.py`, `test_catalog.py`, `test_clone.py`, `test_clone_compose.py`, `test_clone_dna.py`, `test_clone_library.py`, `test_clone_library_api.py`, `test_clone_mirror.py`, `test_clone_mirror_api.py`, `test_clone_mirror_script.py`, `test_clone_mirror_verify.py`, `test_clone_picture.py`, `test_clone_replica.py`, `test_clone_skills.py`, `test_clone_study.py`, `test_cloud.py`, `test_context_map.py`, `test_core.py`, `test_downloads.py`, `test_fit.py`, `test_flow.py`, `test_followups.py`, `test_gateway.py`, `test_github.py`, `test_hardware.py`, `test_hi3d.py`, `test_i18n.py`, `test_imagegen.py`, `test_importer.py`, `test_lmstudio.py`, `test_media_runtime.py`, `test_model_quirks.py`, `test_project_memory.py`, `test_streaming.py`, `test_teams.py`, `test_tool_loop_guards.py`, `test_trellis.py`, `test_verification.py`, `test_video.py`, `test_video_finish.py`, `test_workflows.py`
+- Tests that import it: `test_api.py`, `test_arena_api.py`, `test_arena_assets.py`, `test_arena_bank.py`, `test_arena_basics.py`, `test_arena_exec.py`, `test_arena_iac.py`, `test_arena_quants.py`, `test_arena_runner.py`, `test_arena_scoring.py`, `test_arena_sql.py`, `test_autotune_and_sources.py`, `test_brain.py`, `test_catalog.py`, `test_clone.py`, `test_clone_compose.py`, `test_clone_dna.py`, `test_clone_library.py`, `test_clone_library_api.py`, `test_clone_mirror.py`, `test_clone_mirror_api.py`, `test_clone_mirror_script.py`, `test_clone_mirror_verify.py`, `test_clone_picture.py`, `test_clone_replica.py`, `test_clone_skills.py`, `test_clone_study.py`, `test_cloud.py`, `test_context_map.py`, `test_core.py`, `test_downloads.py`, `test_fit.py`, `test_followups.py`, `test_gateway.py`, `test_github.py`, `test_hardware.py`, `test_hi3d.py`, `test_i18n.py`, `test_imagegen.py`, `test_importer.py`, `test_lmstudio.py`, `test_media_runtime.py`, `test_model_quirks.py`, `test_project_memory.py`, `test_ref2va.py`, `test_relayvsr.py`, `test_streaming.py`, `test_teams.py`, `test_tool_loop_guards.py`, `test_trellis.py`, `test_verification.py`, `test_video.py`, `test_video_finish.py`, `test_workflows.py`
 
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
 | `__init__.py` | 6 | Will It Run core: hardware analysis, model fit, LM Studio integration and LangGraph teams. |  | test_api.py, test_arena_scoring.py, test_clone_picture.py +7 |
 | `__main__.py` | 5 |  |  |  |
-| `api/__init__.py` | 2 | Local HTTP API consumed by the desktop UI. |  | test_api.py, test_video.py |
+| `api/__init__.py` | 2 | Local HTTP API consumed by the desktop UI. |  | test_api.py, test_relayvsr.py, test_video.py |
 | `app.py` | 389 | Service container: wires storage, hardware, runtime, catalog and engines together. | **AppServices**, get_services() | test_api.py, test_arena_api.py, test_brain.py +7 |
 | `arena/__init__.py` | 15 | The Arena: reliability tests for models, checked by code and never by another model. |  | test_arena_assets.py, test_arena_bank.py, test_arena_basics.py +6 |
 | `benchmark/__init__.py` | 4 |  |  | test_core.py |
@@ -27,12 +27,12 @@ Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, 
 | `db.py` | 164 | SQLite storage with forward-only numbered migrations. | **Database**, utcnow(), get_db(), reset_default_db() | test_api.py, test_arena_api.py, test_brain.py +9 |
 | `doctor.py` | 170 | ``willitrun doctor``: environment checks reported as PASS, WARNING or FAIL. | **Check**, run_doctor(), overall() |  |
 | `downloads.py` | 559 | Download manager: disk-safety gate, queue, progress, retry, resume and cancel. | **UnsafeDownload**, **DownloadError**, **DownloadRequest**, **DownloadRecord**, **DownloadManager**, normalize_folder() | test_downloads.py |
-| `events.py` | 52 | In-process publish/subscribe bus feeding the UI's live event stream. | **EventBus** | test_api.py, test_arena_api.py, test_arena_quants.py +24 |
+| `events.py` | 52 | In-process publish/subscribe bus feeding the UI's live event stream. | **EventBus** | test_api.py, test_arena_api.py, test_arena_quants.py +25 |
 | `fit/__init__.py` | 37 |  |  | test_catalog.py, test_fit.py, test_i18n.py |
 | `github.py` | 209 | The user's GitHub account, through the GitHub CLI. | **GitHubError**, **Account**, **Login**, cli_path(), account(), repositories(), git_credential_args() | test_github.py |
 | `hardware/__init__.py` | 30 |  |  | test_hardware.py |
 | `i18n.py` | 93 | Tiny gettext-style localization: the English text is the key. | **LanguageMiddleware**, system_language(), resolve(), set_default_language(), set_request_language(), reset_request_language(), current_language(), tr() | test_arena_scoring.py, test_clone_compose.py, test_clone_skills.py +1 |
-| `imagegen/__init__.py` | 22 | Image generation and editing through ComfyUI. |  | test_flow.py, test_hi3d.py, test_imagegen.py +4 |
+| `imagegen/__init__.py` | 22 | Image generation and editing through ComfyUI. |  | test_hi3d.py, test_imagegen.py, test_importer.py +5 |
 | `lmstudio/__init__.py` | 19 |  |  | test_lmstudio.py |
 | `locales/__init__.py` | 6 | Translation catalogs, keyed by the English text. |  |  |
 | `logging_setup.py` | 111 | Structured JSON-lines logging with secret redaction. | **JsonFormatter**, redact_text(), redact(), configure_logging(), get_logger(), log_event(), read_log_tail() | test_core.py |

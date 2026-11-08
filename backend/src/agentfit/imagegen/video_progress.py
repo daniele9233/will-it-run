@@ -12,7 +12,12 @@ from websockets.sync.client import connect
 
 class VideoProgress:
     def __init__(self, graph: dict[str, Any]) -> None:
-        self.samplers = [key for key, node in graph.items() if node["class_type"] in ("KSampler", "KSamplerAdvanced")]
+        self.samplers = [key for key, node in graph.items() if node["class_type"] in ("KSampler", "KSamplerAdvanced", "SamplerCustomAdvanced")]
+        self.phases = {key: (("decoding", 82) if node["class_type"].startswith("VAEDecode") else
+                             ("upscaling", 82) if node["class_type"] == "VSRDecode" else
+                             ("encoding", 88 if node["class_type"] == "SaveVideo" else 86))
+                       for key, node in graph.items() if node["class_type"] in ("VAEDecode", "VAEDecodeAudio", "VSRDecode", "CreateVideo", "SaveVideo")}
+        self.frame_decoders = {key for key, node in graph.items() if node["class_type"] == "VSRDecode"}
         self.percent = 0
         self.node: str | None = None
         self.prompt_id: str | None = None
@@ -54,10 +59,16 @@ class VideoProgress:
                     fraction = value / maximum
                 stage = "sampling"
                 percent = 10 + round(70 * (index + fraction) / len(self.samplers))
+            elif kind == "progress" and node in self.frame_decoders:
+                value, maximum = data.get("value"), data.get("max")
+                if (isinstance(value, bool) or isinstance(maximum, bool) or not isinstance(value, int)
+                        or not isinstance(maximum, int) or maximum <= 0 or not 0 <= value <= maximum):
+                    return {}
+                stage, percent, step, total = "upscaling", 82 + round(5 * value / maximum), value, maximum
             elif kind == "progress":
                 return {}
-            elif node in ("13", "14", "15"):
-                stage, percent = ("decoding", 82) if node == "13" else ("encoding", 86 if node == "14" else 88)
+            elif node in self.phases:
+                stage, percent = self.phases[node]
         elif kind != "execution_start":
             return {}
         self.percent = max(self.percent, percent)

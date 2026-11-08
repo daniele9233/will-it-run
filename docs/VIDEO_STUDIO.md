@@ -24,9 +24,23 @@ Cancellation and errors keep their final state and elapsed time visible.
 | Profile | Diffusion files | Conditioning | Other components | Defaults |
 |---|---|---|---|---|
 | Wan 2.2 I2V A14B Q6_K | Original HighNoise and LowNoise Q6_K pair | WanImageToVideo with one picture; WanFirstLastFrameToVideo with two | UMT5 XXL FP8, Wan 2.1 VAE | 20 Euler/simple steps, CFG 3.5, 16 fps; shift 5 with one picture, 8 with two |
-| Wan 2.2 Fun-InP 5B Q6_K | Single QuantStack GGUF | WanFunInpaintToVideo | Same UMT5; **Wan 2.2 VAE** | 20 uni_pc/simple steps, CFG 6, shift 8, 24 fps |
-| Wan 2.2 Fun-InP A14B Q4_K_M | QuantStack HighNoise and LowNoise pair | WanFunInpaintToVideo | Same UMT5 and Wan 2.1 VAE | 20 Euler/simple steps, CFG 3.5, shift 8, 16 fps |
 | Wan 2.1 FLF2V 14B 720P Q4_K_M | Single city96 GGUF | WanFirstLastFrameToVideo; both pictures required | Same UMT5 and Wan 2.1 VAE; CLIP Vision H encodes **both** pictures | 20 uni_pc/simple steps, CFG 3, shift 8, 16 fps |
+| MiniMax H3 Ref2VA-VSA INT8 | Pruned Ref2VA INT8 model | MiniMaxH3ReferenceToVideo; one visual reference, not a first/last-frame constraint | Qwen3-VL 32B NVFP4 AWQ; video and audio VAEs; Turbo LoRA and VSA gate | 4 Euler/simple steps, BasicGuider (CFG 1), 24 fps, video/audio shifts 12/3, VSA sparsity 0.75 |
+
+The model selector and selected-model description state which input each model
+accepts. I2V animates a starting frame with optional final guidance. FLF2V is the
+dedicated first/last-frame option and requires both pictures. Ref2VA uses one
+subject reference; it does not promise that image will be the first video frame.
+Its ending-image, negative-prompt, CFG and slow-motion controls are unavailable
+or fixed to the actual upstream recipe. Unsupported API combinations are rejected.
+
+At the owner's request on 2026-11-08, Google Flow and both Fun-InP profiles were
+removed. The three Fun-InP GGUFs and the 5B-only Wan2.2 VAE were deleted from
+D:\Models and from their verified NTFS hard links in ComfyUI: 24,951,591,008 model
+bytes across four underlying files, plus their local verification markers. Shared
+Wan encoders and the two retained Wan profiles were preserved. Saved gallery
+videos remain playable; reusing a removed model's recipe explains why another
+available model must be selected first. Older dated comparisons below are history.
 
 `imagegen/video_catalog.py` specifies the exact filenames. Profiles never fall back to a smaller
 or different checkpoint. `imagegen/data/video_assets.json` records pinned source commits, exact
@@ -49,7 +63,10 @@ and the second continues without adding fresh noise. The ending image is uploade
 and passes through its own LoadImage node. Wan 2.1 also uses a separate CLIP vision encoding of
 each endpoint. The 5B VAE cannot be replaced with the 14B model's VAE.
 
-Native frames must be 4n+1, up to 361. Sizes are multiples of 16 (32 for Fun 5B); the UI adapts its choices.
+Wan native frames must be 4n+1, up to 361. MiniMax H3 uses 17n+5 at 24 fps,
+including 124 frames for the approximately five-second upstream example and 362
+for a 15-second request. Sizes are multiples of 16 for Wan and 32 for Ref2VA;
+the UI adapts its choices and displays the actual aligned frame count.
 The seed is resolved before queuing. Every gallery recipe preserves model key, both input names,
 resolved seed, resolution, fps, steps and CFG. Old gallery entries remain readable.
 The profile defaults are suggestions, not measured hardware-fit or speed guarantees. Begin with
@@ -80,20 +97,25 @@ quality benchmarks. The earlier MP4 was served through the API and decoded in th
 
 ## Full HD desktop hero output
 
-All four profiles have the same final format in the UI: 1920 x 1080, 16:9, 30 fps,
-6 through 15 whole seconds (180 through 450 output frames), H.264/yuv420p MP4 with
-faststart and no audio. Generation defaults to 512 x 288 to limit memory; 768 x 448
-and 1024 x 576 are selectable. The output is explicitly described as upscaled.
-Lanczos scaling and a centered crop preserve aspect ratio; this is not native 1080p
-or learned super-resolution. Higher native resolutions consume more memory.
+The current profiles have the same final format in the UI: 1920 x 1080, 16:9, 30 fps,
+6 through 15 whole seconds for Wan (180 through 450 output frames), or 5 through
+15 for Ref2VA (150 through 450). Output is H.264/yuv420p MP4 with faststart; Wan
+is silent, while Ref2VA preserves its generated audio as AAC. I2V defaults to
+832 x 480, FLF2V to 1280 x 720, and Ref2VA to the upstream 1344 x 768 canvas.
+Portrait inputs rotate the canvas orientation. The output is explicitly described
+as upscaled. Lanczos scaling and centered padding preserve the whole image and
+aspect ratio; this is not native 1080p or learned super-resolution. Higher native
+resolutions consume more memory.
 
 The optional `duration_seconds` request field activates this pipeline. The service
-derives `frames = seconds * profile.fps + 1` and uses that profile's native rate:
-97-241 source frames at 16 fps, or 145-361 at 24 fps for Fun 5B. The entire duration
-is generated as one continuous latent, with the user's original first/last pictures
-conditioning the actual endpoints. No repeated clips, loops or five-second clip
-stretched to fifteen seconds. Long generations cost more memory and may lose
-coherence; accepting a tensor length does not establish a quality guarantee.
+uses each profile's native rate and temporal alignment: 97-241 source frames at
+16 fps for continuous Wan generation; 124-362 at 24 fps, aligned to 17n+5, for
+Ref2VA. Native versus requested export timing remains explicit. Wan endpoint
+images condition the first/last frames; Ref2VA images condition the referenced
+subject. Continuous generation uses one latent, without repeated clips or loops.
+The separately selected Wan Slow motion mode is described below. Longer
+generations cost more memory and may lose coherence; accepting a tensor length
+does not establish a quality guarantee.
 Legacy requests without duration_seconds and existing gallery files remain readable.
 
 `imagegen/video_finish.py` runs the installed local FFmpeg and FFprobe (PATH or
@@ -212,19 +234,182 @@ to the successfully rendered raw native workflow; retiming is done by the same
 verified finishing function. Endpoint geometry is still judged visually: these
 models are not a CAD renderer and fine parts can deform.
 
-## Google Flow, browser-assisted
+## MiniMax H3 Ref2VA-VSA
 
-The Videos page also has a Google Flow panel, independent of ComfyUI. Choose two
-local PNG/JPEG/WebP references and a prompt, then Prepare for Flow. Their copies
-and exact prompt are kept under `videos/flow/<id>` in local app data. Open Flow,
-upload those images as first/last frames, paste the prompt and generate with the
-owner's existing included credits. Generation, login, model selection and spending
-remain in Google's browser UI; no API key, cookies or Google credentials enter
-Will It Run. There is no autonomous MCP/browser bridge in the desktop app.
+Source: <https://github.com/Kablex/ComfyUI-Ref2VA-VSA>, pinned to
+`323a0a5f7c636cc70f95464145732f81f04a72e9`. The Python core binds the author's
+API workflow in `imagegen/ref2va.py`; it never imports torch or the custom node.
+The existing ComfyUI runs the model, Turbo LoRA, gate transplant, sigma shift,
+SamplerCustomAdvanced, video VAE and audio VAE. The existing gallery, cancellation,
+prompt storage and live progress panel also serve Ref2VA. Progress recognizes
+the custom sampler and both decode nodes. The generated audio is retained when
+finishing the MP4, retimed with the video and checked for the requested duration.
 
-Import the downloaded MP4 to extract 150 WebP frames locally, at up to 1280x720.
-FFprobe validates a real video stream with duration 0.5–60 seconds; FFmpeg extracts
-the sequence. The ZIP and manifest become available only after all 150 frames
-exist. Imports are labelled Google Flow (user-imported), without inventing model
-metadata. Original source files remain unchanged. Interrupted work is reported as
-failed and can be imported again. The separate local Wan controls still work.
+The six sources, immutable revisions, sizes and SHA-256 hashes live in
+`imagegen/data/ref2va_assets.json`. The README's original Comfy-Org repository URL
+no longer answers; the verified current publisher repository is
+<https://huggingface.co/Comfy-Org/MiniMax-H3>. All six pinned download URLs answered
+HTTP 200 with the expected byte lengths. Their total size is 48,280,301,087 bytes.
+Files live under `D:\Models\video\ref2va`, separated by diffusion_models,
+text_encoders, vae and loras. A launch-only extra-path configuration exposes these
+folders without changing the owner's ComfyUI YAML.
+
+`POST /api/videos/ref2va/setup` explicitly installs the pinned node in the detected
+ComfyUI and downloads the weights. `POST /api/videos/ref2va/setup/cancel` cancels;
+verified downloads can resume with HTTP Range. Files are published only after size
+and checksum checks; partial files and checksum mismatches never make the model
+Ready. Direct-to-disk downloads retain the safety reserve without a duplicate
+full-size cache. `GET /api/videos/status` includes setup progress and runtime checks.
+Starting or restarting the shared engine loads the node and the new model paths.
+
+Upstream recommends 24 GB VRAM and reports its timings on an RTX 4090. This PC
+has an RTX 4080 SUPER with 16 GB. The UI reports the recommendation and actual
+detected memory, labels smaller GPUs experimental, and checks CUDA BF16 and the
+comfy-kitchen CUDA `sol_attn` capability. These checks establish prerequisites,
+not an inference-speed or fit guarantee. The six local downloads and pinned source
+were verified successfully; hardware generation results are recorded separately.
+
+### Live verification on this PC, 2026-11-08
+
+The local installer built successfully and was applied to the installed app.
+The real installed WebView showed exactly the two retained Wan entries plus
+Ref2VA, with their Italian input-mode descriptions and no Flow panel. The shared
+engine reported all three profiles ready, with no missing nodes or files. The
+FLF form required both images; Ref2VA exposed one reference-image input and fixed
+4-step/CFG-1 controls.
+
+One generation was submitted through that WebView using the extension's clothed
+portrait example and a plain clothed-portrait movement prompt. RTX 4080 SUPER
+16 GB, seed 42, sparsity 0.75, 4 steps; native portrait canvas 768 x 1344,
+124 frames at 24 fps. Job `baf87b3f8fd4429d8dbf6445ff9dd9b6` completed in
+153.7 seconds including finishing and validation. The persisted result measured
+1920 x 1080, 30 fps, 5 seconds, 150 distinct frames, zero adjacent repetitions
+and retained generated audio. The player loaded and sought the result; an
+inspected frame showed the clothed subject with the intended portrait padding.
+Observed progress reached decoding at 82% and completed at 100% only after the
+MP4 and recipe were published. This is one end-to-end pipeline measurement,
+not a general speed or quality ranking.
+
+The complete project checker passed, including backend tests, all eight import
+contracts, Ruff, TypeScript, ESLint, 161 frontend tests and both translation
+catalog checks. Development images and model weights remain outside Git.
+
+## Existing-video restoration: RelayVSR
+
+RelayVSR is a separate upscaling panel in Videos. It processes a gallery video or
+an explicitly selected local MP4/MOV/MKV/WebM/AVI file, preserving the original
+file. It does not replace the three generation profiles. Outputs are new MP4s in
+`videos/upscaled`, with recipes, a separate gallery, native Save dialog and
+explicit deletion. Generation and upscaling share one task slot, cancellation
+and the same progress component. Decode progress reports actual restored frames;
+100% requires both a verified MP4 and its published recipe.
+
+### Models and external runtime
+
+The requested files and their matching Flash decoders are pinned in
+`imagegen/data/relayvsr_assets.json` to Comfy-Org/RelayVSR revision
+`4aa28ada1785a03e9355c28f989b9ed3fdcb9f8e`. All four immutable URLs answered HTTP
+200 with their published sizes, and downloaded files passed SHA-256 verification.
+
+| Component | Bytes |
+|---|---:|
+| relayvsr_x2_lightx2v_int8_convrot.safetensors | 5,163,295,248 |
+| relayvsr_x4_int8_convrot.safetensors | 5,164,179,952 |
+| relayvsr_flash_vae_x2_fp32.safetensors | 127,759,464 |
+| relayvsr_flash_vae_x4_fp32.safetensors | 127,759,784 |
+| **Total** | **10,582,994,448** |
+
+They live under `D:\Models\video\relayvsr`, in diffusion_models and vae folders.
+The launch-only model-path configuration exposes them to ComfyUI without changing
+the owner's YAML. The verified downloader is shared with Ref2VA, including the
+disk reserve, HTTP Range resume, cancellation, checksum checks and atomic markers.
+No ML dependencies or model weights enter the application core or installer.
+
+The existing clean ComfyUI checkout was updated from `6b747c04` (v0.38.0) to the
+official commit `0decb39ee5b5e17c200334589fc317dbbe98310e`, which includes native
+RelayVSR support (ComfyUI PR 17511). Its pinned requirements were installed in
+ComfyUI's own environment, including comfy-kitchen 0.2.41 and comfy-aimdo 0.6.0.
+Torch 2.12.1+cu130 was already present. Runtime checks verify CUDA BF16 and the
+CUDA `window_attention` capability. Ref2VA's custom-node checkout is preserved.
+Both RelayVSR scales and the three existing generators reported ready.
+
+The workflow follows the official LoadVideo / GetVideoComponents / UNETLoader /
+RelayVSRConditioning / one-step Euler KSampler (CFG 1) / matching VSRDecode /
+CreateVideo / SaveVideo graph. No text encoder or prompt is required. The x2
+model is always paired with the x2 decoder, and x4 with x4. The Detail control
+scales the decoder's residual, as implemented by the native node.
+
+### Geometry, timing and resource handling
+
+Native scale doubles or quadruples coded width and height and retains the source
+pixel aspect ratio. Explicit 1080p and UHD 4K presets prepare the model's input
+at the corresponding lower resolution, using the source **display** aspect ratio
+and square-pixel padding. This distinguishes anamorphic pixels from square pixels;
+a 720x576 file marked 16:9 must not be squeezed into a 5:4 picture.
+
+The source's frame count and average FPS are measured. Irregular timestamps are
+explicitly normalized to that average rate while frame order is retained; this
+is not motion interpolation. Final encoding regenerates continuous timestamps
+after concatenation so fractional rates are not changed by segment rounding.
+Source audio is kept and encoded as AAC over the selected video interval.
+
+An interval that fits the available-RAM budget is processed as a whole. Otherwise
+15-frame output windows retain up to 45 preceding frames for the coarse model,
+aligned with RelayVSR's 15-frame keyframe cadence. Native TrimVideoLatent and
+ImageFromBatch remove that context **before** Flash decoding: at most 61 LQ frames
+and 16 newly decoded frames are held per window. Context is not decoded repeatedly,
+and every requested frame is published once in order. Recipes record the choice
+and its reasons. Native outputs beyond the 4K pixel budget require an explicit
+preset; insufficient RAM or disk reserve is reported rather than silently changing
+the requested model or output.
+
+The pipeline verifies the actual output dimensions, decoded frame count, rational
+average FPS, sample aspect ratio and audio presence. A changed source, failed
+checksum, incorrect result or cancellation cannot publish a successful gallery
+entry. Temporary input/output files are scoped to the owned task.
+
+Authenticated API: `GET /api/videos/upscale/status`,
+`POST /api/videos/upscale/setup`, `POST /api/videos/upscale/setup/cancel`,
+`POST /api/videos/upscale`, `GET /api/videos/upscale/gallery`, and file/save/delete
+operations under `/api/videos/upscale/gallery/{video_id}`. The existing
+`POST /api/videos/jobs/{job_id}/cancel` also cancels these jobs.
+
+### Whole-file verification with the owner's test.mp4, 2026-11-08
+
+The owner supplied `test.mp4` in the repository root and requested using that file.
+Measured input: 720x576 coded pixels, SAR 64:45, 16:9 display aspect, 312 frames,
+average FPS 11700/487 (approximately 24.025), approximately 12.99 seconds of video,
+with audio and irregular original timing. The input's SHA-256 was unchanged after
+testing. All four tests processed the **entire** file, not a short excerpt.
+
+| Model | Output | Whole-job time | Measured processing FPS | Frames |
+|---|---|---:|---:|---:|
+| RelayVSR 2x | 1920x1080 | 55.08 s | 5.66 | 312 |
+| RelayVSR 4x | 1920x1080 | 52.27 s | 5.97 | 312 |
+| RelayVSR 2x | 3840x2160 | 307.85 s | 1.01 | 312 |
+| RelayVSR 4x | 3840x2160 | 258.00 s | 1.21 | 312 |
+
+All outputs retained average FPS 11700/487, 16:9 square-pixel geometry and an
+audio track. Both 4K jobs used 21 bounded windows and completed without GPU
+out-of-memory errors. Whole-job times include preparation, loading/inference,
+encoding and verification. CUDA was used on the RTX 4080 SUPER 16 GB; sampled
+whole-GPU usage peaked at 11,762 MiB (about 11.49 GiB, including desktop usage).
+The minimum observed available system RAM was about 3.05 GiB. These measured
+rates are below this clip's playback rate: real-time operation was not reached.
+
+The same decoded frame index (150) was inspected in the source and both 4K
+outputs at a common display size: geometry and colors were intact and edges were
+more defined. There is no reference-quality score or claim that lost detail was
+recovered exactly. Copies with readable names, comparison frames and the JSON
+report are in ignored `.shots/relayvsr-test/`; results also remain in the app's
+upscaling gallery. The input and outputs are not committed.
+
+Disk verification began with 43.64 GB free on D. The four weights required 10.58
+GB, retaining the 30 GiB model-drive reserve. During the whole-file tests, sampled
+free space remained at least 32.77 GB. After exporting the four comparison copies,
+the generated Rust release cache was inspected with `cargo clean --dry-run` and
+cleared with `cargo clean --release --locked --offline` (2.1 GiB recovered).
+The installed app and completed installer in dist were retained; D then had
+approximately 33.95 GB free. Ruff, eight import contracts, backend tests,
+TypeScript, ESLint, 162 frontend tests and translation checks passed, and the
+updated local NSIS installer was successfully applied to the installed app.

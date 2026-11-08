@@ -99,3 +99,34 @@ Will It Run does not ship their files; a run copies the ones it uses into the pr
 - **Leonxlnx/taste-skill** (`taste-skill`), commit `12af471f627f`: MIT, Leonxlnx. Its `scripts/` and `assets/` are not kept.
 - **Motionsites-AI/claude-skill** (`motionsites-web-builder`), commit `faa30d512e39`: MIT, Copyright (c) 2026 MotionSites. Its `examples/` and `media/` are © MotionSites (https://motionsites.ai) and are not kept, nor are its `scripts/`.
 - **pbakaus/impeccable** (`impeccable`), commit `3e3a9179e01a`: Apache-2.0, pbakaus. Its `scripts/` are not kept. Its `reference/ios.md` and `reference/android.md` come from ehmo/platform-design-skills (MIT).
+
+## Ref2VA-VSA video runtime (not bundled)
+
+- **Kablex/ComfyUI-Ref2VA-VSA**, commit `323a0a5f7c636cc70f95464145732f81f04a72e9`:
+  <https://github.com/Kablex/ComfyUI-Ref2VA-VSA>, Apache-2.0. Its custom-node source
+  and license are fetched into the user's existing ComfyUI on explicit setup.
+  `backend/src/agentfit/imagegen/ref2va.py` adapts the published API workflow wiring.
+- **MiniMax H3** weights and components are fetched from Comfy-Org/MiniMax-H3;
+  their terms are the MiniMax H3 Community License Agreement:
+  <https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE>.
+- The Ref2V Turbo LoRA is fetched from **lightx2v/Minimax-h3-Turbo**, and the VSA
+  gate from **barelymining/ComfyUI-MiniMax-H3-FastVideo**. Their upstream terms
+  apply to these downloaded files. Exact source revisions, sizes and SHA-256
+  hashes are recorded in `imagegen/data/ref2va_assets.json`.
+- **ComfyUI** (GPL-3.0) and **comfy-kitchen** run these components in the external
+  runtime. No model weights, CUDA libraries or custom-node source are included
+  in the Will It Run installer.
+
+## RelayVSR video restoration (not bundled)
+
+- **RelayVSR**, <https://github.com/kopperx/RelayVSR>, Apache-2.0. Native ComfyUI
+  support is provided by Comfy-Org/ComfyUI (GPL-3.0), including PR 17511; the local
+  runtime was verified at commit `0decb39ee5b5e17c200334589fc317dbbe98310e`.
+- The **RelayVSR X2** variant is trained by **LightX2V**:
+  <https://huggingface.co/lightx2v/RelayVSR_X2>.
+- INT8 diffusion models and matching FP32 Flash decoders are downloaded from
+  <https://huggingface.co/Comfy-Org/RelayVSR> at revision
+  `4aa28ada1785a03e9355c28f989b9ed3fdcb9f8e` (Apache-2.0). File sizes and
+  SHA-256 hashes are recorded in `imagegen/data/relayvsr_assets.json`.
+- `imagegen/relayvsr.py` binds the official native workflow. No RelayVSR weights,
+  ComfyUI source or CUDA libraries are included in the Will It Run installer.

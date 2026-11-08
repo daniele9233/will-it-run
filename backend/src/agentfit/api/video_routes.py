@@ -9,9 +9,9 @@ from pydantic import BaseModel, Field
 
 from agentfit.app import AppServices
 from agentfit.i18n import tr
-from agentfit.imagegen.flow import FlowPrepare, FlowStudio
 from agentfit.imagegen.video import VideoRequest, VideoStudio
 from agentfit.imagegen.video_prompts import VideoPromptInput, VideoPromptStore
+from agentfit.imagegen.video_upscale import UpscaleRequest, VideoUpscaler
 
 
 class VideoSaveBody(BaseModel):
@@ -21,49 +21,74 @@ class VideoSaveBody(BaseModel):
 def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
     studio = VideoStudio(svc.images)
     prompts = VideoPromptStore(studio.directory / "prompts")
-    flow = FlowStudio(studio.directory / "flow")
+    upscaler = VideoUpscaler(studio)
 
-    @app.get("/api/videos/flow", dependencies=guard)
-    def flow_status() -> dict[str, Any]:
-        return flow.status()
+    @app.get("/api/videos/upscale/status", dependencies=guard)
+    def upscale_status() -> dict[str, Any]:
+        return upscaler.status()
 
-    @app.post("/api/videos/flow", dependencies=guard)
-    def flow_prepare(body: FlowPrepare) -> dict[str, Any]:
+    @app.post("/api/videos/upscale/setup", dependencies=guard)
+    def upscale_setup() -> dict[str, Any]:
+        return upscaler.setup.start()
+
+    @app.post("/api/videos/upscale/setup/cancel", dependencies=guard)
+    def upscale_setup_cancel() -> dict[str, Any]:
+        return upscaler.setup.cancel()
+
+    @app.post("/api/videos/upscale", dependencies=guard)
+    def upscale_generate(body: UpscaleRequest) -> dict[str, Any]:
         try:
-            return flow.prepare(body)
-        except (ValueError, OSError) as exc:
-            raise HTTPException(400, str(exc)) from exc
+            return upscaler.generate(body)
+        except (ValueError, OSError, KeyError) as exc:
+            raise HTTPException(409, str(exc)) from exc
 
-    @app.post("/api/videos/flow/{session_id}/import", dependencies=guard)
-    def flow_import(session_id: str, body: VideoSaveBody) -> dict[str, Any]:
+    @app.get("/api/videos/upscale/gallery", dependencies=guard)
+    def upscale_gallery() -> dict[str, Any]:
+        return {"videos": upscaler.gallery()}
+
+    @app.get("/api/videos/upscale/gallery/{video_id}/file", dependencies=guard)
+    def upscale_file(video_id: str) -> FileResponse:
         try:
-            return flow.import_video(session_id, body.path)
+            return FileResponse(upscaler.file(video_id), media_type="video/mp4", filename=f"RelayVSR-{video_id}.mp4")
         except KeyError as exc:
-            raise HTTPException(404, tr("Flow session not found.")) from exc
-        except (ValueError, OSError) as exc:
-            raise HTTPException(400, str(exc)) from exc
+            raise HTTPException(404, tr("Upscaled video not found.")) from exc
 
-    @app.get("/api/videos/flow/{session_id}/sequence", dependencies=guard)
-    def flow_sequence(session_id: str) -> FileResponse:
+    @app.delete("/api/videos/upscale/gallery/{video_id}", dependencies=guard)
+    def upscale_delete(video_id: str) -> dict[str, bool]:
         try:
-            return FileResponse(flow.sequence(session_id), media_type="application/zip", filename="frames_150.zip")
+            path = upscaler.file(video_id)
+            path.with_suffix(".json").unlink(missing_ok=True)
+            path.unlink()
+            return {"deleted": True}
         except KeyError as exc:
-            raise HTTPException(404, tr("The frame sequence is not ready.")) from exc
+            raise HTTPException(404, tr("Upscaled video not found.")) from exc
 
-    @app.post("/api/videos/flow/{session_id}/save", dependencies=guard)
-    def flow_save(session_id: str, body: VideoSaveBody) -> dict[str, Any]:
+    @app.post("/api/videos/upscale/gallery/{video_id}/save", dependencies=guard)
+    def upscale_save(video_id: str, body: VideoSaveBody) -> dict[str, Any]:
         try:
-            source = flow.sequence(session_id)
+            source = upscaler.file(video_id)
             target = Path(body.path)
-            if not target.is_absolute() or not target.parent.is_dir() or target.suffix.lower() != ".zip":
-                raise ValueError(tr("Choose a ZIP filename in an existing folder."))
+            if not target.is_absolute() or not target.parent.is_dir():
+                raise ValueError(tr("That place does not exist: {path}", path=body.path))
+            if not target.suffix:
+                target = target.with_suffix(".mp4")
+            if target.suffix.lower() != ".mp4":
+                raise ValueError(tr("Choose an MP4 filename."))
             if source.resolve() != target.resolve():
                 shutil.copyfile(source, target)
             return {"path": str(target), "bytes": target.stat().st_size}
         except KeyError as exc:
-            raise HTTPException(404, tr("The frame sequence is not ready.")) from exc
+            raise HTTPException(404, tr("Upscaled video not found.")) from exc
         except (ValueError, OSError) as exc:
             raise HTTPException(400, str(exc)) from exc
+
+    @app.post("/api/videos/ref2va/setup", dependencies=guard)
+    def ref2va_setup() -> dict[str, Any]:
+        return studio.ref2va.start()
+
+    @app.post("/api/videos/ref2va/setup/cancel", dependencies=guard)
+    def ref2va_setup_cancel() -> dict[str, Any]:
+        return studio.ref2va.cancel()
 
     @app.get("/api/videos/prompts", dependencies=guard)
     def videos_prompts() -> dict[str, Any]:

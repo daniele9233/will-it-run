@@ -494,3 +494,75 @@ release was installed over the idle 0.4.0 application: installer exit code 0,
 desktop ProductVersion 0.4.1, frozen-core `version` reporting Will It Run 0.4.1.
 Both the installed desktop and its core remained running after launch. The Voice
 model directory remains absent. No new real GPU generation was run.
+
+## 2026-11-08 - Keep two Wan profiles and add explicit Ref2VA input semantics
+
+The owner removed Google Flow and the Fun-InP 5B/A14B video profiles. Keep only
+the original Wan 2.2 I2V Q6_K pair and Wan 2.1 FLF2V 720P Q4_K_M among the Wan
+models. Remove the retired GGUFs, the exclusive 5B VAE and their verified hard
+links; preserve shared encoders, retained weights and saved videos. Verified
+cleanup removed 24,951,591,008 bytes of underlying model files. Flow's active UI,
+routes and service are removed, superseding its earlier browser-handoff decision.
+
+Add the requested Kablex Ref2VA-VSA project as a separate MiniMax H3 profile.
+Use the pinned upstream four-step workflow with its own encoders, VAEs, LoRA,
+gate, sampler and 17n+5 temporal grid. Never pass these controls or weights to a
+Wan graph. Preserve generated audio through Full HD finishing. Keep a first/last
+endpoint distinct from a subject reference in the UI and reject unsupported
+request fields. The 24 GB upstream recommendation remains visible on this 16 GB
+PC; verified prerequisites and downloaded weights are not a measured generation.
+
+All six immutable sources were checked against publisher metadata and HTTP HEAD.
+Setup downloaded and SHA-256-verified 48,280,301,087 bytes under D:\Models\video\ref2va
+and verified the custom-node commit 323a0a5f7c636cc70f95464145732f81f04a72e9.
+Setup runs locally, is cancellable and resumable, and never installs ML libraries
+in the core's environment. The selected ComfyUI already provides CUDA sol_attn.
+
+The local build and installed-WebView verification succeeded. All three active
+profiles reported ready. A real Ref2VA generation on the 16 GB RTX 4080 SUPER
+completed in 153.7 seconds with seed 42, 4 steps, sparsity 0.75 and a 768 x 1344
+portrait canvas. The saved five-second Full HD MP4 has 150 distinct frames at
+30 fps and retained generated audio. The bar completed at 100% after persistence.
+The 24 GB upstream recommendation remains the documented baseline; this records
+one successful local configuration. Details and the job ID are in VIDEO_STUDIO.md.
+
+## 2026-11-08 - Add RelayVSR as existing-video restoration with measured limits
+
+The owner requested both Comfy-Org RelayVSR INT8 models in Videos, under D:\Models,
+with real disk/GPU verification, then supplied test.mp4 for the test. Add a separate
+upscaling panel, preserving the two Wan and Ref2VA generation profiles. Pair each
+scale with its own Flash VAE; reuse the verified downloader and the shared video
+task slot. Preserve source files and publish upscaled copies only after validation.
+
+Use official native ComfyUI RelayVSR support, pinned runtime commit
+0decb39ee5b5e17c200334589fc317dbbe98310e and CUDA window_attention, rather than
+adding another runtime. Four SHA-256-verified files at HF revision
+4aa28ada1785a03e9355c28f989b9ed3fdcb9f8e occupy 10,582,994,448 bytes under
+D:\Models\video\relayvsr. Keep average frame rate and audio; make normalization
+of irregular timestamps explicit and respect anamorphic display geometry.
+
+Bound 4K RAM by retaining coarse temporal context but trimming that context from
+latents and images before Flash decoding. Keep each requested frame once, in order.
+The recipe returns reasons for output preparation and memory-window choices.
+Display actual whole-job throughput, not an inherited real-time marketing claim.
+
+On the owner's whole 312-frame, 16:9 anamorphic test.mp4, both models produced
+1080p and 4K with matching average FPS and audio. End-to-end times were 55.08/52.27
+seconds at 1080p and 307.85/258.00 at 4K (2x/4x). Sampled whole-GPU usage peaked
+at 11,762 MiB on the 16 GB RTX 4080 SUPER. Source hash was unchanged. Real time
+was not reached. The updated local installer was built and installed; details,
+resource measurements and ignored result paths are in VIDEO_STUDIO.md.
+
+## 2026-11-08 - Publish the accumulated video work as 0.4.2
+
+The owner explicitly requested GitHub publication and a new tagged release after
+the local Ref2VA/RelayVSR work. Publish the validated source, updated documentation,
+translations, model manifests and tests together as v0.4.2 on master. Keep private
+inputs, generated media, local runtime installations and model weights out of the
+public commit. Existing v0.4.1 remains immutable.
+
+Use the GitHub Windows release workflow to build the tagged source and attach
+the versioned installer and SHA-256 checksum. Verify the remote CI and release
+workflow, downloaded checksum and installer version, then install that published
+package on the owner's PC. Record publication and upgrade evidence after these
+steps complete; a local build or an existing tag alone does not prove publication.

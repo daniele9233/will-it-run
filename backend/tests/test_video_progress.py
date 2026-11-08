@@ -7,7 +7,9 @@ from agentfit.imagegen.video_progress import ProgressStream, VideoProgress
 
 
 def tracker(*samplers):
-    progress = VideoProgress({node: {"class_type": "KSamplerAdvanced"} for node in samplers})
+    graph = {node: {"class_type": "KSamplerAdvanced"} for node in samplers}
+    graph.update({"13": {"class_type": "VAEDecode"}, "14": {"class_type": "CreateVideo"}, "15": {"class_type": "SaveVideo"}})
+    progress = VideoProgress(graph)
     progress.prompt_id = "our-video"
     return progress
 

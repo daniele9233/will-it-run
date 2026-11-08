@@ -41,7 +41,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Settings.tsx` | 589 | SettingsPage | `/api/brain`, `/api/doctor`, `/api/lmstudio/server/start`, `/api/models/installed` |  |
 | `pages/Teams.tsx` | 697 | TeamsPage | `/api/downloads`, `/api/runs`, `/api/specializations`, `/api/teams`, `/api/teams/plan`, `/api/teams/{}` |  |
 | `pages/ThreeD.tsx` | 196 | ThreeDPage | `/api/3d/gallery`, `/api/3d/gallery/{}`, `/api/3d/gallery/{}/file`, `/api/3d/gallery/{}/restore`, `/api/3d/gallery/{}/save`, `/api/3d/gallery/{}/web` +5 |  |
-| `pages/Videos.tsx` | 226 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/gallery`, `/api/videos/gallery/{}` +5 |  |
+| `pages/Videos.tsx` | 208 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/gallery`, `/api/videos/gallery/{}` +6 |  |
 | `pages/Wizard.tsx` | 174 | Wizard | `/api/scan` | scan.step |
 | `pages/Workflows.tsx` | 1277 | WorkflowsPage | `/api/models/context-advice`, `/api/runs`, `/api/tools`, `/api/workflows`, `/api/workflows/validate`, `/api/workflows/{}` +1 |  |
 
@@ -53,7 +53,6 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `components/BrainGraph.tsx` | 200 | BrainGraph | `/api/brain/projects/{}/graph` |  |
 | `components/CloudKeys.tsx` | 132 | CloudKeys | `/api/cloud`, `/api/cloud/{}/key`, `/api/cloud/{}/test` |  |
 | `components/GithubPicker.tsx` | 232 | GithubRepo, GithubPicker | `/api/github`, `/api/github/login`, `/api/github/repos` |  |
-| `components/GoogleFlowPanel.tsx` | 57 | GoogleFlowPanel | `/api/videos/flow`, `/api/videos/flow/{}/import`, `/api/videos/flow/{}/save`, `/api/videos/flow/{}/sequence` |  |
 | `components/Guide.tsx` | 184 | TermId, Term, GLOSSARY, HelpTip, accuracyTone, AccuracyMeter, pplLabel |  |  |
 | `components/Hi3DPanel.tsx` | 46 | Hi3DPanel | `/api/3d/gallery/{}/refine`, `/api/3d/hi3d/install`, `/api/3d/hi3d/status` |  |
 | `components/images/EngineCard.tsx` | 126 | EngineCard |  |  |
@@ -73,8 +72,10 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `components/Shell.tsx` | 408 | Mark, Shell |  | 3d.job |
 | `components/ThreeDLab.tsx` | 84 | ThreeDLab | `/api/3d/lab/action`, `/api/3d/lab/generate`, `/api/3d/lab/import`, `/api/3d/lab/splats`, `/api/3d/lab/splats/{}/file`, `/api/3d/lab/status` |  |
 | `components/ui.tsx` | 439 | cx, toneVar, Button, IconButton, Badge, FitBadge, StatusDot +25 |  |  |
-| `components/VideoJobProgress.tsx` | 35 | VideoJob, VideoJobProgress |  |  |
+| `components/VideoJobProgress.tsx` | 38 | VideoJob, VideoJobProgress |  |  |
+| `components/VideoPlayer.tsx` | 46 | VideoPlayer | `/api/videos/gallery` |  |
 | `components/VideoPrompts.tsx` | 87 | VideoPromptPair, SavedVideoPrompt, VideoPromptTexts, SaveVideoPrompts, SavedVideoPrompts | `/api/videos/prompts`, `/api/videos/prompts/{}` |  |
+| `components/VideoUpscalePanel.tsx` | 94 | VideoUpscalePanel | `/api/videos/jobs/{}/cancel`, `/api/videos/upscale` |  |
 
 ## `lib/`
 
@@ -99,8 +100,9 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/models.ts` | 36 | isCloudKey, cloudAsInstalled, providerGap, useModelChoices | `/api/cloud`, `/api/models/installed` |  |
 | `lib/runSource.ts` | 174 | RunSource, isGithubUrl, repoName, sourceProblem, sourcePayload, sourceFromEvent, loadSource +18 |  |  |
 | `lib/store.ts` | 160 | PageId, Toast, useApp, applyAppearance, relativeLuminance | `/api/hardware`, `/api/live`, `/api/lmstudio`, `/api/settings` |  |
-| `lib/types.ts` | 1222 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +92 |  |  |
-| `lib/videoSave.ts` | 30 | saveVideo | `/api/videos/gallery/{}/file`, `/api/videos/gallery/{}/save` |  |
+| `lib/types.ts` | 1256 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +97 |  |  |
+| `lib/video.ts` | 22 | videoInputLabel, videoInputDescription, videoFrameCount |  |  |
+| `lib/videoSave.ts` | 30 | saveVideo | `/api/videos/gallery` |  |
 | `lib/workflow.ts` | 86 | emptySlot, modelLabel, agentModelKey, distinctModels, agentsWithoutModel, assignModel |  |  |
 | `lib/zoom.ts` | 28 | ZOOM_MIN, ZOOM_MAX, ZOOM_STEP, clampZoom, applyZoom |  |  |
 
@@ -108,7 +110,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 
 UI paths with no route of that shape: none
 
-Routes the UI never calls (11; they serve the CLI, the Tauri shell or tests): `/api/app`, `/api/arena/plan`, `/api/images/components`, `/api/images/downloads/{component_id}/cancel`, `/api/images/import/convert-lora`, `/api/images/jobs`, `/api/images/templates/{key}`, `/api/models/estimate`, `/api/models/fit`, `/api/models/recommend`, `/api/workflows/import`
+Routes the UI never calls (20; they serve the CLI, the Tauri shell or tests): `/api/app`, `/api/arena/plan`, `/api/images/components`, `/api/images/downloads/{component_id}/cancel`, `/api/images/import/convert-lora`, `/api/images/jobs`, `/api/images/templates/{key}`, `/api/models/estimate`, `/api/models/fit`, `/api/models/recommend`, `/api/videos/gallery/{video_id}/file`, `/api/videos/gallery/{video_id}/save`, `/api/videos/upscale/gallery`, `/api/videos/upscale/gallery/{video_id}`, `/api/videos/upscale/gallery/{video_id}/file`, `/api/videos/upscale/gallery/{video_id}/save`, `/api/videos/upscale/setup`, `/api/videos/upscale/setup/cancel`, `/api/videos/upscale/status`, `/api/workflows/import`
 
 ## Shell (`desktop/src-tauri/src/lib.rs`, 219 lines)
 

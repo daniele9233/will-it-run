@@ -45,7 +45,6 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_core.py` | 22 | Database, settings, logging redaction, paths, events and benchmark storage. | benchmark, core, lmstudio |
 | `test_downloads.py` | 31 | Disk safety and the download manager (direct and LM Studio backends). | catalog, core, hardware, lmstudio |
 | `test_fit.py` | 31 |  | core, fit, hardware |
-| `test_flow.py` | 5 | Flow keeps authentication in the browser and verifies imported local sequences. | core, imagegen |
 | `test_followups.py` | 4 | After a session: a question about its work is answered by one model, and the next request goes on where the team worked. | core, workflows |
 | `test_gateway.py` | 37 | The model gateway: several models in one workflow, swapped by measuring VRAM. | core, lmstudio, workflows |
 | `test_gguf.py` | 6 | Reading the MTP marker from the header of a GGUF file. | lmstudio |
@@ -59,15 +58,17 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_media_runtime.py` | 11 | Published-hash verification and disk/path safety use HTTP fakes only. | core |
 | `test_model_quirks.py` | 6 | What local models do that the engine has to survive: turns the runtime cannot read, tests in other languages. | core, workflows |
 | `test_project_memory.py` | 18 | The memory of a project for coding agents: what a session leaves behind, the documents it reads, and the MCP server in front of it. | brain, core |
+| `test_ref2va.py` | 12 | Real graph contracts and verified/resumable setup using HTTP fakes, never GPU or owner data. | core, imagegen |
+| `test_relayvsr.py` | 13 | Native RelayVSR graph, resource gates and publication use fakes, never CUDA or owner data. | api, core, imagegen |
 | `test_streaming.py` | 9 | The schema a model is held to, and the text it generates as it is generated. | core, lmstudio, workflows |
 | `test_teams.py` | 37 | Team builder, model sharing and the resource optimizer. | catalog, core, hardware, lmstudio, teams, workflows |
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
 | `test_trellis.py` | 14 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
 | `test_video.py` | 15 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
-| `test_video_finish.py` | 7 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
+| `test_video_finish.py` | 8 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
 | `test_video_progress.py` | 6 | Video progress belongs to one prompt and never turns socket loss into job failure. | imagegen |
 | `test_video_prompts.py` | 4 | Prompt pairs persist as text, without starting a model or touching owner data. | imagegen |
 | `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
-Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/mirror.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/videoSave.test.ts`, `lib/workflow.test.ts`
+Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/mirror.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/video.test.ts`, `lib/videoSave.test.ts`, `lib/workflow.test.ts`

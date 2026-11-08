@@ -1219,3 +1219,37 @@ export interface ThreeDLabEngine {
 }
 export interface ThreeDLabStatus { engines: ThreeDLabEngine[]; error: string | null }
 export interface SplatRecording { id: string; model: string; bytes: number; elapsed: number; format: string }
+
+export type VideoInputMode = "single_or_first_last" | "first_last" | "reference";
+export interface VideoModel {
+  key: string; name: string; ready: boolean;
+  components: { name: string; visible: boolean; source_present: boolean | null; size_valid: boolean }[];
+  missing_nodes: string[]; required_end: boolean; input_mode: VideoInputMode;
+  size_multiple: number; frame_stride: number; frame_offset: number; min_seconds: number;
+  defaults: { fps: number; steps: number; cfg: number; width: number; height: number };
+}
+export interface Ref2VAStatus {
+  job: { status: string; percent: number; received: number; total: number; file: string; error: string | null };
+  environment: { ready: boolean; error: string | null; vram_gb: number | null; source_commit: string | null };
+  weights_ready: boolean; source_ready: boolean; models_dir: string; source: string;
+  source_commit: string; recommended_vram_gb: number;
+}
+
+export interface UpscaledVideo {
+  id: string; model: string; elapsed: number; processing_fps: number | null;
+  source: { name: string; width: number; height: number; frames: number; fps: string; seconds: number; audio: boolean;
+            sample_aspect_ratio?: string | null; display_aspect_ratio?: string | null; irregular_timing?: boolean | null };
+  prepared: { width: number; height: number; frames: number; start_frame: number; chunks: number; context_frames: number };
+  output: { width: number; height: number; frames: number; fps: string; seconds: number; audio: boolean };
+}
+export interface RelayVSRStatus {
+  available: boolean; tools_ready: boolean;
+  models: { factor: 2 | 4; name: string; ready: boolean; missing_nodes: string[] }[];
+  setup: {
+    job: Ref2VAStatus["job"];
+    environment: { ready: boolean; error: string | null; vram_gb: number | null; native_nodes: boolean };
+    weights_ready: boolean; models_dir: string;
+  };
+  jobs: { id: string; status: string; stage: string; percent: number | null; step: number | null; total: number | null; elapsed: number; error: string | null; unit?: "frames" }[];
+  disk: { free: number | null; needed: number; reserve?: number; safe: boolean | null };
+}

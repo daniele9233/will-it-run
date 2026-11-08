@@ -30,7 +30,7 @@ class FakeVideoClient:
 
     def object_info(self):
         return {name: {} for name in ["UnetLoaderGGUF", "CLIPLoader", "VAELoader", "CLIPTextEncode", "LoadImage",
-                              "WanImageToVideo", "WanFirstLastFrameToVideo", "WanFunInpaintToVideo",
+                              "WanImageToVideo", "WanFirstLastFrameToVideo",
                               "ModelSamplingSD3", "VAEDecode", "ResizeAndPadImage", "KSampler", "KSamplerAdvanced",
                               "CLIPVisionLoader", "CLIPVisionEncode", "CreateVideo", "SaveVideo"]}
 
@@ -174,7 +174,7 @@ def test_missing_q6_never_falls_back_to_q4(studio):
         studio.generate(VideoRequest(image="uploaded.png", prompt="movement"))
 
 
-@pytest.mark.parametrize("selected", catalog.PROFILES, ids=lambda p: p.key)
+@pytest.mark.parametrize("selected", [p for p in catalog.PROFILES if p.input_mode != "reference"], ids=lambda p: p.key)
 def test_every_profile_binds_both_pictures_with_no_dangling_links(selected):
     request = VideoRequest(model_key=selected.key, image="start.png", end_image="end.png", prompt="movement")
     graph = workflow(request, {role: name for role, name, _ in selected.requirements()}, "test")
@@ -199,15 +199,12 @@ def test_every_profile_binds_both_pictures_with_no_dangling_links(selected):
     if selected.vision:
         assert graph["19"]["inputs"]["image"] == ["16", 0]
         assert graph["8"]["inputs"]["clip_vision_end_image"] == ["19", 0]
-    if selected.family == "wan22-fun-5b":
-        assert graph["4"]["inputs"]["vae_name"] == "Wan2.2_VAE.safetensors"
-        assert graph["8"]["class_type"] == "WanFunInpaintToVideo"
 
 
 @pytest.mark.parametrize("values", [
     {"model_key": "invented"}, {"end_image": "../private.png"},
     {"end_image": "C:\\private.png"}, {"model_key": "wan21-flf-q4"},
-    {"model_key": "wan22-fun-5b-q6", "height": 432},
+    {"model_key": "wan22-fun-5b-q6"}, {"model_key": "wan22-fun-a14b-q4"},
 ])
 def test_model_and_ending_picture_validation(values):
     with pytest.raises((ValueError, ValidationError)):
@@ -215,17 +212,17 @@ def test_model_and_ending_picture_validation(values):
 
 
 def test_selected_profile_persists_both_inputs_and_model(studio):
-    studio.generate(VideoRequest(model_key="wan22-fun-5b-q6", image="start.png", end_image="end.png", prompt="movement"))
+    studio.generate(VideoRequest(model_key="wan21-flf-q4", image="start.png", end_image="end.png", prompt="movement"))
     assert finish(studio)["status"] == "done"
     row = studio.gallery()[0]
-    assert "Fun-InP 5B" in row["model"]
-    assert row["request"]["model_key"] == "wan22-fun-5b-q6"
+    assert "FLF2V" in row["model"]
+    assert row["request"]["model_key"] == "wan21-flf-q4"
     assert row["request"]["end_image"] == "end.png"
-    assert row["request"]["fps"] == 24
+    assert row["request"]["fps"] == 16
 
 
 def test_incomplete_download_is_not_ready_even_when_listed(studio):
-    p = catalog.profile("wan22-fun-5b-q6")
+    p = catalog.profile("wan21-flf-q4")
     path = studio.models_dir / p.high
     path.parent.mkdir(parents=True)
     path.write_bytes(b"partial")
@@ -239,7 +236,8 @@ def test_download_manifest_has_pinned_verified_sources():
     import re
 
     assets = catalog.assets()
-    assert len(assets) == 6
+    assert len(assets) == 8
+    assert not any("Fun" in a["filename"] or "Wan2.2_VAE" in a["filename"] for a in assets)
     for item in assets:
         assert item["url"].startswith("https://huggingface.co/")
         assert re.fullmatch("[a-f0-9]{64}", item["sha256"])
@@ -264,7 +262,9 @@ def test_video_api_keeps_guards_validation_playback_and_deletion(studio, monkeyp
         assert client.get("/api/videos/status").status_code == 401
         assert client.post("/api/videos/gallery/unknown/save", json={"path": str(tmp_path / "export.mp4")}).status_code == 401
         client.headers["Authorization"] = "Bearer test"
-        assert len(client.get("/api/videos/status").json()["models"]) == 4
+        state = client.get("/api/videos/status").json()
+        assert [m["key"] for m in state["models"]] == ["wan22-i2v-q6", "wan21-flf-q4", "minimax-h3-ref2va-vsa"]
+        assert client.get("/api/videos/flow").status_code == 404
         assert client.post("/api/videos/generate", json={"model_key": "wan21-flf-q4", "image": "a.png", "prompt": "move"}).status_code == 422
         response = client.post("/api/videos/generate", json={"model_key": "wan21-flf-q4", "image": "a.png", "end_image": "b.png", "prompt": "move"})
         assert response.status_code == 200

@@ -566,3 +566,23 @@ the versioned installer and SHA-256 checksum. Verify the remote CI and release
 workflow, downloaded checksum and installer version, then install that published
 package on the owner's PC. Record publication and upgrade evidence after these
 steps complete; a local build or an existing tag alone does not prove publication.
+
+Verification completed on 2026-11-08: master and the annotated v0.4.2 tag were
+published at source commit `c8e718f57ec6993aca2f8e1158357867fd9b06d3`.
+The [release](https://github.com/daniele9233/will-it-run/releases/tag/v0.4.2)
+contains `WillItRun-0.4.2-Setup-x64.exe` (33,812,106 bytes) and its checksum.
+[Source CI](https://github.com/daniele9233/will-it-run/actions/runs/42518848038)
+and the [Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/42518849395)
+both succeeded. The local complete project checks also passed.
+
+Downloaded both assets and verified the installer against the checksum file and
+GitHub's asset digest:
+`3587d83412158c53d2000138ade4adfc21d4f0bb2f7831fa826cbf12302425e6`.
+The published installer was applied successfully on the owner's PC. Desktop
+ProductVersion and the frozen-core version both report 0.4.2; the installed
+HTTP health endpoint returns `ok: true`, app `Will It Run`, version `0.4.2`.
+All six Ref2VA and four RelayVSR verification markers remain valid, and test.mp4's
+SHA-256 is unchanged. The ignored local updater now verifies and runs this
+published installer instead of replacing the app with the older 0.4.1 payload.
+Its CheckOnly and actual update paths both succeeded. The unversioned local
+installer copy was also updated to the verified published package.

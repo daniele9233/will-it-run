@@ -50,7 +50,7 @@ Windows 11, RTX 4080 SUPER 16 GB, 32 GB system RAM:
 Sampled whole-GPU usage peaked at 11,762 MiB, including desktop usage. These
 measurements include preparation, loading/inference, encoding and verification;
 they do not establish real-time performance. Source bytes were unchanged.
-The detailed test record is in [VIDEO_STUDIO.md](VIDEO_STUDIO.md).
+The detailed test record is in [VIDEO_STUDIO.md](https://github.com/daniele9233/will-it-run/blob/v0.4.2/docs/VIDEO_STUDIO.md).
 
 The project checks cover backend tests, eight import contracts, Ruff, TypeScript,
 ESLint, 162 frontend tests, translations and generated maps. CI and the release
@@ -73,3 +73,14 @@ components require 48.28 GB. Model weights are downloaded separately. The
 installer and source repository contain no model weights, private application
 data, input videos or generated media. Machine-specific model cleanup on the
 maintainer's PC is recorded separately in the project documentation.
+
+## Published build
+
+- [Windows x64 installer](https://github.com/daniele9233/will-it-run/releases/download/v0.4.2/WillItRun-0.4.2-Setup-x64.exe)
+- [SHA-256 checksum](https://github.com/daniele9233/will-it-run/releases/download/v0.4.2/WillItRun-0.4.2-Setup-x64.exe.sha256)
+- [Successful source CI](https://github.com/daniele9233/will-it-run/actions/runs/42518848038)
+- [Successful Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/42518849395)
+
+The downloaded installer matches its attached checksum and GitHub asset digest.
+The published package was installed on the maintainer's PC; desktop, frozen core
+and the responding HTTP health endpoint all report 0.4.2.

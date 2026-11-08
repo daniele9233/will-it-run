@@ -100,6 +100,14 @@ export const api = {
   del: <T>(path: string) => request<T>("DELETE", path),
 };
 
+/** Binary media uses the same bearer token as JSON; never put it in an audio/image URL. */
+export async function mediaBlob(path: string): Promise<Blob> {
+  const { url, token } = await getBackend();
+  const response = await fetch(`${url}${path}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!response.ok) throw new ApiError(`Request failed (${response.status})`, response.status);
+  return response.blob();
+}
+
 export function query(params: Record<string, string | number | boolean | null | undefined>): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {

@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from agentfit.app import AppServices
 from agentfit.i18n import tr
+from agentfit.imagegen.flow import FlowPrepare, FlowStudio
 from agentfit.imagegen.video import VideoRequest, VideoStudio
 from agentfit.imagegen.video_prompts import VideoPromptInput, VideoPromptStore
 
@@ -20,6 +21,49 @@ class VideoSaveBody(BaseModel):
 def install_routes(app: FastAPI, svc: AppServices, guard: list[Any]) -> None:
     studio = VideoStudio(svc.images)
     prompts = VideoPromptStore(studio.directory / "prompts")
+    flow = FlowStudio(studio.directory / "flow")
+
+    @app.get("/api/videos/flow", dependencies=guard)
+    def flow_status() -> dict[str, Any]:
+        return flow.status()
+
+    @app.post("/api/videos/flow", dependencies=guard)
+    def flow_prepare(body: FlowPrepare) -> dict[str, Any]:
+        try:
+            return flow.prepare(body)
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.post("/api/videos/flow/{session_id}/import", dependencies=guard)
+    def flow_import(session_id: str, body: VideoSaveBody) -> dict[str, Any]:
+        try:
+            return flow.import_video(session_id, body.path)
+        except KeyError as exc:
+            raise HTTPException(404, tr("Flow session not found.")) from exc
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.get("/api/videos/flow/{session_id}/sequence", dependencies=guard)
+    def flow_sequence(session_id: str) -> FileResponse:
+        try:
+            return FileResponse(flow.sequence(session_id), media_type="application/zip", filename="frames_150.zip")
+        except KeyError as exc:
+            raise HTTPException(404, tr("The frame sequence is not ready.")) from exc
+
+    @app.post("/api/videos/flow/{session_id}/save", dependencies=guard)
+    def flow_save(session_id: str, body: VideoSaveBody) -> dict[str, Any]:
+        try:
+            source = flow.sequence(session_id)
+            target = Path(body.path)
+            if not target.is_absolute() or not target.parent.is_dir() or target.suffix.lower() != ".zip":
+                raise ValueError(tr("Choose a ZIP filename in an existing folder."))
+            if source.resolve() != target.resolve():
+                shutil.copyfile(source, target)
+            return {"path": str(target), "bytes": target.stat().st_size}
+        except KeyError as exc:
+            raise HTTPException(404, tr("The frame sequence is not ready.")) from exc
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
 
     @app.get("/api/videos/prompts", dependencies=guard)
     def videos_prompts() -> dict[str, Any]:

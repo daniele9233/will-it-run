@@ -46,11 +46,26 @@ A beginner can do: *"I want a coding AI team" → Automatic → Install → Run.
 An expert can inspect the exact GGUF, quantization, context, KV cache, GPU offload,
 loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
+## 3D and video studios (0.4.1)
+
+The 3D studio keeps TRELLIS.2, Hi3D, the comparison lab, the model gallery and
+separate original/Web GLB exports. Qwen 3D Coder and the Voice section have been
+removed. Existing 3D assets are preserved.
+
+The Videos page generates locally through ComfyUI with Wan profiles and first/last
+reference frames. Its progress bar shows sampling steps, the current phase and
+elapsed time, including decoding, saving and optional Full HD finishing. Remaining
+time is unknown until measured; 100% means the video and its recipe were saved.
+Google Flow remains an optional browser handoff using the owner's existing account.
+
+See [3D studio](docs/3D_STUDIO.md), [Video studio](docs/VIDEO_STUDIO.md) and
+[0.4.1 release notes](docs/RELEASE_NOTES_0.4.1.md).
+
 ## Requirements
 
 - Windows 11 x64 (Windows 10 x64 may work; it is not tested)
 - [LM Studio](https://lmstudio.ai/download) for running models. Will It Run never installs it for you.
-- [ComfyUI](https://github.com/Comfy-Org/ComfyUI) only if you want the Images page. It is GPL-3.0 and
+- [ComfyUI](https://github.com/Comfy-Org/ComfyUI) for the Images and local Videos pages. It is GPL-3.0 and
   is not bundled or installed by Will It Run: you install it, and Will It Run talks to it over
   `127.0.0.1`.
 - A GPU is recommended. Without one, Will It Run plans for CPU inference with smaller models.
@@ -135,8 +150,6 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 Stated plainly, so nothing is assumed:
 
-- **Video generation.** Wan 2.2 runs in ComfyUI on this PC, but no video workflow is included.
-  Images are covered; moving pictures are not.
 - **Masks, inpainting a region, and face detail.** Editing is instruction-based or whole-image,
   and `FaceDetailer` needs a custom node the app does not install. See
   [docs/IMAGE_STUDIO.md](docs/IMAGE_STUDIO.md).

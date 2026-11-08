@@ -5,8 +5,10 @@ Placeholders, including their format specs (``{gb:.1f}``), must match the key ex
 """
 
 MESSAGES: dict[str, str] = {
+    "Not enough space in {path}. Free: {free:.1f} GB; required: {required:.1f} GB including a {reserve:.1f} GB reserve.": "Spazio insufficiente in {path}. Liberi: {free:.1f} GB; necessari: {required:.1f} GB, inclusa una riserva di {reserve:.1f} GB.",
+    "Could not check the local 3D setup through WSL.": "Impossibile verificare la configurazione 3D locale tramite WSL.",
+    "Could not check local Hi3D setup.": "Impossibile verificare la configurazione locale di Hi3D.",
     "This 720p video model needs at least 1280 x 720 pixels. Choose a higher generation resolution.": "Questo modello video 720p richiede almeno 1280 x 720 pixel. Scegli una risoluzione di generazione maggiore.",
-    # -- confidence levels and fit verdicts (translated through a variable) ----------
     "HIGH": "ALTA",
     "MEDIUM": "MEDIA",
     "LOW": "BASSA",
@@ -19,7 +21,6 @@ MESSAGES: dict[str, str] = {
     "MEMORY TIGHT": "MEMORIA AL LIMITE",
     "NOT RECOMMENDED": "SCONSIGLIATO",
     "IMPOSSIBLE": "IMPOSSIBILE",
-    # -- team specializations (labels only; translated through a variable) -----------
     "Infrastructure": "Infrastruttura",
     "Content": "Contenuti",
     "Research": "Ricerca",
@@ -41,13 +42,11 @@ MESSAGES: dict[str, str] = {
     "Photography": "Fotografia",
     "Computer Use": "Uso del computer",
     "Browser Automation": "Automazione del browser",
-    # -- dashboard --------------------------------------------------------------------
     "Coding": "Programmazione",
     "Reasoning": "Ragionamento",
     "Vision": "Visione",
     "Writing": "Scrittura",
     "Large 70B models": "Modelli grandi da 70B",
-    # -- why a model is recommended ---------------------------------------------------
     "coding": "programmazione",
     "reasoning": "ragionamento",
     "writing": "scrittura",
@@ -73,7 +72,6 @@ MESSAGES: dict[str, str] = {
     "poor choice for concurrent agents": "scelta poco adatta ad agenti in parallelo",
     "only fits at {a}, a heavier quantization than {b}": "ci sta solo a {a}, una quantizzazione più spinta di {b}",
     "lower overall Will It Run score ({a:.1f} vs {b:.1f})": "punteggio Will It Run complessivo più basso ({a:.1f} contro {b:.1f})",
-    # -- search notes -----------------------------------------------------------------
     "Showing fit for a hypothetical {gb:g} GB GPU, not this PC.":
         "Compatibilità calcolata per una GPU ipotetica da {gb:g} GB, non per questo PC.",
     "No uncensored models are cached yet. Connect to the Internet to search Hugging Face.":
@@ -82,7 +80,6 @@ MESSAGES: dict[str, str] = {
         "La ricerca su Hugging Face è disattivata nelle Impostazioni: sono mostrati solo i modelli in cache e integrati.",
     "Hugging Face is unreachable ({error}); showing cached and built-in models only.":
         "Hugging Face non è raggiungibile ({error}): sono mostrati solo i modelli in cache e integrati.",
-    # -- fit engine -------------------------------------------------------------------
     "Measured on this PC.": "Misurato su questo PC.",
     "Measured {tps:.0f} tok/s on this PC.": "Misurati {tps:.0f} tok/s su questo PC.",
     "Estimated ~{tps:.0f} tok/s ({confidence} confidence).": "Stimati ~{tps:.0f} tok/s (affidabilità {confidence}).",
@@ -113,7 +110,6 @@ MESSAGES: dict[str, str] = {
     "{quant} does not fit this computer ({category}).": "{quant} non è adatto a questo computer ({category}).",
     "Smaller quantizations would also run, but {quant} keeps more of the model's quality while still fitting.":
         "Girerebbero anche quantizzazioni più piccole, ma {quant} conserva più qualità del modello pur entrando in memoria.",
-    # -- speed notes ------------------------------------------------------------------
     "CPU-only inference; speed depends heavily on RAM speed and thread count.":
         "Inferenza solo su CPU: la velocità dipende molto dalla velocità della RAM e dal numero di thread.",
     "Mixture-of-experts model: only active experts are read per token.":
@@ -123,7 +119,6 @@ MESSAGES: dict[str, str] = {
         "Il {share:.0f}% dei pesi gira dalla RAM di sistema, molto più lenta della VRAM.",
     "GPU memory bandwidth unknown; estimate uses a per-backend constant.":
         "Banda di memoria della GPU sconosciuta: la stima usa una costante per backend.",
-    # -- resource budget --------------------------------------------------------------
     "System RAM: {total:.1f} GB - {reserve:.1f} GB reserved for Windows and apps = {usable:.1f} GB recommended usable":
         "RAM di sistema: {total:.1f} GB - {reserve:.1f} GB riservati a Windows e alle app = {usable:.1f} GB utilizzabili consigliati",
     "{name}: {total:.1f} GB - {os:.1f} GB Windows/desktop - {safety:.1f} GB safety = {usable:.1f} GB recommended usable":
@@ -132,7 +127,6 @@ MESSAGES: dict[str, str] = {
     "not the raw sum. Runtimes without splitting are limited to the largest single GPU.":
         "{n} GPU {backend}: un modello può essere diviso tra loro (layer split di llama.cpp) per circa {gb:.1f} GB, "
         "non la somma completa. I runtime che non dividono i modelli sono limitati alla GPU singola più grande.",
-    # -- accuracy ---------------------------------------------------------------------
     "Near lossless": "Quasi senza perdita",
     "Very low loss": "Perdita molto bassa",
     "Low loss": "Perdita bassa",
@@ -158,7 +152,6 @@ MESSAGES: dict[str, str] = {
     "Measured on one 8B model. Larger models usually lose less at the same quantization; smaller ones lose more.":
         "Misurato su un solo modello da 8B. I modelli più grandi di solito perdono meno a parità di quantizzazione; "
         "quelli più piccoli perdono di più.",
-    # -- disk safety ------------------------------------------------------------------
     "It needs {required:.1f} GB but only {available:.1f} GB is safely available on {drive} ({free:.1f} GB free "
     "minus a {reserve:.1f} GB reserve).":
         "Servono {required:.1f} GB ma su {drive} sono disponibili in sicurezza solo {available:.1f} GB "
@@ -176,7 +169,6 @@ MESSAGES: dict[str, str] = {
     "Most free space. LM Studio's current folder is nearly full.":
         "Più spazio libero. La cartella attuale di LM Studio è quasi piena.",
     "Most free space. LM Studio's folder was not found.": "Più spazio libero. La cartella di LM Studio non è stata trovata.",
-    # -- downloads --------------------------------------------------------------------
     "Saved to {folder} and linked into LM Studio's folder.": "Salvato in {folder} e collegato nella cartella di LM Studio.",
     "Saved to {folder}. LM Studio already has a file with this name.":
         "Salvato in {folder}. LM Studio ha già un file con questo nome.",
@@ -209,7 +201,6 @@ MESSAGES: dict[str, str] = {
     "The agent has a question": "L'agente ha una domanda",
     "Model download failed": "Download del modello non riuscito",
     "Hugging Face returned HTTP {code} for {file}": "Hugging Face ha risposto HTTP {code} per {file}",
-    # -- workflow templates (name and description, translated through a variable) ----
     "Coding Team": "Team di programmazione",
     "Tech lead, planner, human-approved plan, developer, test loop and code review.":
         "Tech lead, pianificatore, piano approvato da te, sviluppatore, ciclo di test e revisione del codice.",
@@ -240,7 +231,6 @@ MESSAGES: dict[str, str] = {
     "Deferred-Consensus Delphi": "Delphi a consenso differito",
     "Three panelists vote on the same propositions from the same evidence, blind to each other. Code counts the votes afterwards; what splits the panel gets one more round with anonymous counts; what is still contested is reported as unresolved, and without a quorum the run ends with INSUFFICIENT_CONSENSUS.":
         "Tre esperti votano le stesse proposizioni sulle stesse prove, senza vedersi. Il codice conta i voti dopo; ciò che divide il gruppo ha un secondo giro con conteggi anonimi; ciò che resta conteso viene riportato come irrisolto e, senza quorum, l'esecuzione finisce con INSUFFICIENT_CONSENSUS.",
-    # -- deterministic checks (label and description, translated through a variable) -
     "Evidence dossier": "Fascicolo delle prove",
     "Runs before any model. Collects the request and the text files of the documents folder into numbered sources, records the SHA-256 of each, and stops the run when there is too little evidence or the request is too long. Everything an agent later quotes is checked against this text.":
         "Gira prima di qualsiasi modello. Raccoglie la richiesta e i file di testo della cartella dei documenti in fonti numerate, registra lo SHA-256 di ognuna e ferma l'esecuzione quando le prove sono troppo poche o la richiesta è troppo lunga. Tutto ciò che un agente cita dopo viene confrontato con questo testo.",
@@ -300,7 +290,6 @@ MESSAGES: dict[str, str] = {
     "Refusal": "Rifiuto",
     "Ends the run without an answer, with a named verdict. A workflow routes here when no trusted path produced something that could be verified: refusing is the outcome, not a failure to be worked around.":
         "Chiude l'esecuzione senza risposta, con un verdetto esplicito. Un workflow arriva qui quando nessun percorso affidabile ha prodotto qualcosa di verificabile: rifiutare è l'esito, non un errore da aggirare.",
-    # -- master prompts: the library of Clone a site ---------------------------------
     "This master prompt does not exist.": "Questo prompt master non esiste.",
     "This mirror does not exist.": "Questa copia viva non esiste.",
     "The mirror has not finished yet: there is no report to show.": "La copia viva non è ancora finita: non c'è ancora un rapporto da mostrare.",
@@ -308,7 +297,6 @@ MESSAGES: dict[str, str] = {
     "This study does not exist.": "Questo studio non esiste.",
     "The study has not finished yet: there is no Site DNA to show.": "Lo studio non è ancora finito: non c'è ancora un DNA del sito da mostrare.",
     "Write the address of a website.": "Scrivi l'indirizzo di un sito.",
-    # -- image studio: the engine, the components, the downloads ---------------------
     "ComfyUI is not installed on this PC. Install it, then ask Will It Run to look again.":
         "ComfyUI non è installato su questo PC. Installalo, poi chiedi a Will It Run di cercarlo di nuovo.",
     "ComfyUI was found in {root} but no Python interpreter is next to it. Reinstall it, or point Settings > Images at the folder that holds main.py.":
@@ -377,7 +365,6 @@ MESSAGES: dict[str, str] = {
     "This model is not complete: {names}.": "Questo modello non è completo: {names}.",
     "Write what the picture should show.": "Scrivi cosa deve mostrare l'immagine.",
     "The engine finished without producing a picture.": "Il motore ha finito senza produrre un'immagine.",
-    # -- image import: what the files on disk turn out to be --
     'That folder does not exist: {path}.': 'Quella cartella non esiste: {path}.',
     'There is no .safetensors file in {path}.': "Non c'è nessun file .safetensors in {path}.",
     'Unknown import mode: {mode}.': 'Modalità di importazione sconosciuta: {mode}.',
@@ -459,8 +446,38 @@ MESSAGES.update({
 MESSAGES["3D model not found."] = "Modello 3D non trovato."
 MESSAGES.update({'TRELLIS.2 did not produce a valid GLB model.': 'TRELLIS.2 non ha prodotto un modello GLB valido.', 'A 3D task is already running.': 'Un\'attività 3D è già in corso.', 'Choose an installed WSL2 Linux distribution.': 'Scegli una distribuzione Linux WSL2 installata.', 'TRELLIS.2 setup failed. See the local setup log.': 'Installazione di TRELLIS.2 non riuscita. Consulta il registro locale di installazione.', 'Choose a PNG image smaller than 20 MB.': 'Scegli un\'immagine PNG inferiore a 20 MB.', 'Install the local TRELLIS.2 runtime first.': 'Installa prima l\'ambiente locale di TRELLIS.2.', 'Upload a reference image first.': 'Carica prima un\'immagine di riferimento.', 'Local 3D generation failed: {error}': 'Generazione 3D locale non riuscita: {error}', 'Choose a GLB filename in an existing folder.': 'Scegli un nome file GLB in una cartella esistente.'})
 
-MESSAGES.update({'GPU memory ran out while generating this model. Try 1024³ or close other GPU applications. The reference image is still available.': 'Memoria GPU esaurita durante la generazione. Prova 1024³ o chiudi altre applicazioni che usano la GPU. L\u0027immagine di riferimento è ancora disponibile.', 'This model is already in the gallery.': 'Questo modello è già nella galleria.', 'Web export failed. The original model is unchanged. See the local export log.': 'Esportazione Web non riuscita. Il modello originale è invariato. Consulta il registro locale di esportazione.', 'Web export did not produce a Normal Map.': 'L\u0027esportazione Web non ha prodotto una Normal Map.', 'Choose the installed Qwen 3D Coder model.': 'Scegli il modello Qwen 3D Coder installato.', 'Describe the 3D scene first.': 'Descrivi prima la scena 3D.', 'The coder did not return an HTML scene.': 'Il modello non ha restituito una scena HTML.', 'The local Three.js runtime is missing. Reinstall the updated app.': 'Manca l\u0027ambiente Three.js locale. Reinstalla l\u0027app aggiornata.', 'Choose an HTML filename in an existing folder.': 'Scegli un nome file HTML in una cartella esistente.'})
+MESSAGES.update({
+    'GPU memory ran out while generating this model. Try 1024³ or close other GPU applications. The reference image is still available.': 'Memoria GPU esaurita durante la generazione. Prova 1024³ o chiudi altre applicazioni che usano la GPU. L\u0027immagine di riferimento è ancora disponibile.',
+    'This model is already in the gallery.': 'Questo modello è già nella galleria.',
+    'Web export failed. The original model is unchanged. See the local export log.': 'Esportazione Web non riuscita. Il modello originale è invariato. Consulta il registro locale di esportazione.',
+    'Web export did not produce a Normal Map.': 'L\u0027esportazione Web non ha prodotto una Normal Map.',
+})
 
-MESSAGES.update({'The 3D Coder needs the local LM Studio CLI to disable MTP explicitly.': 'Il 3D Coder richiede la CLI locale di LM Studio per disattivare esplicitamente MTP.', 'LM Studio did not report the loaded 3D Coder model.': 'LM Studio non ha segnalato il caricamento del modello 3D Coder.'})
+
 
 MESSAGES["Web export could not meet the triangle budget."] = "L\u0027esportazione Web non ha rispettato il limite di triangoli."
+
+MESSAGES.update({'Hi3D setup failed. See the local setup log.': 'Installazione di Hi3D non riuscita. Consulta il registro locale di installazione.', 'Choose a reference photo for Hi3D.': 'Scegli una foto di riferimento per Hi3D.', 'Install Hi3D locally first.': 'Installa prima Hi3D in locale.', 'Hi3D ran out of memory. Try a lower resolution or enable CPU offloading. The source model is unchanged.': 'Hi3D ha esaurito la memoria. Prova una risoluzione inferiore o attiva il trasferimento dei pesi alla RAM. Il modello di origine è invariato.', 'Hi3D refinement failed. The source model is unchanged. See the local job log.': 'Raffinamento Hi3D non riuscito. Il modello di origine è invariato. Consulta il registro locale dell\'attività.', 'Hi3D returned invalid geometry or a different resolution.': 'Hi3D ha restituito geometria non valida o una risoluzione diversa.', 'The source model changed during refinement.': 'Il modello di origine è cambiato durante il raffinamento.'})
+
+MESSAGES.update({'The media file could not be processed.': 'Il file multimediale non può essere elaborato.', 'The media file has no readable video stream.': 'Il file multimediale non contiene un flusso video leggibile.', 'Frame extraction was interrupted. Import the video again.': 'L\u0027estrazione dei frame è stata interrotta. Importa nuovamente il video.', 'Enter a name and a video prompt.': 'Inserisci un nome e un prompt video.', 'Local FFmpeg and FFprobe are required.': 'Servono FFmpeg e FFprobe locali.', 'Choose PNG, JPEG or WebP reference images under 30 MB.': 'Scegli immagini di riferimento PNG, JPEG o WebP inferiori a 30 MB.', 'Reference images must be between 64 and 8192 pixels.': 'Le immagini di riferimento devono essere comprese tra 64 e 8192 pixel.', 'Choose an MP4 video under 500 MB.': 'Scegli un video MP4 inferiore a 500 MB.', 'This video is already being processed.': 'Questo video è già in elaborazione.', 'Choose a video between 0.5 and 60 seconds.': 'Scegli un video di durata compresa tra 0,5 e 60 secondi.', 'Frame extraction did not produce 150 valid frames.': 'L\u0027estrazione non ha prodotto 150 frame validi.', 'Flow session not found.': 'Sessione Flow non trovata.', 'The frame sequence is not ready.': 'La sequenza di frame non è pronta.', 'Choose a ZIP filename in an existing folder.': 'Scegli un nome file ZIP in una cartella esistente.'})
+
+
+
+# Local 3D comparison lab.
+MESSAGES.update({
+    'Gaussian splat not found.': 'Gaussian Splat non trovato.',
+    'That file already exists. Choose a new filename.': 'Il file esiste già. Scegli un nome diverso.',
+    'Select a WSL distribution in the existing 3D setup first.': 'Seleziona prima una distribuzione WSL nella configurazione 3D esistente.',
+    'Unknown 3D engine.': 'Motore 3D sconosciuto.',
+    'This option is not a companion studio.': 'Questa opzione non è uno studio locale aggiuntivo.',
+    'Install the selected 3D engine first.': 'Installa prima il motore 3D selezionato.',
+    'Choose a GLB smaller than 100 MB.': 'Scegli un GLB inferiore a 100 MB.',
+    'The additional 3D runtimes could not be reached through WSL.': 'Impossibile raggiungere gli ambienti 3D aggiuntivi tramite WSL.',
+    'The 3D engine failed. See its local job log. Existing models are unchanged.': 'Generazione 3D non riuscita. Consulta il log locale. I modelli esistenti sono invariati.',
+    'The 3D tool could not complete this action. See its local job log.': 'Lo strumento 3D non ha completato questa operazione. Consulta il log locale.',
+    'The engine returned an invalid Gaussian splat.': 'Il motore ha restituito un Gaussian Splat non valido.',
+})
+
+MESSAGES.update({
+    "Import a self-contained GLB with embedded textures and buffers.": "Importa un GLB autonomo con texture e buffer incorporati.",
+})

@@ -6,6 +6,7 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 
 | File | Tests | What it checks | Packages it imports |
 |---|---:|---|---|
+| `test_3d_lab.py` | 9 | Additional engines share references/queue and never replace existing gallery models. | api, imagegen |
 | `test_agent_hooks.py` | 15 | The scripts that keep the map and the memory current and stop edits that cannot work (scripts/hooks, .githooks, .claude/settings.json). |  |
 | `test_api.py` | 37 | HTTP API: wiring, auth, error mapping and the end-to-end team flow against fakes. | api, core, lmstudio, workflows |
 | `test_arena_api.py` | 22 | The Arena over HTTP: what a run could ask, the models, a run from start to report, the answers, the files, and the questions the person has to answer… | api, arena, core, workflows |
@@ -44,25 +45,28 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_core.py` | 22 | Database, settings, logging redaction, paths, events and benchmark storage. | benchmark, core, lmstudio |
 | `test_downloads.py` | 31 | Disk safety and the download manager (direct and LM Studio backends). | catalog, core, hardware, lmstudio |
 | `test_fit.py` | 31 |  | core, fit, hardware |
+| `test_flow.py` | 5 | Flow keeps authentication in the browser and verifies imported local sequences. | core, imagegen |
 | `test_followups.py` | 4 | After a session: a question about its work is answered by one model, and the next request goes on where the team worked. | core, workflows |
 | `test_gateway.py` | 37 | The model gateway: several models in one workflow, swapped by measuring VRAM. | core, lmstudio, workflows |
 | `test_gguf.py` | 6 | Reading the MTP marker from the header of a GGUF file. | lmstudio |
 | `test_github.py` | 8 | The GitHub account, through a GitHub CLI that is scripted here. | api, core, workflows |
 | `test_hardware.py` | 29 |  | core, hardware |
+| `test_hi3d.py` | 9 | Refinement persistence, queue exclusivity and asset integrity without GPU/WSL/network. | api, core, imagegen |
 | `test_i18n.py` | 11 | Localization of text the core produces, and the accuracy reference table. | arena, core, fit, locales, teams, workflows |
 | `test_imagegen.py` | 51 | The image studio: templates, components, downloads, plans and a full generation. | api, core, imagegen |
 | `test_importer.py` | 14 | Importing the files people already have: recognition, placement, idempotency, LoRA conversion. | core, imagegen |
 | `test_lmstudio.py` | 37 | LM Studio integration against a mocked HTTP server and a fake CLI. | core, lmstudio |
+| `test_media_runtime.py` | 11 | Published-hash verification and disk/path safety use HTTP fakes only. | core |
 | `test_model_quirks.py` | 6 | What local models do that the engine has to survive: turns the runtime cannot read, tests in other languages. | core, workflows |
 | `test_project_memory.py` | 18 | The memory of a project for coding agents: what a session leaves behind, the documents it reads, and the MCP server in front of it. | brain, core |
 | `test_streaming.py` | 9 | The schema a model is held to, and the text it generates as it is generated. | core, lmstudio, workflows |
 | `test_teams.py` | 37 | Team builder, model sharing and the resource optimizer. | catalog, core, hardware, lmstudio, teams, workflows |
-| `test_three_d_coder.py` | 10 | Integration contracts with a fake gateway; the downloaded Qwen model is never run. | api, core, lmstudio |
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
-| `test_trellis.py` | 13 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
+| `test_trellis.py` | 14 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
 | `test_video.py` | 15 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
 | `test_video_finish.py` | 7 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
+| `test_video_progress.py` | 6 | Video progress belongs to one prompt and never turns socket loss into job failure. | imagegen |
 | `test_video_prompts.py` | 4 | Prompt pairs persist as text, without starting a model or touching owner data. | imagegen |
 | `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 

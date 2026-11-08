@@ -1209,3 +1209,13 @@ export interface ImagePlan {
   estimate: ImageEstimate;
   lighter: { key: string; name: string; vram_gb: number | null }[];
 }
+export interface MediaJob {
+  id: string; kind: string; status: string; error: string | null;
+  percent: number; phase: string; elapsed: number;
+}
+export interface ThreeDLabEngine {
+  id: string; name: string; repository: string; kind: "generation" | "studio" | "skills";
+  format: string; license: string; ready: boolean; generation_verified?: boolean; weights_verified?: boolean;
+}
+export interface ThreeDLabStatus { engines: ThreeDLabEngine[]; error: string | null }
+export interface SplatRecording { id: string; model: string; bytes: number; elapsed: number; format: string }

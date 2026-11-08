@@ -1,0 +1,142 @@
+[
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "LICENSE",
+    "bytes": 27470,
+    "sha256": "e7914ddbb068110d9f9e1e1283dd4bc23ec2a5223909b7fd2a2ca9a152d853fe"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "NOTICE",
+    "bytes": 2157,
+    "sha256": "fb56f04476d143ed5d9f44cb90dba2a7d7c67ee387d0be138937dd2586a16912"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "README.md",
+    "bytes": 15620,
+    "sha256": "fa73fc69803ebbf5882830ffd10a29560a51b1f16370509c549c89c7bcf70c7a"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "THIRD_PARTY_LICENSES.md",
+    "bytes": 24344,
+    "sha256": "0b3316bbe649b762a4a0c14aa19bdd6e112ba6291e87fb33aa79de3c4cdb4a9a"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "model_index.json",
+    "bytes": 224,
+    "sha256": "e24988612733dad44b7354fbfa0b2ef50073ba6ef8d7a677e41023dc2d651386"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "scheduler/scheduler_config.json",
+    "bytes": 127,
+    "sha256": "40cdcdaaa6149dea32b86a5ff730e581b069ae619d7f580444ef503737fb0bf3"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "transformer_1024/config.json",
+    "bytes": 1337,
+    "sha256": "2f96d851844e159523cb6cf5e5b29ddbc1354e222a333232612c19e1eaf278c2"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "transformer_1024/model.safetensors",
+    "bytes": 3675679280,
+    "sha256": "a2ca5e44dde51cacecd59b42fceeb5f14e75d55e6dd047337752c4e6f281008c"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "transformer_512/config.json",
+    "bytes": 1336,
+    "sha256": "809189b8183c3f44118751322f2cb6fe6fa4ca1922ea16c88cd032970d4bc937"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "transformer_512/model.safetensors",
+    "bytes": 3675679280,
+    "sha256": "8ba88311dccf23463c6e10dd0d3bd5e0c5c35d1608c6f466413b6428b5ad8e56"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "vae/config.json",
+    "bytes": 131,
+    "sha256": "71c629eb188485786227277c7bb5b0fa0a1bfcf07a3d21316174da6b4d04f92f"
+  },
+  {
+    "repo": "hi3d-official/Hi3Dv1.0",
+    "revision": "d502e938cbedc6e87aba8884614c5ca6d177a4b6",
+    "file": "vae/model.safetensors",
+    "bytes": 376629712,
+    "sha256": "605d207c77f8db0b33c567a5861252f0090cf3c3604dfda1cfee09e8f0b53f3e"
+  },
+  {
+    "repo": "facebook/dinov2-large",
+    "revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+    "file": "README.md",
+    "bytes": 3033,
+    "sha256": "0be39948cdb4f4c364c505c039cffe26ba8097b7300bf55f361952c8b17a5fee"
+  },
+  {
+    "repo": "facebook/dinov2-large",
+    "revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+    "file": "config.json",
+    "bytes": 549,
+    "sha256": "12df51c069a2dc1305e34ba71ef58bc2407ea553b75f4722a1715c1bce3bbed0"
+  },
+  {
+    "repo": "facebook/dinov2-large",
+    "revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+    "file": "model.safetensors",
+    "bytes": 1217522888,
+    "sha256": "399fba97a95f22c36834418bc69373364a99af3a1153da1c0fb31db567c92e23"
+  },
+  {
+    "repo": "facebook/dinov2-large",
+    "revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+    "file": "preprocessor_config.json",
+    "bytes": 436,
+    "sha256": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828"
+  },
+  {
+    "repo": "openai/clip-vit-large-patch14",
+    "revision": "32bd64288804d66eefd0ccbe215aa642df71cc41",
+    "file": "README.md",
+    "bytes": 7947,
+    "sha256": "de4274ec48590ab3aa1c239720ff55e99a37f4165c117ba3ad7af2b7df72687c"
+  },
+  {
+    "repo": "openai/clip-vit-large-patch14",
+    "revision": "32bd64288804d66eefd0ccbe215aa642df71cc41",
+    "file": "config.json",
+    "bytes": 4519,
+    "sha256": "8a09b467700c58138c29d53c605b34ebc69beaadd13274a8a2af8ad2c2f4032a"
+  },
+  {
+    "repo": "openai/clip-vit-large-patch14",
+    "revision": "32bd64288804d66eefd0ccbe215aa642df71cc41",
+    "file": "model.safetensors",
+    "bytes": 1710540580,
+    "sha256": "a2bf730a0c7debf160f7a6b50b3aaf3703e7e88ac73de7a314903141db026dcb"
+  },
+  {
+    "repo": "openai/clip-vit-large-patch14",
+    "revision": "32bd64288804d66eefd0ccbe215aa642df71cc41",
+    "file": "preprocessor_config.json",
+    "bytes": 316,
+    "sha256": "910e70b3956ac9879ebc90b22fb3bc8a75b6a0677814500101a4c072bd7857bd"
+  }
+]

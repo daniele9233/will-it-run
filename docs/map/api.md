@@ -2,7 +2,7 @@
 
 # HTTP routes
 
-174 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
+181 routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.
 
 ## `api/arena_routes.py` (16)
 
@@ -91,6 +91,17 @@
 | GET | `/api/images/templates` | `images_templates` |  |
 | GET | `/api/images/templates/{key}` | `images_template` |  |
 | POST | `/api/images/upload` | `images_upload` |  |
+
+## `api/lab_routes.py` (6)
+
+| Method | Path | Handler | What it does |
+|---|---|---|---|
+| POST | `/api/3d/lab/action` | `lab_action` |  |
+| POST | `/api/3d/lab/generate` | `lab_generate` |  |
+| POST | `/api/3d/lab/import` | `lab_import` |  |
+| GET | `/api/3d/lab/splats` | `lab_splats` |  |
+| GET | `/api/3d/lab/splats/{identifier}/file` | `lab_splat_file` |  |
+| GET | `/api/3d/lab/status` | `lab_status` |  |
 
 ## `api/prompt_routes.py` (5)
 
@@ -181,32 +192,33 @@
 | GET | `/api/workflows/{workflow_id:path}` | `workflows_get` |  |
 | GET | `/api/workflows/{workflow_id:path}/yaml` | `workflows_yaml` |  |
 
-## `api/trellis_routes.py` (17)
+## `api/trellis_routes.py` (13)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
-| POST | `/api/3d/coder/generate` | `coder_generate` |  |
-| GET | `/api/3d/coder/models` | `coder_models` |  |
-| GET | `/api/3d/coder/scenes` | `coder_scenes` |  |
-| DELETE | `/api/3d/coder/{scene_id}` | `coder_delete` |  |
-| POST | `/api/3d/coder/{scene_id}/preview` | `coder_preview` |  |
-| POST | `/api/3d/coder/{scene_id}/repair` | `coder_repair` |  |
-| POST | `/api/3d/coder/{scene_id}/save` | `coder_save` |  |
 | GET | `/api/3d/gallery` | `trellis_gallery` |  |
 | DELETE | `/api/3d/gallery/{model_id}` | `trellis_delete` |  |
 | GET | `/api/3d/gallery/{model_id}/file` | `trellis_file` |  |
+| POST | `/api/3d/gallery/{model_id}/refine` | `hi3d_refine` |  |
 | POST | `/api/3d/gallery/{model_id}/restore` | `trellis_restore` |  |
 | POST | `/api/3d/gallery/{model_id}/save` | `trellis_save` |  |
 | POST | `/api/3d/gallery/{model_id}/web` | `trellis_web` |  |
 | POST | `/api/3d/generate` | `trellis_generate` |  |
+| POST | `/api/3d/hi3d/install` | `hi3d_install` |  |
+| GET | `/api/3d/hi3d/status` | `hi3d_status` |  |
 | POST | `/api/3d/install` | `trellis_install` |  |
 | GET | `/api/3d/status` | `trellis_status` |  |
 | POST | `/api/3d/upload` | `trellis_upload` |  |
 
-## `api/video_routes.py` (10)
+## `api/video_routes.py` (15)
 
 | Method | Path | Handler | What it does |
 |---|---|---|---|
+| GET | `/api/videos/flow` | `flow_status` |  |
+| POST | `/api/videos/flow` | `flow_prepare` |  |
+| POST | `/api/videos/flow/{session_id}/import` | `flow_import` |  |
+| POST | `/api/videos/flow/{session_id}/save` | `flow_save` |  |
+| GET | `/api/videos/flow/{session_id}/sequence` | `flow_sequence` |  |
 | GET | `/api/videos/gallery` | `videos_gallery` |  |
 | DELETE | `/api/videos/gallery/{video_id}` | `videos_delete` |  |
 | GET | `/api/videos/gallery/{video_id}/file` | `videos_file` |  |

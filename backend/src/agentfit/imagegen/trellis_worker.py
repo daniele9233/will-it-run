@@ -113,6 +113,23 @@ def asset_path(asset):
     return ROOT / "models" / asset["repo"] / asset["file"]
 
 
+def configure_export(cumesh):
+    """Keep UV charts small without decimating geometry or lowering texture size."""
+    original = cumesh.CuMesh.uv_unwrap
+
+    def unwrap(mesh, *args, **kwargs):
+        progress(95, "export_uv")
+        charts = dict(kwargs.get("compute_charts_kwargs", {}))
+        # Huge 90-degree clusters make xatlas pathological on intricate meshes.
+        charts["threshold_cone_half_angle_rad"] = 0.5235987755982988
+        kwargs["compute_charts_kwargs"] = charts
+        result = original(mesh, *args, **kwargs)
+        progress(96, "export_textures")
+        return result
+
+    cumesh.CuMesh.uv_unwrap = unwrap
+
+
 def prepare(assets):
     missing = [a for a in assets if not asset_path(a).is_file() or asset_path(a).stat().st_size != a["bytes"]]
     needed = sum(a["bytes"] for a in missing)
@@ -175,6 +192,7 @@ def main():
     os.environ.setdefault("MAX_JOBS", "2")
     os.environ.setdefault("CPATH", str(ROOT / "env/targets/x86_64-linux/include"))
     os.environ.setdefault("LIBRARY_PATH", str(ROOT / "env/lib") + ":" + str(ROOT / "env/targets/x86_64-linux/lib/stubs"))
+    import cumesh
     import numpy as np
     import o_voxel
     import timm
@@ -249,6 +267,7 @@ def main():
     gc.collect()
     torch.cuda.empty_cache()
     progress(94, "export_original")
+    configure_export(cumesh)
     mesh.simplify(16777216)
     glb = o_voxel.postprocess.to_glb(vertices=mesh.vertices, faces=mesh.faces, attr_volume=mesh.attrs,
                                     coords=mesh.coords, attr_layout=mesh.layout, voxel_size=mesh.voxel_size,

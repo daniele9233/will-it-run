@@ -8,8 +8,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from agentfit.i18n import tr
+from agentfit.imagegen.hi3d import Hi3DRequest, Hi3DStudio
 from agentfit.imagegen.trellis import TrellisRequest, TrellisStudio, WebExportRequest
-from agentfit.three_d_coder import ThreeDCodeStudio
 
 
 class TrellisUpload(BaseModel):
@@ -25,82 +25,29 @@ class TrellisSave(BaseModel):
     variant: str = Field(default="original", pattern="^(original|web)$")
 
 
-class CodeRequest(BaseModel):
-    model_key: str = Field(min_length=1, max_length=500)
-    prompt: str = Field(min_length=1, max_length=12000)
-
-
-class CodeRepair(BaseModel):
-    error: str = Field(default="", max_length=2000)
-
-
-def install_routes(app: FastAPI, guard: list[Any], studio: TrellisStudio | None = None,
-                   coder: ThreeDCodeStudio | None = None) -> None:
+def install_routes(app: FastAPI, guard: list[Any], studio: TrellisStudio | None = None) -> None:
     studio = studio or TrellisStudio()
+    hi3d = Hi3DStudio(studio)
 
-    @app.get("/api/3d/coder/models", dependencies=guard)
-    def coder_models() -> dict[str, Any]:
-        return {"models": coder.models() if coder else []}
+    @app.get("/api/3d/hi3d/status", dependencies=guard)
+    def hi3d_status() -> dict[str, Any]:
+        return hi3d.status()
 
-    @app.get("/api/3d/coder/scenes", dependencies=guard)
-    def coder_scenes() -> dict[str, Any]:
-        return {"scenes": coder.gallery() if coder else []}
-
-    @app.post("/api/3d/coder/generate", dependencies=guard)
-    def coder_generate(body: CodeRequest) -> dict[str, Any]:
-        if coder is None:
-            raise HTTPException(503)
+    @app.post("/api/3d/hi3d/install", dependencies=guard)
+    def hi3d_install() -> dict[str, Any]:
         try:
-            return coder.generate(body.model_key, body.prompt)
+            return hi3d.install()
         except ValueError as exc:
             raise HTTPException(409, str(exc)) from exc
 
-    @app.post("/api/3d/coder/{scene_id}/preview", dependencies=guard)
-    def coder_preview(scene_id: str) -> dict[str, str]:
-        if coder is None:
-            raise HTTPException(503)
+    @app.post("/api/3d/gallery/{model_id}/refine", dependencies=guard)
+    def hi3d_refine(model_id: str, body: Hi3DRequest) -> dict[str, Any]:
         try:
-            return {"url": coder.preview(scene_id)}
-        except KeyError as exc:
-            raise HTTPException(404, str(exc)) from exc
-        except ValueError as exc:
-            raise HTTPException(422, str(exc)) from exc
-
-    @app.delete("/api/3d/coder/{scene_id}", dependencies=guard)
-    def coder_delete(scene_id: str) -> dict[str, bool]:
-        if coder is None:
-            raise HTTPException(503)
-        try:
-            coder.forget(scene_id)
-            return {"deleted": True}
-        except KeyError as exc:
-            raise HTTPException(404, str(exc)) from exc
-        except OSError as exc:
-            raise HTTPException(409, str(exc)) from exc
-
-    @app.post("/api/3d/coder/{scene_id}/repair", dependencies=guard)
-    def coder_repair(scene_id: str, body: CodeRepair | None = None) -> dict[str, Any]:
-        if coder is None:
-            raise HTTPException(503)
-        try:
-            return coder.repair(scene_id, body.error if body else "")
-        except (KeyError, OSError) as exc:
-            raise HTTPException(404, str(exc)) from exc
+            return hi3d.refine(model_id, body)
+        except (KeyError, FileNotFoundError) as exc:
+            raise HTTPException(404, tr("3D model not found.")) from exc
         except ValueError as exc:
             raise HTTPException(409, str(exc)) from exc
-
-    @app.post("/api/3d/coder/{scene_id}/save", dependencies=guard)
-    def coder_save(scene_id: str, body: TrellisSave) -> dict[str, Any]:
-        if coder is None:
-            raise HTTPException(503)
-        target = Path(body.path)
-        if not target.is_absolute() or not target.parent.is_dir() or target.suffix.lower() != ".html":
-            raise HTTPException(400, tr("Choose an HTML filename in an existing folder."))
-        try:
-            target.write_text(coder.standalone(scene_id), encoding="utf-8")
-            return {"path": str(target), "bytes": target.stat().st_size}
-        except (KeyError, ValueError, OSError) as exc:
-            raise HTTPException(400, str(exc)) from exc
 
     @app.get("/api/3d/status", dependencies=guard)
     def trellis_status() -> dict[str, Any]:

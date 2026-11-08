@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import os
-import shutil
 import subprocess
 import tempfile
 import time
@@ -14,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from agentfit.i18n import tr
+from agentfit.media_runtime import local_media_tools
 
 WIDTH, HEIGHT, FPS = 1920, 1080, 30
 
@@ -23,13 +23,7 @@ class VideoCancelled(Exception):
 
 
 def tools() -> dict[str, str | None]:
-    result = {}
-    for name in ("ffmpeg", "ffprobe"):
-        found = shutil.which(name)
-        # Explorer-launched apps may inherit an older PATH than a terminal.
-        installed = Path.home() / "AppData/Local/Programs/FFmpeg/bin" / f"{name}.exe"
-        result[name] = found or (str(installed) if installed.is_file() else None)
-    return result
+    return local_media_tools()
 
 
 def _run(args: list[str], cancelled: Callable[[], bool], directory: Path) -> str:

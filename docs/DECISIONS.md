@@ -1,5 +1,20 @@
 # Decisions
 
+## 2026-11-08 - Remove Voice and Qwen 3D Coder; observe video progress
+
+The owner withdrew Voice and the Qwen 3D Coder panel. Remove their active UI,
+routes, services and build wiring, preserving TRELLIS.2, Hi3D, the comparison
+lab, the 3D gallery and all other model families. Earlier Voice/Qwen entries
+in this document describe superseded decisions. Local model cleanup is limited
+to the dedicated Voice folder and must be reported separately from code removal.
+The updater must never run prepare-voice or redownload the removed models.
+
+Video progress uses observed ComfyUI sampling events filtered to the submitted
+prompt, with monotonic stage weights and the same progress element as 3D.
+Socket failure is optional telemetry loss, not generation failure. Display an
+unknown remaining duration instead of inventing an ETA; reserve 100% for a
+validated, persisted result.
+
 The choices that shaped Will It Run, with the reason for each. One `##` section is one decision. Read this before reopening one of them: the reason is usually the thing that is easy to forget.
 
 Every section is also copied into the project memory (`willitrun memory import-docs`, run by the git hooks), so `willitrun memory recall "<topic>"` finds it by words. The longer arguments stay in the document an entry points to.
@@ -311,3 +326,140 @@ The detailed product changes are in RELEASE_NOTES_0.4.0.md, 3D_STUDIO.md,
 VIDEO_STUDIO.md and CLONE.md. Browser recordings under .playwright-cli are private
 development outputs and are excluded alongside .shots. The owner authorized
 committing all source changes, publishing master and creating the new version tag.
+
+## 2026-11-03 — Optional Hi3D tests in the 3D studio
+
+The owner explicitly requested Hi3D inside the installed application to run their
+own tests, without introducing scene decomposition. Keep TRELLIS.2 generation as
+it is and add an optional selected-model refinement action. Reuse the isolated
+Hi3D runtime and verified pinned public assets, the existing shared 3D task slot,
+authenticated routes and gallery. Each refinement stores a new GLB and recipe
+with source/reference hashes, requested settings and actual geometry counts.
+The original and its reference remain intact. Hi3D is geometry only; do not claim
+textures, UVs or a PBR Web export. Compare the source and result in neutral gray
+with a shared camera and documented uniform size normalization. Let the owner
+select 512, 1024 or 1536 explicitly, never silently reduce resolution, and retain
+the experimental-memory note for 1536 on 16 GB. No cloud, account or paid service.
+
+## 2026-11-03 — Google Flow with the owner's existing Pro credits
+
+The owner explicitly selected Google Flow as the only external video generator.
+Keep Google authentication and credit spending in its normal browser interface.
+Will It Run prepares first/last reference copies and the prompt, opens Flow, then
+imports a downloaded MP4 and extracts 150 WebP frames locally with FFmpeg. This
+is a browser-assisted handoff, not a Google API or an autonomous MCP connection.
+Never store Google passwords, cookies or access tokens, infer a credit balance,
+or claim an imported video's model has been independently authenticated.
+Validate actual streams, duration and frame count; publish the sequence ZIP only
+after complete extraction. Keep local Wan generation available separately.
+
+The three hero experiences combine real interactive GLBs with scroll-scrubbed
+Flow footage, with provenance kept alongside the project. A video adds character
+motion but does not add a skeleton or animation clips to the original models.
+
+## 2026-11-03 — Preserve source appearance on Hi3D geometry
+
+Hi3D itself supplies geometry only. When the source contains color, transfer
+approximate per-vertex RGBA from nearest source vertices after bounding-box
+centering and uniform scaling. This adds appearance without UV unwrapping on the
+refined million-face output. Keep the source intact; record source_vertex_colors
+in the recipe and label the result as approximate, without PBR textures or UVs.
+Do not offer texture-based Web baking for this representation. A source without
+appearance remains explicitly geometry-only. Existing geometry-only results are
+preserved when creating colored recovery copies.
+
+
+## 2026-11-07 - Local 3D comparison lab and Voice
+
+Keep TRELLIS.2, Hi3D and 3D Coder unchanged. Add isolated pinned runtimes for
+Pixal3D, SUPRA-Tex and Gaussian generators; keep GLB and Gaussian PLY results
+separate. Idol uses public repacked weights and compatible TripoSplat code,
+explicitly experimental. Companion applications keep their own interfaces and
+export/import handoff. Scenario instructions are not a generative model.
+
+Voice uses VoxCPM2 and dots.tts SOAR for Italian, Apache-2.0 licensing and a
+16 GB GPU. This is a hardware/license choice, not a measured quality ranking.
+No ML dependencies enter the core. Voice is an independent engine in import
+contracts; the API injects the shared 3D task slot without cross-engine imports.
+Published model manifests and actual files gate readiness. No successful setup
+or generation is fabricated when downloads, WSL or CUDA cannot be verified.
+See VOICE_STUDIO.md and 3D_STUDIO.md for implementation and verification limits.
+
+## 2026-11-07 - Prepare both voices and organize 3D by the task
+
+The owner requested both voices preinstalled and a simpler 3D workflow. The
+local updater now gates application replacement on `prepare-voice` verifying
+both engines. Ready engines are kept; a failed download is resumable and does
+not become an Installed label. Voice is wired once through AppServices for CLI
+and API. The UI keeps one setup repair action and hides optional parameters.
+
+3D starts with photo-to-object and separates text-to-HTML scenes from optional
+refiners, Gaussian generators, companion studios and expert instructions. A
+purpose/output/status table replaces the undifferentiated engine cards. WSL
+access failures report an unknown state instead of an invented missing install.
+
+## 2026-11-07 - Voice follows the existing model folder and verifies audio
+
+The owner explicitly keeps models under D:\Models. Voice now reads the existing
+storage.custom_model_dir setting through AppServices rather than silently using
+the application-data drive. Only model files and receipts follow that folder;
+recordings and history keep their existing private location.
+
+Windows voice setup uses the already selected WSL distribution, isolating both
+TTS stacks from the core and the TRELLIS environment. The pinned dots.tts code
+imports WeTextProcessing/Pynini during runtime import and targets Linux/macOS;
+an untested native Windows pip install is insufficient proof of compatibility.
+The updater now requests actual short TTS and reference-voice jobs before
+reporting completion. File/import readiness and audio verification stay distinct.
+Existing verified model files do not consume a second download reservation;
+the disk reserve for new downloads is unchanged.
+
+## 2026-11-07 - Embedded dots.tts audio excludes the upstream demo UI
+
+The pinned dots.tts package requires Gradio >=6.17,<7, pinned to 6.17.0 in its
+recommended constraints. An owner's setup log proves that requirement cannot
+resolve in their installation. Our worker uses DotsTtsRuntime directly and the
+React app provides its interface. Install the unchanged source without resolving
+its dependencies, then install its declared requirements except the exact Gradio
+package, retaining all other requirements and upstream constraints. Record that
+intentional profile explicitly. Do not edit the pinned checkout or downgrade
+runtime dependencies opportunistically. Setup still requires imports and CUDA;
+the updater still requires generated audio before replacing the app.
+
+## 2026-11-07 - Import WhatsApp voice recordings without manual conversion
+
+Voice accepts WAV and Ogg/Opus references in the same upload flow. Reuse the local
+FFmpeg discovery used by video finishing through the shared media helper, keeping
+the Voice and Images engines independent. Detect Ogg by content, force its demuxer
+and local-only protocols, bound conversion time and decoded duration, then validate
+the PCM WAV before retaining it. References still require 3-60 seconds and at most
+20 MB compressed input. Long audio is rejected instead of quietly cropped. The
+models keep their existing WAV-only private input contract; no new ML dependency,
+network service or permanent copy of the source recording is needed.
+
+## 2026-11-07 - Restore the earlier 3D layout at the owner's request
+
+Undo the task-tab presentation and restore the existing three-column studio:
+gallery/export on the left, preview in the center, generation controls/Hi3D on
+the right. Show generation and export parameters directly and restore comparison
+engine cards. Keep 3D Coder and the comparison lab below the main studio. This is
+a presentation rollback, preserving all current engines, gallery/source comparison,
+unknown WSL probe handling and Voice's new Ogg/Opus import.
+
+## 2026-11-08 - Retire Voice and Qwen 3D Coder; report video progress
+
+The owner superseded the earlier Voice and scene-coder decisions: remove the
+Voice interface, engine integration and automatic setup, and remove only Qwen
+3D Coder from the 3D studio. Keep TRELLIS.2, Hi3D, the comparison lab, galleries,
+original GLBs and Web export. Do not delete a general-purpose Qwen model merely
+because the removed scene-coder used it.
+
+Observe ComfyUI progress for the submitted video prompt only. Keep percentages
+monotonic across both Wan samplers and show decoding, encoding, saving and
+finishing separately. Socket loss must not fail generation. A percentage is
+workflow progress, not a measured ETA; an unknown remaining duration stays
+unknown. Only the saved MP4 and recipe permit 100 percent. Release as 0.4.1.
+
+Voice model cleanup is limited to the dedicated VoxCPM2 and dots.tts SOAR model
+directories after checking their resolved paths. Do not treat code removal as
+proof that files on the owner's drive were deleted; record the actual result.

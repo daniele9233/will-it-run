@@ -32,35 +32,37 @@ function triangles(root: THREE.Object3D): number {
 }
 
 /** One large studio viewport with local assets and explicit GPU resource cleanup. */
-export function ModelPreview({ data, height, onSnapshot }: { data: ArrayBuffer; height: number; onSnapshot?: (image: string) => void }) {
+export function ModelPreview({ data, comparison, clay = false, height, onSnapshot }: { data: ArrayBuffer; comparison?: ArrayBuffer; clay?: boolean; height: number; onSnapshot?: (image: string) => void }) {
   const host = useRef<HTMLDivElement>(null);
   const originalView = useRef<HTMLDivElement>(null);
+  const comparisonView = useRef<HTMLDivElement>(null);
   const reset = useRef(() => {});
   const move = useRef((_angle: number, _zoom: number) => {});
   const [error, setError] = useState("");
   const [counts, setCounts] = useState<{ original: number | null; web: number | null }>({ original: null, web: null });
   useEffect(() => {
     const element = host.current!;
-    const areas = [originalView.current!];
+    const areas = comparison ? [originalView.current!, comparisonView.current!] : [originalView.current!];
     let disposed = false;
     let renderer: THREE.WebGLRenderer;
     queueMicrotask(() => { if (!disposed) { setError(""); setCounts({ original: null, web: null }); } });
     try { renderer = new THREE.WebGLRenderer({ antialias: true }); }
     catch (err) { queueMicrotask(() => { if (!disposed) { setError(errorMessage(err)); onSnapshot?.(""); } }); return () => { disposed = true; }; }
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
     element.prepend(renderer.domElement);
     const room = new RoomEnvironment();
     const pmrem = new THREE.PMREMGenerator(renderer);
     const environment = pmrem.fromScene(room);
     room.dispose(); pmrem.dispose();
-    const scenes = [0].map(() => {
+    const scenes = areas.map(() => {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x141419);
       scene.environment = environment.texture;
-      scene.environmentIntensity = 2;
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x505060, 3));
-      const key = new THREE.DirectionalLight(0xffffff, 3); key.position.set(3, 4, 5); scene.add(key);
+      scene.environmentIntensity = 0.4;
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x505060, 0.8));
+      const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 4, 5); scene.add(key);
       return scene;
     });
     const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
@@ -137,15 +139,43 @@ export function ModelPreview({ data, height, onSnapshot }: { data: ArrayBuffer; 
     manager.onError = () => { if (!disposed) setError(t("The model texture could not be loaded.")); };
     const decoder = new DRACOLoader(manager).setDecoderPath({ js: "wir-draco/draco_wasm_wrapper.js", wasm: "wir-draco/draco_decoder.wasm" });
     const loader = new GLTFLoader(manager).setDRACOLoader(decoder);
-    void loader.parseAsync(data, "").then(async (original) => {
-      if (disposed) { release(original.scene); return; }
-      const box = new THREE.Box3().setFromObject(original.scene);
-      const center = box.getCenter(new THREE.Vector3());
-      original.scene.position.sub(center);
-      radius = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 0.01);
+    void Promise.allSettled((comparison ? [data, comparison] : [data]).map(bytes => loader.parseAsync(bytes, ""))).then((results) => {
+      const failed = results.find(result => result.status === "rejected");
+      if (disposed || failed) {
+        results.forEach(result => { if (result.status === "fulfilled") release(result.value.scene); });
+        if (failed) throw failed.reason;
+        return;
+      }
+      let fittedRadius = 0.01;
+      results.forEach((result, index) => {
+        if (result.status !== "fulfilled") return;
+        const original = result.value;
+        const box = new THREE.Box3().setFromObject(original.scene);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const group = new THREE.Group();
+        original.scene.position.sub(center); group.add(original.scene);
+        if (comparison) group.scale.setScalar(1 / Math.max(size.x, size.y, size.z, 0.001));
+        if (comparison || clay) {
+          const textures = new Set<THREE.Texture>();
+          original.scene.traverse(object => {
+            if (!(object instanceof THREE.Mesh)) return;
+            for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+              for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
+              material.dispose();
+            }
+            object.material = new THREE.MeshStandardMaterial({ color: 0xa9afb8, roughness: 0.78, metalness: 0 });
+            object.geometry.computeVertexNormals();
+          });
+          textures.forEach(texture => { texture.dispose(); if (texture.image instanceof ImageBitmap) texture.image.close(); });
+        }
+        scenes[index]!.add(group);
+        fittedRadius = Math.max(fittedRadius, size.length() / 2 * group.scale.x);
+        setCounts(value => ({ ...value, [index === 0 ? "original" : "web"]: triangles(original.scene) }));
+      });
+      radius = fittedRadius;
       camera.near = radius / 100; camera.far = radius * 100;
-      scenes[0]!.add(original.scene); ready = true;
-      setCounts((value) => ({ ...value, original: triangles(original.scene) })); fit();
+      ready = true; fit();
       if (onSnapshot) { render(); onSnapshot(renderer.domElement.toDataURL("image/webp", 0.8)); }
     }).catch((err) => { if (!disposed) { setError(errorMessage(err)); onSnapshot?.(""); } });
     return () => {
@@ -153,11 +183,11 @@ export function ModelPreview({ data, height, onSnapshot }: { data: ArrayBuffer; 
       scenes.forEach(release); environment.dispose(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
       reset.current = () => {}; move.current = () => {};
     };
-  }, [data, onSnapshot]);
+  }, [data, comparison, clay, onSnapshot]);
   return <div className="grid min-h-0 gap-3">
     <div ref={host} className="relative overflow-hidden rounded-lg bg-[#141419]" style={{ height }}>
-      <div className="relative z-1 grid h-full">
-        {[{ ref: originalView, title: t("Model preview"), count: counts.original, bytes: data.byteLength, available: true }].map((view) => <div key={view.title} className="flex min-h-0 min-w-0 flex-col">
+      <div className={`relative z-1 grid h-full ${comparison ? "grid-cols-2" : ""}`}>
+        {[{ ref: originalView, title: comparison ? t("Source model") : t("Model preview"), count: counts.original, bytes: data.byteLength, available: true }, ...(comparison ? [{ ref: comparisonView, title: "Hi3D", count: counts.web, bytes: comparison.byteLength, available: true }] : [])].map((view) => <div key={view.title} className="flex min-h-0 min-w-0 flex-col">
           {!onSnapshot && <div className="grid shrink-0 gap-1 bg-panel px-3 py-2 text-xs"><strong className="font-semibold">{view.title}</strong><span className="text-ink-3">{view.count !== null ? `${view.count.toLocaleString()} ${t("triangles")}` : view.available ? t("Loading…") : t("Not generated yet")}{view.bytes !== undefined && ` · ${(view.bytes / 1048576).toFixed(2)} MB`}</span></div>}
           <div ref={view.ref} className="relative min-h-0 flex-1 touch-none" role="img" aria-label={view.title}>
             {!view.available && <div className="absolute inset-0 grid place-items-center bg-panel p-4 text-center text-sm text-ink-3">{t("Create a Web copy to compare it with the original.")}</div>}

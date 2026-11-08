@@ -1,7 +1,7 @@
 {
     "name": "agentfit-desktop",
     "private": true,
-    "version": "0.4.0",
+    "version": "0.4.1",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -10,9 +10,7 @@
         "typecheck": "tsc --noEmit",
         "lint": "eslint src",
         "test": "vitest run",
-        "tauri": "tauri",
-        "predev": "node scripts/build-three-runtime.mjs",
-        "prebuild": "node scripts/build-three-runtime.mjs"
+        "tauri": "tauri"
     },
     "dependencies": {
         "@tauri-apps/api": "^2.12.1",

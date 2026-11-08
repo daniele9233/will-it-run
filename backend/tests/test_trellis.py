@@ -109,6 +109,15 @@ def test_runtime_readiness_comes_from_disk_probe(tmp_path, monkeypatch, exit_cod
     assert studio.status()["ready"] is (exit_code == 0)
 
 
+def test_inaccessible_wsl_is_an_unknown_setup_not_a_distribution(tmp_path, monkeypatch):
+    studio = TrellisStudio(tmp_path)
+    monkeypatch.setattr(studio, "_run", lambda *args, **kwargs: subprocess.CompletedProcess(args, 1, b"Access denied", b""))
+    status = studio.status()
+    assert not status["ready"]
+    assert status["distributions"] == []
+    assert "Could not check" in status["error"]
+
+
 def test_routes_enforce_guard_and_save(studio, tmp_path):
     def guard():
         raise HTTPException(401)

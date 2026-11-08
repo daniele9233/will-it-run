@@ -2235,3 +2235,182 @@ Scene preview error ||| Errore anteprima scena
 Delete scene ||| Elimina scena
 Repair scene ||| Ripara scena
 Select a scene to preview it. ||| Seleziona una scena per visualizzarla.
+
+Hi3D geometry refinement ||| Raffinamento geometrico Hi3D
+Refine a selected model using its reference photo. Hi3D creates geometry only: no textures or UVs. The original stays in the gallery. ||| Raffina il modello selezionato usando la sua foto di riferimento. Hi3D genera solo geometria: nessuna texture o UV. L’originale resta nella galleria.
+Hi3D is ready locally. ||| Hi3D è pronto in locale.
+Hi3D needs a separate local setup and the TRELLIS.2 runtime. ||| Hi3D richiede un’installazione locale separata e l’ambiente TRELLIS.2.
+Install Hi3D locally ||| Installa Hi3D in locale
+Select a model in the gallery to refine it with Hi3D. ||| Seleziona un modello nella galleria per raffinarlo con Hi3D.
+Source model ||| Modello di origine
+Hi3D resolution ||| Risoluzione Hi3D
+1536³ is experimental on 16 GB. Resolution is never lowered automatically. Structural errors in the source mesh may remain. ||| 1536³ è sperimentale su 16 GB. La risoluzione non viene mai ridotta automaticamente. Gli errori strutturali della mesh iniziale possono rimanere.
+Hi3D steps per pass ||| Passi Hi3D per passaggio
+Hi3D input triangles ||| Triangoli iniziali per Hi3D
+A separate simplified copy feeds Hi3D. The source file is never overwritten. ||| Hi3D usa una copia semplificata separata. Il file di origine non viene mai sovrascritto.
+Hi3D CPU offloading ||| Trasferimento dei pesi Hi3D alla RAM
+Use the newly uploaded photo for Hi3D ||| Usa la foto appena caricata per Hi3D
+The uploaded photo must show the same object as the selected mesh. ||| La foto caricata deve mostrare lo stesso oggetto della mesh selezionata.
+Uses the selected model's saved reference photo. ||| Usa la foto di riferimento salvata del modello selezionato.
+Refine with Hi3D ||| Raffina con Hi3D
+Preparing Hi3D runtime… ||| Preparazione ambiente Hi3D…
+Downloading Hi3D weights… ||| Scaricamento pesi Hi3D…
+Verifying Hi3D weights… ||| Verifica pesi Hi3D…
+Preparing Hi3D input mesh… ||| Preparazione mesh iniziale Hi3D…
+Loading Hi3D… ||| Caricamento Hi3D…
+Refining geometry with Hi3D… ||| Raffinamento geometria con Hi3D…
+Exporting Hi3D geometry… ||| Esportazione geometria Hi3D…
+Geometry only · no textures or UVs ||| Solo geometria · nessuna texture o UV
+Geometry without textures ||| Geometria senza texture
+Compare geometry with source ||| Confronta geometria con l’origine
+Same camera and neutral material. Each model is centered and uniformly scaled to the same maximum extent; shapes are not fitted. ||| Stessa camera e materiale neutro. Ogni modello viene centrato e scalato uniformemente alla stessa estensione massima, senza adattare le forme.
+
+Google Flow · Pro credits ||| Google Flow · Crediti Pro
+Prepare two frames here, generate the video in your Flow browser, then import the downloaded MP4. Frame extraction runs on this PC. ||| Prepara qui due fotogrammi, genera il video nel browser con Flow e importa il file MP4 scaricato. L’estrazione dei frame avviene su questo PC.
+Your Google account stays in the browser. Will It Run does not store Google credentials or call a paid video API. Check the credit cost in Flow before generating. ||| Il tuo account Google resta nel browser. Will It Run non memorizza credenziali Google e non usa API video a pagamento. Controlla il costo in crediti su Flow prima di generare.
+Open Google Flow ||| Apri Google Flow
+Local FFmpeg and FFprobe are required. ||| Servono FFmpeg e FFprobe locali.
+1. Prepare the shot ||| 1. Prepara la ripresa
+Shot name ||| Nome della ripresa
+First frame path ||| Percorso del primo fotogramma
+Last frame path ||| Percorso dell’ultimo fotogramma
+Choose first frame ||| Scegli il primo fotogramma
+Choose last frame ||| Scegli l’ultimo fotogramma
+Prepare for Flow ||| Prepara per Flow
+2. Generate in Flow ||| 2. Genera in Flow
+In Flow choose Video, Frames, 16:9 and one output. Upload the prepared first and last images, paste the prompt, choose your model and generate using your included credits. ||| In Flow scegli Video, Fotogrammi, 16:9 e una sola uscita. Carica le immagini iniziale e finale preparate, incolla il prompt, scegli il modello e genera usando i crediti inclusi.
+Prepared shots ||| Riprese preparate
+Choose a shot ||| Scegli una ripresa
+First frame ||| Primo fotogramma
+Last frame ||| Ultimo fotogramma
+Copy video prompt ||| Copia prompt video
+Prompt copied. ||| Prompt copiato.
+3. Import and extract 150 frames ||| 3. Importa ed estrai 150 frame
+Download the MP4 from Flow and choose it here. The ZIP includes 150 WebP frames and a manifest for a scroll-linked canvas, up to 1280 × 720. ||| Scarica il file MP4 da Flow e selezionalo qui. Lo ZIP contiene 150 frame WebP e un manifesto per un canvas controllato dallo scroll, fino a 1280 × 720.
+Downloaded MP4 path ||| Percorso del file MP4 scaricato
+Choose downloaded video ||| Scegli il video scaricato
+Import video and extract frames ||| Importa video ed estrai frame
+Save frame sequence ||| Salva sequenza di frame
+Frame sequence saved to {path} ||| Sequenza di frame salvata in {path}
+Ready for Flow ||| Pronto per Flow
+Extracting frames… ||| Estrazione dei frame…
+Sequence ready ||| Sequenza pronta
+The frame sequence is not ready. ||| La sequenza di frame non è pronta.
+Video prompt ||| Prompt video
+
+Preparing texture coordinates… ||| Preparazione delle coordinate delle texture…
+Baking model textures… ||| Creazione delle texture del modello…
+Approximate vertex colors transferred from source · no PBR textures or UVs ||| Colori ai vertici approssimativi trasferiti dall’origine · senza texture PBR o UV
+
+Voice ||| Voce
+Choose a GLB smaller than 100 MB. ||| Scegli un GLB inferiore a 100 MB.
+3D comparison lab ||| Laboratorio di confronto 3D
+Additional engines and local studios. TRELLIS.2, Hi3D and 3D Coder remain available above. ||| Motori aggiuntivi e studi locali. TRELLIS.2, Hi3D e 3D Coder restano disponibili sopra.
+Image to 3D ||| Da immagine a 3D
+Local companion studio ||| Studio locale aggiuntivo
+Expert tool instructions ||| Istruzioni per strumenti specialistici
+Runtime prepared ||| Ambiente preparato
+Each runtime is isolated. First use may download additional upstream weights. A prepared runtime is not a successful generation test. ||| Ogni ambiente è isolato. Al primo utilizzo possono essere scaricati altri pesi ufficiali. Un ambiente preparato non equivale a una generazione verificata.
+SUPRA-Tex material-adapter weights are for non-commercial research and evaluation. ||| I pesi del material adapter di SUPRA-Tex sono destinati a ricerca e valutazione non commerciale.
+These are expert instructions for installed 3D applications, not an image-to-3D model. Scenario-hosted generation is not configured. ||| Sono istruzioni specialistiche per applicazioni 3D installate. La generazione sui server Scenario non è configurata.
+Import a result into the 3D gallery ||| Importa un risultato nella galleria 3D
+Prepare selected 3D runtime ||| Prepara l’ambiente 3D selezionato
+Effigy includes Pixal3D, mesh finishing, rigging and animation. ||| Effigy comprende Pixal3D, rifinitura delle mesh, scheletri e animazione.
+OpenCartridge includes Idol, SUPRA-Tex, SkinTokens and avatar workflows. Docker is required. ||| OpenCartridge comprende Idol, SUPRA-Tex, SkinTokens e flussi per avatar. Richiede Docker.
+Start companion studio ||| Avvia lo studio locale
+Open local studio ||| Apri lo studio locale
+Gaussians ||| Gaussiane
+Uses the uploaded reference photo. New GLBs appear in the existing gallery and support Export for Web. ||| Usa la foto caricata. I nuovi GLB compaiono nella galleria esistente e supportano l’esportazione per il Web.
+Gaussian splats are saved separately as PLY files. Their detail cannot be judged with the ordinary mesh viewer. ||| I Gaussian Splat sono salvati separatamente come file PLY. Il normale visualizzatore di mesh non permette di valutarne il dettaglio.
+Generate comparison ||| Genera per il confronto
+Gaussian splat results ||| Risultati Gaussian Splat
+Save PLY ||| Salva PLY
+Save WAV ||| Salva WAV
+Clone a voice in Italian and compare two local models. Recordings stay on this PC. ||| Clona una voce in italiano e confronta due modelli locali. Le registrazioni restano su questo PC.
+Recommended for Italian: 48 kHz output and approximately 8 GB VRAM. ||| Consigliato per l’italiano: audio a 48 kHz e circa 8 GB di VRAM.
+Compare speaker similarity with a second 2B model. Reference audio is required. ||| Confronta la somiglianza della voce con un secondo modello da 2B. Richiede un audio di riferimento.
+Install selected voice model ||| Installa il modello vocale selezionato
+Installing voice model ||| Installazione del modello vocale
+Generating voice ||| Generazione della voce
+Reference voice ||| Voce di riferimento
+Upload a clean PCM WAV recording lasting 3–60 seconds. A matching transcript can improve similarity. ||| Carica una registrazione PCM WAV pulita di 3–60 secondi. La trascrizione esatta può migliorare la somiglianza.
+Upload reference WAV ||| Carica il WAV di riferimento
+Reference transcript (optional) ||| Trascrizione del riferimento (facoltativa)
+Text to speak in Italian ||| Testo da pronunciare in italiano
+Generate voice ||| Genera la voce
+Use the same recording and text with both models to compare the results. ||| Usa la stessa registrazione e lo stesso testo con entrambi i modelli per confrontare i risultati.
+Voice comparisons ||| Confronti vocali
+Generated recordings will appear here. ||| Le registrazioni generate compariranno qui.
+
+Install both voice models ||| Installa entrambi i modelli vocali
+Companion studios manage their own GPU jobs. Stop the studio before generating with another model. ||| Gli studi locali gestiscono autonomamente la GPU. Ferma lo studio prima di generare con un altro modello.
+Stop companion studio ||| Ferma lo studio locale
+Experimental: public Comfy-Org/Idol weights with the compatible TripoSplat pipeline. This differs from the original Idol SDK preprocessing. ||| Sperimentale: pesi pubblici Comfy-Org/Idol con pipeline TripoSplat compatibile. La preparazione delle immagini differisce da quella dello SDK Idol originale.
+
+Choose a WAV recording smaller than 20 MB. ||| Scegli una registrazione WAV inferiore a 20 MB.
+
+Write your text, add a reference voice if you want, and generate the audio. ||| Scrivi il testo, aggiungi una voce di riferimento se vuoi e genera l’audio.
+Voice models ready ||| Modelli vocali pronti
+Checking. ||| Verifica in corso.
+Ready to use ||| Pronto all’uso
+Setup incomplete ||| Preparazione da completare
+Start with VoxCPM2 for Italian. A reference recording is optional. ||| Inizia con VoxCPM2 per l’italiano. La registrazione di riferimento è facoltativa.
+Use dots.tts SOAR to compare the same voice. A reference recording is required. ||| Usa dots.tts SOAR per confrontare la stessa voce. Serve una registrazione di riferimento.
+Voice setup is incomplete. Both models need to finish downloading before they are ready. ||| La preparazione delle voci è incompleta. Occorre terminare il download di entrambi i modelli.
+Complete voice setup ||| Completa la preparazione delle voci
+Advanced settings ||| Impostazioni avanzate
+Your audio ||| I tuoi audio
+Choose what you want to create. Start with a photo to make a downloadable 3D object. ||| Scegli cosa creare. Parti da una foto per ottenere un oggetto 3D da scaricare.
+From a photo ||| Da una foto
+From a description ||| Da una descrizione
+Other 3D tools ||| Altri strumenti 3D
+Could not check setup ||| Stato non verificabile
+Creates a textured 3D object from your photo. Save it as GLB for your website or 3D software. ||| Crea un oggetto 3D con texture dalla tua foto. Salvalo in GLB per il tuo sito o un programma 3D.
+Set up photo to 3D ||| Prepara la creazione 3D da foto
+Your 3D models ||| I tuoi modelli 3D
+Save the original for full detail, or create a lighter copy for your website. ||| Salva l’originale con tutti i dettagli oppure crea una copia più leggera per il tuo sito.
+Web export settings ||| Impostazioni di esportazione Web
+2. Preview your model ||| 2. Guarda il modello
+Choose a clear photo of one object. You can also use a still frame from a video. ||| Scegli una foto nitida di un oggetto. Puoi anche usare un fotogramma di un video.
+1536³ is experimental on 16 GB. Choose 1024³ in Advanced settings to use less memory. ||| 1536³ è sperimentale con 16 GB. Scegli 1024³ nelle impostazioni avanzate per usare meno memoria.
+Describe a scene to create an interactive 3D web page. This produces HTML, while From a photo produces a GLB object. ||| Descrivi una scena per creare una pagina Web 3D interattiva in HTML. Usa Da una foto per ottenere invece un oggetto GLB.
+Optional tools for comparing models and refining results. For everyday photo to 3D, use TRELLIS.2 in From a photo. ||| Strumenti facoltativi per confrontare i modelli e rifinire i risultati. Per creare un 3D da una foto, inizia con TRELLIS.2 nella scheda Da una foto.
+Improve an existing model ||| Migliora un modello esistente
+Create a textured object from a photo ||| Crea un oggetto con texture da una foto
+Create a textured object for research ||| Crea un oggetto con texture per la ricerca
+Create a 3D point representation from a photo ||| Crea una rappresentazione 3D a punti da una foto
+Open a studio for meshes, rigging and animation ||| Apri uno studio per modelli, scheletri e animazione
+Open a studio for avatars and 3D workflows ||| Apri uno studio per avatar e flussi di lavoro 3D
+Instructions for working with external 3D applications ||| Istruzioni per lavorare con applicazioni 3D esterne
+Additional 3D tools ||| Strumenti 3D aggiuntivi
+Choose a tool by what it does. Setup status is checked on this PC; some tools download model files on first use. ||| Scegli lo strumento in base a cosa fa. Lo stato viene verificato sul PC; alcuni scaricano i modelli al primo utilizzo.
+Tool ||| Strumento
+What it does ||| A cosa serve
+Output ||| Risultato
+Setup ||| Preparazione
+Instructions ||| Istruzioni
+Local application ||| Applicazione locale
+PLY · 3D points ||| PLY · punti 3D
+GLB · 3D object ||| GLB · oggetto 3D
+Tool prepared ||| Strumento preparato
+Not set up ||| Da preparare
+Open the 3D gallery ||| Apri la galleria 3D
+Choose a reference photo ||| Scegli la foto di riferimento
+License and setup details ||| Licenza e dettagli di preparazione
+Voice models folder ||| Cartella dei modelli vocali
+Choose a WAV, OGG or OPUS recording smaller than 20 MB. ||| Scegli una registrazione WAV, OGG o OPUS inferiore a 20 MB.
+Upload WAV or a WhatsApp voice message (OGG/OPUS), 3-60 seconds and up to 20 MB. Conversion is automatic and local. ||| Carica un WAV o un vocale WhatsApp (OGG/OPUS), da 3 a 60 secondi e fino a 20 MB. La conversione è automatica e locale.
+Upload reference audio ||| Carica audio di riferimento
+
+Video task progress ||| Avanzamento video
+Additional engines and local studios. TRELLIS.2 and Hi3D remain available above. ||| Motori aggiuntivi e studi locali. TRELLIS.2 e Hi3D restano disponibili sopra.
+Queued ||| In coda
+Generating video. ||| Generazione del video.
+Loading models. ||| Caricamento dei modelli.
+Interpolating motion and preparing Full HD. ||| Interpolazione del movimento e preparazione Full HD.
+Checking resolution, frame rate and distinct frames. ||| Verifica di risoluzione, frequenza e fotogrammi distinti.
+Generating video frames. ||| Generazione dei fotogrammi video.
+Decoding video frames. ||| Decodifica dei fotogrammi video.
+Encoding video. ||| Codifica del video.
+Saving video. ||| Salvataggio del video.
+Waiting for engine progress. Elapsed time is shown; remaining time is unknown. ||| In attesa dell'avanzamento del motore. È mostrato il tempo trascorso; il tempo rimanente non è noto.

@@ -6,9 +6,11 @@ import { api, getBackend } from "../lib/api";
 import { errorMessage, useInterval, useLoad } from "../lib/hooks";
 import { t } from "../lib/i18n";
 import { saveVideo } from "../lib/videoSave";
+import { GoogleFlowPanel } from "../components/GoogleFlowPanel";
+import { VideoJobProgress, type VideoJob } from "../components/VideoJobProgress";
 
 interface Recipe { duration_seconds?: number | null; motion_frames?: number | null; model_key: string; end_image: string; image: string; prompt: string; negative: string; width: number; height: number; frames: number; fps: number; steps: number; cfg: number; seed: number }
-interface Job { id: string; status: string; stage: string; elapsed: number; error: string | null; request: Recipe }
+interface Job extends VideoJob { request: Recipe }
 interface VideoModel { key: string; name: string; ready: boolean; components: { name: string; visible: boolean; source_present: boolean | null; size_valid: boolean }[]; missing_nodes: string[]; required_end: boolean; size_multiple: number; defaults: { fps: number; steps: number; cfg: number; width: number; height: number } }
 interface Status { available: boolean; models: VideoModel[]; jobs: Job[]; finishing: { ready: boolean } }
 interface Clip { id: string; request: Recipe; elapsed: number; model: string; output?: { width: number; height: number; fps: number; frames: number; seconds: number } | null }
@@ -156,6 +158,7 @@ export function VideosPage() {
         await api.post("/api/images/engine/start");
       })}>{t("Restart engine")}</Button><Button disabled={!!job || busy} onClick={() => void action(() => api.post("/api/images/free"))}>{t("Free VRAM")}</Button></div>
     </header>
+    <GoogleFlowPanel />
     {(error || status.error || gallery.error) && <p role="alert" className="rounded-lg border border-bad p-3 text-bad">{error || status.error || gallery.error}</p>}
     <section className="rounded-xl border border-line bg-surface p-4">
       <label className="grid max-w-xl gap-2 text-sm font-semibold">{t("Video model")}
@@ -206,9 +209,9 @@ export function VideosPage() {
         <p className="text-xs text-ink-2">{recipe.motion_frames ? t("A shorter movement is slowed to {seconds} seconds before Full HD export. This can improve first/last-frame transitions.", { seconds: duration }) : t("Generated at {fps} FPS · {frames} frames, then motion interpolation to 30 FPS.", { fps: model?.defaults.fps ?? 16, frames: nativeFrames })}</p>
         <label className="grid gap-1 text-sm">{t("Seed (-1 = random)")}<input className={inputStyle} type="number" min={-1} max={2147483647} value={recipe.seed} onChange={e => setRecipe({ ...recipe, seed: Number(e.target.value) })} /></label>
         <Button variant="primary" icon={<Play size={14} />} loading={busy} disabled={!model?.ready || !status.data?.finishing.ready || !recipe.image || !recipe.prompt.trim() || !!job || (!!model?.required_end && !recipe.end_image)} onClick={() => void action(async () => { await api.post("/api/videos/generate", { ...recipe, duration_seconds: duration }); setSelected(null); })}>{t("Generate video")}</Button>
-        {job && <div role="status" className="grid gap-2 text-sm"><p>{job.stage === "finishing" ? t("Interpolating motion and preparing Full HD…") : job.stage === "verifying" ? t("Checking resolution, frame rate and distinct frames…") : t("Generating video…")} {Math.round(job.elapsed)} s</p><Button onClick={() => void action(() => api.post(`/api/videos/jobs/${job.id}/cancel`))}>{t("Cancel")}</Button></div>}
+        {(job || last) && <VideoJobProgress job={(job || last)!} />}
+        {job && <Button onClick={() => void action(() => api.post(`/api/videos/jobs/${job.id}/cancel`))}>{t("Cancel")}</Button>}
         {last?.status === "failed" && <p role="alert" className="text-sm text-bad">{last.error}</p>}
-        {last?.status === "cancelled" && <p className="text-sm text-ink-2">{t("Cancelled")}</p>}
       </section>
       <section className="grid gap-4 rounded-xl border border-line bg-surface p-4">
         <h2 className="font-semibold">{t("Video gallery")}</h2>

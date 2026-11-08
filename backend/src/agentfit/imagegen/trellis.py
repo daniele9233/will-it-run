@@ -83,6 +83,8 @@ class TrellisStudio:
         error = None
         try:
             result = self._run(["wsl", "--list", "--quiet"], timeout=15)
+            if result.returncode:
+                raise OSError(tr("Could not check the local 3D setup through WSL."))
             distributions = [s.strip() for s in result.stdout.decode("utf-16-le", errors="replace").splitlines() if s.strip()]
             if distro and distro in distributions:
                 assets = json.loads(Path(__file__).with_name("data").joinpath("trellis2_assets.json").read_text(encoding="utf-8"))

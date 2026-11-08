@@ -8,12 +8,14 @@ const MIN_HEIGHT = 260;
 const MAX_HEIGHT = 900;
 const HEIGHT_KEY = "agentfit.3d.studioHeight";
 
-export function ModelStudio({ id, data, variant, onVariant, hasWeb }: { id: string; data: ArrayBuffer; variant: "original" | "web"; onVariant: (variant: "original" | "web") => void; hasWeb: boolean }) {
+export function ModelStudio({ id, data, source, variant, onVariant, hasWeb }: { id: string; data: ArrayBuffer; source?: ArrayBuffer | null; variant: "original" | "web"; onVariant: (variant: "original" | "web") => void; hasWeb: boolean }) {
   const [height, setHeight] = useState(() => {
     try { const stored = Number(localStorage.getItem(HEIGHT_KEY)); return stored >= MIN_HEIGHT && stored <= MAX_HEIGHT ? stored : 400; }
     catch { return 400; }
   });
   const [expanded, setExpanded] = useState(false);
+  const [comparing, setComparing] = useState(false);
+  const [clay, setClay] = useState(false);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const panel = useRef<HTMLDivElement>(null);
   const expandButton = useRef<HTMLDivElement>(null);
@@ -56,7 +58,12 @@ export function ModelStudio({ id, data, variant, onVariant, hasWeb }: { id: stri
       <label className="text-xs">{t("Preview version")} <select className="rounded border border-line bg-bg p-2" value={variant} onChange={(event) => onVariant(event.target.value as "original" | "web")}><option value="original">{t("Original detailed")}</option><option value="web" disabled={!hasWeb}>{t("Web copy")}</option></select></label>
       <div ref={expandButton}><Button size="sm" aria-expanded={expanded} icon={expanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />} onClick={() => setExpanded(!expanded)}>{expanded ? t("Reduce preview") : t("Expand preview")}</Button></div>
     </div>
-    <Suspense fallback={<p>{t("Loading…")}</p>}><ModelPreview data={data} height={shownHeight} /></Suspense>
+    <div className="flex flex-wrap gap-3 text-xs">
+      <label className="flex items-center gap-2"><input type="checkbox" checked={clay || (comparing && !!source)} disabled={comparing && !!source} onChange={event => setClay(event.target.checked)} />{t("Geometry without textures")}</label>
+      {source && <label className="flex items-center gap-2"><input type="checkbox" checked={comparing} onChange={event => setComparing(event.target.checked)} />{t("Compare geometry with source")}</label>}
+    </div>
+    {comparing && source && <p className="text-xs text-ink-3">{t("Same camera and neutral material. Each model is centered and uniformly scaled to the same maximum extent; shapes are not fitted.")}</p>}
+    <Suspense fallback={<p>{t("Loading…")}</p>}><ModelPreview data={comparing && source ? source : data} comparison={comparing && source ? data : undefined} clay={clay} height={shownHeight} /></Suspense>
     {!expanded && <div className="flex touch-none flex-wrap items-center gap-3 border-y border-line py-2 text-xs text-ink-3" onPointerDown={(event) => {
       if ((event.target as HTMLElement).closest("input,label")) return;
       drag.current = { y: event.clientY, height }; event.currentTarget.setPointerCapture(event.pointerId);

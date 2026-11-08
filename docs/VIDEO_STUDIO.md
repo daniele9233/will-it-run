@@ -4,6 +4,21 @@ The Videos page is embedded in Will It Run below Images. Generation, upload of t
 ending pictures, playback, settings reuse, MP4 download and gallery all remain inside the app.
 The same local ComfyUI engine and authenticated API as Images are reused, with no cloud account.
 
+## Live generation progress (0.4.1)
+
+The generation panel shows the same native progress bar as the 3D studio, with
+the current phase, elapsed seconds and actual sampling steps. A WebSocket
+observer reads ComfyUI events for this video's prompt ID only. Two-expert Wan
+profiles cover both samplers; the percentage never decreases. Decoding,
+encoding, saving, Full HD finishing and validation have separate phases.
+Only a saved MP4 and its published recipe can complete the bar at 100%.
+
+These phase weights describe workflow completion, not a measured remaining
+duration. While ComfyUI has not supplied progress, the bar is indeterminate
+and the interface explicitly reports that remaining time is unknown. Losing
+the progress socket does not fail or interrupt the HTTP generation job.
+Cancellation and errors keep their final state and elapsed time visible.
+
 ## Local profiles
 
 | Profile | Diffusion files | Conditioning | Other components | Defaults |
@@ -196,3 +211,20 @@ The native workflow for the new duration/motion_frames combination is tested equ
 to the successfully rendered raw native workflow; retiming is done by the same
 verified finishing function. Endpoint geometry is still judged visually: these
 models are not a CAD renderer and fine parts can deform.
+
+## Google Flow, browser-assisted
+
+The Videos page also has a Google Flow panel, independent of ComfyUI. Choose two
+local PNG/JPEG/WebP references and a prompt, then Prepare for Flow. Their copies
+and exact prompt are kept under `videos/flow/<id>` in local app data. Open Flow,
+upload those images as first/last frames, paste the prompt and generate with the
+owner's existing included credits. Generation, login, model selection and spending
+remain in Google's browser UI; no API key, cookies or Google credentials enter
+Will It Run. There is no autonomous MCP/browser bridge in the desktop app.
+
+Import the downloaded MP4 to extract 150 WebP frames locally, at up to 1280x720.
+FFprobe validates a real video stream with duration 0.5–60 seconds; FFmpeg extracts
+the sequence. The ZIP and manifest become available only after all 150 frames
+exist. Imports are labelled Google Flow (user-imported), without inventing model
+metadata. Original source files remain unchanged. Interrupted work is reported as
+failed and can be imported again. The separate local Wan controls still work.

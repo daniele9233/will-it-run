@@ -29,6 +29,7 @@ from agentfit.api import (
     clone_routes,
     cloud_routes,
     image_routes,
+    lab_routes,
     prompt_routes,
     trellis_routes,
     video_routes,
@@ -48,6 +49,7 @@ from agentfit.fit import LoadOptions, ModelSpec, VariantSpec, analyze, choose_va
 from agentfit.fit import accuracy as accuracy_mod
 from agentfit.hardware import live_memory
 from agentfit.i18n import tr
+from agentfit.imagegen.lab import ThreeDLab
 from agentfit.lmstudio import DOWNLOAD_URL, LMStudioError
 from agentfit.logging_setup import get_logger, read_log_tail, redact
 from agentfit.runtime import RuntimeUnavailable
@@ -1219,5 +1221,6 @@ def create_app(services: AppServices | None = None) -> FastAPI:
     arena_routes.install_routes(app, svc, guard)
     image_routes.install_routes(app, svc, guard)
     video_routes.install_routes(app, svc, guard)
-    trellis_routes.install_routes(app, guard, svc.trellis, svc.three_d_coder)
+    trellis_routes.install_routes(app, guard, svc.trellis)
+    lab_routes.install_routes(app, guard, ThreeDLab(svc.trellis))
     return app

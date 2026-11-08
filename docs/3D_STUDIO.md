@@ -1,4 +1,68 @@
-# 3D: Microsoft TRELLIS.2
+# 3D: Microsoft TRELLIS.2 and comparison lab
+
+## Three-column interface
+
+At the owner's request, the earlier three-column layout is restored: gallery and
+Web export on the left, the model preview in the center, photo/generation settings
+and Hi3D on the right. Generation, Web export and Hi3D controls are visible again.
+The three task tabs are removed. The comparison lab appears below the
+main studio, with optional engines/studios selected through cards instead of a
+table. The current engine wiring, Hi3D source comparison, explicit quality defaults
+and gallery behavior are retained. A denied WSL probe is an unknown setup, not
+proof that a model is absent. Prepared environments and verified weights remain
+distinct.
+
+## 2026-11-08 - Remove Qwen 3D Coder
+
+At the owner's request, only the procedural Qwen 3D Coder panel, its HTTP
+handlers, scene-generation engine and standalone Three.js runtime builder are
+removed. TRELLIS.2, Hi3D, the comparison lab, model previews, gallery, recovery
+and Web GLB export remain available. Existing model files and saved scenes are
+preserved; removing a panel does not authorize deleting the owner's 3D assets.
+Earlier Qwen experiments below are historical records, not current features.
+
+The restored layout passes TypeScript, ESLint, 158 frontend tests and Italian
+catalog checks. The project checker still fails at the existing Windows localhost
+socketpair restriction in its HTTP tests. The Tauri production app was rebuilt
+after regenerating the restored Italian labels, and the refreshed 312-file update
+payload passes its SHA-256 manifest check. Native installed-UI interaction and
+replacement were not performed from this restricted environment.
+
+## 2026-11-07 - Additional comparison engines
+
+The lab adds Pixal3D and SUPRA-Tex (GLB), Idol and TripoSplat (Gaussian PLY),
+plus Effigy and OpenCartridge as separately launched local studios. Scenario's
+expert instructions are an isolated source checkout, not an image-to-3D model
+or a configured agent integration. TRELLIS.2 and Hi3D remain available.
+
+New GLBs enter the existing gallery and Web export path. Imports must be
+self-contained GLBs under 100 MB, with embedded textures/buffers. Unknown
+generation settings/times remain null. PLY results are stored separately and
+downloadable; no Gaussian renderer is bundled in the ordinary mesh viewer.
+Idol uses public Comfy-Org repacked weights with the compatible TripoSplat
+pipeline/public encoders to avoid gated dependencies. Its preprocessing differs
+from the original Idol SDK; the UI labels it experimental. The owner's linked
+ComfyUI JSON is not executed by this integration.
+
+WSL setup uses the configured distribution and TRELLIS CUDA toolchain. Each
+engine has its own pinned source/environment under
+`~/.local/share/willitrun-3d-lab`. Original runtimes are not modified. Gaussian
+snapshots use verified published sizes/digests. Pixal3D/SUPRA-Tex use upstream
+model acquisition; runtime readiness does not claim a verified model revision
+or successful generation when unknown. SUPRA-Tex's material adapter is limited
+to non-commercial research/evaluation; the UI displays this before setup.
+
+Effigy prepares regular/ML environments, Blender, gltfpack and UI before launch.
+OpenCartridge requires Docker and builds with its pnpm lockfile. Start waits for
+the local server and refuses another application's occupied port. Stop only
+signals a recorded managed process. Companion jobs schedule their own GPU use;
+the page explains stopping them before running another model. Exported GLBs can
+be imported into the existing gallery.
+
+On 2026-11-07 WSL returned E_ACCESSDENIED and shell downloads failed DNS
+resolution in this execution environment. No new 3D runtime was installed or
+tested on the GPU. Tests use fakes and establish file/queue/error behavior,
+not upstream setup success or generation quality.
 
 The 3D page uploads a photo (or a frame at 0.3 seconds of a video), generates a
 static 3D asset locally, previews it and exports a self-contained GLB. Existing
@@ -124,7 +188,7 @@ The original detailed export remains the highest-fidelity generated geometry;
 the Web copy intentionally simplifies it. Qwen prompt research and two untested
 ready-to-copy scene specifications are in [3D_MASTER_PROMPTS.md](3D_MASTER_PROMPTS.md).
 
-## Local Qwen 3D Coder runtime
+## Historical: Qwen 3D Coder runtime (removed in 0.4.1)
 
 The 3D page discovers the already-installed Qwen3.5 3D Coder from LM Studio's
 inventory. It generates procedural Three.js HTML/JavaScript scenes from text,
@@ -191,3 +255,55 @@ the real GLB thumbnail, selection, switching and mocked scene deletion. The rebu
 installed Windows app's layout was verified at the owner's actual zoom. Complete
 project checks and the installer build passed. This is not a quality guarantee
 for arbitrary generated scenes.
+
+## 2026-11-03 — Hi3D refinement
+
+Hi3D is an optional panel in the 3D page. Select a gallery model, choose resolution
+512/1024/1536, steps per pass (1–50), seed, initial triangle budget (10k–200k),
+and CPU offloading. It defaults to that model's saved reference; selecting the
+newly uploaded photo is explicit and requires the same object. The runtime is a
+separate venv overlay in `~/.local/share/willitrun-hi3d`, sharing the TRELLIS Torch
+installation read-only. Install Hi3D locally reuses verified existing files and
+prepares missing public components, with pinned revisions and SHA-256 checks.
+
+Refinement simplifies an in-memory material-free copy of the source, runs Hi3D,
+and creates a new gallery model. The original is never overwritten. Recipes
+retain the parent identifier, source/reference hashes, model revision, source
+commit, settings, actual input/output counts and GPU allocator peak. The source
+file is checked again before accepting output. Setup and refinement share the
+single queue with TRELLIS, Web exports and Qwen. Failures retain logs and do not
+create successful gallery entries. Models can be saved as GLB and deleted/restored
+with the normal gallery controls. Hi3D generates geometry without textures or
+UVs. When its source has appearance data, the worker transfers approximate vertex
+colors from the nearest source vertex after bounding-box centering and uniform
+scaling. This is source appearance transfer, not generated textures or a quality
+guarantee. The recipe and gallery distinguish these copies; the PBR Web-export
+action is not offered for them. Sources without appearance remain geometry-only.
+
+Select a Hi3D result and enable Compare geometry with source in Studio. Both
+models use identical neutral material, lighting and one synchronized camera.
+Each is centered on its own bounding box and uniformly scaled to the same maximum
+extent; this removes global scale/translation differences without fitting shapes.
+Geometry without textures also works on an individual model. Source links are
+available while the original remains in the gallery. The original trial and its
+negative result on the cloud-and-swing scene are in HI3D_TRIAL.md; integration
+does not imply a quality improvement on every input.
+
+## 2026-11-03 — UV export and Hi3D appearance repair
+
+The active photo job spent more than twenty minutes in xatlas after geometry
+generation. CuMesh now preclusters UV work at a 30-degree cone angle instead of
+90 degrees, retaining the original triangle target and texture resolution.
+UV preparation and texture baking publish separate progress phases. A real repeat
+on the uploaded reference at explicit 1024³, 24 steps and 4096 textures completed
+in 165.2 seconds: model `6fb1bac3f8664e7b82403ec83fd98d8d`, 980,744 triangles,
+42,229,736 bytes, embedded base-color and metallic/roughness maps, no external
+resources. This verifies that recipe, not arbitrary 1536³ inputs on 16 GB.
+
+The Hi3D model `d5729498` had no materials, normals, UVs or colors. Its original
+is retained. Copy `29f4536f` transfers source vertex colors and retains all one
+million faces. Both the colored file and neutral geometry were rendered in the
+actual frontend component in a browser. Preview tone mapping and moderate lights
+prevent untextured geometry from becoming a white silhouette. Windows Computer
+Use refused this application with a product-policy block, so this visual check
+does not claim an automated observation of the installed native window.

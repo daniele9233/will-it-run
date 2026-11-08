@@ -4,25 +4,25 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-191 Python files (47,063 lines) · 990 public symbols · 174 HTTP routes · 23 tables · 59 test files (1298 tests) · 85 UI files (22,491 lines).
+198 Python files (48,196 lines) · 1025 public symbols · 181 HTTP routes · 23 tables · 63 test files (1329 tests) · 88 UI files (22,675 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
 | Package | What it is | Files | Lines | Depends on | Card |
 |---|---|---:|---:|---|---|
-| `api` | Local HTTP API consumed by the desktop UI. | 8 | 2,622 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
+| `api` | Local HTTP API consumed by the desktop UI. | 9 | 2,674 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
 | `arena` | The Arena: reliability tests for models, checked by code and never by another model. | 51 | 9,587 | cloud, core, fit, workflows | `arena.md` |
 | `benchmark` | Local measurement | 1 | 237 | core, hardware, lmstudio | `benchmark.md` |
 | `brain` | The Project Brain: the permanent memory of each project. | 13 | 3,050 | core | `brain.md` |
 | `catalog` | Discovery, search, classification, scoring | 8 | 1,655 | core, fit, hardware, lmstudio | `catalog.md` |
 | `clone` | Clone a site: an address in, a project on this PC out (ai-site-cloner, driven by the model the person chooses). | 20 | 7,584 | core, workflows | `clone.md` |
 | `cloud` | Cloud models (Claude, ChatGPT, DeepSeek, Gemini) next to the local ones. | 5 | 1,115 | core | `cloud.md` |
-| `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 33 | 4,084 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
+| `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 33 | 4,009 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
 | `fit` | Quantization tables, memory, speed, fit categories | 6 | 1,005 | core, hardware | `fit.md` |
 | `hardware` | Detection and the usable-memory budget | 6 | 1,029 | core | `hardware.md` |
-| `imagegen` | Image generation and editing through ComfyUI. | 16 | 4,763 | core, hardware | `imagegen.md` |
+| `imagegen` | Image generation and editing through ComfyUI. | 22 | 5,902 | core, hardware | `imagegen.md` |
 | `lmstudio` | CLI wrapper, REST client, runtime | 6 | 1,364 | core, fit, hardware | `lmstudio.md` |
-| `locales` | Translation catalogs, keyed by the English text. | 2 | 823 |  | `locales.md` |
+| `locales` | Translation catalogs, keyed by the English text. | 2 | 840 |  | `locales.md` |
 | `teams` | AI team builder: specializations, roles, model assignment and resource planning. | 5 | 2,538 | catalog, cloud, core, fit, hardware, lmstudio, workflows | `teams.md` |
 | `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,607 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
 
@@ -35,25 +35,27 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | File | Title | About |
 |---|---|---|
 | `3D_MASTER_PROMPTS.md` | Qwen3.5 3D Coder — two scene prompts | Prepared 2026-11-01 for Will It Run. |
-| `3D_STUDIO.md` | 3D: Microsoft TRELLIS.2 | The 3D page uploads a photo (or a frame at 0.3 seconds of a video), generates a static 3D asset locally, previews it and exports a self-contained GLB… |
+| `3D_STUDIO.md` | 3D: Microsoft TRELLIS.2 and comparison lab | At the owner's request, the earlier three-column layout is restored: gallery and Web export on the left, the model preview in the center, photo/gener… |
 | `AGENT_CONTEXT.md` | Working with an AI model on this code | How a model that is asked to change Will It Run learns, in a fresh session, what the software is, how it works and where to touch, without reading ev… |
 | `ARCHITECTURE.md` | Architecture | Will It Run is three layers on one machine. |
 | `ARENA.md` | Arena | The Arena measures how **reliable** a model is. |
 | `CLONE.md` | Clone a site | An address in, a Next.js project on this PC out. |
 | `CLOUD.md` | Cloud models | Will It Run runs models on this PC through LM Studio. |
-| `DECISIONS.md` | Decisions | The choices that shaped Will It Run, with the reason for each. |
+| `DECISIONS.md` | Decisions | The owner withdrew Voice and the Qwen 3D Coder panel. |
 | `DESIGN.md` | Design: file e dove vivono | Mappa dei file che determinano l'aspetto, il linguaggio visivo e i testi dell'interfaccia di **Will It Run**, con accanto le immagini delle schermate… |
 | `DEVELOPMENT.md` | Development | Working with a model on this code is described in [AGENT_CONTEXT.md](AGENT_CONTEXT.md). |
 | `HARDWARE_DETECTION.md` | Hardware detection | `willitrun hardware` and the Hardware page show the result. |
+| `HI3D_TRIAL.md` | Hi3D geometry comparison — 2026-11-03 | The owner authorized a real local TRELLIS.2 versus TRELLIS.2 + Hi3D comparison, then selected `Altalena sospesa tra cielo e mare.png` in the reposito… |
 | `IMAGE_STUDIO.md` | Images: ComfyUI as the engine | Will It Run does not run a diffusion model itself and does not download one. |
 | `LANGGRAPH.md` | LangGraph execution | How a [workflow definition](WORKFLOWS.md) becomes a running LangGraph. |
-| `LESSONS.md` | Lessons | Things that went wrong once and cost time, with the cause and the rule that prevents them. |
+| `LESSONS.md` | Lessons | Removing the Voice UI and service left a local updater calling prepare-voice before replacing the application. |
 | `LM_STUDIO.md` | LM Studio integration | LM Studio is Will It Run's model runtime. |
 | `LOCALIZATION.md` | Localization | Will It Run ships in English and Italian. |
 | `MEMORY.md` | Project Brain | Every project has a permanent memory: how it is built, what was decided, which files were changed and why, what went wrong and what fixed it. |
 | `MODEL_SCORING.md` | Model fit and scoring | Code: `backend/src/agentfit/fit` (fit) and `backend/src/agentfit/catalog/scoring.py` (score). |
 | `QWEN_3D_QUALITY.md` | Qwen 3D quality trial — 2026-11-01 | The owner requested a new, more detailed Japanese garden in the same stylized direction as Cloud Sanctuary, with research into the author's repositor… |
 | `RELEASE_NOTES_0.4.0.md` | RELEASE_NOTES_0.4.0 | Hardware fit and visual quality depend on the model and settings. |
+| `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | Model files, generated pictures, 3D assets and private application data are not included in the installer or public repository. |
 | `RELEASING.md` | Releasing | Every new version of Will It Run is published as a [GitHub release](https://github.com/daniele9233/will-it-run/releases) with the installer and its S… |
 | `SCREENS.md` | Screenshots | Immagini di ogni schermata dell'app, a 1600×1000 (la finestra è 1440×900, quindi il layout è quello reale o più largo). |
 | `SECURITY.md` | Security | Will It Run runs local models that can call tools on your computer. |

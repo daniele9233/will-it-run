@@ -1,5 +1,14 @@
 # Lessons
 
+## 2026-11-08 - Removing a media feature also requires updating local updaters
+
+Removing the Voice UI and service left a local updater calling prepare-voice
+before replacing the application. That gate could reinstall an explicitly
+removed model or block an unrelated app update. Inspect ignored distribution
+scripts as well as tracked code, remove the obsolete setup gate, and verify
+model deletion and application publication independently. Existing historical
+decisions do not prove that a requested cleanup or release happened.
+
 Things that went wrong once and cost time, with the cause and the rule that prevents them. One `##` section is one lesson. Read the ones that touch the area you are about to change.
 
 Every section is also copied into the project memory (`willitrun memory import-docs`), so `willitrun memory recall "<error or topic>"` finds it by words. Add a lesson when a fix was not obvious or a mistake is easy to repeat: a new `##` section at the end, with what happened, why, and the rule. Decisions (why something is the way it is) go in DECISIONS.md.
@@ -329,3 +338,135 @@ The independent backend CI job does not install npm packages or build that file.
 Qwen standalone-preview tests must supply a tiny local runtime fixture instead
 of relying on a developer's already-built package data. This keeps the preview
 security/HTML contracts testable in a clean checkout without network or GPU work.
+
+## 2026-11-02 — A listed WSL distribution can have a missing disk
+
+TRELLIS setup failed before starting because runtime.json selected a distribution
+whose ext4.vhdx no longer existed. Both CodexRancherValidation and agentops were
+still listed by WSL, but launching either returned ERROR_PATH_NOT_FOUND while
+mounting its disk. A distribution name in wsl --list is not evidence that its
+runtime or weights remain installed. Check the actual launch error before
+redownloading individual weights. Keep the Windows 3D gallery and back up
+runtime.json; create a separate dedicated distribution when the old disk is
+missing, rather than unregistering unrelated distributions or deleting gallery
+data. The replacement distribution for this recovery is WillItRun on D:.
+Recovery verified every pinned weight, rebuilt the compiled GPU dependencies,
+and restored the Blender exporter. A real generation of the existing clothed
+robot reference at 1024, 24 steps and 4096 textures completed in 476 seconds
+(76,465,852-byte GLB). Its Web copy completed in 73.6 seconds: 28,000 triangles,
+2048 textures, normal map and Draco/WebP, 3,207,352 bytes. This recovery did not
+retest 1536 resolution or the desktop viewer.
+
+## 2026-11-03 — Direct inference calls need their own no-grad scope
+
+The Hi3D comparison trial called TRELLIS.2's conditioning, sparse-structure,
+shape sampling and shape decoder directly for a geometry-only 512 baseline.
+The normal pipeline's `run()` disables gradients, but that decorator does not
+cover methods called independently. The initial trial retained the sampling
+graph and exhausted GPU memory even at 512. Explicitly disabling gradients in
+the isolated worker completed that geometry pass. Do not report a prototype's
+autograd mistake as evidence that the requested resolution cannot fit.
+
+## 2026-11-03 — Raw TRELLIS decoder meshes are not finished exports
+
+On the owner's cloud-and-swing image the 512 geometry decoder produced roughly
+31.9 million raw triangles. Decimation alone left heavily duplicated/degenerate
+geometry: counting triangles or checking that GLB parses did not catch that.
+Apply the established O-Voxel narrow-band remeshing before preparing comparison
+meshes, then inspect connected components, bounds, and actual clay renders.
+The official exporter converts raw Z-up coordinates to glTF Y-up as
+`(x, y, z) -> (x, z, -y)`; a geometry-only trial must retain that conversion before
+passing a GLB to a refiner. Keep the raw result and failed attempts as private
+diagnostics, not successful gallery assets.
+
+## 2026-11-03 — Web compression can erase layered portrait details
+
+The hero-page trial's TheFuture model lost visible iris layers after per-mesh
+Draco position quantization, even at 16 bits. Triangle counts and a successful
+GLB load did not expose the defect. Its layered surfaces need the original
+geometry; lossless WebP textures still reduce transfer size. Compare eyes,
+decals and nearly coplanar layers in actual renders before accepting compression.
+Keep the unmodified input and record which optimization was rejected. A similar
+portrait that looks fine from one angle must also be checked in its final camera.
+
+## 2026-11-03 — Lock atomic job records while polling on Windows
+
+An atomic replace of a JSON job record can fail on Windows while another thread
+has the destination open for reading. Flow extraction exposed this race under a
+fast polling test. Serialize reads and replacements with the same reentrant lock,
+and clean staging output before publishing a terminal failure. Tests must observe
+both the terminal state and the promised artifact lifecycle.
+# 2026-11-03 — Dense UV charts and untextured Hi3D previews
+
+The photo-to-3D worker reached xatlas after about three minutes, then spent over
+twenty minutes in CPU chart computation on a 989k-face model, occupying 18.4 GiB
+RAM plus swap. The upstream 90-degree CuMesh clusters were too large for this
+input. Use 30-degree clusters before xatlas, retaining the one-million triangle
+target and requested texture size. Report UV and baking stages separately.
+
+The Hi3D GLB in the owner's screenshot had POSITION only, no materials, UVs or
+colors. High lighting intensities without tone mapping turned it into a white
+silhouette. Use tone mapping and moderate lighting in every preview. Hi3D can
+transfer approximate vertex colors from its source by nearest normalized source
+vertices; label this approximation explicitly, never as generated PBR textures.
+Retain the geometry-only original and do not offer PBR Web baking for vertex-only
+color copies. Verify both real files in the viewer.
+
+
+## 2026-11-07 - Media setup interrupted before pip and Windows test sockets
+
+uv may create an isolated interpreter before pip seeding fails. An interpreter
+file alone does not prove the environment is ready. Resume by checking import
+pip and installing the seed into that same environment, without deleting it.
+Similarly, retry a pinned Git fetch when an initialized checkout has no HEAD.
+
+Here WSL returned E_ACCESSDENIED and shell DNS resolution failed for PyPI/HF.
+Both real voice setup attempts stopped before weight download. Preserve logs;
+never call these models installed or inference-tested.
+
+Python 3.13 on Windows implements socketpair with a localhost TCP connection.
+The execution sandbox prevented that connection, so Starlette TestClient hung
+while creating an asyncio ProactorEventLoop, before reaching any API handler.
+A transient test-only sitecustomize set a two-second socket timeout to obtain
+bounded failure traces. It is not part of the app or committed test fixtures.
+The normal project checker still reports pytest failed. Unit tests without
+TestClient can run; this does not establish API integration or native UI success.
+
+## 2026-11-07 - Setup status needs a successful probe and tests need a fake disk
+
+A denied WSL distribution listing returned an error message where the old probe
+expected distribution names. Treat a nonzero listing exit as an unknown setup;
+do not display that error as a distro or imply the installed engine is absent.
+Hi3D probe failures likewise expose a check error separately from readiness.
+
+The fake media-download tests used the real drive's free space. As the owner's
+disk filled, a seven-byte fake download hit the real safety reserve before its
+checksum assertion. Mock disk capacity in those tests and separately verify
+that low space still prevents downloading. Keep the production reserve intact.
+
+## 2026-11-07 - Surface inner Linux pip errors and separate demo dependencies
+
+The Windows voice log contained only run_logged's generic exit-code exception;
+pip's actual resolver error remained in the inaccessible WSL setup.log. Forward
+a bounded tail of that log to the outer process whenever bootstrapping fails.
+Do not infer the exact latest failure from an older log. The older log does prove
+that upstream dots.tts's required Gradio 6.17 cannot resolve; an embedded runtime
+can explicitly omit that demo UI while preserving its other declared requirements
+and constraints. Record the exception and still verify real imports and audio.
+
+## 2026-11-07 - Regenerate translations before testing a restored UI
+
+The generated Italian UI catalog omits unused keys. Restoring an older layout
+can therefore reintroduce labels already present in it.txt but absent from it.ts.
+Run build_locale.py before Vitest and the production UI build. The project
+checker currently generates the catalog after Vitest, so its first run can fail
+coverage for those restored labels. Regenerate and rerun; do not weaken the
+translation coverage test. A concurrent UI build begun before regeneration must
+also be rebuilt to include the restored translations.
+
+## 2026-11-08 - Validate the progress panel in the complete Videos page
+
+The pending video-progress replacement left one extra closing parenthesis in
+the Cancel button handler. TypeScript rejected the whole page, so reviewing the
+progress component alone was insufficient. Check the final page with typecheck
+and regenerate translations for the new phase labels before the desktop build.

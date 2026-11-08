@@ -18,6 +18,7 @@ from agentfit.imagegen import video_catalog as catalog
 from agentfit.imagegen import video_finish
 from agentfit.imagegen.comfy import status_message
 from agentfit.imagegen.video_catalog import ENCODER, HIGH, LOW, VAE  # noqa: F401
+from agentfit.imagegen.video_progress import ProgressStream, VideoProgress
 
 
 class VideoRequest(BaseModel):
@@ -180,7 +181,8 @@ class VideoStudio:
                 raise ValueError(tr("A video is already being generated."))
             job = {"id": uuid.uuid4().hex, "status": "queued", "request": request.model_dump(),
                    "created_at": time.time(), "elapsed": 0, "error": None, "cancel": False,
-                   "model_key": request.model_key, "model_name": selected["name"], "stage": "generation"}
+                   "model_key": request.model_key, "model_name": selected["name"], "stage": "queued",
+                   "percent": 0, "step": None, "total": None}
             self.jobs[job["id"]] = job
             if len(self.jobs) > 40:
                 del self.jobs[next(iter(self.jobs))]
@@ -199,6 +201,9 @@ class VideoStudio:
         client = self.images.client
         started = time.monotonic()
         prompt_id = None
+        graph = workflow(request, files, job["id"])
+        progress = VideoProgress(graph)
+        stream = ProgressStream(client)
 
         def cancelled() -> bool:
             with self.lock:
@@ -207,12 +212,13 @@ class VideoStudio:
 
         def stage(value: str) -> None:
             with self.lock:
-                job["stage"] = value
+                job.update(stage=value, percent={"finishing": 90, "verifying": 97}[value], step=None, total=None)
 
         try:
-            prompt_id = client.queue(workflow(request, files, job["id"]))
+            prompt_id = client.queue(graph)
+            progress.prompt_id = prompt_id
             with self.lock:
-                job.update(status="running")
+                job.update(status="running", stage="generation", percent=None)
             while True:
                 with self.lock:
                     is_cancelled = job["cancel"]
@@ -225,6 +231,11 @@ class VideoStudio:
                 if time.monotonic() - started > 7200:
                     self._cancel_prompt(client, prompt_id)
                     raise ValueError(tr("Video generation timed out after two hours."))
+                for event in stream.poll():
+                    update = progress.event(event)
+                    if update:
+                        with self.lock:
+                            job.update(update)
                 entry = client.history(prompt_id)
                 if entry:
                     break
@@ -236,6 +247,9 @@ class VideoStudio:
             video = next((v for v in videos if str(v.get("filename", "")).lower().endswith(".mp4")), None)
             if not video:
                 raise ValueError(tr("The engine finished without producing an MP4 video."))
+            stream.close()
+            with self.lock:
+                job.update(stage="saving", percent=89, step=None, total=None)
             data = client.view(video["filename"], video.get("subfolder", ""), video.get("type", "output"))
             folder = paths.ensure(self.directory)
             with tempfile.TemporaryDirectory(prefix=f"{job['id']}-", dir=folder) as scratch:
@@ -265,7 +279,7 @@ class VideoStudio:
                     except OSError:
                         target.unlink(missing_ok=True)
                         raise
-                    job.update(status="done", stage="done", elapsed=metadata["elapsed"])
+                    job.update(status="done", stage="done", percent=100, step=None, total=None, elapsed=metadata["elapsed"])
         except video_finish.VideoCancelled:
             with self.lock:
                 job["status"] = "cancelled"
@@ -273,6 +287,9 @@ class VideoStudio:
             with self.lock:
                 job.update(status="failed", error=str(exc))
         finally:
+            stream.close()
+            with self.lock:
+                job["elapsed"] = round(time.monotonic() - started, 1)
             self.images.bus.publish("video.update", {"id": job["id"]})
 
     def cancel(self, job_id: str) -> dict[str, Any]:

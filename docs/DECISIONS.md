@@ -716,3 +716,17 @@ applied on the owner's PC through the ignored local updater (now pointing at 0.4
 desktop ProductVersion and the frozen core report 0.4.3, and the installed HTTP health
 endpoint returns `ok: true`, version `0.4.3`. Publishing from the agent is blocked by
 a local Sixth Sense hook, so the owner sent the branch and the tag to GitHub.
+
+## 2026-11-18 - Videos page lists become dropdowns; published as 0.4.4
+
+The owner found the Videos page too long: every generated video was a full-width button
+under the gallery player, and each prompt collection stacked its side list, a long
+description and one large card per keyframe with its own text box. Lists that only
+choose what to show are now dropdowns (gallery video, saved prompts, collection and
+video of the collection), the collection description folds away, and the keyframes are
+thumbnails with one picture and prompt shown at a time. Nothing is hidden for good:
+every prompt and setting is one choice away. A gallery entry carries its date and
+seconds because prompts written for one series often share their opening words. The
+change is UI only and is published as 0.4.4 the same way as 0.4.3: release commit and
+annotated tag sent by the owner, installer built by the Windows release workflow,
+then verified and installed.

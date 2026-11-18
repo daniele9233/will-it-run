@@ -7,7 +7,7 @@ renaming them would only break existing setups.
 
 APP_NAME = "Will It Run"
 APP_SLUG = "willitrun"
-APP_VERSION = "0.4.3"
+APP_VERSION = "0.4.4"
 APP_TAGLINE = "What AI team can this PC run?"
 APP_VENDOR = "Will It Run"
 CLI_NAME = "willitrun"

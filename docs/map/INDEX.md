@@ -58,6 +58,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | This release retires Voice and Qwen 3D Coder and adds observed video progress. |
 | `RELEASE_NOTES_0.4.2.md` | Will It Run 0.4.2 | Local reference-video generation and existing-video restoration, with verified model setup, explicit input modes and measured GPU results. |
 | `RELEASE_NOTES_0.4.3.md` | Will It Run 0.4.3 | Keyframe video: first frame, first and last frame, or one continuous shot through up to nine pictures, with two new local models, prompt collections… |
+| `RELEASE_NOTES_0.4.4.md` | Will It Run 0.4.4 | A tidier Videos page: dropdowns instead of long columns, and prompt collections that show one video at a time. |
 | `RELEASING.md` | Releasing | Every new version of Will It Run is published as a [GitHub release](https://github.com/daniele9233/will-it-run/releases) with the installer and its S… |
 | `SCREENS.md` | Screenshots | Immagini di ogni schermata dell'app, a 1600×1000 (la finestra è 1440×900, quindi il layout è quello reale o più largo). |
 | `SECURITY.md` | Security | Will It Run runs local models that can call tools on your computer. |

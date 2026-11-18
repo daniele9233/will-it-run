@@ -641,3 +641,19 @@ Fixed on 2026-11-18: a model can carry `kind_sampling` in `models.json`
 `sampling` for that kind of workflow by `ModelProfile.sampling_for` in `graph_for`
 and by `lib/imageSampling.ts` on the Images page. Switching between generating and
 editing moves only the values that differ, so the person's own steps stay.
+
+## 2026-11-18 - One-take keyframes must show the same place, and a Qwen edit does not move the camera
+
+Six more videos (Golden Estates, `D:\render-work\golden-estates`) showed the next step of
+the FPV lesson. Keyframes that frame the next destination still dissolved in LTX-2.5
+when they were separate text-to-image pictures of "the same" villa or farmhouse: two
+generations draw two different buildings, and LTX cross-fades between them instead of
+flying. The fix was to derive each picture from the previous one, so the building is
+literally the same: an edit for a small change of view (the villa seen from further back
+and higher), and for a big step forward a crop of the previous picture around the
+destination, enlarged and restored with a Qwen edit (the farmhouse door). Asked to "move
+the camera forward" by twenty metres, a Qwen edit kept the framing and only roughened
+the sky. With derived keyframes the peak frame-to-frame change fell from 7-9x to 2.8x
+and the dissolves disappeared. Give a doorway entry more time between keyframes (here
+4 s of 8).
+

@@ -74,3 +74,14 @@ profiles are reused rather than downloaded again. FFmpeg and FFprobe are used
 locally for Full HD finishing. Model weights are downloaded separately. The
 installer and source repository contain no model weights, private application
 data, input pictures or generated media.
+
+## Published build
+
+- [Windows x64 installer](https://github.com/daniele9233/will-it-run/releases/download/v0.4.3/WillItRun-0.4.3-Setup-x64.exe)
+- [SHA-256 checksum](https://github.com/daniele9233/will-it-run/releases/download/v0.4.3/WillItRun-0.4.3-Setup-x64.exe.sha256)
+- [Successful source CI](https://github.com/daniele9233/will-it-run/actions/runs/44260046497)
+- [Successful Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/44260077316)
+
+The downloaded installer (34,019,115 bytes) matches its attached checksum and GitHub
+asset digest. The published package was installed on the maintainer's PC; desktop,
+frozen core and the responding HTTP health endpoint all report 0.4.3.

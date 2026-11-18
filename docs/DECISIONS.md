@@ -703,3 +703,16 @@ outputs stay out of the public repository: `reference-video-test/`, `test.mp4`,
 generated pictures, `3dheropages/` and the local `.codex/` configuration, as well as
 the Scroll Heroes files in `D:\render-work`. The published installer, not a local
 build, is then verified and installed on the owner's PC.
+
+Verification completed on 2026-11-18: master and the annotated v0.4.3 tag were
+published at source commit `ef74ad4f2afc40521f0ceb5725f10b7ccc9184c7`. The
+[release](https://github.com/daniele9233/will-it-run/releases/tag/v0.4.3) contains
+`WillItRun-0.4.3-Setup-x64.exe` (34,019,115 bytes) and its checksum.
+[Source CI](https://github.com/daniele9233/will-it-run/actions/runs/44260046497) and
+the [Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/44260077316)
+both succeeded. The downloaded installer matches the checksum file and GitHub's asset
+digest `5c91a3b7a1d5a8fdb86a66a6ea10511cf23d852367db024615135b6c49d3b446`. It was
+applied on the owner's PC through the ignored local updater (now pointing at 0.4.3):
+desktop ProductVersion and the frozen core report 0.4.3, and the installed HTTP health
+endpoint returns `ok: true`, version `0.4.3`. Publishing from the agent is blocked by
+a local Sixth Sense hook, so the owner sent the branch and the tag to GitHub.

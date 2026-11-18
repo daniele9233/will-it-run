@@ -727,6 +727,12 @@ video of the collection), the collection description folds away, and the keyfram
 thumbnails with one picture and prompt shown at a time. Nothing is hidden for good:
 every prompt and setting is one choice away. A gallery entry carries its date and
 seconds because prompts written for one series often share their opening words. The
-change is UI only and is published as 0.4.4 the same way as 0.4.3: release commit and
+change is UI only and was released as 0.4.4 the same way as 0.4.3: release commit and
 annotated tag sent by the owner, installer built by the Windows release workflow,
 then verified and installed.
+
+The 0.4.4 build stopped on the code-map index limit (see LESSONS) and attached no
+installer. Offered the choice between moving the published 0.4.4 tag onto the fix and
+a new version, the owner chose a new version: the same changes and the map fix are
+released as 0.4.5, and the 0.4.4 notes say it was not built. Published tags are not
+moved.

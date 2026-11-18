@@ -61,7 +61,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `VIDEO_STUDIO.md` | Video studio | The Videos page is embedded in Will It Run below Images. |
 | `WINDOWS.md` | Windows | Will It Run version 1 targets Windows 11 x64 and nothing else. |
 | `WORKFLOWS.md` | Workflows | A workflow is a graph of agents, human approval gates and conditional edges. |
-| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4. |
+| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4, 0.4.5. |
 
 ## Scripts (`scripts/`)
 

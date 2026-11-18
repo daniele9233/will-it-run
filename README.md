@@ -46,7 +46,7 @@ A beginner can do: *"I want a coding AI team" → Automatic → Install → Run.
 An expert can inspect the exact GGUF, quantization, context, KV cache, GPU offload,
 loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
-## 3D and video studios (0.4.4)
+## 3D and video studios (0.4.5)
 
 The 3D studio keeps TRELLIS.2, Hi3D, the comparison lab, the model gallery and
 separate original/Web GLB exports. Qwen 3D Coder and the Voice section have been
@@ -65,7 +65,7 @@ iterations). The earlier LTX-2.5 MSR/AssetGuide, Wan 2.1 VACE and MiniMax H3
 Ref2VA-VSA profiles and their weights were removed. **Prompt collections** keep
 finished videos with every prompt that made them (each keyframe picture's image
 prompt, the video prompt and the settings) and load one back into the generator.
-Since 0.4.4 the gallery, the saved prompts and the collections are chosen from
+Since 0.4.5 the gallery, the saved prompts and the collections are chosen from
 dropdowns, and a collection shows one video at a time with its keyframes as
 thumbnails. See the video guide.
 
@@ -79,7 +79,7 @@ windows when required by available RAM. Local verification on the RTX 4080 SUPER
 16 GB succeeded; measured performance is documented in the video guide.
 
 See [3D studio](docs/3D_STUDIO.md), [Video studio](docs/VIDEO_STUDIO.md) and
-[0.4.4 release notes](docs/RELEASE_NOTES_0.4.4.md).
+[0.4.5 release notes](docs/RELEASE_NOTES_0.4.5.md).
 
 ## Requirements
 

@@ -3,6 +3,10 @@
 A tidier Videos page: dropdowns instead of long columns, and prompt collections that
 show one video at a time.
 
+**Not built.** The Windows build of this release stopped on a test of the generated
+code map, so no installer was attached. The same changes ship in
+[0.4.5](RELEASE_NOTES_0.4.5.md).
+
 ## What's new
 
 - **Video gallery: a dropdown instead of a column of prompts.** The gallery used to

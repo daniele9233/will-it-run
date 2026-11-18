@@ -657,3 +657,20 @@ the sky. With derived keyframes the peak frame-to-frame change fell from 7-9x to
 and the dissolves disappeared. Give a doorway entry more time between keyframes (here
 4 s of 8).
 
+## 2026-11-18 - MiniMax can hold a keyframe and jump; a restore edit can invent sky
+
+Six 12-second one-takes (Home Journeys, `D:\render-work\home-journeys`: plot, time-lapse
+build, dive to the door, interior, pool, turn and reveal) used eight MiniMax H3 Turbo
+keyframes, all the exterior ones derived from one master aerial picture. Two lessons:
+
+- With seed 42, two of the six froze on the master picture and then jumped to the next
+  keyframe (a 1.7x crop of it) instead of diving: the per-frame change read near zero,
+  one spike of 8-10x the median, near zero again. The single "largest peak" number does
+  not tell this from fast motion; the values around the peak do (fast motion is a
+  cluster of high values). The same keyframes and prompt with seed 7 gave a continuous
+  dive (peak 3.9x and 4.5x). Retake with another seed before changing the pictures.
+- The Qwen edit that restores an enlarged crop painted a strip of sky over treetops at
+  the top edge, twice, even when the prompt said not to add sky; in the video the hills
+  vanished in a flash. The plain enlarged crop, lightly sharpened with ffmpeg `unsharp`,
+  fixed it: the geometry is exact and at 1.7x the softness does not show in motion.
+

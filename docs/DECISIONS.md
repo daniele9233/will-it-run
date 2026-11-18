@@ -736,3 +736,15 @@ installer. Offered the choice between moving the published 0.4.4 tag onto the fi
 a new version, the owner chose a new version: the same changes and the map fix are
 released as 0.4.5, and the 0.4.4 notes say it was not built. Published tags are not
 moved.
+
+Verification completed on 2026-11-18: master and the annotated v0.4.5 tag were
+published at source commit `74f73d7fce35056158cd7b15dd5e481cc43b16d7`. The
+[release](https://github.com/daniele9233/will-it-run/releases/tag/v0.4.5) contains
+`WillItRun-0.4.5-Setup-x64.exe` (34,021,011 bytes) and its checksum.
+[Source CI](https://github.com/daniele9233/will-it-run/actions/runs/44337954049) and
+the [Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/44337980390)
+both succeeded. The downloaded installer matches the checksum file and GitHub's asset
+digest `090e5b15de1f91630bb3840501154e1a389201469587e21d551b609a3e677376`. It was
+applied on the owner's PC through the ignored local updater (now pointing at 0.4.5):
+desktop ProductVersion and the frozen core report 0.4.5, and the installed HTTP health
+endpoint returns `ok: true`, version `0.4.5`.

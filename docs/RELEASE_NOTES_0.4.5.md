@@ -46,6 +46,17 @@ with all files staged (ruff, import contracts, the whole pytest suite, TypeScrip
 ESLint, Vitest, the Italian catalog). Nothing changed in the core, its routes or its
 data.
 
+## Published build
+
+- [Windows x64 installer](https://github.com/daniele9233/will-it-run/releases/download/v0.4.5/WillItRun-0.4.5-Setup-x64.exe)
+- [SHA-256 checksum](https://github.com/daniele9233/will-it-run/releases/download/v0.4.5/WillItRun-0.4.5-Setup-x64.exe.sha256)
+- [Successful source CI](https://github.com/daniele9233/will-it-run/actions/runs/44337954049)
+- [Successful Windows release build](https://github.com/daniele9233/will-it-run/actions/runs/44337980390)
+
+The downloaded installer (34,021,011 bytes) matches its attached checksum and GitHub
+asset digest. The published package was installed on the maintainer's PC; desktop,
+frozen core and the responding HTTP health endpoint all report 0.4.5.
+
 ## Windows installation
 
 Download `WillItRun-0.4.5-Setup-x64.exe` and its `.sha256` from this release.

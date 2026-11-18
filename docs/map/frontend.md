@@ -41,7 +41,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Settings.tsx` | 589 | SettingsPage | `/api/brain`, `/api/doctor`, `/api/lmstudio/server/start`, `/api/models/installed` |  |
 | `pages/Teams.tsx` | 697 | TeamsPage | `/api/downloads`, `/api/runs`, `/api/specializations`, `/api/teams`, `/api/teams/plan`, `/api/teams/{}` |  |
 | `pages/ThreeD.tsx` | 196 | ThreeDPage | `/api/3d/gallery`, `/api/3d/gallery/{}`, `/api/3d/gallery/{}/file`, `/api/3d/gallery/{}/restore`, `/api/3d/gallery/{}/save`, `/api/3d/gallery/{}/web` +5 |  |
-| `pages/Videos.tsx` | 267 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/collections`, `/api/videos/collections/{}/entries/{}` +7 |  |
+| `pages/Videos.tsx` | 273 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/collections`, `/api/videos/collections/{}/entries/{}` +7 |  |
 | `pages/Wizard.tsx` | 174 | Wizard | `/api/scan` | scan.step |
 | `pages/Workflows.tsx` | 1277 | WorkflowsPage | `/api/models/context-advice`, `/api/runs`, `/api/tools`, `/api/workflows`, `/api/workflows/validate`, `/api/workflows/{}` +1 |  |
 
@@ -72,10 +72,10 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `components/Shell.tsx` | 408 | Mark, Shell |  | 3d.job |
 | `components/ThreeDLab.tsx` | 84 | ThreeDLab | `/api/3d/lab/action`, `/api/3d/lab/generate`, `/api/3d/lab/import`, `/api/3d/lab/splats`, `/api/3d/lab/splats/{}/file`, `/api/3d/lab/status` |  |
 | `components/ui.tsx` | 439 | cx, toneVar, Button, IconButton, Badge, FitBadge, StatusDot +25 |  |  |
-| `components/VideoCollections.tsx` | 120 | VideoCollections | `/api/videos/collections/{}/entries`, `/api/videos/collections/{}/entries/{}` |  |
+| `components/VideoCollections.tsx` | 147 | VideoCollections | `/api/videos/collections/{}/entries`, `/api/videos/collections/{}/entries/{}` |  |
 | `components/VideoJobProgress.tsx` | 38 | VideoJob, VideoJobProgress |  |  |
 | `components/VideoPlayer.tsx` | 46 | VideoPlayer | `/api/videos/gallery` |  |
-| `components/VideoPrompts.tsx` | 87 | VideoPromptPair, SavedVideoPrompt, PromptText, VideoPromptTexts, SaveVideoPrompts, SavedVideoPrompts | `/api/videos/prompts`, `/api/videos/prompts/{}` |  |
+| `components/VideoPrompts.tsx` | 95 | VideoPromptPair, SavedVideoPrompt, PromptText, VideoPromptTexts, SaveVideoPrompts, SavedVideoPrompts | `/api/videos/prompts`, `/api/videos/prompts/{}` |  |
 | `components/VideoUpscalePanel.tsx` | 94 | VideoUpscalePanel | `/api/videos/jobs/{}/cancel`, `/api/videos/upscale` |  |
 
 ## `lib/`
@@ -103,7 +103,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `lib/runSource.ts` | 174 | RunSource, isGithubUrl, repoName, sourceProblem, sourcePayload, sourceFromEvent, loadSource +18 |  |  |
 | `lib/store.ts` | 160 | PageId, Toast, useApp, applyAppearance, relativeLuminance | `/api/hardware`, `/api/live`, `/api/lmstudio`, `/api/settings` |  |
 | `lib/types.ts` | 1273 | Confidence, FitCategory, Alignment, Placement, GpuInfo, DriveInfo, HardwareProfile +101 |  |  |
-| `lib/video.ts` | 50 | videoInputLabel, videoInputDescription, videoFrameCount, defaultKeyframeTimes, keyframeTimesProblem, collectionMissingFiles, collectionKeyframeOrigin +1 |  |  |
+| `lib/video.ts` | 73 | videoInputLabel, videoInputDescription, videoFrameCount, defaultKeyframeTimes, keyframeTimesProblem, collectionMissingFiles, collectionKeyframeOrigin +4 |  |  |
 | `lib/videoSave.ts` | 30 | saveVideo | `/api/videos/gallery` |  |
 | `lib/workflow.ts` | 86 | emptySlot, modelLabel, agentModelKey, distinctModels, agentsWithoutModel, assignModel |  |  |
 | `lib/zoom.ts` | 28 | ZOOM_MIN, ZOOM_MAX, ZOOM_STEP, clampZoom, applyZoom |  |  |

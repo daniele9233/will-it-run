@@ -40,7 +40,30 @@ export function collectionMissingFiles(entry: VideoCollectionEntry): string[] {
 export function collectionKeyframeOrigin(keyframe: VideoCollectionKeyframe, keyframes: VideoCollectionKeyframe[] = []): string {
   if (!keyframe.edited_from) return t("Text to image");
   const index = keyframes.findIndex(item => item.label === keyframe.edited_from);
+  // A crop is cut from another keyframe without a model (workflow "ffmpeg_crop"): not an edit.
+  if (keyframe.workflow.endsWith("_crop")) return index >= 0 ? t("Crop of picture {number}", { number: index + 1 }) : t("Crop of picture \"{label}\"", { label: keyframe.edited_from });
   return index >= 0 ? t("Edit of picture {number}", { number: index + 1 }) : t("Edit of picture \"{label}\"", { label: keyframe.edited_from });
+}
+
+/** A text on one line for a dropdown: spaces and line breaks folded, cut at a word near `max` characters with an ellipsis. */
+export function oneLine(text: string, max = 90): string {
+  const flat = text.replace(/\s+/g, " ").trim();
+  if (flat.length <= max) return flat;
+  const cut = flat.slice(0, max);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`;
+}
+
+/** Day, month, hour and minute of a Unix time in seconds, in the PC's own format ("18/11, 15:20"). */
+export function shortDateTime(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toLocaleString(undefined, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+/** "3. 18/11, 15:20 · 6 s · The camera glides…": one generated video in the gallery dropdown. The date and seconds are
+ * shown when known, so videos with the same opening words can still be told apart. */
+export function galleryClipLabel(index: number, prompt: string, seconds?: number | null, createdAt?: number | null): string {
+  const parts = [createdAt != null ? shortDateTime(createdAt) : null, seconds != null ? `${Number(seconds.toFixed(1))} s` : null, oneLine(prompt) || "—"];
+  return `${index + 1}. ${parts.filter(Boolean).join(" · ")}`;
 }
 
 /** "0 · 2.5 · 5 · 8 s": the seconds the pictures are pinned to. */

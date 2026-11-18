@@ -4,7 +4,7 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-204 Python files (49,271 lines) · 1051 public symbols · 191 HTTP routes · 23 tables · 65 test files (1360 tests) · 92 UI files (23,059 lines).
+204 Python files (49,271 lines) · 1051 public symbols · 191 HTTP routes · 23 tables · 65 test files (1360 tests) · 92 UI files (23,123 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 

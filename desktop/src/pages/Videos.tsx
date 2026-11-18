@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ArrowDown, ArrowUp, Bookmark, Film, ImagePlus, Library, Play, RefreshCw, X } from "lucide-react";
-import { Button } from "../components/ui";
+import { Button, Select } from "../components/ui";
 import { SavedVideoPrompts, SaveVideoPrompts, VideoPromptTexts, type SavedVideoPrompt, type VideoPromptPair } from "../components/VideoPrompts";
 import { VideoCollections } from "../components/VideoCollections";
 import { api, mediaBlob } from "../lib/api";
@@ -10,12 +10,12 @@ import { VideoJobProgress, type VideoJob } from "../components/VideoJobProgress"
 import { VideoPlayer } from "../components/VideoPlayer";
 import { VideoUpscalePanel } from "../components/VideoUpscalePanel";
 import type { VideoCollection, VideoCollectionEntry, VideoModel, VideoSetupStatus } from "../lib/types";
-import { defaultKeyframeTimes, keyframeTimesProblem, videoFrameCount, videoInputDescription, videoInputLabel } from "../lib/video";
+import { defaultKeyframeTimes, galleryClipLabel, keyframeTimesProblem, videoFrameCount, videoInputDescription, videoInputLabel } from "../lib/video";
 
 interface Recipe { duration_seconds?: number | null; model_key: string; image: string; images?: string[]; keyframe_times?: number[]; prompt: string; negative?: string; width: number; height: number; frames: number; fps: number; steps: number; cfg: number; seed: number; turbo?: boolean }
 interface Job extends VideoJob { kind?: string }
 interface Status { available: boolean; models: VideoModel[]; jobs: Job[]; finishing: { ready: boolean } }
-interface Clip { id: string; request: Recipe; elapsed: number; model: string; output?: { width: number; height: number; fps: number; frames: number; seconds: number } | null }
+interface Clip { id: string; request: Recipe; elapsed: number; model: string; created_at?: number; output?: { width: number; height: number; fps: number; frames: number; seconds: number } | null }
 interface Keyframe { name: string; data: string; file: string }
 const H3 = "minimax-h3-fl2va";
 const INITIAL: Recipe = { model_key: H3, image: "", images: [], prompt: "", duration_seconds: 10, width: 1344, height: 768, frames: 243, fps: 24, steps: 20, cfg: 1, seed: -1, turbo: false };
@@ -251,9 +251,15 @@ export function VideosPage() {
         {generationJob && <Button onClick={() => void action(() => api.post(`/api/videos/jobs/${generationJob.id}/cancel`))}>{t("Cancel")}</Button>}
         {last?.status === "failed" && <p role="alert" className="text-sm text-bad">{last.error}</p>}
       </section>
-      <section className="grid gap-4 rounded-xl border border-line bg-surface p-4">
-        <h2 className="font-semibold">{t("Video gallery")}</h2>
-        {clip ? <><VideoPlayer key={clip.id} id={clip.id} title={clip.request.prompt} /><VideoPromptTexts key={`texts-${clip.id}`} prompt={clip.request.prompt} negative={clip.request.negative || ""} /><SaveVideoPrompts key={`save-${clip.id}`} prompt={clip.request.prompt} negative={clip.request.negative || ""} onSaved={promptLibrary.reload} /><p className="text-xs text-ink-3">{clip.model} · {clip.output?.width ?? clip.request.width} × {clip.output?.height ?? clip.request.height} · {clip.output?.fps ?? clip.request.fps} FPS · {clip.output?.frames ?? clip.request.frames} {t("frames")}{clip.output ? ` · ${clip.output.seconds} s` : ""} · {clip.elapsed} s · Seed {clip.request.seed}</p><div className="flex gap-2"><Button onClick={() => reuseSettings(clip)}>{t("Reuse settings")}</Button><Button variant="danger" onClick={() => void action(() => api.del(`/api/videos/gallery/${clip.id}`))}>{t("Delete")}</Button></div><div className="grid gap-2">{clips.map(c => <button key={c.id} className="truncate rounded-md border border-line p-2 text-left text-sm hover:bg-raised" onClick={() => setSelected(c.id)}>{c.request.prompt}</button>)}</div></> : <div className="grid min-h-72 place-content-center gap-3 text-center text-ink-3"><Film size={48} className="mx-auto" /><p>{t("Your videos will appear here.")}</p></div>}
+      <section className="grid content-start gap-4 rounded-xl border border-line bg-surface p-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <h2 className="font-semibold">{t("Video gallery")} {clips.length > 0 && <span className="font-normal text-ink-3">({clips.length})</span>}</h2>
+          {clip && <label className="grid min-w-0 flex-1 gap-1 text-xs font-medium text-ink-2 sm:max-w-xl">{t("Video to show")}
+            <Select value={clip.id} onChange={e => setSelected(e.target.value)}>
+              {clips.map((c, index) => <option key={c.id} value={c.id}>{galleryClipLabel(index, c.request.prompt, c.output?.seconds ?? c.request.duration_seconds, c.created_at)}</option>)}
+            </Select></label>}
+        </div>
+        {clip ? <><VideoPlayer key={clip.id} id={clip.id} title={clip.request.prompt} /><VideoPromptTexts key={`texts-${clip.id}`} prompt={clip.request.prompt} negative={clip.request.negative || ""} /><SaveVideoPrompts key={`save-${clip.id}`} prompt={clip.request.prompt} negative={clip.request.negative || ""} onSaved={promptLibrary.reload} /><p className="text-xs text-ink-3">{clip.model} · {clip.output?.width ?? clip.request.width} × {clip.output?.height ?? clip.request.height} · {clip.output?.fps ?? clip.request.fps} FPS · {clip.output?.frames ?? clip.request.frames} {t("frames")}{clip.output ? ` · ${clip.output.seconds} s` : ""} · {clip.elapsed} s · Seed {clip.request.seed}</p><div className="flex gap-2"><Button onClick={() => reuseSettings(clip)}>{t("Reuse settings")}</Button><Button variant="danger" onClick={() => void action(() => api.del(`/api/videos/gallery/${clip.id}`))}>{t("Delete")}</Button></div></> : <div className="grid min-h-72 place-content-center gap-3 text-center text-ink-3"><Film size={48} className="mx-auto" /><p>{t("Your videos will appear here.")}</p></div>}
       </section>
     </div>
     <section ref={collectionsSection} className="rounded-xl border border-line bg-surface p-4">

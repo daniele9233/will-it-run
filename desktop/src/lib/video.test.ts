@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { VideoModel } from "./types";
-import { collectionKeyframeOrigin, collectionMissingFiles, defaultKeyframeTimes, keyframeSecondsLabel, keyframeTimesProblem, videoFrameCount, videoInputDescription, videoInputLabel } from "./video";
+import { collectionKeyframeOrigin, collectionMissingFiles, defaultKeyframeTimes, galleryClipLabel, keyframeSecondsLabel, keyframeTimesProblem, oneLine, shortDateTime, videoFrameCount, videoInputDescription, videoInputLabel } from "./video";
 
 const h3 = { defaults: { fps: 24 }, frame_stride: 17, frame_offset: 5, input_mode: "keyframes" } as VideoModel;
 const ltx = { defaults: { fps: 24 }, frame_stride: 8, frame_offset: 1, input_mode: "keyframes" } as VideoModel;
@@ -49,6 +49,24 @@ describe("prompt collections", () => {
     expect(collectionKeyframeOrigin(keyframe)).toBe("Text to image");
     expect(collectionKeyframeOrigin(entry.keyframes[1]!, entry.keyframes)).toBe("Edit of picture 1");
     expect(collectionKeyframeOrigin(entry.keyframes[1]!)).toBe("Edit of picture \"first\"");
+    expect(collectionKeyframeOrigin({ ...keyframe, workflow: "ffmpeg_crop", edited_from: "first" }, entry.keyframes)).toBe("Crop of picture 1");
+  });
+
+  it("puts a long prompt on one line for a dropdown, cut at a word", () => {
+    expect(oneLine("  short\n prompt ")).toBe("short prompt");
+    const long = "The camera glides forward through the open door into a warm living room with a fireplace and a kitchen";
+    expect(oneLine(long, 40)).toBe("The camera glides forward through the…");
+    expect(oneLine("x".repeat(50), 40)).toBe(`${"x".repeat(40)}…`);
+  });
+
+  it("labels a gallery video with its number, seconds and prompt", () => {
+    expect(galleryClipLabel(2, "The camera\nrises", 6)).toBe("3. 6 s · The camera rises");
+    expect(galleryClipLabel(0, "p", 12.04)).toBe("1. 12 s · p");
+    expect(galleryClipLabel(0, "p", null)).toBe("1. p");
+    expect(galleryClipLabel(0, "  ")).toBe("1. —");
+    const when = 1795010020;
+    expect(galleryClipLabel(0, "p", 12, when)).toBe(`1. ${shortDateTime(when)} · 12 s · p`);
+    expect(shortDateTime(when)).toMatch(/\d{2}.*\d{2}.*\d{2}.*\d{2}/);
   });
 
   it("writes the keyframe seconds compactly", () => {

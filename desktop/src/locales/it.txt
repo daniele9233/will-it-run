@@ -2095,7 +2095,6 @@ Your saved prompt pairs will appear here. ||| Le coppie di prompt salvate appari
 No saved prompts match this search. ||| Nessun prompt salvato corrisponde alla ricerca.
 Use these prompts ||| Usa questi prompt
 Delete saved prompts ||| Elimina prompt salvati
-Show both prompts ||| Mostra entrambi i prompt
 The entire picture is preserved. Portrait pictures use a portrait generation size and black side borders in the Full HD video. ||| L’immagine viene mantenuta intera. Le immagini verticali vengono generate in verticale e hanno bande nere laterali nel video Full HD.
 This model needs native 720p generation for detail and stable motion. Small preview resolutions are not suitable. ||| Questo modello richiede la generazione nativa a 720p per dettaglio e movimento stabile. Le piccole risoluzioni di anteprima non sono adatte.
 Slow motion ||| Movimento rallentato
@@ -2522,20 +2521,24 @@ Prompt collections ||| Raccolte di prompt
 Finished videos kept with everything that made them: each keyframe picture with its image prompt, the video prompt and the settings. Use one in the generator to make it again or to change it. ||| Video finiti conservati con tutto ciò che li ha creati: ogni immagine chiave con il suo prompt, il prompt del video e le impostazioni. Usane uno nel generatore per rifarlo o modificarlo.
 Your prompt collections will appear here. ||| Le tue raccolte di prompt compariranno qui.
 {count} videos ||| {count} video
-Videos of {collection} ||| Video di {collection}
-{count} pictures ||| {count} immagini
 This collection has no videos. ||| Questa raccolta non ha video.
 This keyframe picture is not on disk. ||| Questa immagine chiave non è sul disco.
 Seed {seed} · {steps} steps · CFG {cfg} ||| Seed {seed} · {steps} passi · CFG {cfg}
 Picture {number} · at {seconds} s ||| Immagine {number} · al secondo {seconds}
 Image prompt ||| Prompt dell'immagine
 Turbo ||| Turbo
-Generated in {time} ||| Generato in {time}
 The video file is not on disk. ||| Il file del video non è sul disco.
-Keyframes at {times} ||| Immagini chiave a {times}
 Use in the generator ||| Usa nel generatore
 Missing from the collection: {files} ||| Mancano dalla raccolta: {files}
 Keyframe pictures and their prompts ||| Immagini chiave e i loro prompt
 Edit of picture "{label}" ||| Modifica dell'immagine «{label}»
 Text to image ||| Da testo a immagine
 Edit of picture {number} ||| Modifica dell'immagine {number}
+Crop of picture {number} ||| Ritaglio dell'immagine {number}
+Crop of picture "{label}" ||| Ritaglio dell'immagine «{label}»
+Generation time ||| Tempo di generazione
+Collection ||| Raccolta
+Video of the collection ||| Video della raccolta
+About this collection ||| Informazioni sulla raccolta
+Saved prompts to show ||| Prompt salvati da mostrare
+Video to show ||| Video da mostrare

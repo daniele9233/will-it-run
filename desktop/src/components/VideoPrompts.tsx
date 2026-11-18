@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import { Bookmark, Check, Copy, Save, Trash2 } from "lucide-react";
-import { Button } from "./ui";
+import { Button, Select, TextInput } from "./ui";
 import { api } from "../lib/api";
 import { errorMessage } from "../lib/hooks";
 import { t } from "../lib/i18n";
 import { copyText } from "../lib/masterPrompts";
+import { oneLine } from "../lib/video";
 
 export interface VideoPromptPair { prompt: string; negative: string }
 export interface SavedVideoPrompt extends VideoPromptPair { id: string; name: string; created_at: number }
@@ -60,12 +61,14 @@ export function SaveVideoPrompts({ prompt, negative, onSaved }: VideoPromptPair 
 
 export function SavedVideoPrompts({ items, loading, error, onReload, onUse, disabled }: { items: SavedVideoPrompt[]; loading: boolean; error: string | null; onReload: () => void; onUse: (pair: VideoPromptPair) => void; disabled: boolean }) {
   const [query, setQuery] = useState("");
+  const [chosen, setChosen] = useState("");
   const [deleting, setDeleting] = useState("");
   const [failure, setFailure] = useState("");
   const filtered = items.filter(p => `${p.name}\n${p.prompt}\n${p.negative}`.toLowerCase().includes(query.toLowerCase()));
+  const item = filtered.find(p => p.id === chosen) ?? filtered[0];
   async function remove(id: string) {
     setDeleting(id); setFailure("");
-    try { await api.del(`/api/videos/prompts/${id}`); onReload(); }
+    try { await api.del(`/api/videos/prompts/${id}`); setChosen(""); onReload(); }
     catch (err) { setFailure(errorMessage(err)); }
     finally { setDeleting(""); }
   }
@@ -73,14 +76,19 @@ export function SavedVideoPrompts({ items, loading, error, onReload, onUse, disa
     <h2 className="flex items-center gap-2 font-semibold"><Bookmark size={18} />{t("Saved video prompts")} <span className="text-ink-3">({items.length})</span></h2>
     <p className="text-sm text-ink-2">{t("Keep your effects ready to use. Loading a saved pair fills both prompt fields.")}</p>
     {(error || failure) && <p role="alert" className="text-sm text-bad">{error || failure}</p>}
-    {items.length > 0 && <label className="grid gap-1 text-sm">{t("Search saved prompts")}<input className="rounded-md border border-line bg-bg p-2" value={query} onChange={e => setQuery(e.target.value)} /></label>}
     {!items.length && <p className="text-sm text-ink-3">{loading ? t("Loading…") : t("Your saved prompt pairs will appear here.")}</p>}
-    {!!items.length && !filtered.length && <p className="text-sm text-ink-3">{t("No saved prompts match this search.")}</p>}
-    {filtered.map(item => <article key={item.id} className="grid gap-3 rounded-lg border border-line bg-bg p-4">
-      <h3 className="selectable font-medium">{item.name}</h3>
-      <p className="selectable line-clamp-2 whitespace-pre-wrap text-sm text-ink-2">{item.prompt}</p>
-      <div className="flex flex-wrap gap-2"><Button icon={<Copy size={14} />} disabled={disabled} onClick={() => onUse(item)}>{t("Use these prompts")}</Button><Button size="sm" variant="danger" icon={<Trash2 size={14} />} loading={deleting === item.id} disabled={!!deleting} onClick={() => void remove(item.id)}>{t("Delete saved prompts")}</Button></div>
-      <details className="text-sm"><summary className="cursor-pointer text-accent">{t("Show both prompts")}</summary><div className="mt-3"><VideoPromptTexts prompt={item.prompt} negative={item.negative} /></div></details>
-    </article>)}
+    {items.length > 0 && <div className="grid gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <label className="grid min-w-0 gap-1 text-xs font-medium text-ink-2">{t("Saved prompts to show")}
+        <Select value={item?.id ?? ""} disabled={!filtered.length} onChange={e => setChosen(e.target.value)}>
+          {filtered.map(p => <option key={p.id} value={p.id}>{oneLine(p.name, 120)}</option>)}
+          {!filtered.length && <option value="">{t("No saved prompts match this search.")}</option>}
+        </Select></label>
+      <label className="grid min-w-0 gap-1 text-xs font-medium text-ink-2">{t("Search saved prompts")}<TextInput value={query} onChange={e => setQuery(e.target.value)} /></label>
+    </div>}
+    {item && <div className="grid gap-3 rounded-lg border border-line bg-bg p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="selectable min-w-0 font-medium">{item.name}</h3>
+        <div className="flex flex-wrap gap-2"><Button icon={<Copy size={14} />} disabled={disabled} onClick={() => onUse(item)}>{t("Use these prompts")}</Button><Button size="sm" variant="danger" icon={<Trash2 size={14} />} loading={deleting === item.id} disabled={!!deleting} onClick={() => void remove(item.id)}>{t("Delete saved prompts")}</Button></div></div>
+      <VideoPromptTexts key={item.id} prompt={item.prompt} negative={item.negative} />
+    </div>}
   </div>;
 }

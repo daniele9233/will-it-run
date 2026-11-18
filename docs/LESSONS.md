@@ -674,3 +674,14 @@ keyframes, all the exterior ones derived from one master aerial picture. Two les
   vanished in a flash. The plain enlarged crop, lightly sharpened with ffmpeg `unsharp`,
   fixed it: the geometry is exact and at 1.7x the softness does not show in motion.
 
+## 2026-11-18 - Stage new files before the release checks: the map only sees what git has
+
+`check.py --all` passed locally before the v0.4.4 release commit, then CI and the
+installer build failed: `docs/map/INDEX.md` was 8,045 characters, over its 8,000 limit.
+The map lists only the files git knows (`git ls-files --cached`), and the new
+`RELEASE_NOTES_0.4.4.md` was still untracked when the checks ran, so locally its row was
+not in the index. Two fixes: `git add` new files before running the checks that gate a
+release, and the index now gives all release notes one row (`RELEASE_NOTES_<version>.md`
+with the list of versions) instead of one row a version, which would have outgrown the
+limit again at every release.
+

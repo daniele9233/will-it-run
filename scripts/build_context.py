@@ -545,13 +545,22 @@ def build_files() -> dict[str, str]:
     api_line = "- `api.md`: every HTTP route" + (f" (then {', '.join(f'`{n}`' for n in api_cards)})" if api_cards else "")
     lines += ["", "## Other cards\n", f"{api_line} · `db.md`: every table · `frontend.md`: every UI file, what it calls, the Rust shell · `tests.md`: every test file\n",
               "## Documents (`docs/`)\n", "| File | Title | About |", "|---|---|---|"]
+    # Release notes grow by one file a version: one row for all of them, or the index outgrows its limit (0.4.4 did).
+    release_notes = []
     for path in listing(DOCS, "*.md", deep=False):
+        version = re.fullmatch(r"RELEASE_NOTES_(\d+(?:\.\d+)*)\.md", path.name)
+        if version:
+            release_notes.append((tuple(int(part) for part in version[1].split(".")), version[1]))
+            continue
         text = path.read_text(encoding="utf-8-sig")
         title = (re.search(r"^# (.+)$", text, re.M) or [None, path.stem])[1]
         text = re.sub(r"```.*?```", "", text, flags=re.S)
         blocks = [b.strip() for b in re.sub(r"^#.*$", "", text, flags=re.M).split("\n\n") if b.strip()]
         body = next((b for b in blocks if not b.startswith(("|", "-", "*", "<", ">"))), "")
         lines.append(f"| `{path.name}` | {cell(title)} | {cell(sentence(body, 150))} |")
+    if release_notes:
+        versions = [name for _, name in sorted(release_notes)]
+        lines.append(f"| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: {cell(', '.join(versions))}. |")
     lines += ["", "## Scripts (`scripts/`)\n"]
     for path in listing(SCRIPTS, "*.py", deep=False):
         if path.name.startswith("_"):

@@ -54,11 +54,6 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `MEMORY.md` | Project Brain | Every project has a permanent memory: how it is built, what was decided, which files were changed and why, what went wrong and what fixed it. |
 | `MODEL_SCORING.md` | Model fit and scoring | Code: `backend/src/agentfit/fit` (fit) and `backend/src/agentfit/catalog/scoring.py` (score). |
 | `QWEN_3D_QUALITY.md` | Qwen 3D quality trial — 2026-11-01 | The owner requested a new, more detailed Japanese garden in the same stylized direction as Cloud Sanctuary, with research into the author's repositor… |
-| `RELEASE_NOTES_0.4.0.md` | RELEASE_NOTES_0.4.0 | Hardware fit and visual quality depend on the model and settings. |
-| `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | This release retires Voice and Qwen 3D Coder and adds observed video progress. |
-| `RELEASE_NOTES_0.4.2.md` | Will It Run 0.4.2 | Local reference-video generation and existing-video restoration, with verified model setup, explicit input modes and measured GPU results. |
-| `RELEASE_NOTES_0.4.3.md` | Will It Run 0.4.3 | Keyframe video: first frame, first and last frame, or one continuous shot through up to nine pictures, with two new local models, prompt collections… |
-| `RELEASE_NOTES_0.4.4.md` | Will It Run 0.4.4 | A tidier Videos page: dropdowns instead of long columns, and prompt collections that show one video at a time. |
 | `RELEASING.md` | Releasing | Every new version of Will It Run is published as a [GitHub release](https://github.com/daniele9233/will-it-run/releases) with the installer and its S… |
 | `SCREENS.md` | Screenshots | Immagini di ogni schermata dell'app, a 1600×1000 (la finestra è 1440×900, quindi il layout è quello reale o più largo). |
 | `SECURITY.md` | Security | Will It Run runs local models that can call tools on your computer. |
@@ -66,6 +61,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `VIDEO_STUDIO.md` | Video studio | The Videos page is embedded in Will It Run below Images. |
 | `WINDOWS.md` | Windows | Will It Run version 1 targets Windows 11 x64 and nothing else. |
 | `WORKFLOWS.md` | Workflows | A workflow is a graph of agents, human approval gates and conditional edges. |
+| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4. |
 
 ## Scripts (`scripts/`)
 

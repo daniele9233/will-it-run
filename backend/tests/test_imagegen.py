@@ -495,6 +495,30 @@ def test_the_qwen_uc_flow_is_the_one_that_works_in_comfyui(studio: ImageStudio) 
     )
 
 
+def test_a_qwen_uc_edit_runs_at_cfg_2_5_not_at_the_text_to_image_cfg_1(studio: ImageStudio) -> None:
+    """At CFG 1 a Qwen-Image edit ignores its instruction and fills flat backgrounds with noise."""
+    for key in ("qwen-image-2.1-uc", "qwen-image-2.1-uc-bf16", "qwen-image-2.1-uc-int8"):
+        profile = catalog.by_key(key)
+        assert profile is not None
+        assert profile.sampling["cfg"] == 1.0 and profile.sampling_for("edit")["cfg"] == 2.5, key
+        assert profile.sampling_for("txt2img") == profile.sampling and profile.sampling_for("upscale") == profile.sampling
+        assert profile.to_json()["kind_sampling"] == {"edit": {"cfg": 2.5}}
+    profile = catalog.by_key("qwen-image-2.1-uc")
+    assert profile is not None
+    edit = templates.by_key("qwen_image_edit")
+    request = GenerationRequest(model_key=profile.key, prompt="make it wireframe", image="photo.png", seed=7).normalised()
+    sampler = studio.graph_for(profile, edit, request)["6"]["inputs"]
+    assert (sampler["steps"], sampler["cfg"]) == (25, 2.5)
+    # The person's own CFG still wins, and text-to-image keeps the model's CFG 1.
+    mine = GenerationRequest(model_key=profile.key, prompt="x", image="photo.png", cfg=4.0).normalised()
+    assert studio.graph_for(profile, edit, mine)["6"]["inputs"]["cfg"] == 4.0
+    txt = GenerationRequest(model_key=profile.key, prompt="x").normalised()
+    assert studio.graph_for(profile, templates.by_key(profile.template), txt)["6"]["inputs"]["cfg"] == 1.0
+    # A model without an edit override edits at its own CFG (an SDXL checkpoint is tuned for both).
+    sdxl = catalog.by_key("realvisxl-v5")
+    assert sdxl is not None and not sdxl.kind_sampling and sdxl.sampling_for("edit") == sdxl.sampling
+
+
 def test_a_model_negative_prompt_is_used_when_nobody_writes_one(studio: ImageStudio) -> None:
     profile = catalog.by_key("noctq-v4")
     assert profile is not None and "blurry" in profile.negative

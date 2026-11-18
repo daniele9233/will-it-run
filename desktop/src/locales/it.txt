@@ -2437,6 +2437,28 @@ Choose reference image ||| Scegli immagine di riferimento
 This recipe uses only the positive prompt, 4 steps and CFG 1. Generated audio is preserved in the MP4. ||| Questa ricetta usa solo il prompt positivo, 4 passi e CFG 1. L'audio generato viene mantenuto nell'MP4.
 VSA sparsity ||| Sparsità VSA
 Default 0.75 follows the upstream example. Reference and text tokens remain dense. ||| Il valore predefinito 0,75 segue l'esempio del progetto. I token di riferimento e testo rimangono densi.
+Up to {count} reference images ||| Fino a {count} immagini di riferimento
+Uses one or more images as visual references for the subject, in the order you add them. They do not lock the first or last frame. Generates video and audio with the 4-step Turbo recipe. ||| Usa una o più immagini come riferimento visivo per il soggetto, nell'ordine in cui le aggiungi. Non vincola il primo o l'ultimo fotogramma. Genera video e audio con la ricetta Turbo a 4 passi.
+Animate one starting frame. An ending image is optional guidance. ||| Anima un fotogramma iniziale. L'immagine finale è una guida facoltativa.
+Reference images ||| Immagini di riferimento
+Add reference image ||| Aggiungi immagine di riferimento
+Choose reference images ||| Scegli immagini di riferimento
+Up to {count} images, used in the order you add them. PNG, JPG or WebP · 40 MB each. ||| Fino a {count} immagini, usate nell'ordine in cui le aggiungi. PNG, JPG o WebP · 40 MB ciascuna.
+Reference image {number} ||| Immagine di riferimento {number}
+Remove reference image {number} ||| Rimuovi immagine di riferimento {number}
+The prompt refers to them as <Picture 1>, <Picture 2>, and so on, in this order. ||| Il prompt le indica come <Picture 1>, <Picture 2> e così via, in questo ordine.
+The prompt refers to the images in this order. ||| Il prompt si riferisce alle immagini in questo ordine.
+You can add up to {count} reference images. ||| Puoi aggiungere fino a {count} immagini di riferimento.
+{model} setup ||| Preparazione di {model}
+The upstream recipe recommends {gb} GB VRAM. Smaller GPUs are experimental. ||| La ricetta del progetto raccomanda {gb} GB di VRAM. Le GPU più piccole sono sperimentali.
+Set up {model} locally ||| Prepara {model} in locale
+Downloading and verifying {model} ||| Download e verifica di {model}
+{model} setup progress ||| Avanzamento della preparazione di {model}
+Generate local video and audio from one or more reference images. ||| Genera video e audio in locale da una o più immagini di riferimento.
+The prompt can refer to them as @1, @2, and so on, in this order. ||| Il prompt può indicarle come @1, @2 e così via, in questo ordine.
+This model fixes {steps} steps, CFG {cfg} and {fps} FPS. {audio} ||| Questo modello fissa {steps} passi, CFG {cfg} e {fps} FPS. {audio}
+Generated audio is preserved in the MP4. ||| L'audio generato viene mantenuto nell'MP4.
+The clip is silent. ||| La clip è muta.
 Inspecting the source video. ||| Analisi del video originale.
 Preparing video frames. ||| Preparazione dei fotogrammi video.
 Upscaling with RelayVSR. ||| Ingrandimento con RelayVSR.
@@ -2470,3 +2492,50 @@ Upscaled copies appear here. Original videos stay in their gallery. ||| Le copie
 Restore detail in an existing video. Frame order, average frame rate and audio are retained. The source display aspect ratio is respected. ||| Ripristina i dettagli di un video esistente. Ordine dei fotogrammi, frequenza media e audio vengono mantenuti. Il formato visivo originale viene rispettato.
 Non-square source pixels were handled to preserve the displayed aspect ratio. ||| I pixel non quadrati dell'originale sono stati gestiti per mantenere il formato visivo corretto.
 Irregular source timestamps were normalized to the measured average frame rate. ||| I tempi irregolari dell'originale sono stati normalizzati alla frequenza media misurata.
+Keyframes · 1 to {count} pictures ||| Keyframe · da 1 a {count} immagini
+One picture is the first frame. Two pictures are the first and last frame. Three or more give one continuous shot that passes through every picture at its time, without cuts. ||| Un'immagine è il primo fotogramma. Due immagini sono il primo e l'ultimo fotogramma. Tre o più danno un unico piano sequenza che passa per ogni immagine al suo secondo, senza tagli.
+Keyframe times must be between 0 and {seconds} seconds. ||| I tempi dei keyframe devono essere tra 0 e {seconds} secondi.
+Keyframe times must increase and land on different frames. ||| I tempi dei keyframe devono essere crescenti e cadere su fotogrammi diversi.
+You can add up to {count} keyframe pictures. ||| Puoi aggiungere fino a {count} immagini keyframe.
+Generate local video and audio from one or more keyframe pictures: first frame, first and last frame, or one continuous shot through several pictures. ||| Genera in locale video e audio da una o più immagini keyframe: primo fotogramma, primo e ultimo fotogramma, oppure un piano sequenza attraverso più immagini.
+MiniMax H3 FL2VA: the highest quality. The first and last pictures are its trained first/last-frame task; pictures in between are pinned to their frames. 20 steps, or an 8-step Turbo draft. ||| MiniMax H3 FL2VA: la qualità più alta. La prima e l'ultima immagine usano il suo compito addestrato primo/ultimo fotogramma; le immagini intermedie vengono fissate al loro fotogramma. 20 passi, oppure una bozza Turbo a 8 passi.
+LTX-2.5: fast drafts and iterations. Half-resolution pass, x2 latent upscaler and a refinement pass, with every picture pinned to its frame. ||| LTX-2.5: bozze e iterazioni rapide. Passaggio a metà risoluzione, upscaler latente x2 e passaggio di rifinitura, con ogni immagine fissata al suo fotogramma.
+Keyframes ||| Keyframe
+Keyframe pictures, in order ||| Immagini keyframe, in ordine
+Add keyframe picture ||| Aggiungi immagine keyframe
+Choose the first keyframe picture ||| Scegli la prima immagine keyframe
+Up to {count} pictures with the same framing ratio. PNG, JPG or WebP · 40 MB each. ||| Fino a {count} immagini con lo stesso formato. PNG, JPG o WebP · 40 MB ciascuna.
+Keyframe picture {number} ||| Immagine keyframe {number}
+Move keyframe {number} earlier ||| Sposta prima il keyframe {number}
+Move keyframe {number} later ||| Sposta dopo il keyframe {number}
+Remove keyframe {number} ||| Rimuovi il keyframe {number}
+At second ||| Al secondo
+Times chosen by you. ||| Tempi scelti da te.
+Times spread evenly from the first to the last frame. ||| Tempi distribuiti in modo uniforme dal primo all'ultimo fotogramma.
+Spread evenly ||| Distribuisci uniformemente
+Describe the path between the pictures: camera movement, speed and what changes. The official MiniMax H3 layout (frame alignment, soundscape, music) is added for you. Optional last lines: "Sound: ..." and "Music: ...". ||| Descrivi il percorso tra le immagini: movimento della camera, velocità e cosa cambia. La struttura ufficiale MiniMax H3 (allineamento dei fotogrammi, suoni, musica) viene aggiunta per te. Righe finali facoltative: "Sound: ..." e "Music: ...".
+Describe the path between the pictures in one paragraph: camera movement, speed and what changes. The keyframe instruction is added for you. ||| Descrivi il percorso tra le immagini in un solo paragrafo: movimento della camera, velocità e cosa cambia. L'istruzione sui keyframe viene aggiunta per te.
+For one continuous shot, write it as a single shot: name the camera moves in order (push in, dive, arc, glide), say "no cuts", and leave enough seconds between two very different pictures. ||| Per un piano sequenza scrivilo come un'unica inquadratura: nomina i movimenti di camera in ordine (push in, dive, arc, glide), scrivi "no cuts" e lascia abbastanza secondi tra due immagini molto diverse.
+Turbo draft · {steps} steps (faster, slightly softer motion) ||| Bozza Turbo · {steps} passi (più veloce, movimento un po' più morbido)
+Generated at {fps} FPS · {frames} frames, then motion interpolation to 30 FPS. Generated audio is preserved in the MP4. ||| Generato a {fps} FPS · {frames} fotogrammi, poi interpolazione del movimento a 30 FPS. L'audio generato è conservato nell'MP4.
+Prompt collections ||| Raccolte di prompt
+Finished videos kept with everything that made them: each keyframe picture with its image prompt, the video prompt and the settings. Use one in the generator to make it again or to change it. ||| Video finiti conservati con tutto ciò che li ha creati: ogni immagine chiave con il suo prompt, il prompt del video e le impostazioni. Usane uno nel generatore per rifarlo o modificarlo.
+Your prompt collections will appear here. ||| Le tue raccolte di prompt compariranno qui.
+{count} videos ||| {count} video
+Videos of {collection} ||| Video di {collection}
+{count} pictures ||| {count} immagini
+This collection has no videos. ||| Questa raccolta non ha video.
+This keyframe picture is not on disk. ||| Questa immagine chiave non è sul disco.
+Seed {seed} · {steps} steps · CFG {cfg} ||| Seed {seed} · {steps} passi · CFG {cfg}
+Picture {number} · at {seconds} s ||| Immagine {number} · al secondo {seconds}
+Image prompt ||| Prompt dell'immagine
+Turbo ||| Turbo
+Generated in {time} ||| Generato in {time}
+The video file is not on disk. ||| Il file del video non è sul disco.
+Keyframes at {times} ||| Immagini chiave a {times}
+Use in the generator ||| Usa nel generatore
+Missing from the collection: {files} ||| Mancano dalla raccolta: {files}
+Keyframe pictures and their prompts ||| Immagini chiave e i loro prompt
+Edit of picture "{label}" ||| Modifica dell'immagine «{label}»
+Text to image ||| Da testo a immagine
+Edit of picture {number} ||| Modifica dell'immagine {number}

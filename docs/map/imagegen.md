@@ -6,21 +6,23 @@ Image generation and editing through ComfyUI.
 
 - Depends on: `core`, `hardware`
 - Used by: `api`, `core`
-- Tests that import it: `test_3d_lab.py`, `test_hi3d.py`, `test_imagegen.py`, `test_importer.py`, `test_ref2va.py`, `test_relayvsr.py`, `test_trellis.py`, `test_video.py`, `test_video_finish.py`, `test_video_progress.py`, `test_video_prompts.py`
+- Tests that import it: `test_3d_lab.py`, `test_hi3d.py`, `test_imagegen.py`, `test_importer.py`, `test_relayvsr.py`, `test_trellis.py`, `test_video.py`, `test_video_collections.py`, `test_video_finish.py`, `test_video_progress.py`, `test_video_prompts.py`, `test_video_setup.py`
 
 | File | Lines | What it is | Public symbols | Tests |
 |---|---:|---|---|---|
-| `imagegen/catalog.py` | 198 | Which image models this PC can generate with, and which components each one needs. | **CatalogError**, **ModelProfile**, profiles(), by_key(), flavour_of(), from_checkpoint() | test_imagegen.py |
-| `imagegen/comfy.py` | 257 | A small client for ComfyUI's HTTP API. | **ComfyError**, **ComfyUnavailable**, **ComfyClient**, produced_images(), status_message() | test_imagegen.py |
+| `imagegen/catalog.py` | 207 | Which image models this PC can generate with, and which components each one needs. | **CatalogError**, **ModelProfile**, profiles(), by_key(), flavour_of(), from_checkpoint() | test_imagegen.py |
+| `imagegen/comfy.py` | 257 | A small client for ComfyUI's HTTP API. | **ComfyError**, **ComfyUnavailable**, **ComfyClient**, produced_images(), status_message() | test_imagegen.py, test_video.py |
 | `imagegen/components.py` | 932 | The parts a model is made of, what is already on disk, and how to fetch what is missing. | **ComponentError**, **DiskFull**, **ComponentDef**, **Resolved**, **Resolver**, **Download**, **ComponentStore**, definitions(), definition() +2 more | test_imagegen.py, test_importer.py |
 | `imagegen/engine.py` | 312 | Finding, starting and stopping the ComfyUI on this PC. | **EngineError**, **Install**, **ComfyEngine**, find_install() | test_imagegen.py, test_importer.py |
 | `imagegen/hi3d.py` | 153 | Optional local Hi3D refinement, sharing the 3D queue and gallery. | **Hi3DRequest**, **Hi3DStudio** | test_hi3d.py |
 | `imagegen/hi3d_worker.py` | 199 | Executed only in the isolated Linux Hi3D environment; GPU imports stay inside refine(). | progress(), digest(), manifest_digest(), asset_path(), stamps(), ready(), prepare(), transfer_source_colors(), refine() +1 more | test_hi3d.py |
 | `imagegen/importer.py` | 554 | The model files already on this PC: finding them, recognising them, putting them in place. | **ImportError_**, **Recognised**, read_header(), classify(), match_component(), guess_family(), scan(), apply(), lora_format() +2 more | test_importer.py |
+| `imagegen/keyframes.py` | 36 | Where each keyframe picture lands on a video's timeline, shared by the keyframe video models. | default_times(), frame_indices(), anchor_sentence() |  |
 | `imagegen/lab.py` | 189 | Additional 3D engines and companion studios, preserving the existing TRELLIS gallery. | **LabRequest**, **ThreeDLab**, validate_embedded_glb() | test_3d_lab.py |
 | `imagegen/lab_worker.py` | 273 | WSL-only launcher for additional 3D engines. | run(), ready(), checkout(), install(), launch(), managed_process(), stop(), generate(), main() |  |
+| `imagegen/ltx25.py` | 122 | LTX-2.5 keyframe workflow on native ComfyUI nodes (official FLF2V + two-stage I2V recipes, generalised). | assets(), prompt(), strength(), workflow() | test_video.py, test_video_setup.py |
+| `imagegen/minimax_h3.py` | 128 | MiniMax H3 FL2VA keyframe workflow on native ComfyUI nodes. | assets(), structured_prompt(), workflow() | test_video.py, test_video_setup.py |
 | `imagegen/plan.py` | 172 | Will this model fit on this card, and what to change when it does not. | cost_per_megapixel(), estimate(), is_out_of_memory(), out_of_memory_hints() | test_imagegen.py |
-| `imagegen/ref2va.py` | 48 | Pinned MiniMax H3 Ref2VA-VSA workflow. | assets(), workflow() | test_ref2va.py |
 | `imagegen/relayvsr.py` | 87 | Native ComfyUI RelayVSR contracts and verified weights; no GPU imports in the core. | **RelayVSRSetup**, assets(), requirements(), workflow() | test_relayvsr.py |
 | `imagegen/service.py` | 629 | The image studio: queue a ComfyUI workflow, watch it, keep the result. | **StudioError**, **GenerationRequest**, **ImageStudio** | test_imagegen.py |
 | `imagegen/templates.py` | 229 | Workflow templates: a ComfyUI graph with holes, loaded from JSON. | **TemplateError**, **Template**, templates(), by_key(), for_family(), bind(), apply_loras() | test_imagegen.py |
@@ -28,10 +30,11 @@ Image generation and editing through ComfyUI.
 | `imagegen/trellis_blender.py` | 185 | Blender background script: decimation, high-to-low PBR/normal bake, Draco/WebP. | progress(), main() |  |
 | `imagegen/trellis_web_worker.py` | 81 | Isolated Blender web export runner; executed in WSL, never in the core. | progress(), prepare(), main() |  |
 | `imagegen/trellis_worker.py` | 285 | Executed by the isolated TRELLIS.2 runtime, never imported by the core. | progress(), configure_pipeline(), asset_path(), configure_export(), prepare(), prepare_asset(), main() | test_trellis.py |
-| `imagegen/video.py` | 344 | Local Wan 2.2 I2V studio, sharing the Images engine and keeping MP4s in app data. | **VideoRequest**, **VideoStudio**, workflow() | test_ref2va.py, test_relayvsr.py, test_video.py +1 |
-| `imagegen/video_catalog.py` | 86 | Explicit local video profiles; the selected quantizations never change silently. | **VideoProfile**, profile(), assets(), local_path() | test_ref2va.py, test_video.py, test_video_finish.py |
+| `imagegen/video.py` | 349 | Local keyframe video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data. | **VideoRequest**, **VideoStudio**, workflow() | test_relayvsr.py, test_video.py, test_video_collections.py +2 |
+| `imagegen/video_catalog.py` | 62 | Explicit local video profiles; the selected quantizations never change silently. | **VideoProfile**, profile(), assets() | test_video.py, test_video_finish.py, test_video_setup.py |
+| `imagegen/video_collections.py` | 130 | Prompt collections: finished videos kept with every prompt and setting that made them. | **CollectionKeyframe**, **CollectionEntry**, **VideoCollection**, **VideoCollectionStore** | test_video_collections.py |
 | `imagegen/video_finish.py` | 105 | Local hero-video finishing: motion interpolation, Lanczos scaling and verified MP4s. | **VideoCancelled**, tools(), finish() | test_relayvsr.py, test_video.py, test_video_finish.py |
-| `imagegen/video_progress.py` | 112 | Observed ComfyUI node/step progress; stage weights are not time estimates. | **VideoProgress**, **ProgressStream** | test_ref2va.py, test_video_progress.py |
-| `imagegen/video_prompts.py` | 74 | Named positive/negative video prompt pairs, stored independently of gallery videos. | **VideoPromptInput**, **SavedVideoPrompt**, **VideoPromptStore** | test_video_prompts.py |
-| `imagegen/video_setup.py` | 245 | Explicit, resumable Ref2VA setup in the existing ComfyUI, with pinned and verified files. | **SetupCancelled**, **VideoModelSetup**, **Ref2VASetup**, asset_path(), verified_asset() | test_ref2va.py, test_relayvsr.py |
+| `imagegen/video_progress.py` | 112 | Observed ComfyUI node/step progress; stage weights are not time estimates. | **VideoProgress**, **ProgressStream** | test_video_progress.py, test_video_setup.py |
+| `imagegen/video_prompts.py` | 74 | Named positive/negative video prompt pairs, stored independently of gallery videos. | **VideoPromptInput**, **SavedVideoPrompt**, **VideoPromptStore** | test_video.py, test_video_prompts.py |
+| `imagegen/video_setup.py` | 232 | Explicit, resumable video model setup for the existing ComfyUI, with pinned and verified files. | **SetupCancelled**, **VideoModelSetup**, **KeyframeModelSetup**, asset_path(), verified_asset() | test_relayvsr.py, test_video_setup.py |
 | `imagegen/video_upscale.py` | 352 | Existing-video RelayVSR jobs, sharing the video task slot and external ComfyUI. | **UpscaleRequest**, **VideoUpscaler**, probe(), dimensions(), preparation_geometry(), frame_windows() | test_relayvsr.py |

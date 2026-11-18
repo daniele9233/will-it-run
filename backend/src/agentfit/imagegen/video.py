@@ -1,4 +1,4 @@
-"""Local Wan 2.2 I2V studio, sharing the Images engine and keeping MP4s in app data."""
+"""Local keyframe video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data."""
 from __future__ import annotations
 
 import json
@@ -7,129 +7,115 @@ import tempfile
 import threading
 import time
 import uuid
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
+import httpx
 from pydantic import BaseModel, Field, model_validator
 
 from agentfit import paths
 from agentfit.i18n import tr
-from agentfit.imagegen import ref2va, video_finish
+from agentfit.imagegen import ltx25, minimax_h3, video_finish
 from agentfit.imagegen import video_catalog as catalog
-from agentfit.imagegen.comfy import status_message
-from agentfit.imagegen.video_catalog import ENCODER, HIGH, LOW, VAE  # noqa: F401
+from agentfit.imagegen.comfy import ComfyUnavailable, status_message
+from agentfit.imagegen.keyframes import default_times, frame_indices
 from agentfit.imagegen.video_progress import ProgressStream, VideoProgress
-from agentfit.imagegen.video_setup import Ref2VASetup
+from agentfit.imagegen.video_setup import KeyframeModelSetup, asset_path
+
+# How long a running ComfyUI may leave status requests unanswered before the job fails.
+ENGINE_SILENCE_LIMIT = 900.0
+
+
+def _engine_busy(exc: ComfyUnavailable) -> bool:
+    """A read timeout means the engine is alive but slow; a refused or failed connection means it is gone."""
+    cause = exc.__cause__
+    return isinstance(cause, httpx.TimeoutException) and not isinstance(cause, httpx.ConnectTimeout)
 
 
 class VideoRequest(BaseModel):
     model_key: str = catalog.DEFAULT
+    image: str = Field(default="", max_length=500)
+    images: list[str] = Field(default_factory=list, max_length=9)
+    # Seconds on the output timeline, one per picture; empty spreads them from 0 to the end.
+    keyframe_times: list[float] = Field(default_factory=list, max_length=9)
     end_image: str = Field(default="", max_length=500)
-    image: str = Field(min_length=1, max_length=500)
     prompt: str = Field(min_length=1, max_length=10000)
     negative: str = Field(default="", max_length=10000)
-    width: int = Field(default=832, ge=256, le=1344)
-    height: int = Field(default=480, ge=256, le=1344)
-    frames: int = Field(default=33, ge=5, le=362)
+    width: int = Field(default=1344, ge=256, le=1408)
+    height: int = Field(default=768, ge=256, le=1408)
+    frames: int = Field(default=124, ge=5, le=362)
     duration_seconds: int | None = Field(default=None, ge=5, le=15)
     motion_frames: int | None = Field(default=None, ge=5, le=361)
-    fps: int = Field(default=16, ge=8, le=30)
+    fps: int = Field(default=24, ge=8, le=30)
     steps: int = Field(default=20, ge=4, le=60)
-    cfg: float = Field(default=3.5, ge=1, le=10)
+    cfg: float = Field(default=1.0, ge=1, le=10)
     seed: int = Field(default=-1, ge=-1, le=2147483647)
-    vsa_sparsity: float = Field(default=0.75, ge=0.0, le=0.98)
+    turbo: bool = False
+
+    def seconds(self) -> float:
+        return float(self.duration_seconds) if self.duration_seconds is not None else self.frames / self.fps
+
+    def times(self) -> list[float]:
+        return list(self.keyframe_times) or default_times(len(self.images), self.seconds())
 
     @model_validator(mode="after")
     def valid(self) -> VideoRequest:
         selected = catalog.profile(self.model_key)
-        for name in ("fps", "steps", "cfg"):
+        if self.images:
+            if len(self.images) > selected.max_images:
+                raise ValueError(tr("This video model accepts at most {count} keyframe pictures.").format(count=selected.max_images))
+            if self.image and self.image != self.images[0]:
+                raise ValueError(tr("The first keyframe picture was given twice with different files."))
+            self.image = self.images[0]
+        elif self.image:
+            self.images = [self.image]
+        if not self.image or not self.prompt.strip():
+            raise ValueError(tr("Choose at least one keyframe picture and describe the movement."))
+        if self.end_image or self.negative.strip() or self.motion_frames is not None:
+            raise ValueError(tr("Keyframe video models take ordered keyframe pictures only, without a separate ending picture, negative prompt or slow motion."))
+        if self.turbo and selected.turbo_steps is None:
+            raise ValueError(tr("This video model has no Turbo recipe."))
+        steps = selected.turbo_steps if self.turbo and selected.turbo_steps else selected.steps
+        for name, value in (("fps", selected.fps), ("steps", steps), ("cfg", selected.cfg)):
+            if name not in self.model_fields_set:
+                setattr(self, name, value)
+        if (self.steps, self.cfg, self.fps) != (steps, selected.cfg, selected.fps):
+            raise ValueError(tr("This video model uses {steps} steps, CFG {cfg} and {fps} FPS.").format(
+                steps=steps, cfg=selected.cfg, fps=selected.fps))
+        for name in ("width", "height"):
             if name not in self.model_fields_set:
                 setattr(self, name, getattr(selected, name))
-        if selected.input_mode == "reference":
-            for name in ("width", "height"):
-                if name not in self.model_fields_set:
-                    setattr(self, name, getattr(selected, name))
-            if "frames" not in self.model_fields_set:
-                self.frames = 124
-            if self.end_image or self.negative.strip() or self.motion_frames is not None:
-                raise ValueError(tr("Ref2VA-VSA uses one reference image, no ending frame, negative prompt or slow motion."))
-            if self.steps != 4 or self.cfg != 1 or self.fps != 24:
-                raise ValueError(tr("Ref2VA-VSA uses the 4-step Turbo recipe, CFG 1 and 24 FPS."))
         if self.duration_seconds is not None:
             if self.duration_seconds < selected.min_seconds:
                 raise ValueError(tr("This video model needs at least {seconds} seconds.").format(seconds=selected.min_seconds))
-            self.fps = selected.fps
-            self.frames = self.motion_frames or selected.frames_for(self.duration_seconds)
-            if selected.required_end:
-                if "width" not in self.model_fields_set and "height" not in self.model_fields_set:
-                    self.width, self.height = 1280, 720
-                if self.width * self.height < 1280 * 720:
-                    raise ValueError(tr("This 720p video model needs at least 1280 x 720 pixels. Choose a higher generation resolution."))
-        if (self.frames - selected.frame_offset) % selected.frame_stride or (selected.family != "ref2va" and self.frames > 361):
+            self.frames = selected.frames_for(self.duration_seconds)
+        elif "frames" not in self.model_fields_set:
+            self.frames = selected.frames_for(selected.min_seconds)
+        if (self.frames - selected.frame_offset) % selected.frame_stride:
             raise ValueError(tr("Video frames must follow {stride}n+{offset} for this model.").format(
                 stride=selected.frame_stride, offset=selected.frame_offset))
         if self.width % selected.size_multiple or self.height % selected.size_multiple:
             raise ValueError(tr("This video model needs dimensions divisible by {multiple}.").format(multiple=selected.size_multiple))
-        if selected.required_end and not self.end_image:
-            raise ValueError(tr("This video model needs both a starting and an ending picture."))
-        if not self.prompt.strip():
-            raise ValueError(tr("Choose an uploaded picture and describe the movement."))
-        for image in (self.image, self.end_image):
+        if self.keyframe_times:
+            if len(self.keyframe_times) != len(self.images):
+                raise ValueError(tr("Give one time for each keyframe picture."))
+            if any(t < 0 or t > self.seconds() for t in self.keyframe_times):
+                raise ValueError(tr("Keyframe times must be between 0 and {seconds} seconds.").format(seconds=f"{self.seconds():g}"))
+        indices = frame_indices(self.times(), self.seconds(), self.frames)
+        if any(b <= a for a, b in pairwise(indices)):
+            raise ValueError(tr("Keyframe times must increase and land on different frames."))
+        for image in self.images:
             if ".." in image or image.startswith(("/", "\\")) or ":" in image:
-                raise ValueError(tr("Choose an uploaded picture and describe the movement."))
+                raise ValueError(tr("Choose at least one keyframe picture and describe the movement."))
         return self
 
 
 def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, Any]:
-    """Bind the official family-specific first/last-frame recipes to local GGUF loaders."""
-    selected = catalog.profile(r.model_key)
-    if selected.family == "ref2va":
-        return ref2va.workflow(r, files, job_id)
-
-    def node(kind: str, **inputs: Any) -> dict[str, Any]:
-        return {"class_type": kind, "inputs": inputs}
-
-    conditioning = "WanImageToVideo" if selected.family == "wan22-i2v" and not r.end_image else "WanFirstLastFrameToVideo"
-    shift = 5.0 if conditioning == "WanImageToVideo" else 8.0
-    graph = {
-        "1": node("UnetLoaderGGUF", unet_name=files["high"]),
-        "3": node("CLIPLoader", clip_name=files["encoder"], type="wan", device="default"),
-        "4": node("VAELoader", vae_name=files["vae"]),
-        "5": node("CLIPTextEncode", clip=["3", 0], text=r.prompt),
-        "6": node("CLIPTextEncode", clip=["3", 0], text=r.negative),
-        "7": node("LoadImage", image=r.image),
-        "20": node("ResizeAndPadImage", image=["7", 0], target_width=r.width, target_height=r.height,
-                   padding_color="black", interpolation="lanczos"),
-        "8": node(conditioning, positive=["5", 0], negative=["6", 0], vae=["4", 0],
-                  start_image=["20", 0], width=r.width, height=r.height, length=r.frames, batch_size=1),
-        "9": node("ModelSamplingSD3", model=["1", 0], shift=shift),
-        "13": node("VAEDecode", samples=["12" if selected.low else "11", 0], vae=["4", 0]),
-        "14": node("CreateVideo", images=["13", 0], fps=r.fps),
-        "15": node("SaveVideo", video=["14", 0], filename_prefix=f"WillItRun/video/{job_id}", format="mp4"),
-    }
-    if r.end_image:
-        graph["16"] = node("LoadImage", image=r.end_image)
-        graph["21"] = node("ResizeAndPadImage", image=["16", 0], target_width=r.width, target_height=r.height,
-                           padding_color="black", interpolation="lanczos")
-        graph["8"]["inputs"]["end_image"] = ["21", 0]
-    if selected.vision:
-        graph["17"] = node("CLIPVisionLoader", clip_name=files["vision"])
-        graph["18"] = node("CLIPVisionEncode", clip_vision=["17", 0], image=["7", 0], crop="none")
-        graph["19"] = node("CLIPVisionEncode", clip_vision=["17", 0], image=["16", 0], crop="none")
-        graph["8"]["inputs"].update(clip_vision_start_image=["18", 0], clip_vision_end_image=["19", 0])
-    common = dict(steps=r.steps, cfg=r.cfg, sampler_name=selected.sampler, scheduler="simple",
-                  positive=["8", 0], negative=["8", 1])
-    if selected.low:
-        split = r.steps // 2
-        graph["2"] = node("UnetLoaderGGUF", unet_name=files["low"])
-        graph["10"] = node("ModelSamplingSD3", model=["2", 0], shift=shift)
-        graph["11"] = node("KSamplerAdvanced", **common, noise_seed=r.seed, model=["9", 0], latent_image=["8", 2],
-                           add_noise="enable", start_at_step=0, end_at_step=split, return_with_leftover_noise="enable")
-        graph["12"] = node("KSamplerAdvanced", **common, noise_seed=r.seed, model=["10", 0], latent_image=["11", 0],
-                           add_noise="disable", start_at_step=split, end_at_step=r.steps, return_with_leftover_noise="disable")
-    else:
-        graph["11"] = node("KSampler", **common, seed=r.seed, model=["9", 0], latent_image=["8", 2], denoise=1.0)
-    return graph
+    """The family's own keyframe graph."""
+    if catalog.profile(r.model_key).family == "minimax-h3":
+        return minimax_h3.workflow(r, files, job_id)
+    return ltx25.workflow(r, files, job_id)
 
 
 class VideoStudio:
@@ -137,9 +123,17 @@ class VideoStudio:
         self.images = images
         self.directory = directory or paths.local_dir() / "videos"
         self.models_dir = models_dir or Path(r"D:\Models")
-        self.ref2va = Ref2VASetup(getattr(images, "engine", None), self.models_dir)
+        engine = getattr(images, "engine", None)
+        self.setups = {
+            p.family: KeyframeModelSetup(engine, self.models_dir / "video" / catalog.FOLDERS[p.family],
+                                         [a for a in catalog.assets() if (a["role"], a["filename"], a["folder"]) in p.requirements()],
+                                         recommended_vram_gb=p.recommended_vram_gb)
+            for p in catalog.PROFILES}
         self.lock = threading.RLock()
         self.jobs: dict[str, dict[str, Any]] = {}
+
+    def setup(self, key: str) -> KeyframeModelSetup:
+        return self.setups[catalog.profile(key).family]
 
     def status(self) -> dict[str, Any]:
         client = self.images.client
@@ -148,46 +142,44 @@ class VideoStudio:
         listed = client.all_models(folders) if available else {}
         objects = client.object_info() if available else {}
         models = []
-        expected_sizes = {a["filename"]: a["size"] for a in catalog.assets()}
-        ref_setup = self.ref2va.status()
         for selected in catalog.PROFILES:
+            setup = self.setups[selected.family]
+            state = setup.status()
+            assets = {a["filename"]: a for a in setup.assets}
             files = {}
             rows = []
             for role, name, folder in selected.requirements():
                 names = listed.get(folder) or []
                 found = next((n for n in names if n.replace("\\", "/").split("/")[-1] == name), None)
-                source = catalog.local_path(self.models_dir, name, folder)
+                source = asset_path(setup.root, assets[name])
                 present = source.is_file()
-                valid_size = not present or name not in expected_sizes or source.stat().st_size == expected_sizes[name]
+                valid_size = not present or source.stat().st_size == assets[name]["size"]
                 if found and valid_size:
                     files[role] = found
                 rows.append({"role": role, "name": name, "visible": found is not None and valid_size,
                              "source_present": present, "size_valid": valid_size})
-            dummy = VideoRequest(model_key=selected.key, image="check.png",
-                                 end_image="" if selected.input_mode == "reference" else "end.png", prompt="check")
+            dummy = VideoRequest(model_key=selected.key, images=["first.png", "middle.png", "last.png"], prompt="check",
+                                 turbo=selected.turbo_steps is not None)
             graph = workflow(dummy, {role: name for role, name, _ in selected.requirements()}, "check")
             classes = {n["class_type"] for n in graph.values()}
-            # The original single-picture mode has a different conditioning node.
-            if selected.family == "wan22-i2v":
-                classes.add("WanImageToVideo")
             missing = sorted(classes - objects.keys()) if available else []
+            runtime_ready = state["weights_ready"] and state["source_ready"] and state["environment"]["ready"]
             models.append({"key": selected.key, "name": selected.name,
                            "ready": available and len(files) == len(selected.requirements()) and not missing
-                           and (selected.family != "ref2va" or (ref_setup["weights_ready"] and ref_setup["source_ready"]
-                                                               and ref_setup["environment"]["ready"])),
-                           "components": rows, "files": files, "missing_nodes": missing,
-                           "required_end": selected.required_end, "input_mode": selected.input_mode,
+                           and runtime_ready,
+                           "components": rows, "files": files, "missing_nodes": missing, "setup": state,
+                           "input_mode": selected.input_mode, "max_images": selected.max_images,
                            "size_multiple": selected.size_multiple, "frame_stride": selected.frame_stride,
                            "frame_offset": selected.frame_offset, "min_seconds": selected.min_seconds,
+                           "turbo_steps": selected.turbo_steps,
                            "defaults": {"fps": selected.fps, "steps": selected.steps, "cfg": selected.cfg,
                                         "width": selected.width, "height": selected.height}})
         with self.lock:
             jobs = [dict(j) for j in reversed(list(self.jobs.values()))]
-        default = models[0]
         finishing = video_finish.tools()
-        return {**default, "available": available, "models": models, "jobs": jobs, "ref2va": ref_setup,
+        return {"available": available, "models": models, "jobs": jobs,
                 "finishing": {"ready": all(finishing.values()), "tools": finishing,
-                              "width": 1920, "height": 1080, "fps": 30, "min_seconds": 6, "max_seconds": 15}}
+                              "width": 1920, "height": 1080, "fps": 30, "min_seconds": 5, "max_seconds": 15}}
 
     def generate(self, request: VideoRequest) -> dict[str, Any]:
         status = self.status()
@@ -223,6 +215,7 @@ class VideoStudio:
         started = time.monotonic()
         prompt_id = None
         graph = workflow(request, files, job["id"])
+        save_id = next((key for key, node in graph.items() if node["class_type"] == "SaveVideo"), "16")
         progress = VideoProgress(graph)
         stream = ProgressStream(client)
 
@@ -235,6 +228,7 @@ class VideoStudio:
             with self.lock:
                 job.update(stage=value, percent={"finishing": 90, "verifying": 97}[value], step=None, total=None)
 
+        silent_since: float | None = None
         try:
             prompt_id = client.queue(graph)
             progress.prompt_id = prompt_id
@@ -257,13 +251,23 @@ class VideoStudio:
                     if update:
                         with self.lock:
                             job.update(update)
-                entry = client.history(prompt_id)
+                try:
+                    entry = client.history(prompt_id)
+                    silent_since = None
+                except ComfyUnavailable as exc:
+                    if not _engine_busy(exc):
+                        raise
+                    # Under memory pressure ComfyUI keeps working but answers HTTP late.
+                    silent_since = silent_since or time.monotonic()
+                    if time.monotonic() - silent_since >= ENGINE_SILENCE_LIMIT:
+                        raise
+                    entry = None
                 if entry:
                     break
                 time.sleep(1)
             if error := status_message(entry):
                 raise ValueError(error)
-            outputs = entry.get("outputs", {}).get("15", {})
+            outputs = entry.get("outputs", {}).get(save_id, {})
             videos = outputs.get("images", []) + outputs.get("videos", [])
             video = next((v for v in videos if str(v.get("filename", "")).lower().endswith(".mp4")), None)
             if not video:
@@ -280,17 +284,18 @@ class VideoStudio:
                 final = None
                 if request.duration_seconds is not None:
                     output = Path(scratch) / "final.mp4"
-                    audio = {"audio_fps": request.fps} if request.model_key == ref2va.KEY else {}
                     final = video_finish.finish(source, output, seconds=request.duration_seconds,
-                                                source_frames=request.frames, cancelled=cancelled, stage=stage, **audio)
+                                                source_frames=request.frames, cancelled=cancelled, stage=stage,
+                                                audio_fps=request.fps)
+                runtime = {"keyframe_times": request.times(),
+                           "keyframe_frames": frame_indices(request.times(), request.seconds(), request.frames)}
                 metadata = {"id": job["id"], "request": request.model_dump(), "created_at": job["created_at"],
                             "elapsed": round(time.monotonic() - started, 1), "model": job["model_name"],
                             "output": final,
-                            "runtime": {"source_commit": ref2va.COMMIT, "sparsity": request.vsa_sparsity}
-                            if request.model_key == ref2va.KEY else None,
-                            "timing": {"native_motion_seconds": (request.frames if request.model_key == ref2va.KEY else request.frames - 1) / request.fps,
+                            "runtime": runtime,
+                            "timing": {"native_motion_seconds": request.frames / request.fps,
                                        "export_seconds": request.duration_seconds,
-                                       "mode": "slow-motion" if request.motion_frames else "continuous"}}
+                                       "mode": "continuous"}}
                 pending = Path(scratch) / "recipe.json"
                 pending.write_text(json.dumps(metadata, ensure_ascii=False), encoding="utf-8")
                 with self.lock:

@@ -46,6 +46,16 @@
       "port": 8791
     },
     {
+      "name": "willitrun-core-token",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$env:AGENTFIT_HOME = Join-Path $env:TEMP 'willitrun-live-home'; & backend\\.venv\\Scripts\\willitrun.exe serve --port 8766 --token live"
+      ],
+      "port": 8766
+    },
+    {
       "name": "willitrun-ui-token",
       "runtimeExecutable": "powershell",
       "runtimeArgs": [

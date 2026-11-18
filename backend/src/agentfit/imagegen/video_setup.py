@@ -1,4 +1,4 @@
-"""Explicit, resumable Ref2VA setup in the existing ComfyUI, with pinned and verified files."""
+"""Explicit, resumable video model setup for the existing ComfyUI, with pinned and verified files."""
 from __future__ import annotations
 
 import json
@@ -12,10 +12,8 @@ from typing import Any
 
 import httpx
 
-from agentfit import paths
 from agentfit.i18n import tr
-from agentfit.imagegen import ref2va
-from agentfit.media_runtime import FLAGS, digest_file, safe_member, source_checkout
+from agentfit.media_runtime import FLAGS, digest_file, safe_member
 
 
 class SetupCancelled(Exception):
@@ -172,8 +170,8 @@ class VideoModelSetup:
                 raise ValueError(tr("Not enough disk space for the video models and the safety reserve."))
             self.prepare()
             with (
-                httpx.Client(follow_redirects=True, timeout=120, headers={"User-Agent": "WillItRun/Ref2VA-setup"}) as client,
-                ThreadPoolExecutor(max_workers=3, thread_name_prefix="ref2va-download") as workers,
+                httpx.Client(follow_redirects=True, timeout=120, headers={"User-Agent": "WillItRun/video-setup"}) as client,
+                ThreadPoolExecutor(max_workers=3, thread_name_prefix="video-download") as workers,
             ):
                 tasks = [workers.submit(self._download, asset, client) for asset in assets]
                 try:
@@ -194,34 +192,29 @@ class VideoModelSetup:
             self._environment_at = 0.0
 
 
-class Ref2VASetup(VideoModelSetup):
-    def __init__(self, engine: Any, models_dir: Path) -> None:
-        super().__init__(engine, models_dir / "video" / "ref2va", ref2va.assets())
+class KeyframeModelSetup(VideoModelSetup):
+    """A keyframe video model that runs on native ComfyUI nodes: verified weights plus a CUDA BF16 check."""
 
-    def prepare(self) -> None:
-        install = self.engine.install()
-        source_checkout(ref2va.REPOSITORY, install.root / "custom_nodes" / "ComfyUI-Ref2VA-VSA",
-                        self.root, paths.logs_dir() / "ref2va-setup.log")
+    def __init__(self, engine: Any, directory: Path, assets: list[dict[str, Any]], *, recommended_vram_gb: int) -> None:
+        super().__init__(engine, directory, assets)
+        self.recommended_vram_gb = recommended_vram_gb
 
     def status(self) -> dict[str, Any]:
         result = super().status()
-        return {**result, "source_ready": result["environment"].get("source_commit") == ref2va.COMMIT,
-                "source": f"https://github.com/{ref2va.REPOSITORY}", "source_commit": ref2va.COMMIT,
-                "recommended_vram_gb": 24}
+        # Native nodes ship with ComfyUI itself: there is no custom-node source to pin.
+        return {**result, "source_ready": True, "recommended_vram_gb": self.recommended_vram_gb}
 
     def environment(self) -> dict[str, Any]:
         if time.monotonic() - self._environment_at < 60:
             return dict(self._environment)
-        result: dict[str, Any] = {"ready": False, "error": None, "vram_gb": None, "source_commit": None}
+        result: dict[str, Any] = {"ready": False, "error": None, "vram_gb": None}
         install = self.engine.install() if self.engine is not None else None
         if install is None or install.python is None:
             result["error"] = tr("ComfyUI was not found on this PC.")
         else:
             query = (
-                "import json,torch,comfy_kitchen as ck; "
-                "cuda=ck.list_backends().get('cuda',{}); "
-                "print(json.dumps({'ready':bool(torch.cuda.is_available() and torch.cuda.is_bf16_supported() "
-                "and cuda.get('available') and 'sol_attn' in cuda.get('capabilities',[])), "
+                "import json,torch; "
+                "print(json.dumps({'ready':bool(torch.cuda.is_available() and torch.cuda.is_bf16_supported()), "
                 "'vram_gb':torch.cuda.get_device_properties(0).total_memory/1024**3 if torch.cuda.is_available() else None}))"
             )
             try:
@@ -231,13 +224,7 @@ class Ref2VASetup(VideoModelSetup):
                     raise ValueError(probe.stderr.decode("utf-8", errors="replace")[-1000:])
                 result.update(json.loads(probe.stdout.decode("utf-8").splitlines()[-1]))
                 if not result["ready"]:
-                    result["error"] = tr("Ref2VA-VSA needs CUDA BF16 and the comfy-kitchen sol_attn CUDA backend.")
-                source = install.root / "custom_nodes" / "ComfyUI-Ref2VA-VSA"
-                if (source / ".git").is_dir():
-                    revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=source,
-                                              capture_output=True, timeout=15, creationflags=FLAGS)
-                    if revision.returncode == 0:
-                        result["source_commit"] = revision.stdout.decode().strip()
+                    result["error"] = tr("This video model needs an NVIDIA GPU with CUDA and BF16 support.")
             except (OSError, ValueError, subprocess.SubprocessError) as exc:
                 result.update(ready=False, error=str(exc))
         self._environment, self._environment_at = result, time.monotonic()

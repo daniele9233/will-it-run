@@ -973,6 +973,8 @@ export interface ImageModel {
   ready: boolean;
   download_bytes: number | null;
   sampling: Record<string, unknown>;
+  /** Sampling that replaces `sampling` for one kind of workflow, e.g. { edit: { cfg: 2.5 } }. */
+  kind_sampling?: Record<string, Record<string, unknown>>;
   installed: boolean;
   missing: ImageComponent[];
   template_kinds: string[];
@@ -1220,20 +1222,35 @@ export interface ThreeDLabEngine {
 export interface ThreeDLabStatus { engines: ThreeDLabEngine[]; error: string | null }
 export interface SplatRecording { id: string; model: string; bytes: number; elapsed: number; format: string }
 
-export type VideoInputMode = "single_or_first_last" | "first_last" | "reference";
+export type VideoInputMode = "keyframes";
+export interface VideoSetupJob { status: string; percent: number; received: number; total: number; file: string; error: string | null }
+export interface VideoSetupStatus {
+  job: VideoSetupJob;
+  environment: { ready: boolean; error: string | null; vram_gb: number | null };
+  weights_ready: boolean; source_ready: boolean; models_dir: string; recommended_vram_gb: number;
+}
 export interface VideoModel {
   key: string; name: string; ready: boolean;
   components: { name: string; visible: boolean; source_present: boolean | null; size_valid: boolean }[];
-  missing_nodes: string[]; required_end: boolean; input_mode: VideoInputMode;
+  missing_nodes: string[]; input_mode: VideoInputMode; max_images: number;
   size_multiple: number; frame_stride: number; frame_offset: number; min_seconds: number;
+  turbo_steps: number | null; setup: VideoSetupStatus;
   defaults: { fps: number; steps: number; cfg: number; width: number; height: number };
 }
-export interface Ref2VAStatus {
-  job: { status: string; percent: number; received: number; total: number; file: string; error: string | null };
-  environment: { ready: boolean; error: string | null; vram_gb: number | null; source_commit: string | null };
-  weights_ready: boolean; source_ready: boolean; models_dir: string; source: string;
-  source_commit: string; recommended_vram_gb: number;
+
+/** One keyframe picture of a collection video, with the image prompt and workflow that made it. */
+export interface VideoCollectionKeyframe {
+  file: string; label: string; time: number | null; prompt: string; workflow: string; edited_from: string | null;
+  image_model: string; width: number | null; height: number | null; seed: number | null; steps: number | null;
+  cfg: number | null; ready: boolean;
 }
+export interface VideoCollectionEntry {
+  id: string; title: string; video: string; video_ready: boolean; model_key: string; model_name: string; prompt: string;
+  duration_seconds: number; keyframe_times: number[]; turbo: boolean; seed: number | null; width: number | null;
+  height: number | null; elapsed: number | null; notes: string; keyframes: VideoCollectionKeyframe[];
+}
+/** Finished videos kept with every prompt and setting that made them (GET /api/videos/collections). */
+export interface VideoCollection { id: string; title: string; description: string; created_at: number; entries: VideoCollectionEntry[] }
 
 export interface UpscaledVideo {
   id: string; model: string; elapsed: number; processing_fps: number | null;
@@ -1246,7 +1263,7 @@ export interface RelayVSRStatus {
   available: boolean; tools_ready: boolean;
   models: { factor: 2 | 4; name: string; ready: boolean; missing_nodes: string[] }[];
   setup: {
-    job: Ref2VAStatus["job"];
+    job: VideoSetupJob;
     environment: { ready: boolean; error: string | null; vram_gb: number | null; native_nodes: boolean };
     weights_ready: boolean; models_dir: string;
   };

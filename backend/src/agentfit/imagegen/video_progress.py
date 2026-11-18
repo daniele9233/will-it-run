@@ -16,7 +16,7 @@ class VideoProgress:
         self.phases = {key: (("decoding", 82) if node["class_type"].startswith("VAEDecode") else
                              ("upscaling", 82) if node["class_type"] == "VSRDecode" else
                              ("encoding", 88 if node["class_type"] == "SaveVideo" else 86))
-                       for key, node in graph.items() if node["class_type"] in ("VAEDecode", "VAEDecodeAudio", "VSRDecode", "CreateVideo", "SaveVideo")}
+                       for key, node in graph.items() if node["class_type"] in ("VAEDecode", "VAEDecodeAudio", "LTXVAudioVAEDecode", "VSRDecode", "CreateVideo", "SaveVideo")}
         self.frame_decoders = {key for key, node in graph.items() if node["class_type"] == "VSRDecode"}
         self.percent = 0
         self.node: str | None = None

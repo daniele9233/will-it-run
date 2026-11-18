@@ -457,16 +457,27 @@ def build_files() -> dict[str, str]:
         for name, items in sorted(subs.items()):
             out[f"{package}-{name}.md"] = package_card(package, items, graph, used_by, tests_of, "", routes_in, sub=name)
 
-    # HTTP routes
-    lines = [HEADER, "# HTTP routes\n", f"{len(routes)} routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.\n"]
+    # HTTP routes: one card, or an index plus one card per routes file once one card no longer fits a small window
     by_file: dict[str, list[Route]] = defaultdict(list)
     for r in routes:
         by_file[r.file].append(r)
-    for file, items in sorted(by_file.items()):
-        lines += [f"## `api/{file}` ({len(items)})\n", "| Method | Path | Handler | What it does |", "|---|---|---|---|"]
-        lines += [f"| {r.method} | `{r.path}` | `{r.handler}` | {cell(r.doc)} |" for r in items]
-        lines.append("")
-    out["api.md"] = "\n".join(lines)
+
+    def route_table(file: str, items: list[Route]) -> list[str]:
+        return [f"## `api/{file}` ({len(items)})\n", "| Method | Path | Handler | What it does |", "|---|---|---|---|",
+                *[f"| {r.method} | `{r.path}` | `{r.handler}` | {cell(r.doc)} |" for r in items], ""]
+
+    head = [HEADER, "# HTTP routes\n", f"{len(routes)} routes, all under the token guard of `api/server.py`. Handlers are plain functions: grep the name.\n"]
+    whole = "\n".join(head + [line for file, items in sorted(by_file.items()) for line in route_table(file, items)])
+    if len(whole) <= CARD_LIMIT:
+        out["api.md"] = whole
+    else:
+        cards = {file: f"api-{Path(file).stem.removesuffix('_routes')}.md" for file in by_file}
+        out["api.md"] = "\n".join([*head, "One card per routes file:\n", "| File | Routes | Card |", "|---|---:|---|",
+                                   *[f"| `api/{file}` | {len(items)} | `{cards[file]}` |" for file, items in sorted(by_file.items())], ""])
+        for file, items in sorted(by_file.items()):
+            out[cards[file]] = "\n".join([HEADER, f"# HTTP routes in `api/{file}`\n",
+                                          "All under the token guard of `api/server.py`; the other files are listed in `api.md`.\n",
+                                          *route_table(file, items)])
 
     # database
     lines = [HEADER, "# Database (SQLite, numbered migrations in `backend/src/agentfit/migrations/`)\n",
@@ -530,7 +541,9 @@ def build_files() -> dict[str, str]:
     for package, mods in sorted(packages.items()):
         purpose = purpose_of(package, modules, architecture)
         lines.append(f"| `{package}` | {cell(purpose)} | {len(mods)} | {sum(m.loc for m in mods):,} | {cell(', '.join(sorted(graph.get(package, ()))))} | `{package}.md` |")
-    lines += ["", "## Other cards\n", "- `api.md`: every HTTP route · `db.md`: every table · `frontend.md`: every UI file, what it calls, the Rust shell · `tests.md`: every test file\n",
+    api_cards = sorted(name for name in out if name.startswith("api-"))
+    api_line = "- `api.md`: every HTTP route" + (f" (then {', '.join(f'`{n}`' for n in api_cards)})" if api_cards else "")
+    lines += ["", "## Other cards\n", f"{api_line} · `db.md`: every table · `frontend.md`: every UI file, what it calls, the Rust shell · `tests.md`: every test file\n",
               "## Documents (`docs/`)\n", "| File | Title | About |", "|---|---|---|"]
     for path in listing(DOCS, "*.md", deep=False):
         text = path.read_text(encoding="utf-8-sig")

@@ -10,7 +10,7 @@ export interface VideoPromptPair { prompt: string; negative: string }
 export interface SavedVideoPrompt extends VideoPromptPair { id: string; name: string; created_at: number }
 const textStyle = "selectable w-full resize-y rounded-md border border-line bg-bg p-3 text-sm leading-relaxed text-ink";
 
-function PromptText({ label, value, empty, rows = 5 }: { label: string; value: string; empty?: string; rows?: number }) {
+export function PromptText({ label, value, empty, rows = 5 }: { label: string; value: string; empty?: string; rows?: number }) {
   const input = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   async function copy() {

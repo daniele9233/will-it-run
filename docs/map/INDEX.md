@@ -4,13 +4,13 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-201 Python files (48,857 lines) · 1040 public symbols · 186 HTTP routes · 23 tables · 64 test files (1350 tests) · 90 UI files (22,799 lines).
+204 Python files (49,271 lines) · 1051 public symbols · 191 HTTP routes · 23 tables · 65 test files (1360 tests) · 92 UI files (23,059 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
 | Package | What it is | Files | Lines | Depends on | Card |
 |---|---|---:|---:|---|---|
-| `api` | Local HTTP API consumed by the desktop UI. | 9 | 2,699 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
+| `api` | Local HTTP API consumed by the desktop UI. | 9 | 2,750 | arena, benchmark, brain, catalog, clone, cloud, core, fit, hardware, imagegen, lmstudio, teams, workflows | `api.md` |
 | `arena` | The Arena: reliability tests for models, checked by code and never by another model. | 51 | 9,587 | cloud, core, fit, workflows | `arena.md` |
 | `benchmark` | Local measurement | 1 | 237 | core, hardware, lmstudio | `benchmark.md` |
 | `brain` | The Project Brain: the permanent memory of each project. | 13 | 3,050 | core | `brain.md` |
@@ -20,15 +20,15 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 33 | 4,009 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
 | `fit` | Quantization tables, memory, speed, fit categories | 6 | 1,005 | core, hardware | `fit.md` |
 | `hardware` | Detection and the usable-memory budget | 6 | 1,029 | core | `hardware.md` |
-| `imagegen` | Image generation and editing through ComfyUI. | 25 | 6,507 | core, hardware | `imagegen.md` |
+| `imagegen` | Image generation and editing through ComfyUI. | 28 | 6,852 | core, hardware | `imagegen.md` |
 | `lmstudio` | CLI wrapper, REST client, runtime | 6 | 1,364 | core, fit, hardware | `lmstudio.md` |
-| `locales` | Translation catalogs, keyed by the English text. | 2 | 871 |  | `locales.md` |
+| `locales` | Translation catalogs, keyed by the English text. | 2 | 889 |  | `locales.md` |
 | `teams` | AI team builder: specializations, roles, model assignment and resource planning. | 5 | 2,538 | catalog, cloud, core, fit, hardware, lmstudio, workflows | `teams.md` |
 | `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,607 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
 
 ## Other cards
 
-- `api.md`: every HTTP route · `db.md`: every table · `frontend.md`: every UI file, what it calls, the Rust shell · `tests.md`: every test file
+- `api.md`: every HTTP route (then `api-arena.md`, `api-clone.md`, `api-cloud.md`, `api-image.md`, `api-lab.md`, `api-prompt.md`, `api-server.md`, `api-trellis.md`, `api-video.md`) · `db.md`: every table · `frontend.md`: every UI file, what it calls, the Rust shell · `tests.md`: every test file
 
 ## Documents (`docs/`)
 
@@ -57,6 +57,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `RELEASE_NOTES_0.4.0.md` | RELEASE_NOTES_0.4.0 | Hardware fit and visual quality depend on the model and settings. |
 | `RELEASE_NOTES_0.4.1.md` | Will It Run 0.4.1 | This release retires Voice and Qwen 3D Coder and adds observed video progress. |
 | `RELEASE_NOTES_0.4.2.md` | Will It Run 0.4.2 | Local reference-video generation and existing-video restoration, with verified model setup, explicit input modes and measured GPU results. |
+| `RELEASE_NOTES_0.4.3.md` | Will It Run 0.4.3 | Keyframe video: first frame, first and last frame, or one continuous shot through up to nine pictures, with two new local models, prompt collections… |
 | `RELEASING.md` | Releasing | Every new version of Will It Run is published as a [GitHub release](https://github.com/daniele9233/will-it-run/releases) with the installer and its S… |
 | `SCREENS.md` | Screenshots | Immagini di ogni schermata dell'app, a 1600×1000 (la finestra è 1440×900, quindi il layout è quello reale o più largo). |
 | `SECURITY.md` | Security | Will It Run runs local models that can call tools on your computer. |

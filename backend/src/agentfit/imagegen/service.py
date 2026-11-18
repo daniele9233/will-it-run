@@ -222,7 +222,7 @@ class ImageStudio:
     # -- readiness ----------------------------------------------------------
     def graph_for(self, profile: catalog.ModelProfile, template: templates.Template, request: GenerationRequest) -> dict[str, Any]:
         values: dict[str, Any] = dict(template.defaults)
-        values.update(profile.sampling)
+        values.update(profile.sampling_for(template.kind))
         values.update(
             {
                 "prompt": _with_prefix(profile.prompt_prefix, request.prompt),

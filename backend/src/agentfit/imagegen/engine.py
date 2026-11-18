@@ -245,12 +245,12 @@ class ComfyEngine:
                 if (video_models / "video" / role).is_dir():
                     mappings[role] = f"video/{role}/"
             extra.write_text(yaml.safe_dump({"willitrun_video": mappings}), encoding="utf-8")
-            for runtime in ("ref2va", "relayvsr"):
+            for runtime in ("minimaxh3", "relayvsr", "ltx25"):
                 runtime_models = video_models / "video" / runtime
                 if runtime_models.is_dir():
                     with extra.open("a", encoding="utf-8") as output:
                         yaml.safe_dump({f"willitrun_{runtime}": {"base_path": str(runtime_models),
-                                       **{role: f"{role}/" for role in ("diffusion_models", "text_encoders", "vae", "loras")
+                                       **{role: f"{role}/" for role in ("diffusion_models", "text_encoders", "vae", "loras", "latent_upscale_models")
                                           if (runtime_models / role).is_dir()}}}, output)
             command.extend(["--extra-model-paths-config", str(extra)])
         creation = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0

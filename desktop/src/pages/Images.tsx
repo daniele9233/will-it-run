@@ -29,6 +29,7 @@ import { api, getBackend } from "../lib/api";
 import { secondsLabel } from "../lib/format";
 import { errorMessage, useBus, useInterval, useLoad } from "../lib/hooks";
 import { t } from "../lib/i18n";
+import { samplingChanges, samplingFor } from "../lib/imageSampling";
 import { savePicture } from "../lib/imageSave";
 import { useApp } from "../lib/store";
 import type {
@@ -170,6 +171,7 @@ export function ImagesPage() {
   // A preset with LoRAs belongs with the LoRAs; one that only changes steps and CFG belongs with the sampling.
   const loraPresets = useMemo(() => (model?.presets ?? []).filter((preset) => preset.loras.length > 0), [model]);
   const samplingPresets = useMemo(() => (model?.presets ?? []).filter((preset) => preset.loras.length === 0), [model]);
+  const modeSampling = useMemo(() => samplingFor(model, mode), [model, mode]);
 
   function applyPreset(preset: ImagePreset) {
     const options = model?.lora_options ?? [];
@@ -219,14 +221,17 @@ export function ImagesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [template?.key]);
 
+  function applySampling(values: Record<string, unknown>) {
+    if (typeof values.steps === "number") setSteps(values.steps);
+    if (typeof values.cfg === "number") setCfg(values.cfg);
+    if (typeof values.sampler === "string") setSampler(values.sampler);
+    if (typeof values.scheduler === "string") setScheduler(values.scheduler);
+  }
+
   // The settings of a model chosen for the first time: steps, CFG, sampler, resolution.
   useEffect(() => {
     if (!model) return;
-    const sampling = model.sampling as Record<string, number | string | undefined>;
-    if (typeof sampling.steps === "number") setSteps(sampling.steps);
-    if (typeof sampling.cfg === "number") setCfg(sampling.cfg);
-    if (typeof sampling.sampler === "string") setSampler(sampling.sampler);
-    if (typeof sampling.scheduler === "string") setScheduler(sampling.scheduler);
+    applySampling(samplingFor(model, mode));
     // The shape and size the model's author recommends, and the negative prompt it was tuned with.
     if (model.aspect && ASPECTS.some((item) => item.value === model.aspect)) setAspect(model.aspect);
     if (model.megapixels) setMegapixels(model.megapixels);
@@ -238,6 +243,14 @@ export function ImagesPage() {
   useEffect(() => {
     if (model && !model.kinds.includes(mode)) setMode(model.kinds.includes("txt2img") ? "txt2img" : (model.kinds[0] as Mode));
   }, [model, mode]);
+
+  // Moving between generating and editing changes only what the model wants different there: Qwen-Image UC
+  // generates at CFG 1 and edits at 2.5 (at 1 an edit ignores its instruction). Other values stay as set.
+  const samplingKind = useRef<Mode>(mode);
+  useEffect(() => {
+    applySampling(samplingChanges(model, samplingKind.current, mode));
+    samplingKind.current = mode;
+  }, [mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What this model and this workflow still need, asked of the engine itself.
   useEffect(() => {
@@ -748,12 +761,12 @@ export function ImagesPage() {
               <Collapsible title={t("Sampling")}>
                 <div className="grid gap-2 pt-1">
                   <p className="text-xs text-ink-3">
-                    {model?.sampling?.steps
+                    {modeSampling.steps
                       ? t("This model was trained for {steps} steps, CFG {cfg}, {sampler} / {scheduler}. Change them only if the picture says so.", {
-                          steps: Number(model.sampling.steps),
-                          cfg: String(model.sampling.cfg ?? "1"),
-                          sampler: String(model.sampling.sampler ?? "euler"),
-                          scheduler: String(model.sampling.scheduler ?? "simple"),
+                          steps: Number(modeSampling.steps),
+                          cfg: String(modeSampling.cfg ?? "1"),
+                          sampler: String(modeSampling.sampler ?? "euler"),
+                          scheduler: String(modeSampling.scheduler ?? "simple"),
                         })
                       : t("Leave these as they are until the pictures give you a reason.")}
                   </p>

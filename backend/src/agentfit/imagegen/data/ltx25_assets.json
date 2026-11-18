@@ -1,0 +1,57 @@
+[
+  {
+    "repo": "comfyicu/LTX-2.5",
+    "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+    "remote_path": "diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+    "role": "high",
+    "folder": "diffusion_models",
+    "filename": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+    "size": 21504034224,
+    "sha256": "c4279eeff115cbeaca494bd2183e7d768c38fe85a184dc6afbb7159157c44334",
+    "url": "https://huggingface.co/comfyicu/LTX-2.5/resolve/1026e00f808dbd9601911479b22d65b760737dc8/diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors"
+  },
+  {
+    "repo": "comfyicu/LTX-2.5",
+    "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+    "remote_path": "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+    "role": "encoder",
+    "folder": "text_encoders",
+    "filename": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+    "size": 15372971786,
+    "sha256": "09a89e084de1a149c3de60cfe9dfd3e5161967eb09eea39e806fcdeffdd568de",
+    "url": "https://huggingface.co/comfyicu/LTX-2.5/resolve/1026e00f808dbd9601911479b22d65b760737dc8/text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors"
+  },
+  {
+    "repo": "comfyicu/LTX-2.5",
+    "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+    "remote_path": "vae/ltx-2.5-video-vae-bf16.safetensors",
+    "role": "vae",
+    "folder": "vae",
+    "filename": "ltx-2.5-video-vae-bf16.safetensors",
+    "size": 1472223346,
+    "sha256": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3",
+    "url": "https://huggingface.co/comfyicu/LTX-2.5/resolve/1026e00f808dbd9601911479b22d65b760737dc8/vae/ltx-2.5-video-vae-bf16.safetensors"
+  },
+  {
+    "repo": "comfyicu/LTX-2.5",
+    "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+    "remote_path": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+    "role": "audio_vae",
+    "folder": "vae",
+    "filename": "ltx-2.5-audio-vae-bf16.safetensors",
+    "size": 364866540,
+    "sha256": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+    "url": "https://huggingface.co/comfyicu/LTX-2.5/resolve/1026e00f808dbd9601911479b22d65b760737dc8/vae/ltx-2.5-audio-vae-bf16.safetensors"
+  },
+  {
+    "repo": "comfyicu/LTX-2.5",
+    "revision": "1026e00f808dbd9601911479b22d65b760737dc8",
+    "remote_path": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+    "role": "upscaler",
+    "folder": "latent_upscale_models",
+    "filename": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+    "size": 995778752,
+    "sha256": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+    "url": "https://huggingface.co/comfyicu/LTX-2.5/resolve/1026e00f808dbd9601911479b22d65b760737dc8/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+  }
+]

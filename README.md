@@ -46,21 +46,26 @@ A beginner can do: *"I want a coding AI team" → Automatic → Install → Run.
 An expert can inspect the exact GGUF, quantization, context, KV cache, GPU offload,
 loading strategy, system prompts, LangGraph state, conditional edges and tools.
 
-## 3D and video studios (0.4.2)
+## 3D and video studios (0.4.3)
 
 The 3D studio keeps TRELLIS.2, Hi3D, the comparison lab, the model gallery and
 separate original/Web GLB exports. Qwen 3D Coder and the Voice section have been
 removed. Existing 3D assets are preserved.
 
-The Videos page generates locally through ComfyUI with Wan profiles and first/last
-reference frames. Its progress bar shows sampling steps, the current phase and
-elapsed time, including decoding, saving and optional Full HD finishing. Remaining
-time is unknown until measured; 100% means the video and its recipe were saved.
-The local video catalog keeps Wan 2.2 I2V A14B Q6_K and Wan 2.1 FLF2V 14B 720P
-Q4_K_M, with explicit single-frame and first/last-frame labels. MiniMax H3
-Ref2VA-VSA adds reference-image video and audio through a pinned ComfyUI node,
-verified model downloads and its own four-step workflow. Google Flow and the two
-Fun-InP profiles have been removed. See the video guide for hardware requirements.
+The Videos page generates video and audio locally through ComfyUI from one or
+more keyframe pictures, each pinned to a second of the timeline: one picture is
+the first frame, two are the first and last frame, three or more give one
+continuous shot (FPV one-take) through every picture, without cuts. Its progress
+bar shows sampling steps, the current phase and elapsed time, including decoding,
+saving and optional Full HD finishing. Remaining time is unknown until measured;
+100% means the video and its recipe were saved. Since 2026-11-17 the catalog has
+two keyframe models on native ComfyUI nodes: MiniMax H3 FL2VA (highest quality,
+20 steps or an 8-step Turbo draft) and LTX-2.5 keyframes (two-stage, fast
+iterations). The earlier LTX-2.5 MSR/AssetGuide, Wan 2.1 VACE and MiniMax H3
+Ref2VA-VSA profiles and their weights were removed. **Prompt collections** keep
+finished videos with every prompt that made them (each keyframe picture's image
+prompt, the video prompt and the settings) and load one back into the generator.
+See the video guide.
 
 The same page also restores existing videos with **RelayVSR 2x (LightX2V) and
 4x**. Choose a gallery video or local file, native scale or a 1080p/4K preset,
@@ -72,7 +77,7 @@ windows when required by available RAM. Local verification on the RTX 4080 SUPER
 16 GB succeeded; measured performance is documented in the video guide.
 
 See [3D studio](docs/3D_STUDIO.md), [Video studio](docs/VIDEO_STUDIO.md) and
-[0.4.2 release notes](docs/RELEASE_NOTES_0.4.2.md).
+[0.4.3 release notes](docs/RELEASE_NOTES_0.4.3.md).
 
 ## Requirements
 

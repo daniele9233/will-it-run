@@ -516,6 +516,27 @@ Deleting the D:\Models Fun-InP files alone would have retained the same weights
 through ComfyUI's NTFS hard links. Inspect `fsutil hardlink list` before cleanup;
 remove only links to the explicitly retired models and their exclusive VAE.
 
+## 2026-11-11 - One writer per download file, and Wan 2.2 VACE is not native
+
+Two curl processes targeting the same `.safetensors` interleave chunks appended
+from their own offsets. The resulting file has a plausible length and passes a
+size check but can never match the SHA-256. Start exactly one transfer per file
+and verify the digest before writing a verified marker; a `--parallel` transfer
+list is only safe when each URL owns a distinct output.
+
+ComfyUI's native Wan VACE class is `WAN21_Vace` with a 16-channel Wan 2.1 latent
+format. The published `wan2.2_fun_vace_*` models are 48-channel Wan 2.2 models;
+there is no `WAN22_Vace` in the installed build or current master. Loading them
+natively silently selects the wrong architecture. Their documented route is the
+WanVideoWrapper's separate VACE module (`Wan2_2_Fun_VACE_module_A14B_*`), which is
+a different runtime contract and not interchangeable with native conditioning.
+
+LTX `LTXAssetGuide` only runs the MSR slot injection when `msr_parameters` is
+connected; images with an explicit `at Ns` placement take the ordinary
+`LTXVAddGuide` path instead. Always crop guide slots with `LTXVCropGuides` after
+sampling, and keep the audio latent joined through `LTXVConcatAVLatent`.
+
+
 ## 2026-11-08 - Test the actual video's geometry, timing and decoded-frame memory
 
 The owner's test.mp4 is coded 720x576 with SAR 64:45 and DAR 16:9, not a square-pixel
@@ -542,3 +563,81 @@ rate unknown if no positive interval was observed.
 External test source IDs may disappear when their owner deletes gallery entries.
 Use the explicitly supplied file or an owned QA fixture, and verify source identity
 and unchanged bytes. Keep videos, comparison frames and reports in ignored storage.
+
+
+## 2026-11-17 - Removing a registered model folder breaks every loader in a running ComfyUI
+
+Deleting `D:\Models\video\ref2va\diffusion_models` while a ComfyUI started with that
+folder in `--extra-model-paths-config` was running made every UNETLoader fail
+validation (`FileNotFoundError` from `folder_paths.get_filename_list`), even for
+models in other folders. After removing or moving a model folder, restart the engine;
+`engine.py` registers only folders that exist at start.
+
+## 2026-11-17 - Keyframe video: reference conditioning is not a frame anchor
+
+Pictures given as references (LTX MSR negative-time slots, VACE positioned frames,
+H3 Ref2VA `<Picture N>`) describe what to show, not where the camera must be. For a
+one-take, anchor each picture to a frame (`MiniMaxH3AddGuide`, `LTXVAddGuide`).
+On LTX, inner guides at strength 1.0 freeze the camera on each picture and then jump;
+0.6 flies through them. Check a one-take for hidden cuts by measuring the
+frame-to-frame difference: the reference one-take peaks near 4x the median, a cut
+is a single spike well above that.
+
+H3 lengths snap *up* to 17n+5: 6 s is 158 frames (6.58 s), not 144. Timestamps in
+the H3 prompt and guide frame indices must be computed from the aligned frame count.
+
+## 2026-11-17 - The FL2V Turbo v1.2 LoRA does not fit the pruned H3 checkpoints
+
+`minimax_h3_fl2v_turbo_8step_v1.2_768p_comfyui_bf16` (2.12 GB) carries full-rank
+`adaln_proj` deltas ([96768, 2688]); the pruned FL2VA checkpoint keeps that layer at
+rank 8, so ComfyUI logs `shape '[96768, 8]' is invalid` for every block and silently
+skips those patches. Use the 1.96 GB comfyui LoRAs (v1.0/v1.1) with `*_pruned_*`
+models; read the ComfyUI log after the first run of any new LoRA.
+
+## 2026-11-17 - A slow ComfyUI is not a dead ComfyUI
+
+The first end-to-end LTX job through the app was marked failed at 45% with "ComfyUI
+at http://127.0.0.1:8188 could not be reached: timed out", yet ComfyUI wrote the MP4
+75 seconds later. The PC has 32 GB of RAM; a 20 GB transformer plus a 14 GB encoder
+(and, that time, a second ComfyUI still holding H3) pushed Windows into paging, and
+one 15-second `/history` request went unanswered. `VideoStudio._run` now waits through
+read timeouts for up to `ENGINE_SILENCE_LIMIT` (15 minutes) and still fails at once on
+a refused connection. Run one ComfyUI at a time for video, and free an idle one with
+`POST /free {"unload_models": true, "free_memory": true}` before a test.
+
+## 2026-11-17 - A busy ComfyUI is not a dead ComfyUI
+
+With 20 GB video models on 32 GB of RAM, ComfyUI can stop answering HTTP for minutes
+while it stages weights from disk (seen: 3.5 minutes during LTX's second stage with
+1.8 GB free) and still finish the prompt. One 15-second history poll that timed out
+failed the job and threw the finished video away. Treat a read timeout as a busy
+engine and keep polling within a bounded silence (15 minutes for video); treat a
+refused connection as a stopped engine and fail at once.
+
+## 2026-11-17 - FPV keyframes must frame the next destination; Qwen edits need CFG > 1
+
+Twenty scroll-hero videos were made through the app (outside the repository, in
+`D:\render-work\scroll-heroes`). Two findings:
+
+**One-take keyframes.** Four keyframes of unrelated places (dining room, kitchen
+door, stove, plate) do not make a one-take. LTX-2.5 bridged them with split-screen
+collages and picture-in-picture insets; H3 FL2VA bridged them with hard cuts
+(histogram jump > 0.5 between two frames). Both became continuous once every
+keyframe showed the next destination in its centre distance (the porthole visible
+from the dining room, the flame through the porthole, the plate on the pass), the
+way the owner's drone reference frames the tower through the window. A big change
+of height between two keyframes (stadium stands to track level) still broke LTX.
+The frame-difference check does not see collages: look at the frames.
+
+**Qwen-Image edits.** `ImageStudio.graph_for` applies the model's `sampling` over
+the template defaults, so `qwen_image_edit` (CFG 2.5) ran at Qwen-Image 2.1 UC's
+txt2img CFG 1. At CFG 1 the edit ignored the instruction and filled flat
+backgrounds with coloured noise; at CFG 2.5 the same edits were correct (about
+85 s instead of 30 s at 1344 x 768). The Images page does the same: choosing the
+model sets its CFG, and the template default only fills an empty field.
+
+Fixed on 2026-11-18: a model can carry `kind_sampling` in `models.json`
+(`{"edit": {"cfg": 2.5}}` on the three Qwen-Image 2.1 UC builds), applied over
+`sampling` for that kind of workflow by `ModelProfile.sampling_for` in `graph_for`
+and by `lib/imageSampling.ts` on the Images page. Switching between generating and
+editing moves only the values that differ, so the person's own steps stay.

@@ -100,22 +100,23 @@ Will It Run does not ship their files; a run copies the ones it uses into the pr
 - **Motionsites-AI/claude-skill** (`motionsites-web-builder`), commit `faa30d512e39`: MIT, Copyright (c) 2026 MotionSites. Its `examples/` and `media/` are © MotionSites (https://motionsites.ai) and are not kept, nor are its `scripts/`.
 - **pbakaus/impeccable** (`impeccable`), commit `3e3a9179e01a`: Apache-2.0, pbakaus. Its `scripts/` are not kept. Its `reference/ios.md` and `reference/android.md` come from ehmo/platform-design-skills (MIT).
 
-## Ref2VA-VSA video runtime (not bundled)
+## MiniMax H3 FL2VA and LTX-2.5 keyframe runtimes (not bundled)
 
-- **Kablex/ComfyUI-Ref2VA-VSA**, commit `323a0a5f7c636cc70f95464145732f81f04a72e9`:
-  <https://github.com/Kablex/ComfyUI-Ref2VA-VSA>, Apache-2.0. Its custom-node source
-  and license are fetched into the user's existing ComfyUI on explicit setup.
-  `backend/src/agentfit/imagegen/ref2va.py` adapts the published API workflow wiring.
-- **MiniMax H3** weights and components are fetched from Comfy-Org/MiniMax-H3;
-  their terms are the MiniMax H3 Community License Agreement:
-  <https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE>.
-- The Ref2V Turbo LoRA is fetched from **lightx2v/Minimax-h3-Turbo**, and the VSA
-  gate from **barelymining/ComfyUI-MiniMax-H3-FastVideo**. Their upstream terms
-  apply to these downloaded files. Exact source revisions, sizes and SHA-256
-  hashes are recorded in `imagegen/data/ref2va_assets.json`.
-- **ComfyUI** (GPL-3.0) and **comfy-kitchen** run these components in the external
-  runtime. No model weights, CUDA libraries or custom-node source are included
-  in the Will It Run installer.
+- **MiniMax H3** FL2VA weights, the Qwen3-VL 32B NVFP4-AWQ encoder and the video and
+  audio VAEs are fetched from **Comfy-Org/MiniMax-H3**; their terms are the MiniMax H3
+  Community License Agreement: <https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE>.
+- The FL2V Turbo LoRA is fetched from **lightx2v/Minimax-h3-Turbo** under the same
+  MiniMax H3 community license.
+- **LTX-2.5** by Lightricks, <https://huggingface.co/Lightricks/LTX-2.5>, gated at
+  the publisher. The app resolves the same ComfyUI-ready files (transformer,
+  encoder, VAEs and the x2 latent spatial upscaler) through the non-gated
+  `comfyicu/LTX-2.5` mirror at revision `1026e00f808dbd9601911479b22d65b760737dc8`.
+  The LTX-2.5 terms, including the community license, apply to the downloaded weights.
+- **ComfyUI** (GPL-3.0) runs both graphs with its native nodes; no custom-node
+  source is fetched. Exact revisions, sizes and SHA-256 hashes are recorded in
+  `imagegen/data/minimax_h3_assets.json` and `imagegen/data/ltx25_assets.json`.
+  No model weights or CUDA libraries are included in the Will It Run installer.
+
 
 ## RelayVSR video restoration (not bundled)
 

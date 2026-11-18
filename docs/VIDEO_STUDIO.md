@@ -1,17 +1,18 @@
 # Video studio
 
-The Videos page is embedded in Will It Run below Images. Generation, upload of the starting and
-ending pictures, playback, settings reuse, MP4 download and gallery all remain inside the app.
+The Videos page is embedded in Will It Run below Images. Upload of the keyframe pictures,
+generation, playback, settings reuse, MP4 download and gallery all remain inside the app.
 The same local ComfyUI engine and authenticated API as Images are reused, with no cloud account.
 
 ## Live generation progress (0.4.1)
 
 The generation panel shows the same native progress bar as the 3D studio, with
 the current phase, elapsed seconds and actual sampling steps. A WebSocket
-observer reads ComfyUI events for this video's prompt ID only. Two-expert Wan
-profiles cover both samplers; the percentage never decreases. Decoding,
-encoding, saving, Full HD finishing and validation have separate phases.
-Only a saved MP4 and its published recipe can complete the bar at 100%.
+observer reads ComfyUI events for this video's prompt ID only. Graphs with two
+samplers (LTX-2.5's half-resolution pass and refinement) cover both; the
+percentage never decreases. Decoding, encoding, saving, Full HD finishing and
+validation have separate phases. Only a saved MP4 and its published recipe can
+complete the bar at 100%.
 
 These phase weights describe workflow completion, not a measured remaining
 duration. While ComfyUI has not supplied progress, the bar is indeterminate
@@ -19,58 +20,90 @@ and the interface explicitly reports that remaining time is unknown. Losing
 the progress socket does not fail or interrupt the HTTP generation job.
 Cancellation and errors keep their final state and elapsed time visible.
 
-## Local profiles
+## Local profiles (since 2026-11-17)
 
-| Profile | Diffusion files | Conditioning | Other components | Defaults |
-|---|---|---|---|---|
-| Wan 2.2 I2V A14B Q6_K | Original HighNoise and LowNoise Q6_K pair | WanImageToVideo with one picture; WanFirstLastFrameToVideo with two | UMT5 XXL FP8, Wan 2.1 VAE | 20 Euler/simple steps, CFG 3.5, 16 fps; shift 5 with one picture, 8 with two |
-| Wan 2.1 FLF2V 14B 720P Q4_K_M | Single city96 GGUF | WanFirstLastFrameToVideo; both pictures required | Same UMT5 and Wan 2.1 VAE; CLIP Vision H encodes **both** pictures | 20 uni_pc/simple steps, CFG 3, shift 8, 16 fps |
-| MiniMax H3 Ref2VA-VSA INT8 | Pruned Ref2VA INT8 model | MiniMaxH3ReferenceToVideo; one visual reference, not a first/last-frame constraint | Qwen3-VL 32B NVFP4 AWQ; video and audio VAEs; Turbo LoRA and VSA gate | 4 Euler/simple steps, BasicGuider (CFG 1), 24 fps, video/audio shifts 12/3, VSA sparsity 0.75 |
+Both profiles take the same input: an ordered list of **keyframe pictures**, each
+pinned to a second of the output timeline. One picture is the first frame; two
+are the first and last frame; three or more give one continuous shot (piano
+sequenza, FPV one-take) that passes through every picture at its time, in one
+generation, without cuts or stitched clips. Times default to an even spread from
+0 to the end and can be set per picture (`VideoRequest.keyframe_times`).
 
-The model selector and selected-model description state which input each model
-accepts. I2V animates a starting frame with optional final guidance. FLF2V is the
-dedicated first/last-frame option and requires both pictures. Ref2VA uses one
-subject reference; it does not promise that image will be the first video frame.
-Its ending-image, negative-prompt, CFG and slow-motion controls are unavailable
-or fixed to the actual upstream recipe. Unsupported API combinations are rejected.
+| Profile | Files (D:\Models\video\…) | Conditioning | Recipe |
+|---|---|---|---|
+| MiniMax H3 FL2VA · keyframes · INT8 | `minimaxh3`: FL2VA pruned INT8 (20.97 GB), Qwen3-VL 32B NVFP4-AWQ encoder, video VAE fp16, audio VAE, FL2V Turbo 8-step v1.1 LoRA | First and last picture on `MiniMaxH3ImageToVideo` (the model's trained first/last-frame task); every picture in between on a chained `MiniMaxH3AddGuide` at its frame | 20 `res_multistep`/simple steps, BasicGuider (CFG 1), 24 fps, 17n+5 frames, 1344 × 768 native; optional Turbo: the 8-step LoRA and 8 steps |
+| LTX-2.5 · keyframes · two-stage · INT8 | `ltx25`: distilled 22B INT8 transformer, Gemma 4 12B projection encoder, video and audio VAEs, x2 latent spatial upscaler | `LTXVAddGuide` per picture (strength 1.0 first, 0.6 inside, 0.9 last), in both stages; `LTXVCropGuides` before upsampling and before decoding | Half resolution with the published 8-step sigmas, `LTXVLatentUpsampler` x2, 3-step refinement (0.85, 0.725, 0.4219, 0), CFG 1, 24 fps, 8n+1 frames, 1280 × 704 |
 
-At the owner's request on 2026-11-08, Google Flow and both Fun-InP profiles were
-removed. The three Fun-InP GGUFs and the 5B-only Wan2.2 VAE were deleted from
-D:\Models and from their verified NTFS hard links in ComfyUI: 24,951,591,008 model
-bytes across four underlying files, plus their local verification markers. Shared
-Wan encoders and the two retained Wan profiles were preserved. Saved gallery
-videos remain playable; reusing a removed model's recipe explains why another
-available model must be selected first. Older dated comparisons below are history.
+Both are native ComfyUI 0.44 nodes: no custom node is installed, pinned or updated.
+Both keep their generated audio in the MP4.
 
-`imagegen/video_catalog.py` specifies the exact filenames. Profiles never fall back to a smaller
-or different checkpoint. `imagegen/data/video_assets.json` records pinned source commits, exact
-byte sizes, SHA-256 and source URLs, verified against the publisher's Hugging Face tree and HEAD.
-The originals live in D:\Models. VAE and vision dependencies have role-specific subdirectories
-`video/vae` and `video/clip_vision`. Existing shared components can be hard-linked there after
-verification, without duplicating bytes. GGUF files are not complete until their download hash
-matches and the .part file is renamed to the final name.
+**MiniMax H3 prompt layout.** H3 was trained on a structured prompt. The core wraps a plain
+description in the official layout of `MiniMaxAI/MiniMax-H3/docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md`:
+the alignment instruction ("Picture 1 (from Shot 1) aligns with the 0.00-second mark …;
+Picture 2 … aligns with the S.SS-second mark") for first/last, first-only or last-only,
+then `integrated_multimodal_description: [Shot 1] …`, `overall_soundscape:` and
+`non_diegetic_music:`. Optional last lines `Sound: …` and `Music: …` fill the two audio
+fields; a prompt that already contains `integrated_multimodal_description:` is sent as it is.
+The text encoder sees only the first-frame and last-frame pictures; intermediate guides
+are latent anchors only (as in the official Multiframe template).
 
-On engine startup, a separate app-cache YAML adds the D:\Models diffusion directory and only
-existing role-specific dependency directories. The owner's extra_model_paths.yaml is untouched.
-For the engine already running on this PC, same-volume hard links expose the same files in its
-usual model folders without restarting it or copying the weights.
+**LTX-2.5 prompt.** The core prefixes the instruction LTX's own keyframe templates use
+("Use the provided start image as the first frame, pass through the N provided
+intermediate keyframe images in order and end exactly on the provided end image …")
+unless the prompt already speaks of the provided start or end image.
+
+**Why the inner LTX guides are 0.6.** On the reference drone sequence, strength 1.0 on the
+inner pictures froze the camera on each picture and then jumped (hard-cut-like spikes);
+0.6 let the camera fly through them with a maximum frame-to-frame change of about
+3.5–4× the median, the same range as the reference video. First and last stay strong.
+
+**Prompting a one-take.** Describe one shot, the camera moves in order (push in, dive,
+arc, glide, slow down), say "no cuts", and give two very different pictures enough seconds
+between them. Two pictures alone cannot tell a model the geometry in between: the more
+spatially distant two keyframes are, the more the model invents.
+
+### What was removed on 2026-11-17
+
+At the owner's request the three previous profiles were deleted from the app and the disk:
+LTX-2.5 + MSR + AssetGuide (reference images at negative times, not frame anchors),
+Wan 2.1 VACE 14B Multi-Ref and MiniMax H3 Ref2VA-VSA (4-step Turbo plus a sparse-attention
+gate). Deleted: `minimax_h3_ref2va_pruned_int8_convrot` (20.97 GB), the Ref2VA Turbo LoRA
+(1.96 GB), the VSA gate (3.85 GB), the MSR V2 LoRA (2.22 GB), the partial Wan VACE 14B
+download (4.26 GB) and the Wan 2.1 VAE, plus the custom nodes ComfyUI-LTX2.5-MSR,
+ComfyUI-LTX-AssetGuide, ComfyUI-Ref2VA-VSA and ComfyUI-Tessiiiz-WanVideoToolkit, their
+modules, manifests, routes and pins. Files shared with the new profiles were kept rather
+than deleted and downloaded again: the LTX-2.5 transformer, encoder and VAEs (`ltx25`) and the
+H3 encoder and VAEs (moved, with their verification markers, from `ref2va` to `minimaxh3`).
+Saved gallery videos remain playable; reusing a removed model's recipe says that another
+model must be chosen.
+
+Why these two: the owner's work is first/last-frame transitions and FPV one-takes. H3 FL2VA
+is the dedicated first/last-frame variant of the H3 family (the Ref2VA variant only uses
+pictures as references and does not lock the ends), and native `MiniMaxH3AddGuide` adds
+any number of anchors in between. LTX-2.5's native `LTXVAddGuide` does the same at a
+fraction of the time and is the iteration model. Wan 2.2 Fun Camera/InP were considered: they
+take a camera trajectory or two ends, not several anchors, and are an older generation.
 
 ## Workflow and validation
 
-`imagegen/video.py` binds the profile to a ComfyUI API graph. There are one or two samplers
-according to the actual model. In two-expert profiles the first stage preserves leftover noise
-and the second continues without adding fresh noise. The ending image is uploaded independently
-and passes through its own LoadImage node. Wan 2.1 also uses a separate CLIP vision encoding of
-each endpoint. The 5B VAE cannot be replaced with the 14B model's VAE.
+`imagegen/video.py` validates the request and binds the profile's graph from
+`imagegen/minimax_h3.py` or `imagegen/ltx25.py`; `imagegen/keyframes.py` maps each time to
+a frame (0 s is frame 0, the full duration is exactly the last frame) and rejects times that
+are outside the clip, out of order or that land on the same frame. Native frames follow each
+model: MiniMax H3 17n+5 and LTX-2.5 8n+1, both at 24 fps (10 s: 243 and 241 frames). Sizes are
+multiples of 32 for H3 and of 64 for LTX (its first pass runs at half size). Steps, CFG and FPS
+are the recipe's own; other values, a separate ending picture, a negative prompt and slow
+motion are rejected rather than ignored. The seed is resolved before queuing. Every gallery
+recipe keeps the model key, the ordered pictures, the keyframe times and frames, the seed,
+resolution and Turbo flag.
 
-Wan native frames must be 4n+1, up to 361. MiniMax H3 uses 17n+5 at 24 fps,
-including 124 frames for the approximately five-second upstream example and 362
-for a 15-second request. Sizes are multiples of 16 for Wan and 32 for Ref2VA;
-the UI adapts its choices and displays the actual aligned frame count.
-The seed is resolved before queuing. Every gallery recipe preserves model key, both input names,
-resolved seed, resolution, fps, steps and CFG. Old gallery entries remain readable.
-The profile defaults are suggestions, not measured hardware-fit or speed guarantees. Begin with
-small generation sizes. Native 720P model naming does not promise 720P will fit a 16 GB card.
+`imagegen/video_catalog.py` names the exact files; profiles never fall back to a smaller or
+different checkpoint. `imagegen/data/minimax_h3_assets.json` and `ltx25_assets.json` pin each
+file's repository revision, byte size and SHA-256 (checked against the Hugging Face tree API).
+`POST /api/videos/models/{model_key}/setup` (and `/cancel`) downloads what is missing with
+HTTP Range resume, verifies size and SHA-256 before publishing and checks CUDA BF16; it installs
+no source code. On engine start a separate app-cache YAML exposes `D:\Models\video\minimaxh3`,
+`ltx25` and `relayvsr`; the owner's own extra_model_paths.yaml is untouched.
 
 MP4 files and JSON recipes live in the app's videos data directory; AGENTFIT_HOME is honored.
 Recipes are atomically published. Jobs run in background threads and do not resume after an app
@@ -80,14 +113,61 @@ shared engine affects image generation too, and the button only stops a process 
 
 ## Official workflow references
 
-- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_wan2_2_14B_flf2v.json
-- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_wan2_2_5B_fun_inpaint.json
-- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_wan2_2_14B_fun_inpaint.json
-- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/wan2.1_flf2v_720_f16.json
+- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_minimax_h3_i2v.json (FL2VA, 20 steps or 8-step Turbo)
+- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_minimax_h3_multiframe_reference.json (chained Add Guide)
+- https://docs.comfy.org/tutorials/video/minimax/minimax-h3-native and https://docs.comfy.org/tutorials/video/minimax/minimax-h3-multiframe
+- https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md
+- https://huggingface.co/lightx2v/Minimax-h3-Turbo (FL2V Turbo v1.1 768p, 8 steps; v1.2 carries full-rank adaln deltas that do not fit the pruned checkpoint)
+- https://github.com/Comfy-Org/workflow_templates/blob/main/templates/video_ltx2_5_flf2v.json and video_ltx2_5_i2v.json (two-stage)
 
-Optional acceleration LoRAs are not loaded; their four-step recipes do not apply to these base models.
+## Live tests on this PC, 2026-11-17 (RTX 4080 SUPER 16 GB, 32 GB RAM)
 
-## Earlier verification on this PC, 2026-10-30
+The owner's test folder `reference-video-test/` (not committed) holds two jobs:
+`auto-explosion` (an assembled 1967 fastback as first frame, its exploded view as
+last frame) and `sequence-drone` (six keyframes: closed airplane window shade,
+shade open on a tower above the clouds, aerial view of the city, close to the wavy
+facade, street level, the entrance) with the target one-take `risultato.mp4`.
+Results and contact sheets are in `reference-video-test/results/`.
+
+"Cuts" below is the largest frame-to-frame change divided by the clip's median
+change, measured on 96 × 54 grey frames. The target `risultato.mp4` peaks at 3.8×
+(ignoring its screen-recording start); a hard cut is a single spike far above that.
+
+| Run | Path | Size · frames | Time | Result |
+|---|---|---|---|---|
+| H3 FL2VA explosion, 20 steps | direct graph | 1344 × 768 · 158 | 986 s (46.8 s/step) | Clean, sharp, mechanical separation; the explosion finishes at about 3.3 s and then holds |
+| H3 FL2VA drone, 6 keyframes, 20 steps | direct graph | 1344 × 768 · 243 | 37 min (108 s/step) | Through the window, over and into the clouds, out over the city, down the facade, street, entrance; peak 4.0×, no cut. Best quality |
+| LTX drone, one stage, inner guides 1.0 | direct graph | 1280 × 704 · 241 | 161 s | Freezes on each keyframe then jumps: peak 16×. Rejected |
+| LTX drone, one stage, inner guides 0.6 | direct graph | 1280 × 704 · 241 | 156 s | Continuous, peak 3.5×; facade descent smeared |
+| LTX drone, two-stage, times 0/1.5/3.5/6/8.25/10, seed 7 | direct graph | 1280 × 704 · 241 | 106 s | Continuous, peak 3.7×, sharper than one stage |
+| LTX explosion, two-stage, seed 7 | direct graph | 1280 × 704 · 145 | 65 s | Doors and panels open and separate into the exploded view; softer than H3 |
+| LTX drone through the app | API, app-started engine, Full HD finishing | 1920 × 1080 · 300 at 30 fps | 576 s | Done: 300 distinct frames, audio kept, peak 3.7×, keyframes at frames 0/36/84/144/198/240 |
+| H3 FL2VA explosion through the app, plain prompt with `Sound:`/`Music:` lines | API, app-built H3 layout, Full HD finishing | 1920 × 1080 · 180 at 30 fps (158 native) | 1018 s | Done: 180 distinct frames, audio kept, peak 2.6×; asking for an even pace moved the end of the separation from about 3.3 s to about 4 s |
+
+"Direct graph" means the same node graph the app builds, queued straight into
+ComfyUI from a test script; "through the app" means the isolated core from source
+(`AGENTFIT_HOME` in a scratch folder), its own setup (which verified 44.4 GB for H3
+and 39.7 GB for LTX without downloading them again) and the engine it started.
+
+The first run through the app failed although ComfyUI finished: during the second
+LTX stage the 20 GB transformer was staged again with 1.8 GB of RAM free, ComfyUI
+did not answer HTTP for about 3.5 minutes and one history poll timed out. A read
+timeout now counts as a busy engine and is tolerated for up to 15 minutes
+(`ENGINE_SILENCE_LIMIT`); a refused connection still fails at once. The rerun
+recorded that silence and completed. On 32 GB of RAM these 20 GB models run, but the
+first run after a restart or after Free VRAM reloads them from disk and takes longer.
+
+Measured afterwards, through the app, in the Scroll Heroes set (see Prompt collections):
+the 8-step Turbo LoRA v1.1 on ten 6-second H3 transitions at 1344 × 768 took 453.5–457.0 s
+each including Full HD finishing; LTX two-stage 8-second one-takes took 124.7–133.6 s and a
+10-second one 453.9 s. Not measured yet: clips longer than 10 s, portrait keyframes, and the
+H3 drone through the app (its 37-minute graph ran directly, as above).
+
+## History (profiles removed before 2026-11-17)
+
+The sections below describe earlier profiles and are kept as history.
+
+### Earlier verification on this PC, 2026-10-30
 
 The original Q6_K I2V pair produced an MP4 at 256 square, 5 frames and 4 steps in 46.4 s.
 A separate first/last-frame graph using those same files produced 17 frames at 256 square,
@@ -98,24 +178,25 @@ quality benchmarks. The earlier MP4 was served through the API and decoded in th
 ## Full HD desktop hero output
 
 The current profiles have the same final format in the UI: 1920 x 1080, 16:9, 30 fps,
-6 through 15 whole seconds for Wan (180 through 450 output frames), or 5 through
-15 for Ref2VA (150 through 450). Output is H.264/yuv420p MP4 with faststart; Wan
-is silent, while Ref2VA preserves its generated audio as AAC. I2V defaults to
-832 x 480, FLF2V to 1280 x 720, and Ref2VA to the upstream 1344 x 768 canvas.
+5 through 15 whole seconds (150 through 450 output frames). Output is H.264/yuv420p
+MP4 with faststart; LTX-2.5 and Ref2VA preserve generated audio as AAC, while Wan
+VACE is silent. Defaults are 768 x 512 for LTX, 832 x 480 for Wan VACE and the
+upstream 1344 x 768 canvas for Ref2VA.
 Portrait inputs rotate the canvas orientation. The output is explicitly described
 as upscaled. Lanczos scaling and centered padding preserve the whole image and
 aspect ratio; this is not native 1080p or learned super-resolution. Higher native
 resolutions consume more memory.
 
 The optional `duration_seconds` request field activates this pipeline. The service
-uses each profile's native rate and temporal alignment: 97-241 source frames at
-16 fps for continuous Wan generation; 124-362 at 24 fps, aligned to 17n+5, for
-Ref2VA. Native versus requested export timing remains explicit. Wan endpoint
-images condition the first/last frames; Ref2VA images condition the referenced
-subject. Continuous generation uses one latent, without repeated clips or loops.
-The separately selected Wan Slow motion mode is described below. Longer
-generations cost more memory and may lose coherence; accepting a tensor length
-does not establish a quality guarantee.
+uses each profile's native rate and temporal alignment: 81-241 source frames at
+16 fps for Wan VACE, 121-361 at 24 fps for LTX-2.5, and 124-362 at 24 fps aligned
+to 17n+5 for Ref2VA. Native versus requested export timing remains explicit.
+Reference images condition the subject or the timeline; none of the current
+profiles is a first/last-frame model. Continuous generation uses one latent,
+without repeated clips or loops. Older slow-motion recipes remain readable, but
+the current reference profiles reject that control. Longer generations cost more
+memory and may lose coherence; accepting a tensor length does not establish a
+quality guarantee.
 Legacy requests without duration_seconds and existing gallery files remain readable.
 
 `imagegen/video_finish.py` runs the installed local FFmpeg and FFprobe (PATH or
@@ -185,6 +266,46 @@ The library works without ComfyUI and survives process restarts and gallery dele
 Prompt text and names never become paths. Tests use temporary directories and no GPU.
 
 
+## Prompt collections (since 2026-11-18)
+
+A prompt collection keeps finished videos together with everything that made them, so a
+video can be made again or varied. The Videos page shows them in **Prompt collections**
+(header shortcut): a list of videos, and for the selected one the player, the video prompt,
+model, duration, generation size, Turbo, seed, generation time, the second each keyframe is
+pinned to, notes, and every keyframe picture with its image prompt, workflow (text to image
+or edit of another keyframe), image model, seed, steps and CFG, each with a Copy button.
+**Use in the generator** hands the pictures to the engine again and fills the generator
+with the same pictures, times, prompt, model, duration, size, seed and Turbo; nothing is
+generated until Generate video is pressed.
+
+A collection is a folder `<app data>/videos/collections/<id>/` holding `collection.json`, the
+MP4 of each entry and its keyframe pictures (`imagegen/video_collections.py` validates the
+JSON; the folder name must equal its `id`; file names never leave the folder; a missing file
+is shown as missing, never replaced). Routes: `GET /api/videos/collections`, and under
+`/api/videos/collections/{collection_id}/entries/{entry_id}`: `GET file` (MP4, Range),
+`POST save`, `GET keyframes/{index}/file`, `POST use`. The app reads collections; it does not
+write them.
+
+**Scroll Heroes** (20 videos, 2026-11-17) is the first collection. It was assembled by
+`D:\render-work\scroll-heroes\tools\export_collection.py` from records only: image prompts,
+seeds, steps and CFG from the generation rows of the app that made the pictures (each PNG
+matched by SHA-256), video prompts and settings from the gallery recipes, titles and "edited
+from" links from `spec.py`. Where the final video differs from the plan (17-museum used three
+keyframes, 18-sprinter five), the recipe wins.
+
+How those videos were made, to do it again:
+
+- **Keyframe pictures:** Qwen-Image 2.1 UC, 1344 × 768, 25 steps. For a before/after pair,
+  generate the harder picture from text and make the other one as an edit of it, so object,
+  angle and volume stay identical. Edits run at CFG 2.5 (the model's `kind_sampling`).
+- **Transitions (first and last frame):** MiniMax H3 FL2VA, Turbo 8 steps, 6 s: about
+  7.6 minutes each. Prompt: what changes, in order, camera move, then `Sound:` and `Music:`.
+- **One-takes (FPV, 4–5 keyframes):** LTX-2.5 two-stage, 8–10 s, about 2 minutes each (10 s:
+  7.5 minutes). Every keyframe must already show the next destination in its centre distance;
+  pictures of unconnected places give split-screen collages (LTX) or hard cuts (H3). Prompt:
+  "One continuous FPV drone shot with no cuts.", the camera moves in order, the pace, the sound.
+
+
 ## 2026-10-31 — Visual-quality corrections after live reference tests
 
 The original two live exports passed format checks but failed visual acceptance.
@@ -234,7 +355,7 @@ to the successfully rendered raw native workflow; retiming is done by the same
 verified finishing function. Endpoint geometry is still judged visually: these
 models are not a CAD renderer and fine parts can deform.
 
-## MiniMax H3 Ref2VA-VSA
+## History: MiniMax H3 Ref2VA-VSA (removed 2026-11-17)
 
 Source: <https://github.com/Kablex/ComfyUI-Ref2VA-VSA>, pinned to
 `323a0a5f7c636cc70f95464145732f81f04a72e9`. The Python core binds the author's
@@ -258,9 +379,12 @@ folders without changing the owner's ComfyUI YAML.
 ComfyUI and downloads the weights. `POST /api/videos/ref2va/setup/cancel` cancels;
 verified downloads can resume with HTTP Range. Files are published only after size
 and checksum checks; partial files and checksum mismatches never make the model
-Ready. Direct-to-disk downloads retain the safety reserve without a duplicate
-full-size cache. `GET /api/videos/status` includes setup progress and runtime checks.
-Starting or restarting the shared engine loads the node and the new model paths.
+full-size cache. LTX-2.5 and Wan VACE use the same lifecycle through
+`POST /api/videos/ltx25/setup` and `POST /api/videos/wan-vace/setup` (with their
+`/cancel` endpoints). Each setup installs its pinned custom nodes first and then
+downloads the model files. `GET /api/videos/status` includes setup progress and
+runtime checks for all three profiles.
+Starting or restarting the shared engine loads the nodes and the new model paths.
 
 Upstream recommends 24 GB VRAM and reports its timings on an RTX 4090. This PC
 has an RTX 4080 SUPER with 16 GB. The UI reports the recommendation and actual
@@ -275,8 +399,9 @@ The local installer built successfully and was applied to the installed app.
 The real installed WebView showed exactly the two retained Wan entries plus
 Ref2VA, with their Italian input-mode descriptions and no Flow panel. The shared
 engine reported all three profiles ready, with no missing nodes or files. The
-FLF form required both images; Ref2VA exposed one reference-image input and fixed
-4-step/CFG-1 controls.
+FLF form required both images; at that time Ref2VA exposed one reference image.
+Since 2026-11-11 it exposes up to nine, each with its own preview and remove
+button, and the saved recipe keeps their order.
 
 One generation was submitted through that WebView using the extension's clothed
 portrait example and a plain clothed-portrait movement prompt. RTX 4080 SUPER

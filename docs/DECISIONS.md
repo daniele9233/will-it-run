@@ -586,3 +586,120 @@ SHA-256 is unchanged. The ignored local updater now verifies and runs this
 published installer instead of replacing the app with the older 0.4.1 payload.
 Its CheckOnly and actual update paths both succeeded. The unversioned local
 installer copy was also updated to the verified published package.
+
+## 2026-11-11 - The video catalog becomes multi-reference and drops both Wan profiles
+
+The owner asked for three changes together: MiniMax H3 Ref2VA must accept nine
+reference images; the two Wan entries (Wan 2.2 I2V A14B Q6_K pair and Wan 2.1
+FLF2V 720P Q4_K_M) must disappear from the app and from disk; and two
+multi-reference replacements must take their place.
+
+Ref2VA now sends `ref_images.ref_image_0..8` to the already-installed
+`MiniMaxH3ReferenceToVideo` autogrow input. `VideoRequest.images` keeps the old
+`image` field readable, and every reference still gets its own LoadImage node
+and recipe entry. Uploads are capped by the profile's `max_images`.
+
+The two Wan profiles, their catalog code, the FLF2V-only CLIP Vision dependency
+and 32.9 GB of weights were removed. `fsutil hardlink list` found the ComfyUI
+NTFS links as well; both names were unlinked. The shared UMT5 encoder and Wan
+VAE were kept for the replacement, and the owner's separate D:\nsfh Wan setup
+was not touched.
+
+Replacement one is the owner's exact request: LTX-2.5 distilled INT8 with the
+LiconStudio MSR IC-LoRA V2 and the pinned `ComfyUI-LTX2.5-MSR` plus
+`ComfyUI-LTX-AssetGuide` nodes. The published LTX files resolve through the
+non-gated `comfyicu/LTX-2.5` mirror because `Lightricks/LTX-2.5` is gated
+(`gated=auto`), and the app must not demand an HF account. Images without an
+explicit `at Ns` mention go through `inject_msr_references`, which places their
+latents at negative temporal slots; `LTXVCropGuides` removes those slots before
+decoding. The graph is single-stage, uses the published eight-step sigma list
+and keeps the generated audio.
+
+Replacement two needed a scope correction. ComfyUI (installed commit and
+current master) has no Wan 2.2 VACE model class: `wan2.2_fun_vace_*` uses
+48-channel latents and only `WAN21_Vace` exists, so the full 2.2 Fun VACE model
+cannot be loaded natively, and the community node that handles it pulls in the
+separate WanVideoWrapper stack. The truthful native replacement is Wan 2.1
+VACE 14B with the pinned Tessiiiz multi-reference node, exposed as
+"Wan 2.1 VACE · Multi-Ref"; its first image is the start frame and the others
+are positioned reference frames, and `TrimVideoLatent` removes the reference
+prefix before decoding. Calling it Wan 2.2 would claim a model the engine cannot
+load. The 2.2 Fun VACE module route stays documented as future work.
+
+Verification on 2026-11-11: nine references were uploaded through the real API
+and a Ref2VA job completed in 57.5 s on the RTX 4080 SUPER 16 GB, publishing
+1920 x 1080, 30 fps, 150 distinct frames and audio; the recipe kept all nine
+ordered names. The Wan multi-reference graph was smoke-tested with the 1.3B
+variant (two references, 512 x 288, 17 frames, 4 steps) and produced a valid
+MP4 in about 9.7 s. All five LTX files matched their pinned SHA-256 values; the
+setup verified all 40.9 GB and a two-reference, 25-frame, 8-step LTX job
+produced a 512 x 288 MP4 in 36.7 s. The Wan 14B weights (34.7 GB) were not
+downloaded in that session, so the 14B profile reports Ready only after the
+owner's setup run completes; the app setup downloads and verifies it.
+
+## 2026-11-17 - Two keyframe video models replace the three reference profiles
+
+The owner makes FPV one-takes (piano sequenza) and first/last-frame transitions and
+found that LTX-2.5 + MSR + AssetGuide, Wan 2.1 VACE Multi-Ref and MiniMax H3
+Ref2VA-VSA failed most of the time. All three conditioned on pictures as
+*references* (identity at negative times, positioned VACE frames, Ref2VA tags);
+none pinned a picture to a frame of the output, and Ref2VA ran a 4-step Turbo LoRA
+plus a 0.75 sparse-attention gate where the official templates use 20 full steps.
+The owner asked to delete the three and install the two best models for the job.
+
+Chosen: **MiniMax H3 FL2VA** (the family's first/last-frame variant, pruned INT8)
+and **LTX-2.5 keyframes** (same distilled INT8 weights, native `LTXVAddGuide`,
+official two-stage recipe with the x2 latent upscaler). Both accept 1 to 9 ordered
+pictures with a time each: H3 puts the first and last on `MiniMaxH3ImageToVideo`
+and pins the others with chained `MiniMaxH3AddGuide`; LTX pins all of them with
+guide strengths 1.0 / 0.6 / 0.9. One generation therefore passes through every
+picture without cuts or stitched clips. Both are native ComfyUI 0.44 nodes, so no
+custom node is installed or pinned any more. Wan 2.2 Fun Camera/InP were rejected:
+a camera trajectory or two ends, not several anchors, and an older generation.
+
+H3 prompts are wrapped by the core in the official FL2VA/I2VA/L2VA layout from
+MiniMax's prompt guide (alignment line plus the three fields), because the model
+was trained on it and the owner should not have to write it. A prompt already in
+that layout is left alone.
+
+Weights shared with the new profiles were kept instead of being deleted and
+downloaded again (LTX transformer, encoder and VAEs; H3 encoder and VAEs, moved
+from `video/ref2va` to `video/minimaxh3` with their verification markers). New
+downloads: FL2VA pruned INT8 (20.97 GB), FL2V Turbo 8-step v1.1 LoRA (1.96 GB; v1.2 does not fit the pruned model) and
+the LTX x2 spatial upscaler (1.00 GB), each checked against the Hub's SHA-256.
+Deleted: 33.5 GB of Ref2VA, VSA gate, Ref2VA Turbo, MSR LoRA and Wan VACE files and
+the four custom nodes. Measured results are in docs/VIDEO_STUDIO.md.
+
+## 2026-11-18 - Prompt collections, and sampling per kind of workflow
+
+The owner wanted the prompts of the twenty Scroll Heroes videos inside the app, next to
+their videos, so the work can be repeated. A collection is a folder of finished files
+plus a `collection.json` (video prompt and settings, each keyframe picture with its
+image prompt and how it was made), shown read-only on the Videos page with a button
+that loads one entry into the generator. It is a folder and not a database table
+because it is written once by whoever assembled it, carries its own MP4 and pictures,
+and must survive the gallery being cleared; the app never writes to it. Every value in
+the first collection comes from a record (generation rows, gallery recipes), not from
+the plan, because the plan and the finished videos differed.
+
+Qwen-Image 2.1 UC generates at CFG 1 but its edits ignore the instruction at CFG 1.
+A model in `models.json` can now carry `kind_sampling` (`{"edit": {"cfg": 2.5}}`),
+applied over `sampling` for that kind of workflow in the core and on the Images page.
+It is data per model, not a rule per family, because SDXL checkpoints are tuned for
+editing at their own CFG.
+
+The generated `docs/map/api.md` passed its 15,000-character limit with the new routes;
+it now becomes an index with one card per routes file (`api-<file>.md`) whenever the
+single card would not fit, the same rule the package cards already follow.
+
+## 2026-11-18 - Publish the keyframe video work as 0.4.3
+
+The owner asked to push everything to GitHub, build the new version and commit. The
+two keyframe video models, the keyframe editor, prompt collections, the Qwen-Image
+edit CFG fix and the busy-engine tolerance are published together as v0.4.3 on
+master, with an annotated tag and a GitHub release whose Windows workflow builds the
+installer on a clean runner and attaches it with its SHA-256. Private inputs and
+outputs stay out of the public repository: `reference-video-test/`, `test.mp4`,
+generated pictures, `3dheropages/` and the local `.codex/` configuration, as well as
+the Scroll Heroes files in `D:\render-work`. The published installer, not a local
+build, is then verified and installed on the owner's PC.

@@ -437,6 +437,12 @@ MESSAGES.update({
     "Could not delete video prompts: {error}": "Impossibile eliminare i prompt video: {error}",
 })
 
+# Prompt collections: finished videos with the prompts that made them
+MESSAGES.update({
+    "This video of the collection is not on disk.": "Questo video della raccolta non è sul disco.",
+    "This keyframe picture is not on disk.": "Questa immagine chiave non è sul disco.",
+})
+
 # TRELLIS 3D
 MESSAGES.update({
     "The scene is too large to complete in the available context.": "La scena è troppo grande per essere completata nel contesto disponibile.",
@@ -482,15 +488,27 @@ MESSAGES.update({
     "Import a self-contained GLB with embedded textures and buffers.": "Importa un GLB autonomo con texture e buffer incorporati.",
 })
 
-# Local MiniMax H3 Ref2VA-VSA video integration.
+# Local video studio messages shared by the video profiles.
 MESSAGES.update({
-    "Ref2VA-VSA uses one reference image, no ending frame, negative prompt or slow motion.": "Ref2VA-VSA usa una sola immagine di riferimento, senza fotogramma finale, prompt negativo o rallentamento.",
-    "Ref2VA-VSA uses the 4-step Turbo recipe, CFG 1 and 24 FPS.": "Ref2VA-VSA usa la ricetta Turbo a 4 passi, CFG 1 e 24 FPS.",
+    "This video model uses {steps} steps, CFG {cfg} and {fps} FPS.": "Questo modello video usa {steps} passi, CFG {cfg} e {fps} FPS.",
     "This video model needs at least {seconds} seconds.": "Questo modello video richiede almeno {seconds} secondi.",
     "Video frames must follow {stride}n+{offset} for this model.": "I fotogrammi devono seguire {stride}n+{offset} per questo modello.",
-    "Ref2VA-VSA needs CUDA BF16 and the comfy-kitchen sol_attn CUDA backend.": "Ref2VA-VSA richiede CUDA BF16 e il backend CUDA sol_attn di comfy-kitchen.",
-    "Not enough disk space for Ref2VA-VSA and the safety reserve.": "Spazio su disco insufficiente per Ref2VA-VSA e la riserva di sicurezza.",
     "The exported video is missing its generated audio or has the wrong audio duration.": "Il video esportato non contiene l'audio generato oppure la durata dell'audio non è corretta.",
+})
+
+# Keyframe video models (MiniMax H3 FL2VA, LTX-2.5), 2026-11-17.
+MESSAGES.update({
+    "LTX-2.5 uses between 1 and {count} keyframe pictures.": "LTX-2.5 usa da 1 a {count} immagini keyframe.",
+    "MiniMax H3 uses between 1 and {count} keyframe pictures.": "MiniMax H3 usa da 1 a {count} immagini keyframe.",
+    "Choose at least one keyframe picture and describe the movement.": "Scegli almeno un'immagine keyframe e descrivi il movimento.",
+    "Keyframe video models take ordered keyframe pictures only, without a separate ending picture, negative prompt or slow motion.": "I modelli video a keyframe usano solo immagini keyframe ordinate, senza un'immagine finale separata, prompt negativo o rallentamento.",
+    "This video model has no Turbo recipe.": "Questo modello video non ha una ricetta Turbo.",
+    "Keyframe times must increase and land on different frames.": "I tempi dei keyframe devono essere crescenti e cadere su fotogrammi diversi.",
+    "The first keyframe picture was given twice with different files.": "La prima immagine keyframe è stata indicata due volte con file diversi.",
+    "Give one time for each keyframe picture.": "Indica un tempo per ogni immagine keyframe.",
+    "This video model accepts at most {count} keyframe pictures.": "Questo modello video accetta al massimo {count} immagini keyframe.",
+    "Keyframe times must be between 0 and {seconds} seconds.": "I tempi dei keyframe devono essere tra 0 e {seconds} secondi.",
+    "This video model needs an NVIDIA GPU with CUDA and BF16 support.": "Questo modello video richiede una GPU NVIDIA con supporto CUDA e BF16.",
 })
 
 # RelayVSR restoration of existing videos.

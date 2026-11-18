@@ -29,12 +29,17 @@
         "sampler": "euler",
         "scheduler": "simple"
       },
+      "kind_sampling": {
+        "edit": {
+          "cfg": 2.5
+        }
+      },
       "vram_gb": 16.0,
       "licence": "Qwen Research Licence: solo uso non commerciale",
       "source": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "nsfw": "native",
       "recommended": false,
-      "notes": "È il flusso ComfyUI che funziona: Unet Loader (GGUF), CLIP qwen3vl 8B int8, VAE 2.1 bf16, TextEncodeQwenImage21, KSampler 25 passi, CFG 1, euler/simple. A CFG 1 il prompt negativo è ignorato: alza il CFG a 3-4 solo se vuoi usarlo. 40-50 passi per la qualità massima; fino a 2048×2048 in multipli di 32.",
+      "notes": "È il flusso ComfyUI che funziona: Unet Loader (GGUF), CLIP qwen3vl 8B int8, VAE 2.1 bf16, TextEncodeQwenImage21, KSampler 25 passi, CFG 1, euler/simple. A CFG 1 il prompt negativo è ignorato: alza il CFG a 3-4 solo se vuoi usarlo. Le modifiche di una foto usano CFG 2,5: a CFG 1 ignorano l'istruzione e riempiono gli sfondi di rumore. 40-50 passi per la qualità massima; fino a 2048×2048 in multipli di 32.",
       "aspect": "1:1",
       "megapixels": 1.0,
       "presets": [
@@ -86,6 +91,11 @@
         "cfg": 1.0,
         "sampler": "euler",
         "scheduler": "simple"
+      },
+      "kind_sampling": {
+        "edit": {
+          "cfg": 2.5
+        }
       },
       "vram_gb": 24.3,
       "licence": "Qwen Research Licence: solo uso non commerciale",
@@ -221,6 +231,11 @@
         "cfg": 1.0,
         "sampler": "euler",
         "scheduler": "simple"
+      },
+      "kind_sampling": {
+        "edit": {
+          "cfg": 2.5
+        }
       },
       "aspect": "1:1",
       "megapixels": 1.0,

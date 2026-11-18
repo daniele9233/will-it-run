@@ -52,23 +52,24 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_hardware.py` | 29 |  | core, hardware |
 | `test_hi3d.py` | 9 | Refinement persistence, queue exclusivity and asset integrity without GPU/WSL/network. | api, core, imagegen |
 | `test_i18n.py` | 11 | Localization of text the core produces, and the accuracy reference table. | arena, core, fit, locales, teams, workflows |
-| `test_imagegen.py` | 51 | The image studio: templates, components, downloads, plans and a full generation. | api, core, imagegen |
+| `test_imagegen.py` | 52 | The image studio: templates, components, downloads, plans and a full generation. | api, core, imagegen |
 | `test_importer.py` | 14 | Importing the files people already have: recognition, placement, idempotency, LoRA conversion. | core, imagegen |
 | `test_lmstudio.py` | 37 | LM Studio integration against a mocked HTTP server and a fake CLI. | core, lmstudio |
 | `test_media_runtime.py` | 11 | Published-hash verification and disk/path safety use HTTP fakes only. | core |
 | `test_model_quirks.py` | 6 | What local models do that the engine has to survive: turns the runtime cannot read, tests in other languages. | core, workflows |
 | `test_project_memory.py` | 18 | The memory of a project for coding agents: what a session leaves behind, the documents it reads, and the MCP server in front of it. | brain, core |
-| `test_ref2va.py` | 12 | Real graph contracts and verified/resumable setup using HTTP fakes, never GPU or owner data. | core, imagegen |
 | `test_relayvsr.py` | 13 | Native RelayVSR graph, resource gates and publication use fakes, never CUDA or owner data. | api, core, imagegen |
 | `test_streaming.py` | 9 | The schema a model is held to, and the text it generates as it is generated. | core, lmstudio, workflows |
 | `test_teams.py` | 37 | Team builder, model sharing and the resource optimizer. | catalog, core, hardware, lmstudio, teams, workflows |
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
 | `test_trellis.py` | 14 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
-| `test_video.py` | 15 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
-| `test_video_finish.py` | 8 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
+| `test_video.py` | 23 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
+| `test_video_collections.py` | 4 | Prompt collections: finished videos kept with the prompts that made them. | api, core, imagegen |
+| `test_video_finish.py` | 7 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
 | `test_video_progress.py` | 6 | Video progress belongs to one prompt and never turns socket loss into job failure. | imagegen |
 | `test_video_prompts.py` | 4 | Prompt pairs persist as text, without starting a model or touching owner data. | imagegen |
+| `test_video_setup.py` | 10 | Verified, resumable video model setup and graph progress, using HTTP fakes, never GPU or owner data. | core, imagegen |
 | `test_workflows.py` | 77 | Workflow DSL, validator, tools and the LangGraph engine. | core, teams, workflows |
 
-Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/mirror.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/video.test.ts`, `lib/videoSave.test.ts`, `lib/workflow.test.ts`
+Front-end tests: `lib/arena.test.ts`, `lib/brainGraph.test.ts`, `lib/cloneSite.test.ts`, `lib/dna.test.ts`, `lib/format.test.ts`, `lib/hooks.test.ts`, `lib/i18n.test.ts`, `lib/imageSampling.test.ts`, `lib/imageSave.test.ts`, `lib/imageView.test.ts`, `lib/liveRun.test.ts`, `lib/masterPrompts.test.ts`, `lib/mirror.test.ts`, `lib/modelFilters.test.ts`, `lib/models.test.ts`, `lib/runSource.test.ts`, `lib/video.test.ts`, `lib/videoSave.test.ts`, `lib/workflow.test.ts`

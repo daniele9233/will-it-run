@@ -6,21 +6,19 @@ import pytest
 
 from agentfit.imagegen import video_catalog as catalog
 from agentfit.imagegen import video_finish as finish
-from agentfit.imagegen.video import VideoRequest, workflow
+from agentfit.imagegen.video import VideoRequest
 
 
-@pytest.mark.parametrize("selected", [p for p in catalog.PROFILES if p.input_mode != "reference"], ids=lambda p: p.key)
+@pytest.mark.parametrize("selected", catalog.PROFILES, ids=lambda p: p.key)
 @pytest.mark.parametrize("seconds", [6, 15])
 def test_duration_generates_the_whole_interval_at_each_models_native_rate(selected, seconds):
-    r = VideoRequest(model_key=selected.key, image="start.png", end_image="end.png", prompt="move",
-                     duration_seconds=seconds, frames=33, fps=30,
-                     width=1280 if selected.required_end else 832, height=720 if selected.required_end else 480)
-    assert r.frames == seconds * selected.fps + 1
-    assert r.fps == selected.fps
-    assert (r.frames - 1) % 4 == 0
+    r = VideoRequest(model_key=selected.key, images=["start.png", "end.png"], prompt="move", duration_seconds=seconds, frames=33)
+    assert r.frames == selected.frames_for(seconds) >= seconds * selected.fps
+    assert r.fps == selected.fps == 24
+    assert (r.frames - selected.frame_offset) % selected.frame_stride == 0
 
 
-@pytest.mark.parametrize("seconds", [5, 16])
+@pytest.mark.parametrize("seconds", [4, 16])
 def test_hero_duration_rejects_outside_supported_range(seconds):
     with pytest.raises(ValueError):
         VideoRequest(image="a.png", prompt="move", duration_seconds=seconds)
@@ -77,28 +75,17 @@ def test_cancellation_kills_only_the_finishing_process(tmp_path, monkeypatch):
     assert calls == ["kill", "wait"]
 
 
-def test_fullhd_flf_cannot_silently_use_a_tiny_latent():
-    with pytest.raises(ValueError, match="720p"):
-        VideoRequest(model_key="wan21-flf-q4", image="start.png", end_image="end.png",
-                     prompt="move", duration_seconds=8, width=512, height=288)
-    request = VideoRequest(model_key="wan21-flf-q4", image="start.png", end_image="end.png",
-                           prompt="move", duration_seconds=8)
-    assert (request.width, request.height) == (1280, 720)
-    portrait = request.model_dump() | {"width": 720, "height": 1280}
-    assert VideoRequest(**portrait).height == 1280
-
-
-def test_slow_motion_uses_the_same_graph_as_the_validated_native_sequence():
-    values = dict(model_key="wan21-flf-q4", image="start.png", end_image="end.png",
-                  prompt="parts separate", width=1280, height=720, seed=42)
-    native = VideoRequest(**values, frames=33)
-    slow = VideoRequest(**values, duration_seconds=8, motion_frames=33)
-    files = {role: name for role, name, _ in catalog.profile(native.model_key).requirements()}
-    assert slow.frames == native.frames == 33
-    assert slow.fps == native.fps == 16
-    assert workflow(native, files, "comparison") == workflow(slow, files, "comparison")
+def test_current_profiles_keep_their_own_native_runtime_and_grid():
+    h3 = VideoRequest(model_key="minimax-h3-fl2va", image="start.png", prompt="move", duration_seconds=8)
+    assert (h3.frames, h3.fps, h3.steps) == (192, 24, 20)
+    assert (h3.width, h3.height) == (1344, 768)
+    ltx = VideoRequest(model_key="ltx25-keyframes", image="start.png", prompt="move", duration_seconds=8)
+    assert (ltx.frames, ltx.fps) == (193, 24)
+    assert (ltx.width, ltx.height) == (1280, 704)
+    with pytest.raises(ValueError, match="keyframe pictures only"):
+        VideoRequest(model_key="ltx25-keyframes", image="start.png", end_image="end.png", prompt="move")
     with pytest.raises(ValueError):
-        VideoRequest(**values, duration_seconds=8, motion_frames=34)
+        VideoRequest(model_key="minimax-h3-fl2va", image="start.png", prompt="move", motion_frames=33)
 
 
 @pytest.mark.parametrize("missing_audio", [False, True])

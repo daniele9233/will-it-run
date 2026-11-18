@@ -37,6 +37,9 @@ class ModelProfile:
     #: What the loaders of this family are called and how they are configured.
     loader: dict[str, Any] = field(default_factory=dict)
     sampling: dict[str, Any] = field(default_factory=dict)
+    #: Sampling that replaces ``sampling`` for one kind of workflow, e.g. {"edit": {"cfg": 2.5}}: Qwen-Image UC is
+    #: tuned for text-to-image at CFG 1, where an edit ignores its instruction.
+    kind_sampling: dict[str, dict[str, Any]] = field(default_factory=dict)
     #: VRAM the weights are expected to hold, in GB. None when unknown.
     vram_gb: float | None = None
     licence: str = ""
@@ -68,6 +71,10 @@ class ModelProfile:
         """Every component this model needs, the graph ones first, without repeats."""
         return list(dict.fromkeys([*self.components.values(), *self.requires]))
 
+    def sampling_for(self, kind: str) -> dict[str, Any]:
+        """The model's sampling for a workflow of this kind (txt2img / edit / upscale)."""
+        return {**self.sampling, **self.kind_sampling.get(kind, {})}
+
     def to_json(self) -> dict[str, Any]:
         return {
             "key": self.key,
@@ -92,6 +99,7 @@ class ModelProfile:
             "loras": list(self.loras),
             "blocked": dict(self.blocked) if self.blocked else None,
             "sampling": dict(self.sampling),
+            "kind_sampling": {kind: dict(values) for kind, values in self.kind_sampling.items()},
         }
 
 
@@ -105,6 +113,7 @@ def _profile(raw: dict[str, Any]) -> ModelProfile:
         requires=tuple(str(cid) for cid in (raw.get("requires") or ())),
         loader=dict(raw.get("loader") or {}),
         sampling=dict(raw.get("sampling") or {}),
+        kind_sampling={str(kind): dict(values) for kind, values in (raw.get("kind_sampling") or {}).items()},
         vram_gb=raw.get("vram_gb"),
         licence=str(raw.get("licence") or ""),
         source=str(raw.get("source") or ""),

@@ -20,7 +20,33 @@ and the interface explicitly reports that remaining time is unknown. Losing
 the progress socket does not fail or interrupt the HTTP generation job.
 Cancellation and errors keep their final state and elapsed time visible.
 
-## Local profiles (since 2026-11-17)
+## Text-to-Video
+
+Select **MiniMax H3 FL2VA** or **LTX-2.5** in **Videos**, then choose **Text-to-Video**
+under **Generation mode**. Describe the scene, motion and any sound in the prompt.
+
+**MiniMax H3** uses the native [ComfyUI Text-to-Video workflow](https://docs.comfy.org/tutorials/video/minimax/minimax-h3-native)
+with the existing FL2VA INT8 weights and empty AV latents. A plain prompt gets the
+official T2VA fields, including soundscape and music. A structured prompt is passed
+through. Its 20-step and 8-step Turbo recipes are both available.
+
+**LTX-2.5** shares its existing distilled INT8 transformer,
+Gemma encoder, VAEs and 2× latent upscaler are shared with keyframe generation. This uses
+the layout of [Lightricks' two-stage Text-to-Video workflow](https://docs.ltx.io/open-source-model/usage-guides/text-to-video),
+with the app's existing weights and sampler settings. The first pass starts from empty
+video and audio latents. The second pass refines the upscaled video latent with the generated
+audio. The prompt goes directly to the existing encoder.
+
+The generation API accepts `input_mode: "text-to-video"` with `model_key: "minimax-h3-fl2va"`
+or `model_key: "ltx25-keyframes"` and an empty or omitted image list. Existing recipes
+default to `input_mode: "keyframes"`.
+The gallery saves the mode so **Reuse settings** restores it along with the seed and prompt.
+
+On 2026-11-22, a prompt-only API run on the RTX 4080 SUPER and ComfyUI 0.44 generated
+five seconds at 1024 × 576. The Full HD export contained 150 distinct frames at 30 fps
+and a generated audio track. Generation and export took 122 seconds in that run.
+
+## Local keyframe profiles (since 2026-11-17)
 
 Both profiles take the same input: an ordered list of **keyframe pictures**, each
 pinned to a second of the output timeline. One picture is the first frame; two

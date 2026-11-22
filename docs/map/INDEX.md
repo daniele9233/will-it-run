@@ -4,7 +4,7 @@
 
 Read this first, then the card of the package you will touch. For symbols, lines and callers use `codegraph explore "<question>"`; for what happened before, `willitrun memory search`. Rules and commands are in `AGENTS.md`.
 
-204 Python files (49,271 lines) · 1051 public symbols · 191 HTTP routes · 23 tables · 65 test files (1360 tests) · 92 UI files (23,123 lines).
+204 Python files (49,296 lines) · 1051 public symbols · 191 HTTP routes · 23 tables · 65 test files (1364 tests) · 92 UI files (23,137 lines).
 
 ## Backend packages (`backend/src/agentfit/<name>/`)
 
@@ -20,9 +20,9 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `core` | Entry points and shared plumbing: AppServices wiring (app.py), CLI, config, db, events, paths, downloads, chat, runtime, i18n. | 33 | 4,009 | api, arena, benchmark, brain, catalog, clone, cloud, fit, hardware, imagegen, lmstudio, locales, teams, workflows | `core.md` |
 | `fit` | Quantization tables, memory, speed, fit categories | 6 | 1,005 | core, hardware | `fit.md` |
 | `hardware` | Detection and the usable-memory budget | 6 | 1,029 | core | `hardware.md` |
-| `imagegen` | Image generation and editing through ComfyUI. | 28 | 6,852 | core, hardware | `imagegen.md` |
+| `imagegen` | Image generation and editing through ComfyUI. | 28 | 6,873 | core, hardware | `imagegen.md` |
 | `lmstudio` | CLI wrapper, REST client, runtime | 6 | 1,364 | core, fit, hardware | `lmstudio.md` |
-| `locales` | Translation catalogs, keyed by the English text. | 2 | 889 |  | `locales.md` |
+| `locales` | Translation catalogs, keyed by the English text. | 2 | 893 |  | `locales.md` |
 | `teams` | AI team builder: specializations, roles, model assignment and resource planning. | 5 | 2,538 | catalog, cloud, core, fit, hardware, lmstudio, workflows | `teams.md` |
 | `workflows` | Workflow DSL, validator, LangGraph compiler and run manager. | 11 | 5,607 | brain, cloud, core, hardware, lmstudio, teams | `workflows.md` |
 
@@ -41,7 +41,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `ARENA.md` | Arena | The Arena measures how **reliable** a model is. |
 | `CLONE.md` | Clone a site | An address in, a Next.js project on this PC out. |
 | `CLOUD.md` | Cloud models | Will It Run runs models on this PC through LM Studio. |
-| `DECISIONS.md` | Decisions | The owner withdrew Voice and the Qwen 3D Coder panel. |
+| `DECISIONS.md` | Decisions | The video request selects the input mode explicitly, defaulting to keyframes for existing recipes. |
 | `DESIGN.md` | Design: file e dove vivono | Mappa dei file che determinano l'aspetto, il linguaggio visivo e i testi dell'interfaccia di **Will It Run**, con accanto le immagini delle schermate… |
 | `DEVELOPMENT.md` | Development | Working with a model on this code is described in [AGENT_CONTEXT.md](AGENT_CONTEXT.md). |
 | `HARDWARE_DETECTION.md` | Hardware detection | `willitrun hardware` and the Hardware page show the result. |
@@ -61,7 +61,7 @@ Read this first, then the card of the package you will touch. For symbols, lines
 | `VIDEO_STUDIO.md` | Video studio | The Videos page is embedded in Will It Run below Images. |
 | `WINDOWS.md` | Windows | Will It Run version 1 targets Windows 11 x64 and nothing else. |
 | `WORKFLOWS.md` | Workflows | A workflow is a graph of agents, human approval gates and conditional edges. |
-| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4, 0.4.5. |
+| `RELEASE_NOTES_<version>.md` | Release notes | One file per published version: 0.4.0, 0.4.1, 0.4.2, 0.4.3, 0.4.4, 0.4.5, 0.4.6. |
 
 ## Scripts (`scripts/`)
 

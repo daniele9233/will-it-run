@@ -1,4 +1,4 @@
-"""Local keyframe video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data."""
+"""Local video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data."""
 from __future__ import annotations
 
 import json
@@ -9,7 +9,7 @@ import time
 import uuid
 from itertools import pairwise
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 from pydantic import BaseModel, Field, model_validator
@@ -35,6 +35,7 @@ def _engine_busy(exc: ComfyUnavailable) -> bool:
 
 class VideoRequest(BaseModel):
     model_key: str = catalog.DEFAULT
+    input_mode: Literal["keyframes", "text-to-video"] = "keyframes"
     image: str = Field(default="", max_length=500)
     images: list[str] = Field(default_factory=list, max_length=9)
     # Seconds on the output timeline, one per picture; empty spreads them from 0 to the end.
@@ -62,18 +63,28 @@ class VideoRequest(BaseModel):
     @model_validator(mode="after")
     def valid(self) -> VideoRequest:
         selected = catalog.profile(self.model_key)
-        if self.images:
-            if len(self.images) > selected.max_images:
-                raise ValueError(tr("This video model accepts at most {count} keyframe pictures.").format(count=selected.max_images))
-            if self.image and self.image != self.images[0]:
-                raise ValueError(tr("The first keyframe picture was given twice with different files."))
-            self.image = self.images[0]
-        elif self.image:
-            self.images = [self.image]
-        if not self.image or not self.prompt.strip():
-            raise ValueError(tr("Choose at least one keyframe picture and describe the movement."))
-        if self.end_image or self.negative.strip() or self.motion_frames is not None:
-            raise ValueError(tr("Keyframe video models take ordered keyframe pictures only, without a separate ending picture, negative prompt or slow motion."))
+        if self.input_mode == "text-to-video":
+            if not selected.supports_text_to_video:
+                raise ValueError(tr("This video model does not support Text-to-Video in Will It Run."))
+            if self.image or self.images or self.keyframe_times or self.end_image:
+                raise ValueError(tr("Text-to-Video takes a prompt without keyframe pictures or times."))
+            if not self.prompt.strip():
+                raise ValueError(tr("Describe the scene to generate a video from text."))
+            if self.negative.strip() or self.motion_frames is not None:
+                raise ValueError(tr("Text-to-Video uses the model's own negative prompt and motion settings."))
+        else:
+            if self.images:
+                if len(self.images) > selected.max_images:
+                    raise ValueError(tr("This video model accepts at most {count} keyframe pictures.").format(count=selected.max_images))
+                if self.image and self.image != self.images[0]:
+                    raise ValueError(tr("The first keyframe picture was given twice with different files."))
+                self.image = self.images[0]
+            elif self.image:
+                self.images = [self.image]
+            if not self.image or not self.prompt.strip():
+                raise ValueError(tr("Choose at least one keyframe picture and describe the movement."))
+            if self.end_image or self.negative.strip() or self.motion_frames is not None:
+                raise ValueError(tr("Keyframe video models take ordered keyframe pictures only, without a separate ending picture, negative prompt or slow motion."))
         if self.turbo and selected.turbo_steps is None:
             raise ValueError(tr("This video model has no Turbo recipe."))
         steps = selected.turbo_steps if self.turbo and selected.turbo_steps else selected.steps
@@ -112,7 +123,7 @@ class VideoRequest(BaseModel):
 
 
 def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, Any]:
-    """The family's own keyframe graph."""
+    """The family's own generation graph."""
     if catalog.profile(r.model_key).family == "minimax-h3":
         return minimax_h3.workflow(r, files, job_id)
     return ltx25.workflow(r, files, job_id)
@@ -168,7 +179,8 @@ class VideoStudio:
                            "ready": available and len(files) == len(selected.requirements()) and not missing
                            and runtime_ready,
                            "components": rows, "files": files, "missing_nodes": missing, "setup": state,
-                           "input_mode": selected.input_mode, "max_images": selected.max_images,
+                           "input_mode": selected.input_mode, "supports_text_to_video": selected.supports_text_to_video,
+                           "max_images": selected.max_images,
                            "size_multiple": selected.size_multiple, "frame_stride": selected.frame_stride,
                            "frame_offset": selected.frame_offset, "min_seconds": selected.min_seconds,
                            "turbo_steps": selected.turbo_steps,

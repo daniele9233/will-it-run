@@ -20,8 +20,8 @@ Image generation and editing through ComfyUI.
 | `imagegen/keyframes.py` | 36 | Where each keyframe picture lands on a video's timeline, shared by the keyframe video models. | default_times(), frame_indices(), anchor_sentence() |  |
 | `imagegen/lab.py` | 189 | Additional 3D engines and companion studios, preserving the existing TRELLIS gallery. | **LabRequest**, **ThreeDLab**, validate_embedded_glb() | test_3d_lab.py |
 | `imagegen/lab_worker.py` | 273 | WSL-only launcher for additional 3D engines. | run(), ready(), checkout(), install(), launch(), managed_process(), stop(), generate(), main() |  |
-| `imagegen/ltx25.py` | 122 | LTX-2.5 keyframe workflow on native ComfyUI nodes (official FLF2V + two-stage I2V recipes, generalised). | assets(), prompt(), strength(), workflow() | test_video.py, test_video_setup.py |
-| `imagegen/minimax_h3.py` | 128 | MiniMax H3 FL2VA keyframe workflow on native ComfyUI nodes. | assets(), structured_prompt(), workflow() | test_video.py, test_video_setup.py |
+| `imagegen/ltx25.py` | 129 | LTX-2.5 text and keyframe workflows on native ComfyUI nodes. | assets(), prompt(), strength(), workflow() | test_video.py, test_video_setup.py |
+| `imagegen/minimax_h3.py` | 128 | MiniMax H3 FL2VA text and keyframe workflows on native ComfyUI nodes. | assets(), structured_prompt(), workflow() | test_video.py, test_video_setup.py |
 | `imagegen/plan.py` | 172 | Will this model fit on this card, and what to change when it does not. | cost_per_megapixel(), estimate(), is_out_of_memory(), out_of_memory_hints() | test_imagegen.py |
 | `imagegen/relayvsr.py` | 87 | Native ComfyUI RelayVSR contracts and verified weights; no GPU imports in the core. | **RelayVSRSetup**, assets(), requirements(), workflow() | test_relayvsr.py |
 | `imagegen/service.py` | 629 | The image studio: queue a ComfyUI workflow, watch it, keep the result. | **StudioError**, **GenerationRequest**, **ImageStudio** | test_imagegen.py |
@@ -30,8 +30,8 @@ Image generation and editing through ComfyUI.
 | `imagegen/trellis_blender.py` | 185 | Blender background script: decimation, high-to-low PBR/normal bake, Draco/WebP. | progress(), main() |  |
 | `imagegen/trellis_web_worker.py` | 81 | Isolated Blender web export runner; executed in WSL, never in the core. | progress(), prepare(), main() |  |
 | `imagegen/trellis_worker.py` | 285 | Executed by the isolated TRELLIS.2 runtime, never imported by the core. | progress(), configure_pipeline(), asset_path(), configure_export(), prepare(), prepare_asset(), main() | test_trellis.py |
-| `imagegen/video.py` | 349 | Local keyframe video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data. | **VideoRequest**, **VideoStudio**, workflow() | test_relayvsr.py, test_video.py, test_video_collections.py +2 |
-| `imagegen/video_catalog.py` | 62 | Explicit local video profiles; the selected quantizations never change silently. | **VideoProfile**, profile(), assets() | test_video.py, test_video_finish.py, test_video_setup.py |
+| `imagegen/video.py` | 361 | Local video studio (MiniMax H3 FL2VA, LTX-2.5), sharing the Images engine and keeping MP4s in app data. | **VideoRequest**, **VideoStudio**, workflow() | test_relayvsr.py, test_video.py, test_video_collections.py +2 |
+| `imagegen/video_catalog.py` | 64 | Explicit local video profiles; the selected quantizations never change silently. | **VideoProfile**, profile(), assets() | test_video.py, test_video_finish.py, test_video_setup.py |
 | `imagegen/video_collections.py` | 130 | Prompt collections: finished videos kept with every prompt and setting that made them. | **CollectionKeyframe**, **CollectionEntry**, **VideoCollection**, **VideoCollectionStore** | test_video_collections.py |
 | `imagegen/video_finish.py` | 105 | Local hero-video finishing: motion interpolation, Lanczos scaling and verified MP4s. | **VideoCancelled**, tools(), finish() | test_relayvsr.py, test_video.py, test_video_finish.py |
 | `imagegen/video_progress.py` | 112 | Observed ComfyUI node/step progress; stage weights are not time estimates. | **VideoProgress**, **ProgressStream** | test_video_progress.py, test_video_setup.py |

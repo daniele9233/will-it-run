@@ -9,10 +9,10 @@ import { t } from "../lib/i18n";
 import { VideoJobProgress, type VideoJob } from "../components/VideoJobProgress";
 import { VideoPlayer } from "../components/VideoPlayer";
 import { VideoUpscalePanel } from "../components/VideoUpscalePanel";
-import type { VideoCollection, VideoCollectionEntry, VideoModel, VideoSetupStatus } from "../lib/types";
+import type { VideoCollection, VideoCollectionEntry, VideoInputMode, VideoModel, VideoSetupStatus } from "../lib/types";
 import { defaultKeyframeTimes, galleryClipLabel, keyframeTimesProblem, videoFrameCount, videoInputDescription, videoInputLabel } from "../lib/video";
 
-interface Recipe { duration_seconds?: number | null; model_key: string; image: string; images?: string[]; keyframe_times?: number[]; prompt: string; negative?: string; width: number; height: number; frames: number; fps: number; steps: number; cfg: number; seed: number; turbo?: boolean }
+interface Recipe { duration_seconds?: number | null; model_key: string; input_mode?: VideoInputMode; image: string; images?: string[]; keyframe_times?: number[]; prompt: string; negative?: string; width: number; height: number; frames: number; fps: number; steps: number; cfg: number; seed: number; turbo?: boolean }
 interface Job extends VideoJob { kind?: string }
 interface Status { available: boolean; models: VideoModel[]; jobs: Job[]; finishing: { ready: boolean } }
 interface Clip { id: string; request: Recipe; elapsed: number; model: string; created_at?: number; output?: { width: number; height: number; fps: number; frames: number; seconds: number } | null }
@@ -62,6 +62,7 @@ export function VideosPage() {
   const model = status.data?.models.find(m => m.key === recipe.model_key);
   const limit = model?.max_images ?? 9;
   const isH3 = recipe.model_key === H3;
+  const textToVideo = recipe.input_mode === "text-to-video";
   const settingUp = status.data?.models.some(m => m.setup.job.status === "running");
   const multiple = model?.size_multiple ?? 32;
   const resolutions = (SIZES[recipe.model_key] ?? [[1280, 704]]).map(([w, h]) => (portrait ? [h, w] : [w, h]).map(n => Math.ceil(n / multiple) * multiple));
@@ -76,7 +77,7 @@ export function VideosPage() {
     const kept = keyframes.slice(0, chosen.max_images);
     setKeyframes(kept);
     const [w, h] = SIZES[key]?.at(-1) ?? [chosen.defaults.width, chosen.defaults.height];
-    setRecipe(r => ({ ...r, model_key: key, ...chosen.defaults, turbo: false,
+    setRecipe(r => ({ ...r, model_key: key, input_mode: chosen.input_mode, ...chosen.defaults, turbo: false,
       images: kept.map(item => item.name), image: kept[0]?.name ?? "",
       width: portrait ? h : w, height: portrait ? w : h }));
   }
@@ -88,7 +89,8 @@ export function VideosPage() {
     const chosen = status.data?.models.find(m => m.key === saved.request.model_key);
     if (!chosen) { setError(t("This saved video used a removed model. Choose an available model before generating again.")); return; }
     const w = Math.max(saved.request.width, saved.request.height), h = Math.min(saved.request.width, saved.request.height);
-    setRecipe({ ...INITIAL, ...chosen.defaults, model_key: chosen.key, prompt: saved.request.prompt,
+    setRecipe({ ...INITIAL, ...chosen.defaults, model_key: chosen.key, input_mode: saved.request.input_mode ?? chosen.input_mode,
+      prompt: saved.request.prompt,
       duration_seconds: saved.request.duration_seconds ?? 10, seed: saved.request.seed, turbo: !!saved.request.turbo,
       width: portrait ? h : w, height: portrait ? w : h, image: recipe.image, images: recipe.images });
     const savedTimes = saved.request.keyframe_times ?? [];
@@ -176,16 +178,16 @@ export function VideosPage() {
 
   function generate() {
     return action(async () => {
-      await api.post("/api/videos/generate", { model_key: recipe.model_key, images: recipe.images, prompt: recipe.prompt,
+      await api.post("/api/videos/generate", { model_key: recipe.model_key, input_mode: recipe.input_mode ?? "keyframes", prompt: recipe.prompt,
         width: recipe.width, height: recipe.height, duration_seconds: duration, seed: recipe.seed, turbo: !!recipe.turbo,
-        ...(manualTimes ? { keyframe_times: times } : {}) });
+        ...(!textToVideo && { images: recipe.images, ...(manualTimes && { keyframe_times: times }) }) });
       setSelected(null);
     });
   }
 
   return <div className="mx-auto grid min-h-0 w-full max-w-[1500px] flex-1 content-start gap-5 overflow-y-auto p-6">
     <header className="flex flex-wrap items-center justify-between gap-3">
-      <div><h1 className="flex items-center gap-2 text-2xl font-semibold"><Film size={24} />{t("Videos")}</h1><p className="mt-1 text-sm text-ink-2">{t("Generate local video and audio from one or more keyframe pictures: first frame, first and last frame, or one continuous shot through several pictures.")}</p></div>
+      <div><h1 className="flex items-center gap-2 text-2xl font-semibold"><Film size={24} />{t("Videos")}</h1><p className="mt-1 text-sm text-ink-2">{t("Generate video and audio locally from a prompt or keyframe pictures.")}</p></div>
       <div className="flex flex-wrap gap-2"><Button icon={<Library size={14} />} onClick={() => collectionsSection.current?.scrollIntoView({ block: "start" })}>{t("Prompt collections")}</Button><Button icon={<Bookmark size={14} />} onClick={() => librarySection.current?.scrollIntoView({ block: "start" })}>{t("Saved video prompts")}</Button><Button icon={<RefreshCw size={14} />} onClick={() => { status.reload(); gallery.reload(); }}>{t("Refresh")}</Button><Button loading={busy} onClick={() => void action(() => api.post("/api/images/engine/start"))}>{t("Start engine")}</Button><Button disabled={!!job || busy || !status.data?.available} onClick={() => void action(async () => {
         const result = await api.post<{ stopped: boolean }>("/api/images/engine/stop");
         if (!result.stopped) throw new Error(t("The engine was started outside Will It Run. Stop it there before restarting here."));
@@ -198,10 +200,18 @@ export function VideosPage() {
       <label className="grid max-w-4xl gap-2 text-sm font-semibold">{t("Video model")}
         <select className={inputStyle} value={recipe.model_key} disabled={busy || !!job} onChange={e => chooseModel(e.target.value)}>
           {!status.data && <option value={recipe.model_key}>{t("Loading")}</option>}
-          {(status.data?.models ?? []).map(m =><option key={m.key} value={m.key}>{m.name} · {videoInputLabel(m.max_images)}{m.ready ? ` · ${t("Ready")}` : ""}</option>)}
+          {(status.data?.models ?? []).map(m =><option key={m.key} value={m.key}>{m.name}{m.ready ? ` · ${t("Ready")}` : ""}</option>)}
         </select>
       </label>
-      {model && <div className="my-3 grid gap-1 text-sm"><strong className="text-accent">{videoInputLabel(model.max_images)}</strong><p className="text-ink-2">{videoInputDescription()}</p><p className="text-ink-2">{isH3 ? t("MiniMax H3 FL2VA: the highest quality. The first and last pictures are its trained first/last-frame task; pictures in between are pinned to their frames. 20 steps, or an 8-step Turbo draft.") : t("LTX-2.5: fast drafts and iterations. Half-resolution pass, x2 latent upscaler and a refinement pass, with every picture pinned to its frame.")}</p></div>}
+      {model?.supports_text_to_video && <label className="my-3 grid max-w-xs gap-2 text-sm font-semibold">{t("Generation mode")}
+        <Select value={recipe.input_mode ?? model.input_mode} disabled={busy || !!job} onChange={e => setRecipe(r => ({ ...r, input_mode: e.target.value as VideoInputMode }))}>
+          <option value="keyframes">{t("Keyframes")}</option>
+          <option value="text-to-video">{t("Text-to-Video")}</option>
+        </Select>
+      </label>}
+      {model && <div className="my-3 grid gap-1 text-sm">
+        {textToVideo ? <p className="text-ink-2">{t("The model generates the entire scene, including the first frame, from your prompt.")}</p> : <><strong className="text-accent">{videoInputLabel(model.max_images)}</strong><p className="text-ink-2">{videoInputDescription()}</p><p className="text-ink-2">{isH3 ? t("MiniMax H3 FL2VA: the highest quality. The first and last pictures are its trained first/last-frame task; pictures in between are pinned to their frames. 20 steps, or an 8-step Turbo draft.") : t("LTX-2.5: fast drafts and iterations. Half-resolution pass, x2 latent upscaler and a refinement pass, with every picture pinned to its frame.")}</p></>}
+      </div>}
       {model && <SetupPanel title={model.name} setup={model.setup} endpoint={`/api/videos/models/${model.key}/setup`} busy={busy} job={!!job} ready={model.ready} onAction={action} />}
       <div className="my-3 rounded-lg border border-line bg-bg p-3 text-sm"><strong>1920 × 1080 · 16:9 · 30 FPS · {duration} s</strong><p className="mt-1 text-ink-2">{t("Final MP4 for a desktop hero. Motion interpolation adds new frames; Lanczos scaling produces Full HD. This is upscaled output.")}</p></div>
       {status.data && !status.data.finishing.ready && <p role="alert" className="text-warn">{t("Local FFmpeg and FFprobe are needed to finish Full HD videos.")}</p>}
@@ -211,7 +221,8 @@ export function VideosPage() {
     </section>
     <div className="grid items-start gap-5 xl:grid-cols-[420px_1fr]">
       <section ref={generatorSection} className="grid gap-4 rounded-xl border border-line bg-surface p-4">
-        <h2 className="font-semibold">{t("Keyframes")}</h2>
+        <h2 className="font-semibold">{textToVideo ? t("Text-to-Video") : t("Keyframes")}</h2>
+        {!textToVideo && <>
         <div className="grid gap-2 text-sm">
           <div className="flex items-baseline justify-between gap-2"><p className="font-medium">{t("Keyframe pictures, in order")}</p><span className="text-xs text-ink-3">{keyframes.length} / {limit}</span></div>
           <input ref={pictureInput} className="hidden" type="file" accept="image/png,image/jpeg,image/webp" aria-label={t("Keyframe pictures, in order")} onChange={e => { const f = e.target.files?.[0]; if (f) void upload(f); }} />
@@ -231,11 +242,14 @@ export function VideosPage() {
         </li>)}</ol>}
         {keyframes.length > 1 && <div className="flex flex-wrap items-center gap-2 text-xs text-ink-2"><span>{manualTimes ? t("Times chosen by you.") : t("Times spread evenly from the first to the last frame.")}</span>{manualTimes && <Button onClick={() => setManualTimes(null)}>{t("Spread evenly")}</Button>}</div>}
         {timesProblem && keyframes.length > 0 && <p role="alert" className="text-sm text-warn">{timesProblem}</p>}
+        </>}
 
-        <label className="grid gap-1 text-sm">{t("Describe the movement")}<textarea ref={promptInput} className={inputStyle} rows={7} value={recipe.prompt} onChange={e => setRecipe({ ...recipe, prompt: e.target.value })} /></label>
+        <label className="grid gap-1 text-sm">{textToVideo ? t("Describe the scene and movement") : t("Describe the movement")}<textarea ref={promptInput} className={inputStyle} rows={7} value={recipe.prompt} onChange={e => setRecipe({ ...recipe, prompt: e.target.value })} /></label>
         <div className="grid gap-1 rounded-md border border-line bg-bg p-2 text-xs text-ink-2">
-          <p>{isH3 ? t("Describe the path between the pictures: camera movement, speed and what changes. The official MiniMax H3 layout (frame alignment, soundscape, music) is added for you. Optional last lines: \"Sound: ...\" and \"Music: ...\".") : t("Describe the path between the pictures in one paragraph: camera movement, speed and what changes. The keyframe instruction is added for you.")}</p>
-          <p>{t("For one continuous shot, write it as a single shot: name the camera moves in order (push in, dive, arc, glide), say \"no cuts\", and leave enough seconds between two very different pictures.")}</p>
+          {textToVideo ? <p>{t("Describe the subject, setting and light, then the subject's action and the camera movement in order. Include the sounds you want to hear.")}</p> : <>
+            <p>{isH3 ? t("Describe the path between the pictures: camera movement, speed and what changes. The official MiniMax H3 layout (frame alignment, soundscape, music) is added for you. Optional last lines: \"Sound: ...\" and \"Music: ...\".") : t("Describe the path between the pictures in one paragraph: camera movement, speed and what changes. The keyframe instruction is added for you.")}</p>
+            <p>{t("For one continuous shot, write it as a single shot: name the camera moves in order (push in, dive, arc, glide), say \"no cuts\", and leave enough seconds between two very different pictures.")}</p>
+          </>}
         </div>
         <SaveVideoPrompts prompt={recipe.prompt} negative="" onSaved={promptLibrary.reload} />
         <p className="text-xs text-ink-2">{t("Higher generation resolutions and longer clips need more memory and time. The final file is always 1920 × 1080 at 30 FPS.")}</p>
@@ -246,7 +260,7 @@ export function VideosPage() {
         {model?.turbo_steps != null && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!recipe.turbo} disabled={busy || !!job} onChange={e => setRecipe({ ...recipe, turbo: e.target.checked })} />{t("Turbo draft · {steps} steps (faster, slightly softer motion)", { steps: model.turbo_steps })}</label>}
         <p className="text-xs text-ink-2">{t("Generated at {fps} FPS · {frames} frames, then motion interpolation to 30 FPS. Generated audio is preserved in the MP4.", { fps: model?.defaults.fps ?? 24, frames: nativeFrames })}</p>
         <label className="grid gap-1 text-sm">{t("Seed (-1 = random)")}<input className={inputStyle} type="number" min={-1} max={2147483647} value={recipe.seed} onChange={e => setRecipe({ ...recipe, seed: Number(e.target.value) })} /></label>
-        <Button variant="primary" icon={<Play size={14} />} loading={busy} disabled={!model?.ready || !status.data?.finishing.ready || keyframes.length === 0 || !!timesProblem || !recipe.prompt.trim() || !!job} onClick={() => void generate()}>{t("Generate video")}</Button>
+        <Button variant="primary" icon={<Play size={14} />} loading={busy} disabled={!model?.ready || !status.data?.finishing.ready || (!textToVideo && (keyframes.length === 0 || !!timesProblem)) || !recipe.prompt.trim() || !!job} onClick={() => void generate()}>{t("Generate video")}</Button>
         {(generationJob || last) && <VideoJobProgress job={(generationJob || last)!} />}
         {generationJob && <Button onClick={() => void action(() => api.post(`/api/videos/jobs/${generationJob.id}/cancel`))}>{t("Cancel")}</Button>}
         {last?.status === "failed" && <p role="alert" className="text-sm text-bad">{last.error}</p>}

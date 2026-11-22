@@ -499,6 +499,10 @@ MESSAGES.update({
 # Keyframe video models (MiniMax H3 FL2VA, LTX-2.5), 2026-11-17.
 MESSAGES.update({
     "LTX-2.5 uses between 1 and {count} keyframe pictures.": "LTX-2.5 usa da 1 a {count} immagini keyframe.",
+    "This video model does not support Text-to-Video in Will It Run.": "Questo modello video non supporta Text-to-Video in Will It Run.",
+    "Text-to-Video takes a prompt without keyframe pictures or times.": "Text-to-Video usa un prompt senza immagini o tempi dei keyframe.",
+    "Describe the scene to generate a video from text.": "Descrivi la scena per generare un video dal testo.",
+    "Text-to-Video uses the model's own negative prompt and motion settings.": "Text-to-Video usa il prompt negativo e le impostazioni di movimento predefiniti del modello.",
     "MiniMax H3 uses between 1 and {count} keyframe pictures.": "MiniMax H3 usa da 1 a {count} immagini keyframe.",
     "Choose at least one keyframe picture and describe the movement.": "Scegli almeno un'immagine keyframe e descrivi il movimento.",
     "Keyframe video models take ordered keyframe pictures only, without a separate ending picture, negative prompt or slow motion.": "I modelli video a keyframe usano solo immagini keyframe ordinate, senza un'immagine finale separata, prompt negativo o rallentamento.",

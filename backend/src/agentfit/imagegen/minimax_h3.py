@@ -1,4 +1,4 @@
-"""MiniMax H3 FL2VA keyframe workflow on native ComfyUI nodes. GPU code runs only inside ComfyUI.
+"""MiniMax H3 FL2VA text and keyframe workflows on native ComfyUI nodes.
 
 The first and last pictures go to MiniMaxH3ImageToVideo (the trained first/last-frame task); every
 picture in between is pinned to its own frame with a chained MiniMaxH3AddGuide, so one generation
@@ -35,7 +35,7 @@ def _seconds(value: float) -> str:
 
 
 def structured_prompt(text: str, indices: list[int], frames: int) -> str:
-    """Wrap a plain description in the official H3 FL2VA / I2VA / L2VA prompt layout.
+    """Wrap a plain description in the official H3 T2VA / FL2VA / I2VA / L2VA prompt layout.
 
     The text encoder sees only the first-frame and last-frame pictures (in that order); a prompt
     that already uses the official fields is passed through unchanged.
@@ -74,12 +74,12 @@ def structured_prompt(text: str, indices: list[int], frames: int) -> str:
 
 
 def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, Any]:
-    """First/last frame on the FL2VA node, intermediate keyframes as chained guides, AV decoding."""
+    """Condition empty AV latents on text and any supplied keyframes."""
     def node(kind: str, **inputs: Any) -> dict[str, Any]:
         return {"class_type": kind, "inputs": inputs}
 
     images = list(r.images) or ([r.image] if r.image else [])
-    if not 1 <= len(images) <= MAX_IMAGES:
+    if r.input_mode == "keyframes" and not 1 <= len(images) <= MAX_IMAGES:
         raise ValueError(tr("MiniMax H3 uses between 1 and {count} keyframe pictures.").format(count=MAX_IMAGES))
     indices = frame_indices(r.times(), r.seconds(), r.frames)
     graph: dict[str, Any] = {

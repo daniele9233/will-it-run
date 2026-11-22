@@ -1,5 +1,12 @@
 # Decisions
 
+## 2026-11-22 - Text-to-Video shares the existing video profiles
+
+The video request selects the input mode explicitly, defaulting to keyframes for existing
+recipes. Both models share verified weights, setup state and the gallery across modes.
+LTX-2.5 omits the image guides in both sampling stages. MiniMax H3 uses the native FL2VA
+conditioning node with no first or last frame connected.
+
 ## 2026-11-08 - Remove Voice and Qwen 3D Coder; observe video progress
 
 The owner withdrew Voice and the Qwen 3D Coder panel. Remove their active UI,

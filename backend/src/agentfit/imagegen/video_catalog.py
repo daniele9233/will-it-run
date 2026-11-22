@@ -24,6 +24,7 @@ class VideoProfile:
     max_images: int
     cfg: float = 1.0
     input_mode: str = "keyframes"
+    supports_text_to_video: bool = False
     min_seconds: int = 5
     turbo_steps: int | None = None
     recommended_vram_gb: int = 24
@@ -38,12 +39,13 @@ class VideoProfile:
 
 
 PROFILES = (
-    VideoProfile(minimax_h3.KEY, "MiniMax H3 FL2VA · keyframes · INT8", "minimax-h3", fps=minimax_h3.FPS,
+    VideoProfile(minimax_h3.KEY, "MiniMax H3 FL2VA · INT8", "minimax-h3", fps=minimax_h3.FPS,
                  steps=minimax_h3.STEPS, turbo_steps=minimax_h3.TURBO_STEPS, size_multiple=32,
-                 width=1344, height=768, frame_stride=17, frame_offset=5, max_images=minimax_h3.MAX_IMAGES),
-    VideoProfile(ltx25.KEY, "LTX-2.5 · keyframes · two-stage · INT8", "ltx25", fps=ltx25.FPS, steps=8,
+                 width=1344, height=768, frame_stride=17, frame_offset=5, max_images=minimax_h3.MAX_IMAGES,
+                 supports_text_to_video=True),
+    VideoProfile(ltx25.KEY, "LTX-2.5 · two-stage · INT8", "ltx25", fps=ltx25.FPS, steps=8,
                  size_multiple=64, width=1280, height=704, frame_stride=8, frame_offset=1,
-                 max_images=ltx25.MAX_IMAGES),
+                 max_images=ltx25.MAX_IMAGES, supports_text_to_video=True),
 )
 # Folder of each family under D:\Models\video.
 FOLDERS = {"minimax-h3": "minimaxh3", "ltx25": "ltx25"}

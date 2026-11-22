@@ -1,8 +1,7 @@
-"""LTX-2.5 keyframe workflow on native ComfyUI nodes (official FLF2V + two-stage I2V recipes, generalised).
+"""LTX-2.5 text and keyframe workflows on native ComfyUI nodes.
 
-Stage one samples at half resolution with the distilled 8-step schedule and every keyframe pinned
-by LTXVAddGuide; the x2 latent upsampler doubles it and stage two refines with three steps and the
-keyframes pinned again at full resolution. GPU code runs only inside ComfyUI.
+Stage one samples at half resolution with the distilled 8-step schedule. The x2 latent upsampler
+doubles it and stage two refines with three steps. When used, keyframes are pinned in both stages.
 """
 from __future__ import annotations
 
@@ -52,12 +51,12 @@ def strength(frame: int, frames: int) -> float:
 
 
 def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, Any]:
-    """Two-stage keyframe graph with AV latents; guides are cropped before upsampling and decoding."""
+    """Sample audio and video together and refine the upscaled video latent."""
     def node(kind: str, **inputs: Any) -> dict[str, Any]:
         return {"class_type": kind, "inputs": inputs}
 
     images = list(r.images) or ([r.image] if r.image else [])
-    if not 1 <= len(images) <= MAX_IMAGES:
+    if r.input_mode == "keyframes" and not 1 <= len(images) <= MAX_IMAGES:
         raise ValueError(tr("LTX-2.5 uses between 1 and {count} keyframe pictures.").format(count=MAX_IMAGES))
     indices = frame_indices(r.times(), r.seconds(), r.frames)
     half = (r.width // 2, r.height // 2)
@@ -99,10 +98,13 @@ def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, A
         "15": node("SamplerCustomAdvanced", noise=["12", 0], guider=["11", 0], sampler=["13", 0], sigmas=["14", 0],
                    latent_image=["10", 0]),
         "16": node("LTXVSeparateAVLatent", av_latent=["15", 0]),
-        "17": node("LTXVCropGuides", positive=positive, negative=negative, latent=["16", 0]),
-        "31": node("LTXVLatentUpsampler", samples=["17", 2], upscale_model=["30", 0], vae=["3", 0]),
     })
-    positive, negative, latent = guides(["17", 0], ["17", 1], ["31", 0], 300, (r.width, r.height))
+    latent = ["16", 0]
+    if images:
+        graph["17"] = node("LTXVCropGuides", positive=positive, negative=negative, latent=latent)
+        positive, negative, latent = ["17", 0], ["17", 1], ["17", 2]
+    graph["31"] = node("LTXVLatentUpsampler", samples=latent, upscale_model=["30", 0], vae=["3", 0])
+    positive, negative, latent = guides(positive, negative, ["31", 0], 300, (r.width, r.height))
     graph.update({
         "32": node("LTXVConcatAVLatent", video_latent=latent, audio_latent=["16", 1]),
         "33": node("LTXVDualCFGGuider", model=["1", 0], positive=positive, negative=negative, video_cfg=1.0, audio_cfg=1.0),
@@ -111,8 +113,13 @@ def workflow(r: VideoRequest, files: dict[str, str], job_id: str) -> dict[str, A
         "36": node("SamplerCustomAdvanced", noise=["34", 0], guider=["33", 0], sampler=["13", 0], sigmas=["35", 0],
                    latent_image=["32", 0]),
         "37": node("LTXVSeparateAVLatent", av_latent=["36", 0]),
-        "38": node("LTXVCropGuides", positive=positive, negative=negative, latent=["37", 0]),
-        "18": node("VAEDecodeTiled", samples=["38", 2], vae=["3", 0], tile_size=512, overlap=64,
+    })
+    latent = ["37", 0]
+    if images:
+        graph["38"] = node("LTXVCropGuides", positive=positive, negative=negative, latent=latent)
+        latent = ["38", 2]
+    graph.update({
+        "18": node("VAEDecodeTiled", samples=latent, vae=["3", 0], tile_size=512, overlap=64,
                    temporal_size=64, temporal_overlap=16),
         "19": node("LTXVAudioVAEDecode", samples=["37", 1], audio_vae=["4", 0]),
         "20": node("CreateVideo", images=["18", 0], audio=["19", 0], fps=float(FPS)),

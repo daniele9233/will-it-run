@@ -183,6 +183,57 @@ def test_ltx_pins_every_keyframe_in_both_stages_and_crops_guides_before_upsampli
     assert_connected(graph)
 
 
+def test_ltx_text_to_video_has_two_sampling_stages_and_no_image_inputs():
+    prompt = "A train rolls into the station in one continuous shot."
+    request = VideoRequest(model_key=ltx25.KEY, input_mode="text-to-video", prompt=prompt, duration_seconds=5, seed=42)
+    graph = workflow(request, files(ltx25.KEY), "test")
+
+    assert request.images == request.times() == []
+    assert request.frames == 121
+    assert graph["5"]["inputs"]["text"] == prompt
+    classes = {node["class_type"] for node in graph.values()}
+    assert classes.isdisjoint({"LoadImage", "ImageScale", "LTXVPreprocess", "LTXVAddGuide", "LTXVCropGuides"})
+    assert graph["10"]["inputs"]["video_latent"] == ["8", 0]
+    assert graph["31"]["inputs"]["samples"] == ["16", 0]
+    assert graph["32"]["inputs"]["video_latent"] == ["31", 0]
+    assert graph["32"]["inputs"]["audio_latent"] == ["16", 1]
+    assert graph["18"]["inputs"]["samples"] == ["37", 0]
+    assert graph["19"]["inputs"]["samples"] == ["37", 1]
+    assert sum(node["class_type"] == "SamplerCustomAdvanced" for node in graph.values()) == 2
+    assert_connected(graph)
+
+
+@pytest.mark.parametrize("turbo", [False, True])
+def test_minimax_text_to_video_uses_the_fl2va_weights_without_image_conditioning(turbo):
+    request = VideoRequest(model_key=minimax_h3.KEY, input_mode="text-to-video", duration_seconds=5, turbo=turbo,
+                           prompt="A train rolls into the station.\nSound: Wheels on rails.\nMusic: Soft piano.")
+    graph = workflow(request, files(minimax_h3.KEY), "test")
+    conditioning = graph["6"]
+    assert request.images == request.times() == []
+    assert request.frames == 124
+    assert conditioning["class_type"] == "MiniMaxH3ImageToVideo"
+    assert conditioning["inputs"]["prompt"] == (
+        "integrated_multimodal_description: [Shot 1] A train rolls into the station.\n\n"
+        "overall_soundscape: Wheels on rails.\n\nnon_diegetic_music: Soft piano."
+    )
+    assert {"first_frame", "last_frame"}.isdisjoint(conditioning["inputs"])
+    assert {"LoadImage", "MiniMaxH3AddGuide"}.isdisjoint(node["class_type"] for node in graph.values())
+    assert graph["10"]["inputs"]["steps"] == (8 if turbo else 20)
+    assert ("5" in graph) == turbo
+    assert graph["13"]["inputs"]["samples"] == graph["14"]["inputs"]["samples"] == ["11", 0]
+    assert_connected(graph)
+
+
+@pytest.mark.parametrize("model_key", [ltx25.KEY, minimax_h3.KEY])
+@pytest.mark.parametrize("fields", [
+    {"image": "first.png"}, {"images": ["first.png"]},
+    {"end_image": "last.png"}, {"keyframe_times": [0]}, {"prompt": "   "},
+])
+def test_text_to_video_rejects_input_from_the_wrong_mode(model_key, fields):
+    with pytest.raises(ValidationError):
+        VideoRequest(**({"model_key": model_key, "input_mode": "text-to-video", "prompt": "move"} | fields))
+
+
 @pytest.mark.parametrize(("selected", "seconds", "frames"), [
     (minimax_h3.KEY, 5, 124), (minimax_h3.KEY, 15, 362), (ltx25.KEY, 5, 121), (ltx25.KEY, 15, 361),
 ])
@@ -383,6 +434,7 @@ def test_video_api_keeps_guards_validation_playback_and_deletion(studio, monkeyp
         state = client.get("/api/videos/status").json()
         assert [m["key"] for m in state["models"]] == [minimax_h3.KEY, ltx25.KEY]
         assert state["models"][0]["max_images"] == 9
+        assert all(model["supports_text_to_video"] for model in state["models"])
         assert client.post("/api/videos/models/invented/setup").status_code == 404
         assert client.post("/api/videos/ref2va/setup").status_code == 404
         assert client.get("/api/videos/flow").status_code == 404
@@ -408,6 +460,17 @@ def test_video_api_keeps_guards_validation_playback_and_deletion(studio, monkeyp
             assert client.post(f"/api/videos/gallery/{video_id}/save", json={"path": str(tmp_path / "error.mp4")}).status_code == 400
         assert client.delete(f"/api/videos/gallery/{video_id}").status_code == 200
         assert client.get(f"/api/videos/gallery/{video_id}/file").status_code == 404
+
+
+@pytest.mark.parametrize("model_key", [ltx25.KEY, minimax_h3.KEY])
+def test_text_to_video_keeps_its_mode_in_the_gallery_recipe(studio, model_key):
+    request = VideoRequest(model_key=model_key, input_mode="text-to-video", prompt="A moving train.")
+    studio.generate(request)
+    assert finish(studio)["status"] == "done"
+    (clip,) = studio.gallery()
+    assert clip["request"]["input_mode"] == "text-to-video"
+    assert clip["request"]["images"] == clip["runtime"]["keyframe_frames"] == []
+    assert VideoRequest.model_validate(clip["request"]).input_mode == "text-to-video"
 
 
 def test_video_prompt_library_keeps_pairs_after_gallery_deletion_and_requires_auth(studio, monkeypatch):

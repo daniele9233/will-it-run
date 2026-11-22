@@ -2500,6 +2500,12 @@ Generate local video and audio from one or more keyframe pictures: first frame, 
 MiniMax H3 FL2VA: the highest quality. The first and last pictures are its trained first/last-frame task; pictures in between are pinned to their frames. 20 steps, or an 8-step Turbo draft. ||| MiniMax H3 FL2VA: la qualità più alta. La prima e l'ultima immagine usano il suo compito addestrato primo/ultimo fotogramma; le immagini intermedie vengono fissate al loro fotogramma. 20 passi, oppure una bozza Turbo a 8 passi.
 LTX-2.5: fast drafts and iterations. Half-resolution pass, x2 latent upscaler and a refinement pass, with every picture pinned to its frame. ||| LTX-2.5: bozze e iterazioni rapide. Passaggio a metà risoluzione, upscaler latente x2 e passaggio di rifinitura, con ogni immagine fissata al suo fotogramma.
 Keyframes ||| Keyframe
+Generation mode ||| Modalità di generazione
+Text-to-Video ||| Da testo a video
+Generate video and audio locally from a prompt or keyframe pictures. ||| Genera video e audio in locale da un prompt o da immagini keyframe.
+The model generates the entire scene, including the first frame, from your prompt. ||| Il modello genera tutta la scena, incluso il primo fotogramma, a partire dal tuo prompt.
+Describe the scene and movement ||| Descrivi la scena e il movimento
+Describe the subject, setting and light, then the subject's action and the camera movement in order. Include the sounds you want to hear. ||| Descrivi il soggetto, l'ambiente e la luce, poi l'azione e il movimento di camera nell'ordine in cui avvengono. Includi i suoni che vuoi sentire.
 Keyframe pictures, in order ||| Immagini keyframe, in ordine
 Add keyframe picture ||| Aggiungi immagine keyframe
 Choose the first keyframe picture ||| Scegli la prima immagine keyframe

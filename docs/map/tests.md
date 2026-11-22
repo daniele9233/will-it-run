@@ -64,7 +64,7 @@ They never touch LM Studio, the network or your data (`conftest.py` points `AGEN
 | `test_tool_loop_guards.py` | 15 | What keeps a tool loop moving: a file read twice, rounds of reading without writing, a small budget for a fix, edits instead of rewrites, and trimmin… | core, workflows |
 | `test_trellis.py` | 14 | 3D pipeline and authenticated API, using fakes without WSL, network or GPU. | api, core, imagegen |
 | `test_verification.py` | 26 | Verification workflows: isolation, deterministic checks and the ledger. | core, teams, workflows |
-| `test_video.py` | 23 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
+| `test_video.py` | 27 | Video workflow and lifecycle, without ComfyUI, GPU, network or user data. | api, core, imagegen |
 | `test_video_collections.py` | 4 | Prompt collections: finished videos kept with the prompts that made them. | api, core, imagegen |
 | `test_video_finish.py` | 7 | Finishing contracts without external programs, network, GPU or owner data. | core, imagegen |
 | `test_video_progress.py` | 6 | Video progress belongs to one prompt and never turns socket loss into job failure. | imagegen |

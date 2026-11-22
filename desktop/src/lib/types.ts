@@ -1222,7 +1222,7 @@ export interface ThreeDLabEngine {
 export interface ThreeDLabStatus { engines: ThreeDLabEngine[]; error: string | null }
 export interface SplatRecording { id: string; model: string; bytes: number; elapsed: number; format: string }
 
-export type VideoInputMode = "keyframes";
+export type VideoInputMode = "keyframes" | "text-to-video";
 export interface VideoSetupJob { status: string; percent: number; received: number; total: number; file: string; error: string | null }
 export interface VideoSetupStatus {
   job: VideoSetupJob;
@@ -1232,7 +1232,7 @@ export interface VideoSetupStatus {
 export interface VideoModel {
   key: string; name: string; ready: boolean;
   components: { name: string; visible: boolean; source_present: boolean | null; size_valid: boolean }[];
-  missing_nodes: string[]; input_mode: VideoInputMode; max_images: number;
+  missing_nodes: string[]; input_mode: VideoInputMode; supports_text_to_video: boolean; max_images: number;
   size_multiple: number; frame_stride: number; frame_offset: number; min_seconds: number;
   turbo_steps: number | null; setup: VideoSetupStatus;
   defaults: { fps: number; steps: number; cfg: number; width: number; height: number };

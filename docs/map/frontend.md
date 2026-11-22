@@ -41,7 +41,7 @@ The UI talks to the core only over HTTP (`desktop/src/lib/api.ts`) and one event
 | `pages/Settings.tsx` | 589 | SettingsPage | `/api/brain`, `/api/doctor`, `/api/lmstudio/server/start`, `/api/models/installed` |  |
 | `pages/Teams.tsx` | 697 | TeamsPage | `/api/downloads`, `/api/runs`, `/api/specializations`, `/api/teams`, `/api/teams/plan`, `/api/teams/{}` |  |
 | `pages/ThreeD.tsx` | 196 | ThreeDPage | `/api/3d/gallery`, `/api/3d/gallery/{}`, `/api/3d/gallery/{}/file`, `/api/3d/gallery/{}/restore`, `/api/3d/gallery/{}/save`, `/api/3d/gallery/{}/web` +5 |  |
-| `pages/Videos.tsx` | 273 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/collections`, `/api/videos/collections/{}/entries/{}` +7 |  |
+| `pages/Videos.tsx` | 287 | VideosPage | `/api/images/engine/start`, `/api/images/engine/stop`, `/api/images/free`, `/api/images/upload`, `/api/videos/collections`, `/api/videos/collections/{}/entries/{}` +7 |  |
 | `pages/Wizard.tsx` | 174 | Wizard | `/api/scan` | scan.step |
 | `pages/Workflows.tsx` | 1277 | WorkflowsPage | `/api/models/context-advice`, `/api/runs`, `/api/tools`, `/api/workflows`, `/api/workflows/validate`, `/api/workflows/{}` +1 |  |
 
